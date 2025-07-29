@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,15 +20,7 @@ const paywalledDomains = [
   "theathletic.com", "nytimes.com", "wsj.com", "bloomberg.com"
 ];
 
-const rssFeeds: Record<string, string[]> = {
-  "Philadelphia Phillies": [
-    "https://philliesnation.com/feed/", // Working Phillies-specific RSS feed
-    "https://feeds.espn.com/rss/mlb/news" // ESPN MLB general news
-  ],
-  "New York Yankees": [
-    "https://www.nydailynews.com/sports/baseball/yankees/rss2.0.xml"
-  ]
-};
+// RSS feeds are now managed in the database
 
 function deduplicate(articles: NewsArticle[]): NewsArticle[] {
   const seen = new Set();
@@ -88,29 +81,46 @@ async function fetchFromGNews(query: string): Promise<NewsArticle[]> {
   }
 }
 
-async function fetchFromRSS(topics: string[]): Promise<NewsArticle[]> {
+async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
   try {
-    const topicFeeds = topics.flatMap(t => (rssFeeds[t] || []));
-    const uniqueFeeds = [...new Set(topicFeeds)];
-    
-    console.log('RSS feeds to fetch:', uniqueFeeds);
+    // Get RSS feeds from database that match the topics
+    const { data: rssFeeds, error } = await supabase
+      .from('rss_sources')
+      .select('*')
+      .eq('is_active', true);
+
+    if (error) {
+      console.error('Error fetching RSS feeds from database:', error);
+      return [];
+    }
+
+    // Filter feeds that match any of the topics (case-insensitive)
+    const relevantFeeds = rssFeeds.filter(feed => 
+      topics.some(topic => 
+        feed.name.toLowerCase().includes(topic.toLowerCase()) ||
+        feed.category.toLowerCase().includes(topic.toLowerCase()) ||
+        topic.toLowerCase().includes(feed.name.toLowerCase())
+      )
+    );
+
+    console.log('RSS feeds to fetch:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
     
     const rssResults = await Promise.allSettled(
-      uniqueFeeds.map(async (feed) => {
+      relevantFeeds.map(async (feedData) => {
         try {
-          console.log(`Fetching RSS feed: ${feed}`);
-          const response = await fetch(feed);
+          console.log(`Fetching RSS feed: ${feedData.url} (${feedData.name})`);
+          const response = await fetch(feedData.url);
           if (!response.ok) {
-            console.error(`RSS feed ${feed} returned status: ${response.status}`);
+            console.error(`RSS feed ${feedData.url} returned status: ${response.status}`);
             return [];
           }
           
           const xmlText = await response.text();
-          console.log(`RSS feed ${feed} fetched, length: ${xmlText.length}`);
+          console.log(`RSS feed ${feedData.url} fetched, length: ${xmlText.length}`);
           
           // Simple RSS parsing for title, link, and pubDate
           const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
-          console.log(`Found ${items.length} items in ${feed}`);
+          console.log(`Found ${items.length} items in ${feedData.url}`);
           
           const articles = items.map(item => {
             // Enhanced regex patterns for better parsing
@@ -128,16 +138,16 @@ async function fetchFromRSS(topics: string[]): Promise<NewsArticle[]> {
               title: title.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
               description: description.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
               url: link,
-              source: "Phillies Nation", // Use a cleaner source name
+              source: feedData.name,
               publishedAt: pubDate,
               sourceType: "rss" as const
             };
           }).filter(article => article.title && article.url);
           
-          console.log(`Parsed ${articles.length} valid articles from ${feed}`);
+          console.log(`Parsed ${articles.length} valid articles from ${feedData.url}`);
           return articles;
         } catch (error) {
-          console.error(`RSS feed error for ${feed}:`, error);
+          console.error(`RSS feed error for ${feedData.url}:`, error);
           return [];
         }
       })
@@ -171,11 +181,17 @@ serve(async (req) => {
 
     console.log('Fetching unified news for topics:', topics);
 
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    );
+
     // Fetch from all sources in parallel
     const [newsApiArticles, gnewsArticles, rssArticles] = await Promise.all([
       fetchFromNewsAPI(query),
       fetchFromGNews(query),
-      fetchFromRSS(topics)
+      fetchFromRSS(topics, supabase)
     ]);
 
     console.log('Results:', {

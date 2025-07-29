@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import ManageTeams from "./pages/ManageTeams";
 import ManageSports from "./pages/ManageSports";
 import ManagePlayers from "./pages/ManagePlayers";
+import ManageRSSFeeds from "./pages/ManageRSSFeeds";
 import News from "./pages/News";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/manage-teams" element={<ManageTeams />} />
           <Route path="/manage-sports" element={<ManageSports />} />
           <Route path="/manage-players" element={<ManagePlayers />} />
+          <Route path="/manage-rss-feeds" element={<ManageRSSFeeds />} />
           <Route path="/news" element={<News />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

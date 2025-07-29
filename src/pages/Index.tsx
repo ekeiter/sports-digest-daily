@@ -102,7 +102,7 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
             <div className="p-6 border rounded-lg">
               <h3 className="text-xl font-semibold mb-2">Teams</h3>
               <p className="text-muted-foreground mb-4">
@@ -128,6 +128,15 @@ const Index = () => {
               </p>
               <Button variant="outline" className="w-full" onClick={() => navigate('/manage-players')}>
                 Manage Players
+              </Button>
+            </div>
+            <div className="p-6 border rounded-lg">
+              <h3 className="text-xl font-semibold mb-2">RSS Feeds</h3>
+              <p className="text-muted-foreground mb-4">
+                Manage RSS feeds for teams and sports news sources
+              </p>
+              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-rss-feeds')}>
+                Manage RSS Feeds
               </Button>
             </div>
           </div>
