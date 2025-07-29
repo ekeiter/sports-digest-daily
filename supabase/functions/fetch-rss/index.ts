@@ -175,12 +175,11 @@ Deno.serve(async (req) => {
 
     console.log(`Total articles collected: ${allArticles.length}`)
 
-    // Show more articles - if user has preferences, show both matching articles AND general sports
+    // Filter articles based on user preferences ONLY - be very strict
     let filteredArticles = allArticles
     
     if (teams.length > 0 || sports.length > 0 || players.length > 0) {
-      console.log(`User has preferences - showing personalized + general sports content`)
-      console.log(`Filtering ${allArticles.length} articles with preferences:`, {
+      console.log(`Filtering ${allArticles.length} articles with strict preferences:`, {
         teams: teams.map(t => t.team_name),
         sports: sports.map(s => s.sport_name), 
         players: players.map(p => p.player_name)
@@ -190,35 +189,40 @@ Deno.serve(async (req) => {
         const content = `${article.title} ${article.description}`.toLowerCase()
         const category = article.category.toLowerCase()
         
-        // High priority: Direct team/player matches
-        const teamMatch = teams.some(team => 
-          content.includes(team.team_name.toLowerCase())
-        )
-        const playerMatch = players.some(player => 
-          content.includes(player.player_name.toLowerCase())
-        )
-        const sportMatch = sports.some(sport => 
-          content.includes(sport.sport_name.toLowerCase())
-        )
+        // Direct team matches
+        const teamMatch = teams.some(team => {
+          const teamName = team.team_name.toLowerCase()
+          return content.includes(teamName) || 
+                 (teamName === 'philadelphia phillies' && (content.includes('phillies') || content.includes('philadelphia')))
+        })
         
-        // Medium priority: MLB content (since user follows Phillies)
-        const mlbContent = category.includes('baseball') || 
-                          category.includes('mlb') ||
-                          content.includes('mlb') ||
-                          content.includes('baseball')
+        // Direct player matches  
+        const playerMatch = players.some(player => {
+          const playerName = player.player_name.toLowerCase()
+          const nameParts = playerName.split(' ')
+          return content.includes(playerName) || 
+                 (nameParts.length >= 2 && content.includes(nameParts[0]) && content.includes(nameParts[1]))
+        })
         
-        // General sports content from top headlines
-        const generalSportsContent = category.includes('top') || 
-                                   category.includes('headlines') ||
-                                   category.includes('nfl') ||
-                                   category.includes('nba') ||
-                                   category.includes('football') ||
-                                   category.includes('basketball')
+        // Sport matches only if it's relevant to user's teams/players
+        const sportMatch = sports.some(sport => {
+          const sportName = sport.sport_name.toLowerCase()
+          if (sportName === 'baseball') {
+            // Only include baseball if it mentions teams/players or is MLB-specific
+            return (content.includes('mlb') || content.includes('baseball')) && 
+                   (teamMatch || playerMatch || 
+                    content.includes('phillies') || content.includes('skenes') ||
+                    category.includes('philadelphia') || category.includes('pittsburgh'))
+          }
+          return false
+        })
         
-        const shouldInclude = teamMatch || playerMatch || sportMatch || mlbContent || generalSportsContent
+        const shouldInclude = teamMatch || playerMatch || sportMatch
         
         if (shouldInclude) {
           console.log(`✓ Including: "${article.title.substring(0, 50)}..." (Category: ${article.category})`)
+        } else {
+          console.log(`✗ Excluding: "${article.title.substring(0, 50)}..." - No match found`)
         }
         
         return shouldInclude
