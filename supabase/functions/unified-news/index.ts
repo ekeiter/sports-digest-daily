@@ -101,12 +101,9 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
         const nameLower = feed.name.toLowerCase();
         const categoryLower = feed.category.toLowerCase();
         
-        // Only include feeds that specifically mention the team/player names
         return nameLower.includes(topicLower) || 
                categoryLower.includes(topicLower) ||
-               topicLower.includes(nameLower) ||
-               (topicLower.includes('phillies') && (nameLower.includes('phillies') || categoryLower.includes('phillies'))) ||
-               (topicLower.includes('skenes') && (nameLower.includes('skenes') || categoryLower.includes('skenes')));
+               topicLower.includes(nameLower);
       })
     );
 
@@ -231,17 +228,7 @@ serve(async (req) => {
     // Filter articles based on topics - all articles must specifically mention the topics
     const filteredArticles = allArticles.filter(article => {
       const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
-      return topics.some(topic => {
-        const topicLower = topic.toLowerCase();
-        // For specific matches like "Philadelphia Phillies" or "Paul Skenes"
-        if (topicLower.includes('phillies')) {
-          return searchText.includes('phillies');
-        }
-        if (topicLower.includes('skenes')) {
-          return searchText.includes('skenes');
-        }
-        return searchText.includes(topicLower);
-      });
+      return topics.some(topic => searchText.includes(topic.toLowerCase()));
     });
 
     console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total (RSS: ${rssArticles.length}, API: ${newsApiArticles.length + gnewsArticles.length})`);
