@@ -2,7 +2,7 @@ import axios from "axios";
 import Parser from "rss-parser";
 import rssFeeds from "./rssFeeds.json";
 
-// API keys (store securely in .env or Supabase secrets in prod!)
+// Note: These should be moved to edge functions for security
 const NEWSAPI_KEY = "fde0ff5a328f4555b6351aecd05fdb7d";
 const GNEWS_KEY = "439cd65bb32110496ba054e64e61f489";
 
