@@ -94,13 +94,30 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       return [];
     }
 
-    // Filter feeds that match any of the topics (case-insensitive)
+    // Filter feeds that match any of the topics (more flexible matching)
     const relevantFeeds = rssFeeds.filter(feed => 
-      topics.some(topic => 
-        feed.name.toLowerCase().includes(topic.toLowerCase()) ||
-        feed.category.toLowerCase().includes(topic.toLowerCase()) ||
-        topic.toLowerCase().includes(feed.name.toLowerCase())
-      )
+      topics.some(topic => {
+        const topicLower = topic.toLowerCase();
+        const nameLower = feed.name.toLowerCase();
+        const categoryLower = feed.category.toLowerCase();
+        
+        // Direct matches
+        if (nameLower.includes(topicLower) || categoryLower.includes(topicLower) || topicLower.includes(nameLower)) {
+          return true;
+        }
+        
+        // Team-specific matching - extract team/city names
+        if (topicLower.includes('phillies') || topicLower.includes('philadelphia')) {
+          return nameLower.includes('philadelphia') || categoryLower.includes('philadelphia');
+        }
+        
+        // Player-specific matching - match to their sport
+        if (topicLower.includes('paul skenes')) {
+          return categoryLower.includes('baseball') || nameLower.includes('baseball') || nameLower.includes('mlb');
+        }
+        
+        return false;
+      })
     );
 
     console.log('RSS feeds to fetch:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
