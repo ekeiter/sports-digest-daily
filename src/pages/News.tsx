@@ -29,18 +29,55 @@ interface NewsResponse {
 const News = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("sports");
+  const [searchQuery, setSearchQuery] = useState("");
   const [totalResults, setTotalResults] = useState(0);
+  const [loadedPersonalized, setLoadedPersonalized] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load initial sports news
-    fetchNews("sports");
+    // Load personalized news based on user preferences
+    loadPersonalizedNews();
   }, []);
+
+  const loadPersonalizedNews = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-news');
+
+      if (error) {
+        console.error('Error fetching news:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch personalized news",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const newsData = data as NewsResponse;
+      if (newsData.status === 'ok') {
+        setArticles(newsData.articles || []);
+        setTotalResults(newsData.totalResults || 0);
+        setLoadedPersonalized(true);
+      } else {
+        throw new Error('Invalid response from news API');
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch personalized news",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchNews = async (query: string) => {
     setLoading(true);
+    setLoadedPersonalized(false);
     try {
       const { data, error } = await supabase.functions.invoke('fetch-news', {
         body: {
@@ -83,6 +120,11 @@ const News = () => {
     if (searchQuery.trim()) {
       fetchNews(searchQuery.trim());
     }
+  };
+
+  const handleRefreshPersonalized = () => {
+    setSearchQuery("");
+    loadPersonalizedNews();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -134,6 +176,15 @@ const News = () => {
           </Button>
           <h1 className="text-2xl font-bold">Sports News</h1>
           <div className="ml-auto flex items-center gap-4">
+            {!loadedPersonalized && (
+              <Button 
+                variant="outline" 
+                onClick={handleRefreshPersonalized}
+                disabled={loading}
+              >
+                My News
+              </Button>
+            )}
             <Badge variant="secondary">
               {totalResults.toLocaleString()} articles found
             </Badge>
@@ -143,6 +194,18 @@ const News = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-6">
+          {/* Info Banner */}
+          {loadedPersonalized && (
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-4">
+                <p className="text-sm">
+                  <strong>Personalized News:</strong> Showing articles based on your selected teams, sports, and players. 
+                  Use the search below to find specific topics.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+          
           {/* Search Bar */}
           <Card>
             <CardContent className="p-6">
@@ -151,7 +214,7 @@ const News = () => {
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for sports news..."
+                    placeholder="Search for specific sports news..."
                     onKeyPress={handleKeyPress}
                   />
                 </div>
