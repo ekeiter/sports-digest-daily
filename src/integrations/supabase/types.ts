@@ -14,7 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          email_delivery_frequency: string
+          email_delivery_time: string | null
+          id: string
+          subscription_status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          email_delivery_frequency?: string
+          email_delivery_time?: string | null
+          id: string
+          subscription_status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          email_delivery_frequency?: string
+          email_delivery_time?: string | null
+          id?: string
+          subscription_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_players: {
+        Row: {
+          created_at: string
+          id: string
+          player_name: string
+          sport: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          player_name: string
+          sport: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          player_name?: string
+          sport?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_players_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_sports: {
+        Row: {
+          created_at: string
+          id: string
+          sport_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sport_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sport_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_teams: {
+        Row: {
+          created_at: string
+          id: string
+          league: string
+          team_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league: string
+          team_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league?: string
+          team_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_teams_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
