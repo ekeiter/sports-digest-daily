@@ -175,10 +175,11 @@ Deno.serve(async (req) => {
 
     console.log(`Total articles collected: ${allArticles.length}`)
 
-    // Filter articles based on user preferences, but be more lenient
+    // Show more articles - if user has preferences, show both matching articles AND general sports
     let filteredArticles = allArticles
     
     if (teams.length > 0 || sports.length > 0 || players.length > 0) {
+      console.log(`User has preferences - showing personalized + general sports content`)
       console.log(`Filtering ${allArticles.length} articles with preferences:`, {
         teams: teams.map(t => t.team_name),
         sports: sports.map(s => s.sport_name), 
@@ -187,49 +188,40 @@ Deno.serve(async (req) => {
       
       filteredArticles = allArticles.filter(article => {
         const content = `${article.title} ${article.description}`.toLowerCase()
+        const category = article.category.toLowerCase()
         
-        // Check for team mentions
+        // High priority: Direct team/player matches
         const teamMatch = teams.some(team => 
           content.includes(team.team_name.toLowerCase())
         )
-        
-        // Check for sport mentions  
+        const playerMatch = players.some(player => 
+          content.includes(player.player_name.toLowerCase())
+        )
         const sportMatch = sports.some(sport => 
           content.includes(sport.sport_name.toLowerCase())
         )
         
-        // Check for player mentions
-        const playerMatch = players.some(player => 
-          content.includes(player.player_name.toLowerCase())
-        )
+        // Medium priority: MLB content (since user follows Phillies)
+        const mlbContent = category.includes('baseball') || 
+                          category.includes('mlb') ||
+                          content.includes('mlb') ||
+                          content.includes('baseball')
         
-        // Check if category matches user's sports (more flexible matching)
-        const categoryMatch = sports.some(sport => {
-          const sportName = sport.sport_name.toLowerCase()
-          const category = article.category.toLowerCase()
-          return (
-            (sportName === 'baseball' && (category.includes('baseball') || category.includes('mlb'))) ||
-            (sportName === 'football' && (category.includes('football') || category.includes('nfl'))) ||
-            (sportName === 'basketball' && (category.includes('basketball') || category.includes('nba'))) ||
-            (sportName === 'hockey' && (category.includes('hockey') || category.includes('nhl')))
-          )
-        })
-
-        // Also include general sports articles if user has any sports preferences
-        const generalSportsMatch = sports.length > 0 && (
-          article.category.toLowerCase().includes('top') ||
-          article.category.toLowerCase().includes('headlines') ||
-          content.includes('mlb') ||
-          content.includes('nfl') ||
-          content.includes('nba') ||
-          content.includes('nhl')
-        )
-
-        const matches = teamMatch || sportMatch || playerMatch || categoryMatch || generalSportsMatch
-        if (matches) {
-          console.log(`Article matched: "${article.title.substring(0, 50)}..." - Category: ${article.category}`)
+        // General sports content from top headlines
+        const generalSportsContent = category.includes('top') || 
+                                   category.includes('headlines') ||
+                                   category.includes('nfl') ||
+                                   category.includes('nba') ||
+                                   category.includes('football') ||
+                                   category.includes('basketball')
+        
+        const shouldInclude = teamMatch || playerMatch || sportMatch || mlbContent || generalSportsContent
+        
+        if (shouldInclude) {
+          console.log(`✓ Including: "${article.title.substring(0, 50)}..." (Category: ${article.category})`)
         }
-        return matches
+        
+        return shouldInclude
       })
       
       console.log(`After filtering: ${filteredArticles.length} articles remaining`)
