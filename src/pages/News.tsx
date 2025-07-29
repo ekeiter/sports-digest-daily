@@ -43,8 +43,8 @@ const News = () => {
   const loadPersonalizedNews = async () => {
     setLoading(true);
     try {
-      // Fetch from both NewsAPI and RSS feeds
-      const [newsApiResponse, rssResponse] = await Promise.all([
+      // Fetch from both sources with individual error handling
+      const [newsApiResponse, rssResponse] = await Promise.allSettled([
         supabase.functions.invoke('fetch-news'),
         supabase.functions.invoke('fetch-rss')
       ]);
@@ -52,9 +52,15 @@ const News = () => {
       console.log('NewsAPI response:', newsApiResponse);
       console.log('RSS response:', rssResponse);
 
-      // Combine articles from both sources
-      const newsApiArticles = newsApiResponse.data?.articles || [];
-      const rssArticles = rssResponse.data?.articles || [];
+      // Handle NewsAPI results
+      const newsApiArticles = newsApiResponse.status === 'fulfilled' 
+        ? newsApiResponse.value.data?.articles || []
+        : [];
+      
+      // Handle RSS results (don't fail if RSS is down)
+      const rssArticles = rssResponse.status === 'fulfilled' 
+        ? rssResponse.value.data?.articles || []
+        : [];
       
       console.log('NewsAPI articles:', newsApiArticles.length);
       console.log('RSS articles:', rssArticles.length);
