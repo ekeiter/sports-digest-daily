@@ -110,7 +110,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Stay updated on golf, auto racing, tennis, and more
               </p>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-sports')}>
                 Manage Sports
               </Button>
             </div>
