@@ -93,11 +93,17 @@ async function fetchFromRSS(topics: string[]): Promise<NewsArticle[]> {
     const topicFeeds = topics.flatMap(t => (rssFeeds[t] || []));
     const uniqueFeeds = [...new Set(topicFeeds)];
     
+    console.log('RSS feeds to fetch:', uniqueFeeds);
+    
     const rssResults = await Promise.allSettled(
       uniqueFeeds.map(async (feed) => {
         try {
+          console.log(`Fetching RSS feed: ${feed}`);
           const response = await fetch(feed);
-          if (!response.ok) return [];
+          if (!response.ok) {
+            console.error(`RSS feed ${feed} returned status: ${response.status}`);
+            return [];
+          }
           
           const xmlText = await response.text();
           // Simple RSS parsing for title, link, and pubDate
@@ -141,7 +147,14 @@ serve(async (req) => {
   }
 
   try {
-    const { topics = ["Philadelphia Phillies", "New York Yankees", "MLB", "Baseball"] } = await req.json();
+    const { topics = [] } = await req.json();
+    
+    if (!topics.length) {
+      return new Response(
+        JSON.stringify({ articles: [], error: 'No topics provided' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     const query = topics.map((t: string) => `"${t}"`).join(" OR ");
 
     console.log('Fetching unified news for topics:', topics);

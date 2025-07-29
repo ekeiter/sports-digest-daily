@@ -44,11 +44,31 @@ const News = () => {
   const loadPersonalizedNews = async () => {
     setLoading(true);
     try {
-      // Use the unified news edge function
+      // Fetch user preferences
+      const [teamsRes, playersRes, sportsRes] = await Promise.all([
+        supabase.from('user_teams').select('team_name'),
+        supabase.from('user_players').select('player_name'),
+        supabase.from('user_sports').select('sport_name')
+      ]);
+
+      const topics = [
+        ...(teamsRes.data?.map(t => t.team_name) || []),
+        ...(playersRes.data?.map(p => p.player_name) || []),
+        ...(sportsRes.data?.map(s => s.sport_name) || [])
+      ];
+
+      if (topics.length === 0) {
+        toast({
+          title: "No preferences set",
+          description: "Please add teams, players, or sports to your preferences first",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Use the unified news edge function with actual user preferences
       const { data, error } = await supabase.functions.invoke('unified-news', {
-        body: {
-          topics: ["Philadelphia Phillies", "New York Yankees", "MLB", "Baseball"]
-        }
+        body: { topics }
       });
 
       if (error) {
