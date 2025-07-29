@@ -175,10 +175,16 @@ Deno.serve(async (req) => {
 
     console.log(`Total articles collected: ${allArticles.length}`)
 
-    // Filter articles based on user preferences if any exist
+    // Filter articles based on user preferences, but be more lenient
     let filteredArticles = allArticles
     
     if (teams.length > 0 || sports.length > 0 || players.length > 0) {
+      console.log(`Filtering ${allArticles.length} articles with preferences:`, {
+        teams: teams.map(t => t.team_name),
+        sports: sports.map(s => s.sport_name), 
+        players: players.map(p => p.player_name)
+      })
+      
       filteredArticles = allArticles.filter(article => {
         const content = `${article.title} ${article.description}`.toLowerCase()
         
@@ -187,7 +193,7 @@ Deno.serve(async (req) => {
           content.includes(team.team_name.toLowerCase())
         )
         
-        // Check for sport mentions
+        // Check for sport mentions  
         const sportMatch = sports.some(sport => 
           content.includes(sport.sport_name.toLowerCase())
         )
@@ -197,20 +203,38 @@ Deno.serve(async (req) => {
           content.includes(player.player_name.toLowerCase())
         )
         
-        // Check if category matches user's sports
+        // Check if category matches user's sports (more flexible matching)
         const categoryMatch = sports.some(sport => {
           const sportName = sport.sport_name.toLowerCase()
           const category = article.category.toLowerCase()
           return (
-            (sportName === 'baseball' && category.includes('baseball')) ||
-            (sportName === 'football' && category.includes('football')) ||
-            (sportName === 'basketball' && category.includes('basketball')) ||
-            (sportName === 'hockey' && category.includes('hockey'))
+            (sportName === 'baseball' && (category.includes('baseball') || category.includes('mlb'))) ||
+            (sportName === 'football' && (category.includes('football') || category.includes('nfl'))) ||
+            (sportName === 'basketball' && (category.includes('basketball') || category.includes('nba'))) ||
+            (sportName === 'hockey' && (category.includes('hockey') || category.includes('nhl')))
           )
         })
 
-        return teamMatch || sportMatch || playerMatch || categoryMatch
+        // Also include general sports articles if user has any sports preferences
+        const generalSportsMatch = sports.length > 0 && (
+          article.category.toLowerCase().includes('top') ||
+          article.category.toLowerCase().includes('headlines') ||
+          content.includes('mlb') ||
+          content.includes('nfl') ||
+          content.includes('nba') ||
+          content.includes('nhl')
+        )
+
+        const matches = teamMatch || sportMatch || playerMatch || categoryMatch || generalSportsMatch
+        if (matches) {
+          console.log(`Article matched: "${article.title.substring(0, 50)}..." - Category: ${article.category}`)
+        }
+        return matches
       })
+      
+      console.log(`After filtering: ${filteredArticles.length} articles remaining`)
+    } else {
+      console.log('No user preferences found, returning all articles')
     }
 
     // Sort by publication date (newest first)
