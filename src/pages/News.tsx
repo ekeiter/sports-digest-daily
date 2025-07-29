@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, ExternalLink, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Search, ExternalLink, Calendar, Clock, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { fetchUnifiedNews } from "@/lib/universalNewsAggregator";
@@ -19,6 +19,7 @@ interface NewsArticle {
     name: string;
   } | string;
   author: string;
+  paywalled?: boolean;
 }
 
 interface NewsResponse {
@@ -89,7 +90,8 @@ const News = () => {
         urlToImage: "", // RSS feeds don't typically have images
         publishedAt: article.publishedAt,
         source: article.source,
-        author: ""
+        author: "",
+        paywalled: article.paywalled || false
       }));
 
       console.log('Unified articles loaded:', transformedArticles.length);
@@ -299,6 +301,12 @@ const News = () => {
                       <Badge variant="outline" className="text-xs">
                         {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
                       </Badge>
+                      {article.paywalled && (
+                        <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                          <Lock className="h-3 w-3" />
+                          Premium
+                        </Badge>
+                      )}
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
                         {getTimeAgo(article.publishedAt)}
@@ -325,7 +333,7 @@ const News = () => {
                         onClick={() => window.open(article.url, '_blank')}
                       >
                         <ExternalLink className="h-3 w-3 mr-1" />
-                        Read
+                        {article.paywalled ? 'View Article' : 'Read'}
                       </Button>
                     </div>
                     {article.author && (
