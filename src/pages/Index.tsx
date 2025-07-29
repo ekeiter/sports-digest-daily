@@ -101,7 +101,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Follow your favorite teams from MLB, NFL, NBA, and NHL
               </p>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-teams')}>
                 Manage Teams
               </Button>
             </div>
