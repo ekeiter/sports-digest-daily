@@ -93,75 +93,75 @@ Deno.serve(async (req) => {
         console.log(`First 500 chars: ${xmlText.substring(0, 500)}`)
 
         // Parse RSS items using regex (more reliable than DOM parser in Deno)
+        // Make the regex case-insensitive and handle various RSS formats
         const itemMatches = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || []
-        console.log(`Found ${itemMatches.length} items in ${source.name}`)
+        console.log(`Found ${itemMatches.length} RSS items in ${source.name}`)
         
-        if (itemMatches.length === 0) {
-          // Try alternative patterns for different RSS formats
-          const entryMatches = xmlText.match(/<entry[^>]*>[\s\S]*?<\/entry>/gi) || []
-          console.log(`Found ${entryMatches.length} entries (Atom format) in ${source.name}`)
-          
-          if (entryMatches.length > 0) {
-            for (const entryXml of entryMatches) {
-              // Extract title from Atom feed
-              const titleMatch = entryXml.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
-              const title = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim() : ''
-
-              // Extract summary or content
-              const summaryMatch = entryXml.match(/<summary[^>]*>([\s\S]*?)<\/summary>/i) || 
-                                  entryXml.match(/<content[^>]*>([\s\S]*?)<\/content>/i)
-              const description = summaryMatch ? summaryMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').replace(/<[^>]*>/g, '').trim() : ''
-
-              // Extract link from Atom feed
-              const linkMatch = entryXml.match(/<link[^>]*href\s*=\s*["']([^"']+)["']/i) ||
-                               entryXml.match(/<id[^>]*>(https?:\/\/[^<]+)<\/id>/i)
-              const link = linkMatch ? linkMatch[1].trim() : ''
-
-              // Extract updated or published date
-              const dateMatch = entryXml.match(/<updated[^>]*>([\s\S]*?)<\/updated>/i) ||
-                               entryXml.match(/<published[^>]*>([\s\S]*?)<\/published>/i)
-              const pubDate = dateMatch ? dateMatch[1].trim() : ''
-
-              if (title && link) {
-                allArticles.push({
-                  title: title,
-                  description: description,
-                  link: link,
-                  pubDate: pubDate,
-                  source: source.name,
-                  category: source.category
-                })
-              }
-            }
-            continue
-          }
-        }
-
         for (const itemXml of itemMatches) {
-          // Extract title - handle CDATA properly
-          const titleMatch = itemXml.match(/<title[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/title>/i)
-          const title = titleMatch ? (titleMatch[1] || titleMatch[2] || titleMatch[3] || '').trim() : ''
+          // Extract title - handle multiple CDATA formats
+          let title = ''
+          const titleMatch = itemXml.match(/<title[^>]*>([\s\S]*?)<\/title>/gi)
+          if (titleMatch && titleMatch[0]) {
+            const titleContent = titleMatch[0]
+            // Remove CDATA wrapper and HTML tags
+            title = titleContent
+              .replace(/<title[^>]*>/gi, '')
+              .replace(/<\/title>/gi, '')
+              .replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1')
+              .replace(/<!--\[CDATA\[(.*?)\]-->/g, '$1')
+              .replace(/&lt;!\[CDATA\[(.*?)\]\]&gt;/g, '$1')
+              .replace(/<[^>]*>/g, '')
+              .trim()
+          }
 
-          // Extract description - handle CDATA and comments
-          const descMatch = itemXml.match(/<description[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/description>/i)
-          const description = descMatch ? (descMatch[1] || descMatch[2] || descMatch[3] || '').replace(/<[^>]*>/g, '').trim() : ''
+          // Extract description
+          let description = ''
+          const descMatch = itemXml.match(/<description[^>]*>([\s\S]*?)<\/description>/gi)
+          if (descMatch && descMatch[0]) {
+            const descContent = descMatch[0]
+            description = descContent
+              .replace(/<description[^>]*>/gi, '')
+              .replace(/<\/description>/gi, '')
+              .replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1')
+              .replace(/<!--\[CDATA\[(.*?)\]-->/g, '$1')
+              .replace(/&lt;!\[CDATA\[(.*?)\]\]&gt;/g, '$1')
+              .replace(/<[^>]*>/g, '')
+              .trim()
+          }
 
-          // Extract link - handle CDATA and comments
-          const linkMatch = itemXml.match(/<link[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/link>/i)
-          const link = linkMatch ? (linkMatch[1] || linkMatch[2] || linkMatch[3] || '').trim() : ''
+          // Extract link
+          let link = ''
+          const linkMatch = itemXml.match(/<link[^>]*>([\s\S]*?)<\/link>/gi)
+          if (linkMatch && linkMatch[0]) {
+            const linkContent = linkMatch[0]
+            link = linkContent
+              .replace(/<link[^>]*>/gi, '')
+              .replace(/<\/link>/gi, '')
+              .replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1')
+              .replace(/<!--\[CDATA\[(.*?)\]-->/g, '$1')
+              .replace(/&lt;!\[CDATA\[(.*?)\]\]&gt;/g, '$1')
+              .trim()
+          }
 
-          // Extract pubDate
-          const pubDateMatch = itemXml.match(/<pubdate[^>]*>(.*?)<\/pubdate>/i)
-          const pubDate = pubDateMatch ? pubDateMatch[1].trim() : ''
+          // Extract pubDate (try multiple variations)
+          let pubDate = ''
+          const pubDateMatch = itemXml.match(/<pubdate[^>]*>([\s\S]*?)<\/pubdate>/gi) ||
+                               itemXml.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/gi) ||
+                               itemXml.match(/<published[^>]*>([\s\S]*?)<\/published>/gi)
+          if (pubDateMatch && pubDateMatch[0]) {
+            pubDate = pubDateMatch[0]
+              .replace(/<[^>]*>/g, '')
+              .trim()
+          }
 
-          console.log(`Parsed item: title="${title.substring(0, 50)}", link="${link}", hasDesc=${!!description}`)
+          console.log(`Parsed: "${title.substring(0, 30)}..." link: "${link.substring(0, 50)}..."`)
 
-          if (title && link) {
+          if (title && link && link.startsWith('http')) {
             allArticles.push({
               title: title,
               description: description,
               link: link,
-              pubDate: pubDate,
+              pubDate: pubDate || new Date().toISOString(),
               source: source.name,
               category: source.category
             })
