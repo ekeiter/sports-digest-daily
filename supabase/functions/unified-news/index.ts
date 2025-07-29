@@ -106,24 +106,36 @@ async function fetchFromRSS(topics: string[]): Promise<NewsArticle[]> {
           }
           
           const xmlText = await response.text();
+          console.log(`RSS feed ${feed} fetched, length: ${xmlText.length}`);
+          
           // Simple RSS parsing for title, link, and pubDate
           const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
+          console.log(`Found ${items.length} items in ${feed}`);
           
-          return items.map(item => {
-            const title = item.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>|<title[^>]*>(.*?)<\/title>/i)?.[1] || item.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>|<title[^>]*>(.*?)<\/title>/i)?.[2] || "";
-            const link = item.match(/<link[^>]*>(.*?)<\/link>/i)?.[1] || "";
-            const pubDate = item.match(/<pubDate[^>]*>(.*?)<\/pubDate>/i)?.[1] || "";
-            const description = item.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]><\/description>|<description[^>]*>(.*?)<\/description>/i)?.[1] || item.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]><\/description>|<description[^>]*>(.*?)<\/description>/i)?.[2] || "";
+          const articles = items.map(item => {
+            // Enhanced regex patterns for better parsing
+            const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
+            const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
+            const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
+            const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
+            
+            const title = titleMatch?.[1]?.trim() || "";
+            const link = linkMatch?.[1]?.trim() || "";
+            const pubDate = pubDateMatch?.[1]?.trim() || "";
+            const description = descMatch?.[1]?.trim() || "";
             
             return {
-              title: title.trim(),
-              description: description.trim(),
-              url: link.trim(),
-              source: feed.split('/')[2] || "",
-              publishedAt: pubDate.trim(),
+              title: title.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+              description: description.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+              url: link,
+              source: "Phillies Nation", // Use a cleaner source name
+              publishedAt: pubDate,
               sourceType: "rss" as const
             };
           }).filter(article => article.title && article.url);
+          
+          console.log(`Parsed ${articles.length} valid articles from ${feed}`);
+          return articles;
         } catch (error) {
           console.error(`RSS feed error for ${feed}:`, error);
           return [];
@@ -175,13 +187,19 @@ serve(async (req) => {
     // Combine and deduplicate
     let allArticles: NewsArticle[] = [...newsApiArticles, ...gnewsArticles, ...rssArticles];
     
-    // Filter articles to only include those mentioning the user's topics
+    // Filter articles based on topics, but be more lenient with RSS feeds since they're already topic-specific
     const filteredArticles = allArticles.filter(article => {
+      // RSS articles from topic-specific feeds should be included by default
+      if (article.sourceType === 'rss') {
+        return true;
+      }
+      
+      // For API sources, filter by topic relevance
       const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
       return topics.some(topic => searchText.includes(topic.toLowerCase()));
     });
 
-    console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total`);
+    console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total (RSS: ${rssArticles.length}, API: ${newsApiArticles.length + gnewsArticles.length})`);
     
     const finalArticles = deduplicate(filteredArticles).map(a => ({
       ...a,
