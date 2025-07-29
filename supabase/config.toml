@@ -22,3 +22,6 @@ port = 54322
 
 [functions.fetch-news]
 verify_jwt = true
+
+[functions.fetch-rss]
+verify_jwt = true

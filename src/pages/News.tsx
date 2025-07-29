@@ -43,25 +43,45 @@ const News = () => {
   const loadPersonalizedNews = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('fetch-news');
+      // Fetch from both NewsAPI and RSS feeds
+      const [newsApiResponse, rssResponse] = await Promise.all([
+        supabase.functions.invoke('fetch-news'),
+        supabase.functions.invoke('fetch-rss')
+      ]);
 
-      if (error) {
-        console.error('Error fetching news:', error);
+      console.log('NewsAPI response:', newsApiResponse);
+      console.log('RSS response:', rssResponse);
+
+      // Combine articles from both sources
+      const newsApiArticles = newsApiResponse.data?.articles || [];
+      const rssArticles = rssResponse.data?.articles || [];
+      
+      console.log('NewsAPI articles:', newsApiArticles.length);
+      console.log('RSS articles:', rssArticles.length);
+      
+      // Merge and deduplicate articles by URL and title
+      const allArticles = [...newsApiArticles, ...rssArticles];
+      const uniqueArticles = allArticles.filter((article, index, self) => 
+        index === self.findIndex(a => a.url === article.url || a.title === article.title)
+      );
+      
+      // Sort by publication date (newest first)
+      uniqueArticles.sort((a, b) => {
+        const dateA = new Date(a.publishedAt).getTime();
+        const dateB = new Date(b.publishedAt).getTime();
+        return dateB - dateA;
+      });
+
+      console.log('Total unique articles:', uniqueArticles.length);
+      setArticles(uniqueArticles);
+      setTotalResults(uniqueArticles.length);
+      setLoadedPersonalized(true);
+
+      if (uniqueArticles.length === 0) {
         toast({
-          title: "Error",
-          description: "Failed to fetch personalized news",
-          variant: "destructive",
+          title: "No articles found",
+          description: "Try adding more teams, sports, or players to your preferences",
         });
-        return;
-      }
-
-      const newsData = data as NewsResponse;
-      if (newsData.status === 'ok') {
-        setArticles(newsData.articles || []);
-        setTotalResults(newsData.totalResults || 0);
-        setLoadedPersonalized(true);
-      } else {
-        throw new Error('Invalid response from news API');
       }
     } catch (error) {
       console.error('Error fetching news:', error);
