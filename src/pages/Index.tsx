@@ -119,7 +119,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Get news about your favorite individual players
               </p>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-players')}>
                 Manage Players
               </Button>
             </div>
