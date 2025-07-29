@@ -21,8 +21,8 @@ const paywalledDomains = [
 
 const rssFeeds: Record<string, string[]> = {
   "Philadelphia Phillies": [
-    "https://www.inquirer.com/phillies/rss/",
-    "https://www.nbcsports.com/philadelphia/rss/feed/46"
+    "https://philliesnation.com/feed/", // Working Phillies-specific RSS feed
+    "https://feeds.espn.com/rss/mlb/news" // ESPN MLB general news
   ],
   "New York Yankees": [
     "https://www.nydailynews.com/sports/baseball/yankees/rss2.0.xml"
@@ -175,16 +175,24 @@ serve(async (req) => {
     // Combine and deduplicate
     let allArticles: NewsArticle[] = [...newsApiArticles, ...gnewsArticles, ...rssArticles];
     
-    allArticles = deduplicate(allArticles).map(a => ({
+    // Filter articles to only include those mentioning the user's topics
+    const filteredArticles = allArticles.filter(article => {
+      const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
+      return topics.some(topic => searchText.includes(topic.toLowerCase()));
+    });
+
+    console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total`);
+    
+    const finalArticles = deduplicate(filteredArticles).map(a => ({
       ...a,
       paywalled: paywalledDomains.some(domain => a.url.includes(domain))
     }));
 
     // Sort by publication date (newest first)
-    allArticles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    finalArticles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
     return new Response(
-      JSON.stringify({ articles: allArticles }),
+      JSON.stringify({ articles: finalArticles }),
       { 
         headers: { 
           ...corsHeaders, 
