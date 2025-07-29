@@ -44,18 +44,31 @@ const News = () => {
   const loadPersonalizedNews = async () => {
     setLoading(true);
     try {
-      // Use the unified news aggregator with default sports topics
-      const topics = ["Philadelphia Phillies", "New York Yankees", "MLB", "Baseball"];
-      const unifiedArticles = await fetchUnifiedNews(topics);
-      
+      // Use the unified news edge function
+      const { data, error } = await supabase.functions.invoke('unified-news', {
+        body: {
+          topics: ["Philadelphia Phillies", "New York Yankees", "MLB", "Baseball"]
+        }
+      });
+
+      if (error) {
+        console.error('Error fetching unified news:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch personalized news",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Transform the articles to match our interface
-      const transformedArticles = unifiedArticles.map(article => ({
+      const transformedArticles = (data.articles || []).map((article: any) => ({
         title: article.title,
         description: article.description || "",
         url: article.url,
         urlToImage: "", // RSS feeds don't typically have images
         publishedAt: article.publishedAt,
-        source: typeof article.source === 'string' ? article.source : article.source,
+        source: article.source,
         author: ""
       }));
 
