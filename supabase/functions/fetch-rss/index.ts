@@ -90,27 +90,71 @@ Deno.serve(async (req) => {
 
         const xmlText = await response.text()
         console.log(`Received ${xmlText.length} characters from ${source.name}`)
+        console.log(`First 500 chars: ${xmlText.substring(0, 500)}`)
 
         // Parse RSS items using regex (more reliable than DOM parser in Deno)
         const itemMatches = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || []
         console.log(`Found ${itemMatches.length} items in ${source.name}`)
+        
+        if (itemMatches.length === 0) {
+          // Try alternative patterns for different RSS formats
+          const entryMatches = xmlText.match(/<entry[^>]*>[\s\S]*?<\/entry>/gi) || []
+          console.log(`Found ${entryMatches.length} entries (Atom format) in ${source.name}`)
+          
+          if (entryMatches.length > 0) {
+            for (const entryXml of entryMatches) {
+              // Extract title from Atom feed
+              const titleMatch = entryXml.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
+              const title = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim() : ''
+
+              // Extract summary or content
+              const summaryMatch = entryXml.match(/<summary[^>]*>([\s\S]*?)<\/summary>/i) || 
+                                  entryXml.match(/<content[^>]*>([\s\S]*?)<\/content>/i)
+              const description = summaryMatch ? summaryMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').replace(/<[^>]*>/g, '').trim() : ''
+
+              // Extract link from Atom feed
+              const linkMatch = entryXml.match(/<link[^>]*href\s*=\s*["']([^"']+)["']/i) ||
+                               entryXml.match(/<id[^>]*>(https?:\/\/[^<]+)<\/id>/i)
+              const link = linkMatch ? linkMatch[1].trim() : ''
+
+              // Extract updated or published date
+              const dateMatch = entryXml.match(/<updated[^>]*>([\s\S]*?)<\/updated>/i) ||
+                               entryXml.match(/<published[^>]*>([\s\S]*?)<\/published>/i)
+              const pubDate = dateMatch ? dateMatch[1].trim() : ''
+
+              if (title && link) {
+                allArticles.push({
+                  title: title,
+                  description: description,
+                  link: link,
+                  pubDate: pubDate,
+                  source: source.name,
+                  category: source.category
+                })
+              }
+            }
+            continue
+          }
+        }
 
         for (const itemXml of itemMatches) {
-          // Extract title
-          const titleMatch = itemXml.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
-          const title = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim() : ''
+          // Extract title - handle CDATA properly
+          const titleMatch = itemXml.match(/<title[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/title>/i)
+          const title = titleMatch ? (titleMatch[1] || titleMatch[2] || titleMatch[3] || '').trim() : ''
 
-          // Extract description
-          const descMatch = itemXml.match(/<description[^>]*>([\s\S]*?)<\/description>/i)
-          const description = descMatch ? descMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').replace(/<[^>]*>/g, '').trim() : ''
+          // Extract description - handle CDATA and comments
+          const descMatch = itemXml.match(/<description[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/description>/i)
+          const description = descMatch ? (descMatch[1] || descMatch[2] || descMatch[3] || '').replace(/<[^>]*>/g, '').trim() : ''
 
-          // Extract link
-          const linkMatch = itemXml.match(/<link[^>]*>([\s\S]*?)<\/link>/i)
-          const link = linkMatch ? linkMatch[1].trim() : ''
+          // Extract link - handle CDATA and comments
+          const linkMatch = itemXml.match(/<link[^>]*>(?:<!\[CDATA\[(.*?)\]\]>|<!--\[CDATA\[(.*?)\]-->|(.*?))<\/link>/i)
+          const link = linkMatch ? (linkMatch[1] || linkMatch[2] || linkMatch[3] || '').trim() : ''
 
           // Extract pubDate
-          const pubDateMatch = itemXml.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/i)
+          const pubDateMatch = itemXml.match(/<pubdate[^>]*>(.*?)<\/pubdate>/i)
           const pubDate = pubDateMatch ? pubDateMatch[1].trim() : ''
+
+          console.log(`Parsed item: title="${title.substring(0, 50)}", link="${link}", hasDesc=${!!description}`)
 
           if (title && link) {
             allArticles.push({
