@@ -94,29 +94,19 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       return [];
     }
 
-    // Filter feeds that match any of the topics (more flexible matching)
+    // Filter feeds that match any of the topics (exact matching for RSS feeds)
     const relevantFeeds = rssFeeds.filter(feed => 
       topics.some(topic => {
         const topicLower = topic.toLowerCase();
         const nameLower = feed.name.toLowerCase();
         const categoryLower = feed.category.toLowerCase();
         
-        // Direct matches
-        if (nameLower.includes(topicLower) || categoryLower.includes(topicLower) || topicLower.includes(nameLower)) {
-          return true;
-        }
-        
-        // Team-specific matching - extract team/city names
-        if (topicLower.includes('phillies') || topicLower.includes('philadelphia')) {
-          return nameLower.includes('philadelphia') || categoryLower.includes('philadelphia');
-        }
-        
-        // Player-specific matching - match to their sport
-        if (topicLower.includes('paul skenes')) {
-          return categoryLower.includes('baseball') || nameLower.includes('baseball') || nameLower.includes('mlb');
-        }
-        
-        return false;
+        // Only include feeds that specifically mention the team/player names
+        return nameLower.includes(topicLower) || 
+               categoryLower.includes(topicLower) ||
+               topicLower.includes(nameLower) ||
+               (topicLower.includes('phillies') && (nameLower.includes('phillies') || categoryLower.includes('phillies'))) ||
+               (topicLower.includes('skenes') && (nameLower.includes('skenes') || categoryLower.includes('skenes')));
       })
     );
 
@@ -238,16 +228,20 @@ serve(async (req) => {
     // Combine and deduplicate
     let allArticles: NewsArticle[] = [...newsApiArticles, ...gnewsArticles, ...rssArticles];
     
-    // Filter articles based on topics, but be more lenient with RSS feeds since they're already topic-specific
+    // Filter articles based on topics - all articles must specifically mention the topics
     const filteredArticles = allArticles.filter(article => {
-      // RSS articles from topic-specific feeds should be included by default
-      if (article.sourceType === 'rss') {
-        return true;
-      }
-      
-      // For API sources, filter by topic relevance
       const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
-      return topics.some(topic => searchText.includes(topic.toLowerCase()));
+      return topics.some(topic => {
+        const topicLower = topic.toLowerCase();
+        // For specific matches like "Philadelphia Phillies" or "Paul Skenes"
+        if (topicLower.includes('phillies')) {
+          return searchText.includes('phillies');
+        }
+        if (topicLower.includes('skenes')) {
+          return searchText.includes('skenes');
+        }
+        return searchText.includes(topicLower);
+      });
     });
 
     console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total (RSS: ${rssArticles.length}, API: ${newsApiArticles.length + gnewsArticles.length})`);
