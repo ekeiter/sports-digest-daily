@@ -95,6 +95,13 @@ const Index = () => {
           <p className="text-lg text-muted-foreground">
             Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
           </p>
+          
+          <div className="mb-8">
+            <Button size="lg" onClick={() => navigate('/news')}>
+              View Latest Sports News
+            </Button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             <div className="p-6 border rounded-lg">
               <h3 className="text-xl font-semibold mb-2">Teams</h3>
