@@ -16,7 +16,7 @@ interface NewsArticle {
   publishedAt: string;
   source: {
     name: string;
-  };
+  } | string;
   author: string;
 }
 
@@ -283,7 +283,7 @@ const News = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" className="text-xs">
-                        {article.source.name}
+                        {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
                       </Badge>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
