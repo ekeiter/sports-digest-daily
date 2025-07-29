@@ -1,5 +1,4 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,7 +70,7 @@ Deno.serve(async (req) => {
     const sports = sportsResponse.data || []
     const players = playersResponse.data || []
 
-    // Fetch and parse RSS feeds
+    // Fetch and parse RSS feeds using simple regex parsing
     const allArticles: RSSItem[] = []
     
     for (const source of rssSources || []) {
@@ -90,29 +89,35 @@ Deno.serve(async (req) => {
         }
 
         const xmlText = await response.text()
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(xmlText, 'application/xml')
+        console.log(`Received ${xmlText.length} characters from ${source.name}`)
 
-        if (!doc) {
-          console.error(`Failed to parse XML from ${source.name}`)
-          continue
-        }
+        // Parse RSS items using regex (more reliable than DOM parser in Deno)
+        const itemMatches = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || []
+        console.log(`Found ${itemMatches.length} items in ${source.name}`)
 
-        const items = doc.querySelectorAll('item')
-        console.log(`Found ${items.length} items in ${source.name}`)
+        for (const itemXml of itemMatches) {
+          // Extract title
+          const titleMatch = itemXml.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
+          const title = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim() : ''
 
-        for (const item of items) {
-          const title = item.querySelector('title')?.textContent || ''
-          const description = item.querySelector('description')?.textContent || ''
-          const link = item.querySelector('link')?.textContent || ''
-          const pubDate = item.querySelector('pubDate')?.textContent || ''
+          // Extract description
+          const descMatch = itemXml.match(/<description[^>]*>([\s\S]*?)<\/description>/i)
+          const description = descMatch ? descMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').replace(/<[^>]*>/g, '').trim() : ''
+
+          // Extract link
+          const linkMatch = itemXml.match(/<link[^>]*>([\s\S]*?)<\/link>/i)
+          const link = linkMatch ? linkMatch[1].trim() : ''
+
+          // Extract pubDate
+          const pubDateMatch = itemXml.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/i)
+          const pubDate = pubDateMatch ? pubDateMatch[1].trim() : ''
 
           if (title && link) {
             allArticles.push({
-              title: title.trim(),
-              description: description.trim(),
-              link: link.trim(),
-              pubDate: pubDate.trim(),
+              title: title,
+              description: description,
+              link: link,
+              pubDate: pubDate,
               source: source.name,
               category: source.category
             })
