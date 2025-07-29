@@ -151,9 +151,27 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
             const pubDate = pubDateMatch?.[1]?.trim() || "";
             const description = descMatch?.[1]?.trim() || "";
             
+            // Decode HTML entities
+            const decodeHtmlEntities = (text: string) => {
+              return text
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&')
+                .replace(/&#39;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&apos;/g, "'")
+                .replace(/&#x27;/g, "'")
+                .replace(/&#x2F;/g, '/')
+                .replace(/&#x2019;/g, "'")
+                .replace(/&#8217;/g, "'")
+                .replace(/&#8216;/g, "'")
+                .replace(/&#8220;/g, '"')
+                .replace(/&#8221;/g, '"');
+            };
+            
             return {
-              title: title.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
-              description: description.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+              title: decodeHtmlEntities(title),
+              description: decodeHtmlEntities(description),
               url: link,
               source: feedData.name,
               publishedAt: pubDate,
