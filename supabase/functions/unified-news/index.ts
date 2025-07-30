@@ -264,8 +264,8 @@ serve(async (req) => {
         return true;
       }
       
-      // For API articles, require topic matching
-      const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
+      // For API articles, require topic matching in title, description, OR URL
+      const searchText = `${article.title} ${article.description || ''} ${article.url}`.toLowerCase();
       const matches = topics.some(topic => {
         const topicWords = topic.toLowerCase().split(' ');
         return topicWords.some(word => searchText.includes(word));
