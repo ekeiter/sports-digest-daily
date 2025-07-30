@@ -309,16 +309,25 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       console.log('Feed matches:', matchResult);
       return matchResult;
     });
-
-    console.log('RSS feeds to fetch:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
+    
+    console.log('📋 Relevant feeds selected:', relevantFeeds.length);
+    console.log('📝 Feed details:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
+    
+    if (relevantFeeds.length === 0) {
+      console.log('⚠️ NO RELEVANT FEEDS FOUND - returning empty array');
+      return [];
+    }
     
     const rssResults = await Promise.allSettled(
       relevantFeeds.map(async (feedData) => {
         try {
-          console.log(`Fetching RSS feed: ${feedData.url} (${feedData.name})`);
+          console.log(`🌐 Fetching RSS feed: ${feedData.url} (${feedData.name})`);
           const response = await fetch(feedData.url);
+          
+          console.log(`📡 Response status for ${feedData.url}: ${response.status}`);
+          
           if (!response.ok) {
-            console.error(`RSS feed ${feedData.url} returned status: ${response.status}`);
+            console.error(`❌ RSS feed ${feedData.url} returned status: ${response.status}`);
             return [];
           }
           
