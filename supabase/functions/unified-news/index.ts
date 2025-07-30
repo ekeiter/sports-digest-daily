@@ -156,9 +156,15 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
         }).filter(article => {
           // Filter articles that mention the topics and are within time range
           const searchText = `${article.title} ${article.description}`.toLowerCase();
+          console.log('🔍 RSS article evaluation for', feed.name, ':', article.title);
+          console.log('  Search text:', searchText.substring(0, 100) + '...');
+          console.log('  Looking for topics:', topics);
+          
           const isTopicRelated = topics.some(topic => {
             const topicWords = topic.toLowerCase().split(' ');
-            return topicWords.some(word => searchText.includes(word));
+            const matches = topicWords.some(word => searchText.includes(word));
+            console.log('  Topic check for "' + topic + '": words =', topicWords, 'matches =', matches);
+            return matches;
           });
           
           // Check if article is within time range
@@ -176,8 +182,12 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             }
           }
           
+          console.log('  Final result - topic related:', isTopicRelated, 'within time range:', isWithinTimeRange);
+          
           if (isTopicRelated && isWithinTimeRange) {
             console.log('✅ Including article from', feed.name, ':', article.title);
+          } else {
+            console.log('❌ Excluding article from', feed.name, ':', article.title, '- topic:', isTopicRelated, 'time:', isWithinTimeRange);
           }
           
           return article.title && article.url && isTopicRelated && isWithinTimeRange;
