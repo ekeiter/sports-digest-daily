@@ -162,17 +162,35 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             sourceType: "rss" as const
           };
         }).filter(article => {
-          // Filter articles that mention the topics and are within time range
+          // For debugging: let's temporarily be very permissive with ESPN articles
+          if (feed.name === 'ESPN') {
+            console.log('🔍 ESPN article found:', article.title);
+            console.log('  URL:', article.url);
+            console.log('  Description:', article.description?.substring(0, 100) + '...');
+            
+            // For ESPN, let's include ALL MLB articles for now to see what we get
+            const searchText = `${article.title} ${article.description}`.toLowerCase();
+            const hasMLBContent = searchText.includes('mlb') || 
+                                 searchText.includes('baseball') || 
+                                 searchText.includes('phillies') ||
+                                 searchText.includes('philadelphia') ||
+                                 searchText.includes('trade') ||
+                                 searchText.includes('deadline');
+            
+            console.log('  Has MLB content:', hasMLBContent);
+            if (hasMLBContent) {
+              console.log('✅ Including ESPN article:', article.title);
+              return true;
+            }
+          }
+          
+          // For other feeds, use original logic
           const searchText = `${article.title} ${article.description}`.toLowerCase();
           console.log('🔍 RSS article evaluation for', feed.name, ':', article.title);
-          console.log('  Search text:', searchText.substring(0, 100) + '...');
-          console.log('  Looking for topics:', topics);
           
           const isTopicRelated = topics.some(topic => {
             const topicWords = topic.toLowerCase().split(' ');
-            const matches = topicWords.some(word => searchText.includes(word));
-            console.log('  Topic check for "' + topic + '": words =', topicWords, 'matches =', matches);
-            return matches;
+            return topicWords.some(word => searchText.includes(word));
           });
           
           // Check if article is within time range
@@ -181,21 +199,13 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             try {
               const articleDate = new Date(article.publishedAt);
               isWithinTimeRange = articleDate >= cutoffTime;
-              if (!isWithinTimeRange) {
-                console.log('⏰ Article outside time range:', article.title, 'published:', articleDate.toISOString());
-              }
             } catch (dateError) {
               console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
-              // Keep articles with invalid dates
             }
           }
           
-          console.log('  Final result - topic related:', isTopicRelated, 'within time range:', isWithinTimeRange);
-          
           if (isTopicRelated && isWithinTimeRange) {
             console.log('✅ Including article from', feed.name, ':', article.title);
-          } else {
-            console.log('❌ Excluding article from', feed.name, ':', article.title, '- topic:', isTopicRelated, 'time:', isWithinTimeRange);
           }
           
           return article.title && article.url && isTopicRelated && isWithinTimeRange;
