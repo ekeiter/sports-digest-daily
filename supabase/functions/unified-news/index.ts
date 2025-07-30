@@ -151,7 +151,19 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
           const description = descMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
           const url = linkMatch?.[1]?.trim() || "";
-          const pubDate = pubDateMatch?.[1]?.trim() || new Date().toISOString();
+          
+          // Parse the pubDate and convert to ISO string to handle timezones properly
+          let pubDate = new Date().toISOString();
+          if (pubDateMatch?.[1]?.trim()) {
+            try {
+              const parsedDate = new Date(pubDateMatch[1].trim());
+              if (!isNaN(parsedDate.getTime())) {
+                pubDate = parsedDate.toISOString();
+              }
+            } catch (dateError) {
+              console.log('⚠️ Could not parse date:', pubDateMatch[1], 'using current time');
+            }
+          }
 
           return {
             title,
