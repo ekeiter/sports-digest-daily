@@ -158,13 +158,12 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             try {
               let dateString = pubDateMatch[1].trim();
               
-              // Convert EST to proper UTC offset for JavaScript Date parser
-              if (dateString.includes(' EST')) {
-                // During daylight savings, EST should be EDT (-0400), otherwise EST (-0500)
-                const now = new Date();
-                const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
-                const offset = isDST ? '-0400' : '-0500';
-                dateString = dateString.replace(' EST', ` ${offset}`);
+              // During daylight savings, RSS feeds often incorrectly use "EST" when they mean "EDT"
+              // The time is correct, just the timezone label is wrong
+              const now = new Date();
+              const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
+              if (isDST && dateString.includes(' EST')) {
+                dateString = dateString.replace(' EST', ' EDT');
               }
               
               const parsedDate = new Date(dateString);
