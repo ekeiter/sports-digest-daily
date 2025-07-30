@@ -132,6 +132,14 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
         // Simple RSS parsing for items
         const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
         console.log('📰 Found', items.length, 'RSS items for', feed.name);
+        
+        // Log first few items to see what we're getting
+        console.log('📋 Sample RSS items from', feed.name, ':');
+        items.slice(0, 3).forEach((item, index) => {
+          const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
+          const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
+          console.log(`  ${index + 1}. ${title}`);
+        });
 
         // Parse articles from this feed
         const feedArticles = items.slice(0, 20).map(item => {
