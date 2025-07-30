@@ -51,6 +51,7 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
+    console.log('📰 NewsAPI: Requesting articles from date:', from, 'Hours back:', hoursBack);
     console.log('📰 NewsAPI cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=20`);
@@ -58,6 +59,7 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     if (!response.ok) return [];
     
     const data = await response.json();
+    console.log('📰 NewsAPI returned', (data.articles || []).length, 'articles');
     
     // Filter articles to ensure they're within the time range
     return (data.articles || []).filter((a: any) => {
@@ -90,6 +92,7 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
     const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
+    console.log('📰 GNews: Requesting articles from date:', from, 'Hours back:', hoursBack);
     console.log('📰 GNews cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=20`);
@@ -97,6 +100,7 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
     if (!response.ok) return [];
     
     const data = await response.json();
+    console.log('📰 GNews returned', (data.articles || []).length, 'articles');
     
     // Filter articles to ensure they're within the time range
     return (data.articles || []).filter((a: any) => {
