@@ -62,15 +62,17 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     console.log('📰 NewsAPI returned', (data.articles || []).length, 'articles');
     
     // Filter articles to ensure they're within the time range
-    return (data.articles || []).filter((a: any) => {
+    const filteredArticles = (data.articles || []).filter((a: any) => {
       if (!a.publishedAt) return false;
       const articleDate = new Date(a.publishedAt);
       const isWithinRange = articleDate >= cutoffTime;
-      if (!isWithinRange) {
-        console.log('❌ NewsAPI: Excluding old article:', a.title, 'Date:', a.publishedAt);
-      }
+      console.log('📰 NewsAPI article:', a.title, 'Date:', a.publishedAt, 'Within range:', isWithinRange);
       return isWithinRange;
-    }).map((a: any) => ({
+    });
+    
+    console.log('📰 NewsAPI: After filtering', filteredArticles.length, 'of', (data.articles || []).length, 'articles');
+    
+    return filteredArticles.map((a: any) => ({
       title: a.title,
       description: a.description,
       url: a.url,
