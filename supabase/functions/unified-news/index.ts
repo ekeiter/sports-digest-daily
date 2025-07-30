@@ -232,16 +232,19 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
     
     topics.forEach(topic => {
       const topicLower = topic.toLowerCase();
+      console.log('Processing topic:', topic, 'lowercased:', topicLower);
       
       // Check if topic matches a team name
       const teamMapping = TEAM_MAPPINGS[topicLower];
       if (teamMapping) {
+        console.log('Direct match found:', teamMapping);
         sportCityFilters.add(`${teamMapping.sport}|${teamMapping.city}`);
       }
       
       // Also check for partial matches (e.g., "Philadelphia Phillies" contains "phillies")
       for (const [teamName, mapping] of Object.entries(TEAM_MAPPINGS)) {
         if (topicLower.includes(teamName) || teamName.includes(topicLower)) {
+          console.log('Partial match found:', teamName, '→', mapping);
           sportCityFilters.add(`${mapping.sport}|${mapping.city}`);
         }
       }
