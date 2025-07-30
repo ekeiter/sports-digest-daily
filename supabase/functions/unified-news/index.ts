@@ -320,11 +320,8 @@ serve(async (req) => {
       fetchFromRSS(topics, supabase, hoursBack)
     ]);
 
-    console.log('📊 Results:', {
-      newsApi: newsApiArticles.length,
-      gnews: gnewsArticles.length,
-      rss: rssArticles.length
-    });
+    console.log(`📊 Results before filtering: NewsAPI: ${newsApiArticles.length}, GNews: ${gnewsArticles.length}, RSS: ${rssArticles.length}`);
+    console.log(`⏰ Time range: ${hoursBack} hours back`);
 
     // Combine and deduplicate
     let allArticles: NewsArticle[] = [...newsApiArticles, ...gnewsArticles, ...rssArticles];
