@@ -215,22 +215,20 @@ const TEAM_MAPPINGS: Record<string, { sport: string; city: string }> = {
 };
 
 async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
-  console.log('🔥🔥🔥 RSS FUNCTION STARTED WITH TOPICS:', JSON.stringify(topics));
+  console.log('RSS FUNCTION CALLED!!! Topics:', topics);
   
-  try {
-    // Get RSS feeds from database that match the topics
-    const { data: rssFeeds, error } = await supabase
-      .from('rss_sources')
-      .select('*')
-      .eq('is_active', true);
-
-    console.log('📊 RSS FEEDS COUNT:', rssFeeds?.length || 0);
-    console.log('❌ RSS ERROR:', error);
-
-    if (error || !rssFeeds) {
-      console.log('💥 EARLY RETURN DUE TO ERROR OR NO FEEDS');
-      return [];
-    }
+  // TEMPORARY: Return a test RSS article to see if the issue is with RSS parsing
+  const testArticle: NewsArticle = {
+    title: "TEST: Phillies RSS Article",
+    description: "This is a test article from the RSS feed to verify the function is working",
+    url: "https://example.com/test-article",
+    source: "Phila Inquirer (TEST)",
+    publishedAt: new Date().toISOString(),
+    sourceType: "rss"
+  };
+  
+  console.log('Returning test article:', testArticle);
+  return [testArticle];
 
 
     // Extract sports and cities from topics using team mappings
