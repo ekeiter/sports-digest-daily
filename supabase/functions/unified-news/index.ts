@@ -48,15 +48,31 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
     if (!NEWSAPI_KEY) return [];
 
+    const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
+    
+    console.log('📰 NewsAPI: Hours back:', hoursBack, 'Cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=20`);
     
     if (!response.ok) return [];
     
     const data = await response.json();
-    return (data.articles || []).map((a: any) => ({
+    console.log('📰 NewsAPI returned', (data.articles || []).length, 'articles before time filtering');
+    
+    // Filter articles to ensure they're within the exact hour cutoff
+    const filteredArticles = (data.articles || []).filter((a: any) => {
+      if (!a.publishedAt) return false;
+      const articleDate = new Date(a.publishedAt);
+      const isWithinRange = articleDate >= cutoffTime;
+      console.log('📰 NewsAPI article:', a.title.substring(0, 50), 'Date:', a.publishedAt, 'Within range:', isWithinRange);
+      return isWithinRange;
+    });
+    
+    console.log('📰 NewsAPI: After time filtering', filteredArticles.length, 'articles remain');
+    
+    return filteredArticles.map((a: any) => ({
       title: a.title,
       description: a.description,
       url: a.url,
@@ -75,15 +91,32 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
     const GNEWS_KEY = Deno.env.get('GNEWS_KEY');
     if (!GNEWS_KEY) return [];
 
+    const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
+    
+    console.log('📰 GNews: Hours back:', hoursBack, 'Cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=20`);
     
     if (!response.ok) return [];
     
     const data = await response.json();
-    return (data.articles || []).map((a: any) => ({
+    console.log('📰 GNews returned', (data.articles || []).length, 'articles before time filtering');
+    
+    // Filter articles to ensure they're within the exact hour cutoff
+    const filteredArticles = (data.articles || []).filter((a: any) => {
+      if (!a.publishedAt && !a.published_at) return false;
+      const publishDate = a.publishedAt || a.published_at;
+      const articleDate = new Date(publishDate);
+      const isWithinRange = articleDate >= cutoffTime;
+      console.log('📰 GNews article:', a.title.substring(0, 50), 'Date:', publishDate, 'Within range:', isWithinRange);
+      return isWithinRange;
+    });
+    
+    console.log('📰 GNews: After time filtering', filteredArticles.length, 'articles remain');
+    
+    return filteredArticles.map((a: any) => ({
       title: a.title,
       description: a.description,
       url: a.url,
@@ -101,7 +134,9 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
   console.log('🔥 RSS FUNCTION CALLED WITH TOPICS:', topics, 'TIME RANGE:', hoursBack, 'hours');
   
   const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
-  console.log('⏰ RSS Cutoff time:', cutoffTime.toISOString(), 'Local:', cutoffTime.toString());
+  const now = new Date();
+  console.log('⏰ Current time:', now.toISOString(), 'Local:', now.toString());
+  console.log('⏰ RSS Cutoff time (', hoursBack, 'hours ago):', cutoffTime.toISOString(), 'Local:', cutoffTime.toString());
   try {
     // Get RSS feeds from database that match the topics
     const { data: rssFeeds, error } = await supabase
