@@ -156,7 +156,16 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           let pubDate = new Date().toISOString();
           if (pubDateMatch?.[1]?.trim()) {
             try {
-              const parsedDate = new Date(pubDateMatch[1].trim());
+              let dateString = pubDateMatch[1].trim();
+              
+              // Fix EST/EDT timezone issue - during daylight savings, EST should be EDT
+              const now = new Date();
+              const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
+              if (isDST && dateString.includes(' EST')) {
+                dateString = dateString.replace(' EST', ' EDT');
+              }
+              
+              const parsedDate = new Date(dateString);
               if (!isNaN(parsedDate.getTime())) {
                 pubDate = parsedDate.toISOString();
               }
