@@ -81,6 +81,139 @@ async function fetchFromGNews(query: string): Promise<NewsArticle[]> {
   }
 }
 
+// Team to sport and city mapping
+const TEAM_MAPPINGS: Record<string, { sport: string; city: string }> = {
+  // MLB Teams
+  'yankees': { sport: 'MLB', city: 'New York' },
+  'red sox': { sport: 'MLB', city: 'Boston' },
+  'blue jays': { sport: 'MLB', city: 'Toronto' },
+  'rays': { sport: 'MLB', city: 'Tampa Bay' },
+  'orioles': { sport: 'MLB', city: 'Baltimore' },
+  'white sox': { sport: 'MLB', city: 'Chicago' },
+  'guardians': { sport: 'MLB', city: 'Cleveland' },
+  'tigers': { sport: 'MLB', city: 'Detroit' },
+  'royals': { sport: 'MLB', city: 'Kansas City' },
+  'twins': { sport: 'MLB', city: 'Minneapolis' },
+  'astros': { sport: 'MLB', city: 'Houston' },
+  'angels': { sport: 'MLB', city: 'Los Angeles' },
+  'athletics': { sport: 'MLB', city: 'Oakland' },
+  'mariners': { sport: 'MLB', city: 'Seattle' },
+  'rangers': { sport: 'MLB', city: 'Texas' },
+  'braves': { sport: 'MLB', city: 'Atlanta' },
+  'marlins': { sport: 'MLB', city: 'Miami' },
+  'mets': { sport: 'MLB', city: 'New York' },
+  'phillies': { sport: 'MLB', city: 'Philadelphia' },
+  'nationals': { sport: 'MLB', city: 'Washington' },
+  'cubs': { sport: 'MLB', city: 'Chicago' },
+  'reds': { sport: 'MLB', city: 'Cincinnati' },
+  'brewers': { sport: 'MLB', city: 'Milwaukee' },
+  'pirates': { sport: 'MLB', city: 'Pittsburgh' },
+  'cardinals': { sport: 'MLB', city: 'St. Louis' },
+  'diamondbacks': { sport: 'MLB', city: 'Arizona' },
+  'rockies': { sport: 'MLB', city: 'Colorado' },
+  'dodgers': { sport: 'MLB', city: 'Los Angeles' },
+  'padres': { sport: 'MLB', city: 'San Diego' },
+  'giants': { sport: 'MLB', city: 'San Francisco' },
+  
+  // NFL Teams  
+  'bills': { sport: 'NFL', city: 'Buffalo' },
+  'dolphins': { sport: 'NFL', city: 'Miami' },
+  'patriots': { sport: 'NFL', city: 'New England' },
+  'jets': { sport: 'NFL', city: 'New York' },
+  'ravens': { sport: 'NFL', city: 'Baltimore' },
+  'bengals': { sport: 'NFL', city: 'Cincinnati' },
+  'browns': { sport: 'NFL', city: 'Cleveland' },
+  'steelers': { sport: 'NFL', city: 'Pittsburgh' },
+  'texans': { sport: 'NFL', city: 'Houston' },
+  'colts': { sport: 'NFL', city: 'Indianapolis' },
+  'jaguars': { sport: 'NFL', city: 'Jacksonville' },
+  'titans': { sport: 'NFL', city: 'Tennessee' },
+  'broncos': { sport: 'NFL', city: 'Denver' },
+  'chiefs': { sport: 'NFL', city: 'Kansas City' },
+  'raiders': { sport: 'NFL', city: 'Las Vegas' },
+  'chargers': { sport: 'NFL', city: 'Los Angeles' },
+  'cowboys': { sport: 'NFL', city: 'Dallas' },
+  'eagles': { sport: 'NFL', city: 'Philadelphia' },
+  'commanders': { sport: 'NFL', city: 'Washington' },
+  'bears': { sport: 'NFL', city: 'Chicago' },
+  'lions': { sport: 'NFL', city: 'Detroit' },
+  'packers': { sport: 'NFL', city: 'Green Bay' },
+  'vikings': { sport: 'NFL', city: 'Minnesota' },
+  'falcons': { sport: 'NFL', city: 'Atlanta' },
+  'panthers': { sport: 'NFL', city: 'Carolina' },
+  'saints': { sport: 'NFL', city: 'New Orleans' },
+  'buccaneers': { sport: 'NFL', city: 'Tampa Bay' },
+  'cardinals': { sport: 'NFL', city: 'Arizona' },
+  'rams': { sport: 'NFL', city: 'Los Angeles' },
+  'seahawks': { sport: 'NFL', city: 'Seattle' },
+  '49ers': { sport: 'NFL', city: 'San Francisco' },
+  
+  // NBA Teams
+  'celtics': { sport: 'NBA', city: 'Boston' },
+  'nets': { sport: 'NBA', city: 'Brooklyn' },
+  'knicks': { sport: 'NBA', city: 'New York' },
+  '76ers': { sport: 'NBA', city: 'Philadelphia' },
+  'raptors': { sport: 'NBA', city: 'Toronto' },
+  'bulls': { sport: 'NBA', city: 'Chicago' },
+  'cavaliers': { sport: 'NBA', city: 'Cleveland' },
+  'pistons': { sport: 'NBA', city: 'Detroit' },
+  'pacers': { sport: 'NBA', city: 'Indiana' },
+  'bucks': { sport: 'NBA', city: 'Milwaukee' },
+  'hawks': { sport: 'NBA', city: 'Atlanta' },
+  'hornets': { sport: 'NBA', city: 'Charlotte' },
+  'heat': { sport: 'NBA', city: 'Miami' },
+  'magic': { sport: 'NBA', city: 'Orlando' },
+  'wizards': { sport: 'NBA', city: 'Washington' },
+  'nuggets': { sport: 'NBA', city: 'Denver' },
+  'timberwolves': { sport: 'NBA', city: 'Minnesota' },
+  'thunder': { sport: 'NBA', city: 'Oklahoma City' },
+  'blazers': { sport: 'NBA', city: 'Portland' },
+  'jazz': { sport: 'NBA', city: 'Utah' },
+  'warriors': { sport: 'NBA', city: 'Golden State' },
+  'clippers': { sport: 'NBA', city: 'Los Angeles' },
+  'lakers': { sport: 'NBA', city: 'Los Angeles' },
+  'suns': { sport: 'NBA', city: 'Phoenix' },
+  'kings': { sport: 'NBA', city: 'Sacramento' },
+  'mavericks': { sport: 'NBA', city: 'Dallas' },
+  'rockets': { sport: 'NBA', city: 'Houston' },
+  'grizzlies': { sport: 'NBA', city: 'Memphis' },
+  'pelicans': { sport: 'NBA', city: 'New Orleans' },
+  'spurs': { sport: 'NBA', city: 'San Antonio' },
+  
+  // NHL Teams
+  'bruins': { sport: 'NHL', city: 'Boston' },
+  'sabres': { sport: 'NHL', city: 'Buffalo' },
+  'red wings': { sport: 'NHL', city: 'Detroit' },
+  'panthers': { sport: 'NHL', city: 'Florida' },
+  'canadiens': { sport: 'NHL', city: 'Montreal' },
+  'senators': { sport: 'NHL', city: 'Ottawa' },
+  'lightning': { sport: 'NHL', city: 'Tampa Bay' },
+  'maple leafs': { sport: 'NHL', city: 'Toronto' },
+  'hurricanes': { sport: 'NHL', city: 'Carolina' },
+  'blue jackets': { sport: 'NHL', city: 'Columbus' },
+  'devils': { sport: 'NHL', city: 'New Jersey' },
+  'islanders': { sport: 'NHL', city: 'New York' },
+  'rangers': { sport: 'NHL', city: 'New York' },
+  'flyers': { sport: 'NHL', city: 'Philadelphia' },
+  'penguins': { sport: 'NHL', city: 'Pittsburgh' },
+  'capitals': { sport: 'NHL', city: 'Washington' },
+  'blackhawks': { sport: 'NHL', city: 'Chicago' },
+  'avalanche': { sport: 'NHL', city: 'Colorado' },
+  'stars': { sport: 'NHL', city: 'Dallas' },
+  'wild': { sport: 'NHL', city: 'Minnesota' },
+  'predators': { sport: 'NHL', city: 'Nashville' },
+  'blues': { sport: 'NHL', city: 'St. Louis' },
+  'flames': { sport: 'NHL', city: 'Calgary' },
+  'oilers': { sport: 'NHL', city: 'Edmonton' },
+  'kraken': { sport: 'NHL', city: 'Seattle' },
+  'canucks': { sport: 'NHL', city: 'Vancouver' },
+  'ducks': { sport: 'NHL', city: 'Anaheim' },
+  'coyotes': { sport: 'NHL', city: 'Arizona' },
+  'sharks': { sport: 'NHL', city: 'San Jose' },
+  'kings': { sport: 'NHL', city: 'Los Angeles' },
+  'golden knights': { sport: 'NHL', city: 'Vegas' }
+};
+
 async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
   try {
     // Get RSS feeds from database that match the topics
@@ -94,22 +227,59 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       return [];
     }
 
-    // Filter feeds that match any of the topics (exact matching for RSS feeds)
-    const relevantFeeds = rssFeeds.filter(feed => 
-      topics.some(topic => {
-        const topicLower = topic.toLowerCase();
-        const nameLower = feed.name.toLowerCase();
-        const sportLower = feed.sport.toLowerCase();
-        const cityLower = feed.city.toLowerCase();
+    // Extract sports and cities from topics using team mappings
+    const sportCityFilters = new Set<string>();
+    
+    topics.forEach(topic => {
+      const topicLower = topic.toLowerCase();
+      
+      // Check if topic matches a team name
+      const teamMapping = TEAM_MAPPINGS[topicLower];
+      if (teamMapping) {
+        sportCityFilters.add(`${teamMapping.sport}|${teamMapping.city}`);
+      }
+      
+      // Also check for partial matches (e.g., "Philadelphia Phillies" contains "phillies")
+      for (const [teamName, mapping] of Object.entries(TEAM_MAPPINGS)) {
+        if (topicLower.includes(teamName) || teamName.includes(topicLower)) {
+          sportCityFilters.add(`${mapping.sport}|${mapping.city}`);
+        }
+      }
+    });
+
+    console.log('Sport/City filters extracted:', Array.from(sportCityFilters));
+
+    // Filter feeds based on sport and city logic
+    const relevantFeeds = rssFeeds.filter(feed => {
+      // If no team mappings found, fall back to general matching
+      if (sportCityFilters.size === 0) {
+        return topics.some(topic => {
+          const topicLower = topic.toLowerCase();
+          const nameLower = feed.name.toLowerCase();
+          const sportLower = feed.sport.toLowerCase();
+          const cityLower = feed.city.toLowerCase();
+          
+          return nameLower.includes(topicLower) || 
+                 sportLower.includes(topicLower) ||
+                 cityLower.includes(topicLower) ||
+                 sportLower === 'general' ||
+                 cityLower === 'general' ||
+                 topicLower.includes(nameLower);
+        });
+      }
+      
+      // Use sport/city filtering for team-based searches
+      return Array.from(sportCityFilters).some(filter => {
+        const [targetSport, targetCity] = filter.split('|');
+        const feedSport = feed.sport.toLowerCase();
+        const feedCity = feed.city.toLowerCase();
         
-        return nameLower.includes(topicLower) || 
-               sportLower.includes(topicLower) ||
-               cityLower.includes(topicLower) ||
-               sportLower === 'general' ||
-               cityLower === 'general' ||
-               topicLower.includes(nameLower);
-      })
-    );
+        const sportMatch = feedSport === targetSport.toLowerCase() || feedSport === 'all';
+        const cityMatch = feedCity === targetCity.toLowerCase() || feedCity === 'all';
+        
+        return sportMatch && cityMatch;
+      });
+    });
 
     console.log('RSS feeds to fetch:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
     
