@@ -232,29 +232,27 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
     
     topics.forEach(topic => {
       const topicLower = topic.toLowerCase();
-      console.log('=== Processing topic:', topic, 'lowercased:', topicLower);
+      console.log('=== Processing topic:', topic);
+      
+      // Special handling for Phillies - this should always work
+      if (topicLower.includes('phillies') || topicLower.includes('philadelphia phillies')) {
+        console.log('✓ Phillies detected! Adding MLB|Philadelphia filter');
+        sportCityFilters.add('MLB|Philadelphia');
+      }
       
       // Check if topic matches a team name directly
       const teamMapping = TEAM_MAPPINGS[topicLower];
       if (teamMapping) {
         console.log('✓ Direct match found for', topicLower, ':', teamMapping);
         sportCityFilters.add(`${teamMapping.sport}|${teamMapping.city}`);
-      } else {
-        console.log('✗ No direct match for', topicLower);
       }
       
-      // Check for partial matches (e.g., "Philadelphia Phillies" contains "phillies")
+      // Check for partial matches (team name within topic)
       for (const [teamName, mapping] of Object.entries(TEAM_MAPPINGS)) {
         if (topicLower.includes(teamName)) {
-          console.log('✓ Partial match found: topic', topicLower, 'contains team', teamName, '→', mapping);
+          console.log('✓ Partial match: topic contains', teamName, '→', mapping);
           sportCityFilters.add(`${mapping.sport}|${mapping.city}`);
         }
-      }
-      
-      // Special case for Philadelphia Phillies
-      if (topicLower.includes('phillies') || (topicLower.includes('philadelphia') && topicLower.includes('phillies'))) {
-        console.log('✓ Special Phillies detection triggered for:', topicLower);
-        sportCityFilters.add('MLB|Philadelphia');
       }
     });
 
