@@ -261,15 +261,22 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       }
     });
 
-    console.log('Sport/City filters extracted:', Array.from(sportCityFilters));
+    console.log('🎯 Final Sport/City filters:', Array.from(sportCityFilters));
 
-    // Filter feeds based on sport and city logic
+    // TEMPORARY: Force include the Phila Inquirer feed for debugging
+    console.log('🚨 TEMPORARILY FORCING PHILA INQUIRER FEED TO BE INCLUDED');
     const relevantFeeds = rssFeeds.filter(feed => {
-      console.log('Checking feed:', feed.name, 'sport:', feed.sport, 'city:', feed.city);
+      console.log('📝 Checking feed:', feed.name, 'sport:', feed.sport, 'city:', feed.city);
+      
+      // Temporarily force include the Phila Inquirer
+      if (feed.name === 'Phila Inquirer') {
+        console.log('🔥 FORCING PHILA INQUIRER TO BE INCLUDED');
+        return true;
+      }
       
       // If no team mappings found, fall back to general matching
       if (sportCityFilters.size === 0) {
-        console.log('No sport/city filters, using general matching');
+        console.log('🔄 No sport/city filters, using general matching');
         return topics.some(topic => {
           const topicLower = topic.toLowerCase();
           const nameLower = feed.name.toLowerCase();
