@@ -115,25 +115,42 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       const xmlText = await response.text();
       console.log('✅ RSS fetched, length:', xmlText.length);
 
-      // Simple RSS parsing
+      // Simple RSS parsing for items
       const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
       console.log('📰 Found', items.length, 'RSS items');
 
-      const articles = items.slice(0, 5).map(item => {
+      // Parse more articles to ensure we capture all Phillies content
+      const articles = items.slice(0, 20).map(item => {
         const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
         const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
         const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
         const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
 
+        const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
+        const description = descMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
+        const url = linkMatch?.[1]?.trim() || "";
+        const pubDate = pubDateMatch?.[1]?.trim() || new Date().toISOString();
+
         return {
-          title: titleMatch?.[1]?.trim().replace(/&amp;/g, '&') || "",
-          description: descMatch?.[1]?.trim().replace(/&amp;/g, '&') || "",
-          url: linkMatch?.[1]?.trim() || "",
+          title,
+          description,
+          url,
           source: philaFeed.name,
-          publishedAt: pubDateMatch?.[1]?.trim() || new Date().toISOString(),
+          publishedAt: pubDate,
           sourceType: "rss" as const
         };
-      }).filter(article => article.title && article.url);
+      }).filter(article => {
+        // Only include articles that mention Phillies to ensure relevance
+        const isPhilliesRelated = article.title.toLowerCase().includes('phillies') || 
+                                  article.description.toLowerCase().includes('phillies') ||
+                                  article.url.includes('/phillies/');
+        
+        if (isPhilliesRelated) {
+          console.log('✅ Including Phillies article:', article.title);
+        }
+        
+        return article.title && article.url && isPhilliesRelated;
+      });
 
       console.log('✅ Parsed', articles.length, 'valid RSS articles');
       return articles;
