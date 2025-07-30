@@ -438,8 +438,21 @@ serve(async (req) => {
     
     // Filter articles based on topics - all articles must specifically mention the topics
     const filteredArticles = allArticles.filter(article => {
+      // For RSS articles, be more lenient with filtering since we already filtered by feed selection
+      if (article.sourceType === "rss") {
+        console.log('RSS article passed through filter:', article.title);
+        return true;
+      }
+      
+      // For API articles, require topic matching
       const searchText = `${article.title} ${article.description || ''}`.toLowerCase();
-      return topics.some(topic => searchText.includes(topic.toLowerCase()));
+      const matches = topics.some(topic => {
+        const topicWords = topic.toLowerCase().split(' ');
+        return topicWords.some(word => searchText.includes(word));
+      });
+      
+      console.log('API article filter result:', article.title, '- matches:', matches);
+      return matches;
     });
 
     console.log(`Filtered articles: ${filteredArticles.length} out of ${allArticles.length} total (RSS: ${rssArticles.length}, API: ${newsApiArticles.length + gnewsArticles.length})`);
