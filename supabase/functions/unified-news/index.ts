@@ -234,7 +234,7 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       const topicLower = topic.toLowerCase();
       console.log('Processing topic:', topic, 'lowercased:', topicLower);
       
-      // Check if topic matches a team name
+      // Check if topic matches a team name directly
       const teamMapping = TEAM_MAPPINGS[topicLower];
       if (teamMapping) {
         console.log('Direct match found:', teamMapping);
@@ -247,6 +247,12 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
           console.log('Partial match found:', teamName, '→', mapping);
           sportCityFilters.add(`${mapping.sport}|${mapping.city}`);
         }
+      }
+      
+      // Additional check: if topic contains team city and sport keywords
+      if (topicLower.includes('philadelphia') && (topicLower.includes('phillies') || topicLower.includes('mlb') || topicLower.includes('baseball'))) {
+        console.log('Philadelphia baseball team detected, adding MLB|Philadelphia filter');
+        sportCityFilters.add('MLB|Philadelphia');
       }
     });
 
