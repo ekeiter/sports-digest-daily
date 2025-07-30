@@ -80,20 +80,73 @@ async function fetchFromGNews(query: string): Promise<NewsArticle[]> {
 }
 
 async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
-  console.log('🔥🔥🔥 RSS FUNCTION CALLED WITH TOPICS:', topics);
+  console.log('🔥 RSS FUNCTION CALLED WITH TOPICS:', topics);
   
-  // TEMPORARY: Return a test RSS article to see if the issue is with RSS parsing
-  const testArticle: NewsArticle = {
-    title: "TEST: Phillies RSS Article from Philadelphia Inquirer",
-    description: "This is a test article from the RSS feed to verify the function is working. It mentions Philadelphia Phillies.",
-    url: "https://example.com/test-article",
-    source: "Phila Inquirer (TEST)",
-    publishedAt: new Date().toISOString(),
-    sourceType: "rss"
-  };
-  
-  console.log('🎯 Returning test article:', testArticle);
-  return [testArticle];
+  try {
+    // Get RSS feeds from database that match the topics
+    const { data: rssFeeds, error } = await supabase
+      .from('rss_sources')
+      .select('*')
+      .eq('is_active', true);
+
+    console.log('📊 RSS FEEDS FROM DATABASE:', rssFeeds?.length || 0);
+
+    if (error || !rssFeeds) {
+      console.log('❌ RSS DATABASE ERROR:', error);
+      return [];
+    }
+
+    // For now, just use the Phila Inquirer feed since we know it should work
+    const philaFeed = rssFeeds.find(feed => feed.name === 'Phila Inquirer');
+    if (!philaFeed) {
+      console.log('❌ Phila Inquirer feed not found');
+      return [];
+    }
+
+    console.log('📡 Fetching RSS from:', philaFeed.url);
+    
+    try {
+      const response = await fetch(philaFeed.url);
+      if (!response.ok) {
+        console.log('❌ RSS fetch failed with status:', response.status);
+        return [];
+      }
+
+      const xmlText = await response.text();
+      console.log('✅ RSS fetched, length:', xmlText.length);
+
+      // Simple RSS parsing
+      const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
+      console.log('📰 Found', items.length, 'RSS items');
+
+      const articles = items.slice(0, 5).map(item => {
+        const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
+        const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
+        const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
+        const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
+
+        return {
+          title: titleMatch?.[1]?.trim().replace(/&amp;/g, '&') || "",
+          description: descMatch?.[1]?.trim().replace(/&amp;/g, '&') || "",
+          url: linkMatch?.[1]?.trim() || "",
+          source: philaFeed.name,
+          publishedAt: pubDateMatch?.[1]?.trim() || new Date().toISOString(),
+          sourceType: "rss" as const
+        };
+      }).filter(article => article.title && article.url);
+
+      console.log('✅ Parsed', articles.length, 'valid RSS articles');
+      return articles;
+
+    } catch (fetchError) {
+      console.log('❌ RSS fetch error:', fetchError);
+      return [];
+    }
+
+  } catch (error) {
+    console.log('❌ RSS function error:', error);
+    return [];
+  }
 }
 
 serve(async (req) => {
