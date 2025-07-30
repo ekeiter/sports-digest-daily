@@ -11,7 +11,8 @@ interface RSSItem {
   link: string;
   pubDate: string;
   source: string;
-  category: string;
+  sport: string;
+  city: string;
 }
 
 Deno.serve(async (req) => {
@@ -163,7 +164,8 @@ Deno.serve(async (req) => {
               link: link,
               pubDate: pubDate || new Date().toISOString(),
               source: source.name,
-              category: source.category
+              sport: source.sport,
+              city: source.city
             })
           }
         }
@@ -187,7 +189,8 @@ Deno.serve(async (req) => {
       
       filteredArticles = allArticles.filter(article => {
         const content = `${article.title} ${article.description}`.toLowerCase()
-        const category = article.category.toLowerCase()
+        const sport = article.sport.toLowerCase()
+        const city = article.city.toLowerCase()
         
         // Direct team matches
         const teamMatch = teams.some(team => {
@@ -205,22 +208,22 @@ Deno.serve(async (req) => {
         })
         
         // Sport matches only if it's relevant to user's teams/players
-        const sportMatch = sports.some(sport => {
-          const sportName = sport.sport_name.toLowerCase()
+        const sportMatch = sports.some(userSport => {
+          const sportName = userSport.sport_name.toLowerCase()
           if (sportName === 'baseball') {
             // Only include baseball if it mentions teams/players or is MLB-specific
-            return (content.includes('mlb') || content.includes('baseball')) && 
+            return (content.includes('mlb') || content.includes('baseball') || sport.includes('baseball') || sport === 'general') && 
                    (teamMatch || playerMatch || 
                     content.includes('phillies') || content.includes('skenes') ||
-                    category.includes('philadelphia') || category.includes('pittsburgh'))
+                    city.includes('philadelphia') || city.includes('pittsburgh'))
           }
-          return false
+          return sport.includes(sportName) || sport === 'general'
         })
         
         const shouldInclude = teamMatch || playerMatch || sportMatch
         
         if (shouldInclude) {
-          console.log(`✓ Including: "${article.title.substring(0, 50)}..." (Category: ${article.category})`)
+          console.log(`✓ Including: "${article.title.substring(0, 50)}..." (Sport: ${article.sport}, City: ${article.city})`)
         } else {
           console.log(`✗ Excluding: "${article.title.substring(0, 50)}..." - No match found`)
         }
@@ -255,7 +258,8 @@ Deno.serve(async (req) => {
           description: article.description,
           url: article.link,
           publishedAt: article.pubDate,
-          category: article.category
+          sport: article.sport,
+          city: article.city
         }))
       }),
       { 

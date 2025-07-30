@@ -49,29 +49,32 @@ export type Database = {
       }
       rss_sources: {
         Row: {
-          category: string
+          city: string
           created_at: string
           id: string
           is_active: boolean
           name: string
+          sport: string
           updated_at: string
           url: string
         }
         Insert: {
-          category: string
+          city?: string
           created_at?: string
           id?: string
           is_active?: boolean
           name: string
+          sport?: string
           updated_at?: string
           url: string
         }
         Update: {
-          category?: string
+          city?: string
           created_at?: string
           id?: string
           is_active?: boolean
           name?: string
+          sport?: string
           updated_at?: string
           url?: string
         }

@@ -12,7 +12,8 @@ interface RSSFeed {
   id: string;
   name: string;
   url: string;
-  category: string;
+  sport: string;
+  city: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -25,7 +26,8 @@ export default function ManageRSSFeeds() {
   const [newFeed, setNewFeed] = useState({
     name: "",
     url: "",
-    category: "",
+    sport: "General",
+    city: "General",
     is_active: true
   });
   const { toast } = useToast();
@@ -56,7 +58,7 @@ export default function ManageRSSFeeds() {
   };
 
   const handleAddFeed = async () => {
-    if (!newFeed.name || !newFeed.url || !newFeed.category) {
+    if (!newFeed.name || !newFeed.url || !newFeed.sport || !newFeed.city) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -77,7 +79,7 @@ export default function ManageRSSFeeds() {
         description: "RSS feed added successfully"
       });
 
-      setNewFeed({ name: "", url: "", category: "", is_active: true });
+      setNewFeed({ name: "", url: "", sport: "General", city: "General", is_active: true });
       fetchFeeds();
     } catch (error) {
       console.error('Error adding feed:', error);
@@ -96,7 +98,8 @@ export default function ManageRSSFeeds() {
         .update({
           name: feed.name,
           url: feed.url,
-          category: feed.category,
+          sport: feed.sport,
+          city: feed.city,
           is_active: feed.is_active
         })
         .eq('id', feed.id);
@@ -187,7 +190,7 @@ export default function ManageRSSFeeds() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <Label htmlFor="name">Name</Label>
               <Input
@@ -207,12 +210,21 @@ export default function ManageRSSFeeds() {
               />
             </div>
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="sport">Sport</Label>
               <Input
-                id="category"
-                value={newFeed.category}
-                onChange={(e) => setNewFeed({ ...newFeed, category: e.target.value })}
-                placeholder="e.g., MLB, NFL, NBA"
+                id="sport"
+                value={newFeed.sport}
+                onChange={(e) => setNewFeed({ ...newFeed, sport: e.target.value })}
+                placeholder="e.g., Baseball, Football, General"
+              />
+            </div>
+            <div>
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                value={newFeed.city}
+                onChange={(e) => setNewFeed({ ...newFeed, city: e.target.value })}
+                placeholder="e.g., Philadelphia, Pittsburgh, General"
               />
             </div>
           </div>
@@ -235,7 +247,7 @@ export default function ManageRSSFeeds() {
             <CardContent className="p-6">
               {editingFeed?.id === feed.id ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <Label>Name</Label>
                       <Input
@@ -251,10 +263,17 @@ export default function ManageRSSFeeds() {
                       />
                     </div>
                     <div>
-                      <Label>Category</Label>
+                      <Label>Sport</Label>
                       <Input
-                        value={editingFeed.category}
-                        onChange={(e) => setEditingFeed({ ...editingFeed, category: e.target.value })}
+                        value={editingFeed.sport}
+                        onChange={(e) => setEditingFeed({ ...editingFeed, sport: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label>City</Label>
+                      <Input
+                        value={editingFeed.city}
+                        onChange={(e) => setEditingFeed({ ...editingFeed, city: e.target.value })}
                       />
                     </div>
                   </div>
@@ -277,7 +296,7 @@ export default function ManageRSSFeeds() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{feed.name}</h3>
-                      <span className="text-sm text-muted-foreground">({feed.category})</span>
+                      <span className="text-sm text-muted-foreground">({feed.sport} - {feed.city})</span>
                       <Switch
                         checked={feed.is_active}
                         onCheckedChange={() => toggleFeedStatus(feed)}

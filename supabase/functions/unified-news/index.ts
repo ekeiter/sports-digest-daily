@@ -99,10 +99,14 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       topics.some(topic => {
         const topicLower = topic.toLowerCase();
         const nameLower = feed.name.toLowerCase();
-        const categoryLower = feed.category.toLowerCase();
+        const sportLower = feed.sport.toLowerCase();
+        const cityLower = feed.city.toLowerCase();
         
         return nameLower.includes(topicLower) || 
-               categoryLower.includes(topicLower) ||
+               sportLower.includes(topicLower) ||
+               cityLower.includes(topicLower) ||
+               sportLower === 'general' ||
+               cityLower === 'general' ||
                topicLower.includes(nameLower);
       })
     );

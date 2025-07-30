@@ -1,6 +1,6 @@
 import axios from "axios";
 import Parser from "rss-parser";
-import rssFeeds from "./rssFeeds.json";
+// RSS feeds are now managed in the database
 
 // Note: These should be moved to edge functions for security
 const NEWSAPI_KEY = "fde0ff5a328f4555b6351aecd05fdb7d";
@@ -75,26 +75,12 @@ export async function fetchUnifiedNews(topics: string[]): Promise<NewsArticle[]>
     }))
   ).catch(() => []);
 
-  // 3. RSS Feeds (for all topics)
-  const parser = new Parser();
-  const topicFeeds = topics.flatMap(t => (rssFeeds[t] || []));
-  const uniqueFeeds = [...new Set(topicFeeds)];
-  const rssPromises = uniqueFeeds.map(feed =>
-    parser.parseURL(feed)
-      .then(f => f.items.map(item => ({
-        title: item.title ?? "",
-        description: item.contentSnippet ?? item.summary ?? "",
-        url: item.link ?? "",
-        source: f.title ?? "",
-        publishedAt: item.pubDate ?? "",
-        sourceType: "rss" as const
-      })))
-      .catch(() => [])
-  );
+  // 3. RSS Feeds - now fetched via edge function
+  const rssPromise = [];
 
   // Aggregate
-  const [newsapi, gnews, ...rssFeedsResults] = await Promise.all([newsapiPromise, gnewsPromise, ...rssPromises]);
-  let allArticles: NewsArticle[] = [...newsapi, ...gnews, ...rssFeedsResults.flat()];
+  const [newsapi, gnews] = await Promise.all([newsapiPromise, gnewsPromise]);
+  let allArticles: NewsArticle[] = [...newsapi, ...gnews];
 
   // Deduplicate and tag paywalls
   allArticles = deduplicate(allArticles).map(a => ({
