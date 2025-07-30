@@ -158,16 +158,25 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             try {
               let dateString = pubDateMatch[1].trim();
               
-              // Fix EST/EDT timezone issue - during daylight savings, EST should be EDT
-              const now = new Date();
-              const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
-              if (isDST && dateString.includes(' EST')) {
-                dateString = dateString.replace(' EST', ' EDT');
-              }
-              
-              const parsedDate = new Date(dateString);
-              if (!isNaN(parsedDate.getTime())) {
-                pubDate = parsedDate.toISOString();
+              // Handle EST/EDT timezone manually since feeds often incorrectly use EST year-round
+              if (dateString.includes(' EST')) {
+                // Parse the date components manually
+                const dateWithoutTz = dateString.replace(' EST', '');
+                const tempDate = new Date(dateWithoutTz);
+                
+                // During daylight saving time, treat "EST" as "EDT" (UTC-4 instead of UTC-5)
+                const now = new Date();
+                const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
+                const offsetHours = isDST ? 4 : 5; // EDT is UTC-4, EST is UTC-5
+                
+                // Add the offset hours to get UTC time
+                const utcTime = new Date(tempDate.getTime() + (offsetHours * 60 * 60 * 1000));
+                pubDate = utcTime.toISOString();
+              } else {
+                const parsedDate = new Date(dateString);
+                if (!isNaN(parsedDate.getTime())) {
+                  pubDate = parsedDate.toISOString();
+                }
               }
             } catch (dateError) {
               console.log('⚠️ Could not parse date:', pubDateMatch[1], 'using current time');
