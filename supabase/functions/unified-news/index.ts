@@ -113,84 +113,87 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
       return [];
     }
 
-    // For now, just use the Phila Inquirer feed since we know it should work
-    const philaFeed = rssFeeds.find(feed => feed.name === 'Phila Inquirer');
-    if (!philaFeed) {
-      console.log('❌ Phila Inquirer feed not found');
-      return [];
-    }
-
-    console.log('📡 Fetching RSS from:', philaFeed.url);
+    // Process all active RSS feeds
+    const allRssArticles = [];
     
-    try {
-      const response = await fetch(philaFeed.url);
-      if (!response.ok) {
-        console.log('❌ RSS fetch failed with status:', response.status);
-        return [];
-      }
+    for (const feed of rssFeeds) {
+      console.log('📡 Fetching RSS from:', feed.name, '-', feed.url);
+      
+      try {
+        const response = await fetch(feed.url);
+        if (!response.ok) {
+          console.log('❌ RSS fetch failed for', feed.name, 'with status:', response.status);
+          continue;
+        }
 
-      const xmlText = await response.text();
-      console.log('✅ RSS fetched, length:', xmlText.length);
+        const xmlText = await response.text();
+        console.log('✅ RSS fetched for', feed.name, 'length:', xmlText.length);
 
-      // Simple RSS parsing for items
-      const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
-      console.log('📰 Found', items.length, 'RSS items');
+        // Simple RSS parsing for items
+        const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
+        console.log('📰 Found', items.length, 'RSS items for', feed.name);
 
-      // Parse more articles to ensure we capture all Phillies content
-      const articles = items.slice(0, 20).map(item => {
-        const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
-        const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
-        const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
-        const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
+        // Parse articles from this feed
+        const feedArticles = items.slice(0, 20).map(item => {
+          const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
+          const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
+          const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
+          const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
 
-        const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
-        const description = descMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
-        const url = linkMatch?.[1]?.trim() || "";
-        const pubDate = pubDateMatch?.[1]?.trim() || new Date().toISOString();
+          const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
+          const description = descMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
+          const url = linkMatch?.[1]?.trim() || "";
+          const pubDate = pubDateMatch?.[1]?.trim() || new Date().toISOString();
 
-        return {
-          title,
-          description,
-          url,
-          source: philaFeed.name,
-          publishedAt: pubDate,
-          sourceType: "rss" as const
-        };
-      }).filter(article => {
-        // Only include articles that mention Phillies and are within time range
-        const isPhilliesRelated = article.title.toLowerCase().includes('phillies') || 
-                                  article.description.toLowerCase().includes('phillies') ||
-                                  article.url.includes('/phillies/');
-        
-        // Check if article is within time range
-        let isWithinTimeRange = true;
-        if (article.publishedAt) {
-          try {
-            const articleDate = new Date(article.publishedAt);
-            isWithinTimeRange = articleDate >= cutoffTime;
-            if (!isWithinTimeRange) {
-              console.log('⏰ Article outside time range:', article.title, 'published:', articleDate.toISOString());
+          return {
+            title,
+            description,
+            url,
+            source: feed.name,
+            publishedAt: pubDate,
+            sourceType: "rss" as const
+          };
+        }).filter(article => {
+          // Filter articles that mention the topics and are within time range
+          const searchText = `${article.title} ${article.description}`.toLowerCase();
+          const isTopicRelated = topics.some(topic => {
+            const topicWords = topic.toLowerCase().split(' ');
+            return topicWords.some(word => searchText.includes(word));
+          });
+          
+          // Check if article is within time range
+          let isWithinTimeRange = true;
+          if (article.publishedAt) {
+            try {
+              const articleDate = new Date(article.publishedAt);
+              isWithinTimeRange = articleDate >= cutoffTime;
+              if (!isWithinTimeRange) {
+                console.log('⏰ Article outside time range:', article.title, 'published:', articleDate.toISOString());
+              }
+            } catch (dateError) {
+              console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
+              // Keep articles with invalid dates
             }
-          } catch (dateError) {
-            console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
-            // Keep articles with invalid dates
           }
-        }
-        
-        if (isPhilliesRelated && isWithinTimeRange) {
-          console.log('✅ Including Phillies article:', article.title);
-        }
-        
-        return article.title && article.url && isPhilliesRelated && isWithinTimeRange;
-      });
+          
+          if (isTopicRelated && isWithinTimeRange) {
+            console.log('✅ Including article from', feed.name, ':', article.title);
+          }
+          
+          return article.title && article.url && isTopicRelated && isWithinTimeRange;
+        });
 
-      console.log('✅ Parsed', articles.length, 'valid RSS articles');
-      return articles;
+        allRssArticles.push(...feedArticles);
+        console.log('✅ Parsed', feedArticles.length, 'valid RSS articles from', feed.name);
 
-    } catch (fetchError) {
-      console.log('❌ RSS fetch error:', fetchError);
-      return [];
+      } catch (fetchError) {
+        console.log('❌ RSS fetch error for', feed.name, ':', fetchError);
+        continue;
+      }
     }
+
+    console.log('✅ Total RSS articles from all feeds:', allRssArticles.length);
+    return allRssArticles;
 
   } catch (error) {
     console.log('❌ RSS function error:', error);
