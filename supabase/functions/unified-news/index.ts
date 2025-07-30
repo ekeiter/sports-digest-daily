@@ -159,9 +159,24 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
               let dateString = pubDateMatch[1].trim();
               
               // RSS feeds often use "EST" year-round when they should use "EDT" during daylight saving time
-              // July is definitely daylight saving time, so replace EST with EDT
+              // Properly detect if we're currently in daylight saving time
               if (dateString.includes(' EST')) {
-                dateString = dateString.replace(' EST', ' EDT');
+                const now = new Date();
+                // Check if current date is in daylight saving time (March 2nd Sunday to November 1st Sunday)
+                const year = now.getFullYear();
+                const march = new Date(year, 2, 1); // March 1st
+                const november = new Date(year, 10, 1); // November 1st
+                
+                // Find second Sunday in March (DST starts)
+                const dstStart = new Date(year, 2, (14 - march.getDay()) % 7 + 7);
+                // Find first Sunday in November (DST ends)  
+                const dstEnd = new Date(year, 10, (7 - november.getDay()) % 7);
+                
+                const isDST = now >= dstStart && now < dstEnd;
+                
+                if (isDST) {
+                  dateString = dateString.replace(' EST', ' EDT');
+                }
               }
               
               const parsedDate = new Date(dateString);
