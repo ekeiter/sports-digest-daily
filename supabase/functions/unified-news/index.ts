@@ -162,35 +162,17 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             sourceType: "rss" as const
           };
         }).filter(article => {
-          // For debugging: let's temporarily be very permissive with ESPN articles
-          if (feed.name === 'ESPN') {
-            console.log('🔍 ESPN article found:', article.title);
-            console.log('  URL:', article.url);
-            console.log('  Description:', article.description?.substring(0, 100) + '...');
-            
-            // For ESPN, let's include ALL MLB articles for now to see what we get
-            const searchText = `${article.title} ${article.description}`.toLowerCase();
-            const hasMLBContent = searchText.includes('mlb') || 
-                                 searchText.includes('baseball') || 
-                                 searchText.includes('phillies') ||
-                                 searchText.includes('philadelphia') ||
-                                 searchText.includes('trade') ||
-                                 searchText.includes('deadline');
-            
-            console.log('  Has MLB content:', hasMLBContent);
-            if (hasMLBContent) {
-              console.log('✅ Including ESPN article:', article.title);
-              return true;
-            }
-          }
-          
-          // For other feeds, use original logic
-          const searchText = `${article.title} ${article.description}`.toLowerCase();
+          // Filter articles that mention the topics in title, description, OR URL
+          const searchText = `${article.title} ${article.description} ${article.url}`.toLowerCase();
           console.log('🔍 RSS article evaluation for', feed.name, ':', article.title);
+          console.log('  URL:', article.url);
+          console.log('  Looking for topics in title, description, and URL:', topics);
           
           const isTopicRelated = topics.some(topic => {
             const topicWords = topic.toLowerCase().split(' ');
-            return topicWords.some(word => searchText.includes(word));
+            const matches = topicWords.some(word => searchText.includes(word));
+            console.log('  Topic check for "' + topic + '": matches =', matches);
+            return matches;
           });
           
           // Check if article is within time range
