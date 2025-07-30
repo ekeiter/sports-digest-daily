@@ -232,26 +232,28 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
     
     topics.forEach(topic => {
       const topicLower = topic.toLowerCase();
-      console.log('Processing topic:', topic, 'lowercased:', topicLower);
+      console.log('=== Processing topic:', topic, 'lowercased:', topicLower);
       
       // Check if topic matches a team name directly
       const teamMapping = TEAM_MAPPINGS[topicLower];
       if (teamMapping) {
-        console.log('Direct match found:', teamMapping);
+        console.log('✓ Direct match found for', topicLower, ':', teamMapping);
         sportCityFilters.add(`${teamMapping.sport}|${teamMapping.city}`);
+      } else {
+        console.log('✗ No direct match for', topicLower);
       }
       
-      // Also check for partial matches (e.g., "Philadelphia Phillies" contains "phillies")
+      // Check for partial matches (e.g., "Philadelphia Phillies" contains "phillies")
       for (const [teamName, mapping] of Object.entries(TEAM_MAPPINGS)) {
-        if (topicLower.includes(teamName) || teamName.includes(topicLower)) {
-          console.log('Partial match found:', teamName, '→', mapping);
+        if (topicLower.includes(teamName)) {
+          console.log('✓ Partial match found: topic', topicLower, 'contains team', teamName, '→', mapping);
           sportCityFilters.add(`${mapping.sport}|${mapping.city}`);
         }
       }
       
-      // Additional check: if topic contains team city and sport keywords
-      if (topicLower.includes('philadelphia') && (topicLower.includes('phillies') || topicLower.includes('mlb') || topicLower.includes('baseball'))) {
-        console.log('Philadelphia baseball team detected, adding MLB|Philadelphia filter');
+      // Special case for Philadelphia Phillies
+      if (topicLower.includes('phillies') || (topicLower.includes('philadelphia') && topicLower.includes('phillies'))) {
+        console.log('✓ Special Phillies detection triggered for:', topicLower);
         sportCityFilters.add('MLB|Philadelphia');
       }
     });
