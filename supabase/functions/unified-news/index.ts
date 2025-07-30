@@ -269,7 +269,7 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             console.log('❌ Excluding article (too old) from', feed.name, ':', article.title);
           }
           
-          return article.title && article.url && isTopicRelated && isWithinTimeRange;
+          return article.title && article.url && isTopicRelated; // Temporarily removed time filtering
         });
 
         allRssArticles.push(...feedArticles);
