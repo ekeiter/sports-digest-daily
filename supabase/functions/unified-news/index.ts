@@ -48,31 +48,15 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
     if (!NEWSAPI_KEY) return [];
 
-    const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
-    console.log('📰 NewsAPI: Requesting articles from date:', from, 'Hours back:', hoursBack);
-    console.log('📰 NewsAPI cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=20`);
     
     if (!response.ok) return [];
     
     const data = await response.json();
-    console.log('📰 NewsAPI returned', (data.articles || []).length, 'articles');
-    
-    // Filter articles to ensure they're within the time range
-    const filteredArticles = (data.articles || []).filter((a: any) => {
-      if (!a.publishedAt) return false;
-      const articleDate = new Date(a.publishedAt);
-      const isWithinRange = articleDate >= cutoffTime;
-      console.log('📰 NewsAPI article:', a.title, 'Date:', a.publishedAt, 'Within range:', isWithinRange);
-      return isWithinRange;
-    });
-    
-    console.log('📰 NewsAPI: After filtering', filteredArticles.length, 'of', (data.articles || []).length, 'articles');
-    
-    return filteredArticles.map((a: any) => ({
+    return (data.articles || []).map((a: any) => ({
       title: a.title,
       description: a.description,
       url: a.url,
@@ -91,30 +75,15 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
     const GNEWS_KEY = Deno.env.get('GNEWS_KEY');
     if (!GNEWS_KEY) return [];
 
-    const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
     const from = fromDate.toISOString().split('T')[0];
-    console.log('📰 GNews: Requesting articles from date:', from, 'Hours back:', hoursBack);
-    console.log('📰 GNews cutoff time:', cutoffTime.toISOString());
     
     const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=20`);
     
     if (!response.ok) return [];
     
     const data = await response.json();
-    console.log('📰 GNews returned', (data.articles || []).length, 'articles');
-    
-    // Filter articles to ensure they're within the time range
-    return (data.articles || []).filter((a: any) => {
-      if (!a.publishedAt && !a.published_at) return false;
-      const publishDate = a.publishedAt || a.published_at;
-      const articleDate = new Date(publishDate);
-      const isWithinRange = articleDate >= cutoffTime;
-      if (!isWithinRange) {
-        console.log('❌ GNews: Excluding old article:', a.title, 'Date:', publishDate);
-      }
-      return isWithinRange;
-    }).map((a: any) => ({
+    return (data.articles || []).map((a: any) => ({
       title: a.title,
       description: a.description,
       url: a.url,
