@@ -29,12 +29,27 @@ function deduplicate(articles: NewsArticle[]): NewsArticle[] {
   });
 }
 
-async function fetchFromNewsAPI(query: string): Promise<NewsArticle[]> {
+async function getNewsTimeRange(supabase: any): Promise<number> {
+  try {
+    const { data: newsConfig } = await supabase
+      .from('news_config')
+      .select('hours_back')
+      .maybeSingle();
+    
+    return newsConfig?.hours_back || 24; // Default to 24 hours
+  } catch (error) {
+    console.error('Error getting news time range:', error);
+    return 24; // Default to 24 hours on error
+  }
+}
+
+async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsArticle[]> {
   try {
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
     if (!NEWSAPI_KEY) return [];
 
-    const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+    const from = fromDate.toISOString().split('T')[0];
     const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=20`);
     
     if (!response.ok) return [];
@@ -54,12 +69,13 @@ async function fetchFromNewsAPI(query: string): Promise<NewsArticle[]> {
   }
 }
 
-async function fetchFromGNews(query: string): Promise<NewsArticle[]> {
+async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArticle[]> {
   try {
     const GNEWS_KEY = Deno.env.get('GNEWS_KEY');
     if (!GNEWS_KEY) return [];
 
-    const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const fromDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+    const from = fromDate.toISOString().split('T')[0];
     const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=20`);
     
     if (!response.ok) return [];
@@ -79,9 +95,10 @@ async function fetchFromGNews(query: string): Promise<NewsArticle[]> {
   }
 }
 
-async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
-  console.log('🔥 RSS FUNCTION CALLED WITH TOPICS:', topics);
+async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number): Promise<NewsArticle[]> {
+  console.log('🔥 RSS FUNCTION CALLED WITH TOPICS:', topics, 'TIME RANGE:', hoursBack, 'hours');
   
+  const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
   try {
     // Get RSS feeds from database that match the topics
     const { data: rssFeeds, error } = await supabase
@@ -140,16 +157,31 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
           sourceType: "rss" as const
         };
       }).filter(article => {
-        // Only include articles that mention Phillies to ensure relevance
+        // Only include articles that mention Phillies and are within time range
         const isPhilliesRelated = article.title.toLowerCase().includes('phillies') || 
                                   article.description.toLowerCase().includes('phillies') ||
                                   article.url.includes('/phillies/');
         
-        if (isPhilliesRelated) {
+        // Check if article is within time range
+        let isWithinTimeRange = true;
+        if (article.publishedAt) {
+          try {
+            const articleDate = new Date(article.publishedAt);
+            isWithinTimeRange = articleDate >= cutoffTime;
+            if (!isWithinTimeRange) {
+              console.log('⏰ Article outside time range:', article.title, 'published:', articleDate.toISOString());
+            }
+          } catch (dateError) {
+            console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
+            // Keep articles with invalid dates
+          }
+        }
+        
+        if (isPhilliesRelated && isWithinTimeRange) {
           console.log('✅ Including Phillies article:', article.title);
         }
         
-        return article.title && article.url && isPhilliesRelated;
+        return article.title && article.url && isPhilliesRelated && isWithinTimeRange;
       });
 
       console.log('✅ Parsed', articles.length, 'valid RSS articles');
@@ -191,11 +223,15 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
+    // Get configurable time range
+    const hoursBack = await getNewsTimeRange(supabase);
+    console.log('⏰ Using time range:', hoursBack, 'hours');
+
     // Fetch from all sources in parallel
     const [newsApiArticles, gnewsArticles, rssArticles] = await Promise.all([
-      fetchFromNewsAPI(query),
-      fetchFromGNews(query),
-      fetchFromRSS(topics, supabase)
+      fetchFromNewsAPI(query, hoursBack),
+      fetchFromGNews(query, hoursBack),
+      fetchFromRSS(topics, supabase, hoursBack)
     ]);
 
     console.log('📊 Results:', {

@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      news_config: {
+        Row: {
+          created_at: string
+          hours_back: number
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hours_back?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hours_back?: number
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
