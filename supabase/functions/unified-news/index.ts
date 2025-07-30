@@ -254,8 +254,11 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
 
     // Filter feeds based on sport and city logic
     const relevantFeeds = rssFeeds.filter(feed => {
+      console.log('Checking feed:', feed.name, 'sport:', feed.sport, 'city:', feed.city);
+      
       // If no team mappings found, fall back to general matching
       if (sportCityFilters.size === 0) {
+        console.log('No sport/city filters, using general matching');
         return topics.some(topic => {
           const topicLower = topic.toLowerCase();
           const nameLower = feed.name.toLowerCase();
@@ -272,7 +275,7 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
       }
       
       // Use sport/city filtering for team-based searches
-      return Array.from(sportCityFilters).some(filter => {
+      const matchResult = Array.from(sportCityFilters).some(filter => {
         const [targetSport, targetCity] = filter.split('|');
         const feedSport = feed.sport.toLowerCase();
         const feedCity = feed.city.toLowerCase();
@@ -280,8 +283,13 @@ async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticl
         const sportMatch = feedSport === targetSport.toLowerCase() || feedSport === 'all';
         const cityMatch = feedCity === targetCity.toLowerCase() || feedCity === 'all';
         
+        console.log(`Filter ${filter}: sport match (${feedSport} === ${targetSport.toLowerCase()} or 'all'): ${sportMatch}, city match (${feedCity} === ${targetCity.toLowerCase()} or 'all'): ${cityMatch}`);
+        
         return sportMatch && cityMatch;
       });
+      
+      console.log('Feed matches:', matchResult);
+      return matchResult;
     });
 
     console.log('RSS feeds to fetch:', relevantFeeds.map(f => ({ name: f.name, url: f.url })));
