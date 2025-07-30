@@ -254,10 +254,10 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             try {
               const articleDate = new Date(article.publishedAt);
               isWithinTimeRange = articleDate >= cutoffTime;
-              console.log('📅 Time check for', article.title, ':');
-              console.log('  Article date:', articleDate.toISOString(), 'Local:', articleDate.toString());
-              console.log('  Cutoff time:', cutoffTime.toISOString(), 'Local:', cutoffTime.toString());
-              console.log('  Within range?', isWithinTimeRange);
+               console.log('📅 RSS Time check for', article.title.substring(0, 40), ':');
+               console.log('  Article date:', articleDate.toISOString(), 'Local:', articleDate.toString());
+               console.log('  Cutoff time:', cutoffTime.toISOString(), 'Local:', cutoffTime.toString());
+               console.log('  Within range?', isWithinTimeRange, 'Hours old:', Math.round((Date.now() - articleDate.getTime()) / (1000 * 60 * 60)));
             } catch (dateError) {
               console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
             }
