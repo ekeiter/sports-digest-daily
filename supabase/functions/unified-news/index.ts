@@ -157,18 +157,25 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           if (pubDateMatch?.[1]?.trim()) {
             try {
               let dateString = pubDateMatch[1].trim();
+              console.log('🕐 Original date string:', dateString);
               
               // During daylight savings, RSS feeds often incorrectly use "EST" when they mean "EDT"
               // The time is correct, just the timezone label is wrong
               const now = new Date();
               const isDST = now.getTimezoneOffset() < new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
+              console.log('🌞 Is daylight savings time?', isDST);
+              
               if (isDST && dateString.includes(' EST')) {
                 dateString = dateString.replace(' EST', ' EDT');
+                console.log('🔄 Converted date string:', dateString);
               }
               
               const parsedDate = new Date(dateString);
+              console.log('📅 Parsed date object:', parsedDate);
+              
               if (!isNaN(parsedDate.getTime())) {
                 pubDate = parsedDate.toISOString();
+                console.log('✅ Final ISO string:', pubDate);
               }
             } catch (dateError) {
               console.log('⚠️ Could not parse date:', pubDateMatch[1], 'using current time');
