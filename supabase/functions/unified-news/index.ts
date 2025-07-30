@@ -216,11 +216,16 @@ const TEAM_MAPPINGS: Record<string, { sport: string; city: string }> = {
 
 async function fetchFromRSS(topics: string[], supabase: any): Promise<NewsArticle[]> {
   try {
+    console.log('🔥 FETCHFROMRSS CALLED WITH TOPICS:', topics);
+    
     // Get RSS feeds from database that match the topics
     const { data: rssFeeds, error } = await supabase
       .from('rss_sources')
       .select('*')
       .eq('is_active', true);
+
+    console.log('📊 RSS FEEDS FROM DATABASE:', rssFeeds);
+    console.log('❌ RSS DATABASE ERROR:', error);
 
     if (error) {
       console.error('Error fetching RSS feeds from database:', error);
