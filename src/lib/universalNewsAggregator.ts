@@ -1,95 +1,54 @@
 import axios from "axios";
-import Parser from "rss-parser";
-// RSS feeds are now managed in the database
 
-// Note: These should be moved to edge functions for security
-const NEWSAPI_KEY = "fde0ff5a328f4555b6351aecd05fdb7d";
-const GNEWS_KEY = "439cd65bb32110496ba054e64e61f489";
-
-const paywalledDomains = [
-  "theathletic.com", "nytimes.com", "wsj.com", "bloomberg.com"
-  // Add more here as needed
-];
-
-type NewsArticle = {
+export type UnifiedNewsItem = {
   title: string;
-  description?: string;
+  description: string | null;
   url: string;
   source: string;
   publishedAt: string;
-  paywalled?: boolean;
-  sourceType: "newsapi" | "gnews" | "rss";
+  sourceType: "newsapi" | "gnews" | "other";
 };
 
-function deduplicate(articles: NewsArticle[]): NewsArticle[] {
-  const seen = new Set();
-  return articles.filter(a => {
-    if (seen.has(a.url)) return false;
-    seen.add(a.url);
-    return true;
-  });
+function deduplicate(items: UnifiedNewsItem[]): UnifiedNewsItem[] {
+  const seen = new Map<string, UnifiedNewsItem>();
+  for (const item of items) {
+    const key = item.url || item.title;
+    if (!seen.has(key)) {
+      seen.set(key, item);
+    }
+  }
+  return Array.from(seen.values());
 }
 
-export async function fetchUnifiedNews(topics: string[]): Promise<NewsArticle[]> {
-  const query = topics.map(t => `"${t}"`).join(" OR ");
-  const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+/**
+ * Fetches unified news via a secure edge function proxy instead of calling upstream APIs directly.
+ */
+export async function fetchUnifiedNews(
+  query: string
+): Promise<UnifiedNewsItem[]> {
+  try {
+    const resp = await axios.get("/api/news-proxy", {
+      params: { q: query },
+      timeout: 10_000,
+    });
 
-  // 1. NewsAPI
-  const newsapiPromise = axios.get("https://newsapi.org/v2/everything", {
-    params: {
-      q: query,
-      from,
-      language: "en",
-      sortBy: "publishedAt",
-      apiKey: NEWSAPI_KEY,
-      pageSize: 20,
-    },
-  }).then(res =>
-    (res.data.articles || []).map((a: any) => ({
-      title: a.title,
-      description: a.description,
-      url: a.url,
-      source: a.source?.name || "",
-      publishedAt: a.publishedAt,
-      sourceType: "newsapi" as const
-    }))
-  ).catch(() => []);
-
-  // 2. GNews
-  const gnewsPromise = axios.get("https://gnews.io/api/v4/search", {
-    params: {
-      q: query,
-      from,
-      lang: "en",
-      token: GNEWS_KEY,
-      max: 20
+    if (!resp.data || !Array.isArray(resp.data.articles)) {
+      console.warn("Edge function returned unexpected shape", resp.data);
+      return [];
     }
-  }).then(res =>
-    (res.data.articles || []).map((a: any) => ({
+
+    const items: UnifiedNewsItem[] = resp.data.articles.map((a: any) => ({
       title: a.title,
-      description: a.description,
+      description: a.description ?? null,
       url: a.url,
-      source: a.source?.name || "",
-      publishedAt: a.publishedAt || a.published_at,
-      sourceType: "gnews" as const
-    }))
-  ).catch(() => []);
+      source: a.source,
+      publishedAt: a.publishedAt,
+      sourceType: a.sourceType,
+    }));
 
-  // 3. RSS Feeds - now fetched via edge function
-  const rssPromise = [];
-
-  // Aggregate
-  const [newsapi, gnews] = await Promise.all([newsapiPromise, gnewsPromise]);
-  let allArticles: NewsArticle[] = [...newsapi, ...gnews];
-
-  // Deduplicate and tag paywalls
-  allArticles = deduplicate(allArticles).map(a => ({
-    ...a,
-    paywalled: paywalledDomains.some(domain => a.url.includes(domain))
-  }));
-
-  // Optional: sort newest first
-  allArticles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-
-  return allArticles;
+    return deduplicate(items);
+  } catch (err: any) {
+    console.error("Failed to fetch unified news:", err?.message || err);
+    return [];
+  }
 }
