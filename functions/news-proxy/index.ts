@@ -1,4 +1,8 @@
 // index.ts (Supabase Edge Function)
+require('dotenv').config();
+
+console.log(process.env.SUPABASE_DB_URL); // Will output the database connection string
+
 import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
 
 type UnifiedNewsItem = {
