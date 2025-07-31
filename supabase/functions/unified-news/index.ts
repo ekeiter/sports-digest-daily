@@ -54,7 +54,7 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
     
     console.log('📰 NewsAPI: Hours back:', hoursBack, 'Cutoff time:', cutoffTime.toISOString());
     
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=20`);
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${from}&language=en&sortBy=publishedAt&apiKey=${NEWSAPI_KEY}&pageSize=100`);
     
     if (!response.ok) return [];
     
@@ -97,7 +97,7 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
     
     console.log('📰 GNews: Hours back:', hoursBack, 'Cutoff time:', cutoffTime.toISOString());
     
-    const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=20`);
+    const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&from=${from}&lang=en&token=${GNEWS_KEY}&max=100`);
     
     if (!response.ok) return [];
     
@@ -179,8 +179,8 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           console.log(`  ${index + 1}. ${title}`);
         });
 
-        // Parse articles from this feed
-        const feedArticles = items.slice(0, 20).map(item => {
+        // Parse articles from this feed - processing all items
+        const feedArticles = items.map(item => {
           const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
           const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
           const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
