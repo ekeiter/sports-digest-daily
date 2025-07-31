@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      cached_articles: {
+        Row: {
+          cached_at: string
+          description: string | null
+          id: number
+          last_fetched: string
+          published_at: string
+          source: string
+          title: string
+          url: string
+        }
+        Insert: {
+          cached_at?: string
+          description?: string | null
+          id?: number
+          last_fetched?: string
+          published_at: string
+          source: string
+          title: string
+          url: string
+        }
+        Update: {
+          cached_at?: string
+          description?: string | null
+          id?: number
+          last_fetched?: string
+          published_at?: string
+          source?: string
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
       news_config: {
         Row: {
           created_at: string
