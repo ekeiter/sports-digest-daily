@@ -1,4 +1,4 @@
-// index.ts (Supabase Edge Function)
+index.ts// index.ts (Supabase Edge Function)
 require('dotenv').config();
 
 console.log(process.env.SUPABASE_DB_URL); // Will output the database connection string
