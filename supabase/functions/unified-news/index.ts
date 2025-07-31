@@ -145,6 +145,7 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
       .eq('is_active', true);
 
     console.log('📊 RSS FEEDS FROM DATABASE:', rssFeeds?.length || 0);
+    console.log('📊 RSS FEEDS DETAILS:', rssFeeds?.map(f => ({ name: f.name, url: f.url, active: f.is_active })));
 
     if (error || !rssFeeds) {
       console.log('❌ RSS DATABASE ERROR:', error);
