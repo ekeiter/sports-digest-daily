@@ -54,7 +54,8 @@ async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<vo
               title: article.title,
               description: article.description || null,
               published_at: article.publishedAt,
-              last_fetched: new Date().toISOString()
+              last_fetched: new Date().toISOString(),
+              source_type: article.sourceType
             })
             .eq('id', existing.id);
             
