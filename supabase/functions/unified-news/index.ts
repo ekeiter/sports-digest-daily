@@ -31,8 +31,14 @@ function deduplicate(articles: NewsArticle[]): NewsArticle[] {
 
 async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<void> {
   console.log('💾 Caching', articles.length, 'articles to database...');
+  console.log('📊 Sample article for debugging:', articles[0] ? {
+    title: articles[0].title,
+    sourceType: articles[0].sourceType,
+    source: articles[0].source
+  } : 'No articles to cache');
   
   for (const article of articles) {
+    console.log('🔍 Processing article:', article.title, 'with sourceType:', article.sourceType);
     try {
       // Check if article exists by URL
       const { data: existing } = await supabase
