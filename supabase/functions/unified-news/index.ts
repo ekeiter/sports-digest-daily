@@ -29,6 +29,79 @@ function deduplicate(articles: NewsArticle[]): NewsArticle[] {
   });
 }
 
+async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<void> {
+  console.log('💾 Caching', articles.length, 'articles to database...');
+  
+  for (const article of articles) {
+    try {
+      // Check if article exists by URL
+      const { data: existing } = await supabase
+        .from('cached_articles')
+        .select('id, published_at')
+        .eq('url', article.url)
+        .maybeSingle();
+
+      const publishedDate = new Date(article.publishedAt);
+      
+      if (existing) {
+        // Check if this article has a newer publication date
+        const existingDate = new Date(existing.published_at);
+        if (publishedDate > existingDate) {
+          // Update with newer publication date
+          const { error: updateError } = await supabase
+            .from('cached_articles')
+            .update({
+              title: article.title,
+              description: article.description || null,
+              published_at: article.publishedAt,
+              last_fetched: new Date().toISOString()
+            })
+            .eq('id', existing.id);
+            
+          if (updateError) {
+            console.error('❌ Error updating article:', updateError);
+          } else {
+            console.log('🔄 Updated article with newer date:', article.title);
+          }
+        } else {
+          // Just update last_fetched timestamp
+          const { error: touchError } = await supabase
+            .from('cached_articles')
+            .update({ last_fetched: new Date().toISOString() })
+            .eq('id', existing.id);
+            
+          if (touchError) {
+            console.error('❌ Error touching article:', touchError);
+          }
+        }
+      } else {
+        // Insert new article
+        const { error: insertError } = await supabase
+          .from('cached_articles')
+          .insert({
+            title: article.title,
+            description: article.description || null,
+            url: article.url,
+            source: article.source,
+            published_at: article.publishedAt,
+            cached_at: new Date().toISOString(),
+            last_fetched: new Date().toISOString()
+          });
+          
+        if (insertError) {
+          console.error('❌ Error inserting article:', insertError);
+        } else {
+          console.log('✅ Cached new article:', article.title);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error processing article for cache:', error);
+    }
+  }
+  
+  console.log('💾 Finished caching articles');
+}
+
 async function getNewsTimeRange(supabase: any): Promise<number> {
   try {
     const { data: newsConfig } = await supabase
@@ -361,6 +434,9 @@ serve(async (req) => {
 
     // Sort by publication date (newest first)
     finalArticles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+    // Cache all articles in the database
+    await cacheArticles(finalArticles, supabase);
 
     return new Response(
       JSON.stringify({ articles: finalArticles }),

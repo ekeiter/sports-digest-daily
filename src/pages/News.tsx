@@ -45,18 +45,39 @@ const News = () => {
   const loadPersonalizedNews = async () => {
     setLoading(true);
     try {
+      console.log("📱 Loading personalized news from cache...");
+      
       // Fetch user preferences
       const [teamsRes, playersRes, sportsRes] = await Promise.all([
-        supabase.from('user_teams').select('team_name'),
-        supabase.from('user_players').select('player_name'),
+        supabase.from('user_teams').select('team_name, league'),
+        supabase.from('user_players').select('player_name, sport'),
         supabase.from('user_sports').select('sport_name')
       ]);
 
-      const topics = [
-        ...(teamsRes.data?.map(t => t.team_name) || []),
-        ...(playersRes.data?.map(p => p.player_name) || []),
-        ...(sportsRes.data?.map(s => s.sport_name) || [])
-      ];
+      const topics = [];
+      
+      // Add team names with their leagues
+      if (teamsRes.data) {
+        teamsRes.data.forEach(team => {
+          topics.push(`${team.team_name} ${team.league}`);
+          topics.push(team.team_name); // Also add just the team name
+        });
+      }
+      
+      // Add sports
+      if (sportsRes.data) {
+        sportsRes.data.forEach(sport => {
+          topics.push(sport.sport_name);
+        });
+      }
+      
+      // Add players with their sports
+      if (playersRes.data) {
+        playersRes.data.forEach(player => {
+          topics.push(`${player.player_name} ${player.sport}`);
+          topics.push(player.player_name); // Also add just the player name
+        });
+      }
 
       if (topics.length === 0) {
         toast({
@@ -67,13 +88,15 @@ const News = () => {
         return;
       }
 
-      // Use the unified news edge function with actual user preferences
-      const { data, error } = await supabase.functions.invoke('unified-news', {
+      console.log("🎯 Searching cached articles for topics:", topics);
+
+      // Call the cached articles function first
+      const { data, error } = await supabase.functions.invoke('get-cached-articles', {
         body: { topics }
       });
 
       if (error) {
-        console.error('Error fetching unified news:', error);
+        console.error('❌ Error calling get-cached-articles:', error);
         toast({
           title: "Error",
           description: "Failed to fetch personalized news",
@@ -82,31 +105,38 @@ const News = () => {
         return;
       }
 
+      console.log("📰 Cached articles response:", data);
+
       // Transform the articles to match our interface
       const transformedArticles = (data.articles || []).map((article: any) => ({
         title: article.title,
         description: article.description || "",
         url: article.url,
-        urlToImage: "", // RSS feeds don't typically have images
+        urlToImage: "", // Cached articles don't have images
         publishedAt: article.publishedAt,
         source: article.source,
         author: "",
         paywalled: article.paywalled || false
       }));
 
-      console.log('Unified articles loaded:', transformedArticles.length);
       setArticles(transformedArticles);
       setTotalResults(transformedArticles.length);
       setLoadedPersonalized(true);
 
-      if (transformedArticles.length === 0) {
+      console.log('✅ Loaded', transformedArticles.length, "cached articles");
+
+      // If we have few or no cached articles, refresh from APIs
+      if (transformedArticles.length < 10) {
+        console.log("🔄 Low cached article count, refreshing from APIs...");
+        await refreshFromAPIs(topics);
+      } else if (transformedArticles.length === 0) {
         toast({
           title: "No articles found",
-          description: "Try adding more teams, sports, or players to your preferences",
+          description: "Try refreshing or add more teams, sports, or players to your preferences",
         });
       }
     } catch (error) {
-      console.error('Error fetching unified news:', error);
+      console.error('❌ Error loading personalized news:', error);
       toast({
         title: "Error",
         description: "Failed to fetch personalized news",
@@ -117,40 +147,121 @@ const News = () => {
     }
   };
 
+  const refreshFromAPIs = async (topics: string[]) => {
+    try {
+      console.log("🔄 Refreshing articles from APIs...");
+      toast({
+        title: "Refreshing News",
+        description: "Fetching latest articles from news sources...",
+      });
+      
+      // Call the unified news function to fetch fresh data and cache it
+      const { data, error } = await supabase.functions.invoke('unified-news', {
+        body: { topics }
+      });
+
+      if (error) {
+        console.error("❌ Error calling unified-news:", error);
+        return;
+      }
+
+      console.log("📰 Fresh articles from APIs:", data);
+
+      if (data?.articles && Array.isArray(data.articles)) {
+        // Now get the updated cached articles
+        const { data: cachedData } = await supabase.functions.invoke('get-cached-articles', {
+          body: { topics }
+        });
+        
+        if (cachedData?.articles) {
+          const transformedArticles = cachedData.articles.map((article: any) => ({
+            title: article.title,
+            description: article.description || "",
+            url: article.url,
+            urlToImage: "",
+            publishedAt: article.publishedAt,
+            source: article.source,
+            author: "",
+            paywalled: article.paywalled || false
+          }));
+          
+          setArticles(transformedArticles);
+          setTotalResults(transformedArticles.length);
+          console.log("✅ Updated with", transformedArticles.length, "articles from cache");
+          
+          toast({
+            title: "News Updated",
+            description: `Loaded ${transformedArticles.length} fresh articles`,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error refreshing from APIs:", error);
+    }
+  };
+
   const fetchNews = async (query: string) => {
     setLoading(true);
     setLoadedPersonalized(false);
     try {
-      const { data, error } = await supabase.functions.invoke('fetch-news', {
-        body: {
-          query: query,
-          pageSize: 20,
-          language: 'en'
+      console.log("🔍 Searching cached articles for:", query);
+
+      // Search in cached articles first
+      const { data, error } = await supabase.functions.invoke('get-cached-articles', {
+        body: { 
+          searchQuery: query.trim()
         }
       });
 
       if (error) {
-        console.error('Error fetching news:', error);
+        console.error("❌ Error searching cached articles:", error);
         toast({
-          title: "Error",
-          description: "Failed to fetch news",
+          title: "Search Error",
+          description: "Failed to search for news. Please try again.",
           variant: "destructive",
         });
         return;
       }
 
-      const newsData = data as NewsResponse;
-      if (newsData.status === 'ok') {
-        setArticles(newsData.articles || []);
-        setTotalResults(newsData.totalResults || 0);
+      console.log("📰 Cached search results:", data);
+
+      if (data?.articles && Array.isArray(data.articles)) {
+        // Transform the articles to match our interface
+        const transformedArticles = data.articles.map((article: any) => ({
+          title: article.title,
+          description: article.description || "",
+          url: article.url,
+          urlToImage: "",
+          publishedAt: article.publishedAt,
+          source: article.source,
+          author: "",
+          paywalled: article.paywalled || false
+        }));
+
+        setArticles(transformedArticles);
+        setTotalResults(transformedArticles.length);
+        console.log("✅ Found", transformedArticles.length, "cached articles for search");
+        
+        if (transformedArticles.length < 5) {
+          toast({
+            title: "Limited Results",
+            description: "Consider refreshing the news cache for more results",
+          });
+        }
       } else {
-        throw new Error('Invalid response from news API');
+        console.log("⚠️ No cached articles found for query:", query);
+        setArticles([]);
+        setTotalResults(0);
+        toast({
+          title: "No Results",
+          description: "No articles found for your search. Try different keywords.",
+        });
       }
     } catch (error) {
-      console.error('Error fetching news:', error);
+      console.error("❌ Error searching news:", error);
       toast({
-        title: "Error",
-        description: "Failed to fetch news",
+        title: "Search Error",
+        description: "Failed to search for news. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -227,6 +338,43 @@ const News = () => {
                 My News
               </Button>
             )}
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                if (loadedPersonalized) {
+                  // Get current topics and refresh from APIs
+                  supabase.from('user_teams').select('team_name, league')
+                    .then(teamsRes => supabase.from('user_players').select('player_name, sport')
+                      .then(playersRes => supabase.from('user_sports').select('sport_name')
+                        .then(sportsRes => {
+                          const topics = [];
+                          if (teamsRes.data) {
+                            teamsRes.data.forEach(team => {
+                              topics.push(`${team.team_name} ${team.league}`);
+                              topics.push(team.team_name);
+                            });
+                          }
+                          if (sportsRes.data) {
+                            sportsRes.data.forEach(sport => topics.push(sport.sport_name));
+                          }
+                          if (playersRes.data) {
+                            playersRes.data.forEach(player => {
+                              topics.push(`${player.player_name} ${player.sport}`);
+                              topics.push(player.player_name);
+                            });
+                          }
+                          if (topics.length > 0) refreshFromAPIs(topics);
+                        })
+                      )
+                    );
+                } else {
+                  handleRefreshPersonalized();
+                }
+              }}
+              disabled={loading}
+            >
+              🔄 Refresh
+            </Button>
             <Badge variant="secondary">
               {totalResults.toLocaleString()} articles found
             </Badge>
