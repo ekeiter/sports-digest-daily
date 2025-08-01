@@ -85,7 +85,8 @@ async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<vo
             source: article.source,
             published_at: article.publishedAt,
             cached_at: new Date().toISOString(),
-            last_fetched: new Date().toISOString()
+            last_fetched: new Date().toISOString(),
+            source_type: article.sourceType
           });
           
         if (insertError) {
