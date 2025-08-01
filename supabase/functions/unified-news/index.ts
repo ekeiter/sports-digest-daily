@@ -98,8 +98,13 @@ async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<vo
           
         if (insertError) {
           console.error('❌ Error inserting article:', insertError);
+          console.error('❌ Article data being inserted:', {
+            title: article.title,
+            sourceType: article.sourceType,
+            source: article.source
+          });
         } else {
-          console.log('✅ Cached new article:', article.title);
+          console.log('✅ Cached new article:', article.title, 'with sourceType:', article.sourceType);
         }
       }
     } catch (error) {
