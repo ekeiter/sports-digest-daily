@@ -383,10 +383,10 @@ serve(async (req) => {
 
     console.log('🔥 Fetching unified news for topics:', topics);
 
-    // Initialize Supabase client
+    // Initialize Supabase client with service role for database writes
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     // Get configurable time range
