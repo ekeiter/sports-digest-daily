@@ -330,8 +330,21 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           
           const isTopicRelated = topics.some(topic => {
             const topicWords = topic.toLowerCase().split(' ');
-            const matches = topicWords.some(word => searchText.includes(word));
-            console.log('  Topic check for "' + topic + '": matches =', matches);
+            // For team names, check if ANY significant word matches (not just "mlb" or "nfl")
+            const significantWords = topicWords.filter(word => 
+              word.length > 3 && !['mlb', 'nfl', 'nba', 'nhl'].includes(word)
+            );
+            
+            let matches = false;
+            if (significantWords.length > 0) {
+              // If we have significant words (team names), check if any match
+              matches = significantWords.some(word => searchText.includes(word));
+            } else {
+              // Fallback to checking all words for generic topics
+              matches = topicWords.some(word => searchText.includes(word));
+            }
+            
+            console.log('  Topic check for "' + topic + '": significant words =', significantWords, 'matches =', matches);
             return matches;
           });
           
