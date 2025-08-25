@@ -16,6 +16,7 @@ interface AuthFormData {
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -59,7 +60,19 @@ export default function Auth() {
   const onSubmit = async (data: AuthFormData) => {
     setLoading(true);
     try {
-      if (isSignUp) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Password reset email sent",
+          description: "Check your email for a password reset link.",
+        });
+        setIsForgotPassword(false);
+      } else if (isSignUp) {
         const redirectUrl = `${window.location.origin}/`;
         
         const { error } = await supabase.auth.signUp({
@@ -102,6 +115,13 @@ export default function Auth() {
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
+    setIsForgotPassword(false);
+    reset();
+  };
+
+  const toggleForgotPassword = () => {
+    setIsForgotPassword(!isForgotPassword);
+    setIsSignUp(false);
     reset();
   };
 
@@ -110,12 +130,14 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">
-            {isSignUp ? "Create account" : "Sign in"}
+            {isForgotPassword ? "Reset password" : isSignUp ? "Create account" : "Sign in"}
           </CardTitle>
           <CardDescription className="text-center">
-            {isSignUp 
-              ? "Enter your details to create your Sports Digest account"
-              : "Enter your email and password to access your Sports Digest"
+            {isForgotPassword 
+              ? "Enter your email to receive a password reset link"
+              : isSignUp 
+                ? "Enter your details to create your Sports Digest account"
+                : "Enter your email and password to access your Sports Digest"
             }
           </CardDescription>
         </CardHeader>
@@ -140,45 +162,62 @@ export default function Auth() {
               )}
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
-            </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                )}
+              </div>
+            )}
 
             <Button 
               type="submit" 
               className="w-full" 
               disabled={loading}
             >
-              {loading ? "Please wait..." : (isSignUp ? "Create account" : "Sign in")}
+              {loading ? "Please wait..." : isForgotPassword ? "Send reset email" : isSignUp ? "Create account" : "Sign in"}
             </Button>
           </form>
 
-          <div className="mt-4 text-center">
-            <Button
-              variant="link"
-              onClick={toggleMode}
-              className="text-sm"
-            >
-              {isSignUp 
-                ? "Already have an account? Sign in" 
-                : "Don't have an account? Sign up"
-              }
-            </Button>
+          <div className="mt-4 text-center space-y-2">
+            {!isForgotPassword && (
+              <Button
+                variant="link"
+                onClick={toggleMode}
+                className="text-sm"
+              >
+                {isSignUp 
+                  ? "Already have an account? Sign in" 
+                  : "Don't have an account? Sign up"
+                }
+              </Button>
+            )}
+            
+            <div>
+              <Button
+                variant="link"
+                onClick={toggleForgotPassword}
+                className="text-sm"
+              >
+                {isForgotPassword 
+                  ? "Back to sign in" 
+                  : "Forgot your password?"
+                }
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
