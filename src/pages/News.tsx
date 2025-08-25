@@ -80,12 +80,14 @@ const News = () => {
       }
 
       if (topics.length === 0) {
+        console.log("⚠️ No user preferences found, loading default sports news");
+        // Load default sports news when no preferences are set
+        topics.push("MLB", "NFL", "NBA", "NHL", "MLS", "College Football", "College Basketball");
+        
         toast({
-          title: "No preferences set",
-          description: "Please add teams, players, or sports to your preferences first",
+          title: "Loading Default News",
+          description: "No preferences set - showing general sports news. Set up your preferences for personalized content!",
         });
-        setLoading(false);
-        return;
       }
 
       console.log("🎯 Searching cached articles for topics:", topics);
