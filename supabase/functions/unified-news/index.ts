@@ -258,12 +258,17 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
         const items = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi) || [];
         console.log('📰 Found', items.length, 'RSS items for', feed.name);
         
-        // Log first few items to see what we're getting
+        // Log first few items to see what we're getting - including the specific article we're looking for
         console.log('📋 Sample RSS items from', feed.name, ':');
-        items.slice(0, 3).forEach((item, index) => {
+        items.slice(0, 5).forEach((item, index) => {
           const titleMatch = item.match(/<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/i);
           const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
           console.log(`  ${index + 1}. ${title}`);
+          
+          // Special logging for the article we're looking for
+          if (title.toLowerCase().includes('phillies') && title.toLowerCase().includes('nationals')) {
+            console.log('🎯 FOUND TARGET ARTICLE:', title);
+          }
         });
 
         // Parse articles from this feed - processing all items
@@ -322,6 +327,13 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             sourceType: "rss" as const
           };
         }).filter(article => {
+          // Special logging for the specific article we're looking for
+          if (article.title.toLowerCase().includes('phillies') && article.title.toLowerCase().includes('nationals')) {
+            console.log('🎯 EVALUATING TARGET ARTICLE:', article.title);
+            console.log('🎯 Article URL:', article.url);
+            console.log('🎯 Article date:', article.publishedAt);
+          }
+          
           // Filter articles that mention the topics in title, description, OR URL
           const searchText = `${article.title} ${article.description} ${article.url}`.toLowerCase();
           console.log('🔍 RSS article evaluation for', feed.name, ':', article.title);
@@ -345,6 +357,12 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             }
             
             console.log('  Topic check for "' + topic + '": significant words =', significantWords, 'matches =', matches);
+            
+            // Special logging for target article
+            if (article.title.toLowerCase().includes('phillies') && article.title.toLowerCase().includes('nationals')) {
+              console.log('🎯 TARGET ARTICLE topic match result:', matches, 'for topic:', topic);
+            }
+            
             return matches;
           });
           
@@ -358,18 +376,32 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
                console.log('  Article date:', articleDate.toISOString(), 'Local:', articleDate.toString());
                console.log('  Cutoff time:', cutoffTime.toISOString(), 'Local:', cutoffTime.toString());
                console.log('  Within range?', isWithinTimeRange, 'Hours old:', Math.round((Date.now() - articleDate.getTime()) / (1000 * 60 * 60)));
+               
+               // Special logging for target article
+               if (article.title.toLowerCase().includes('phillies') && article.title.toLowerCase().includes('nationals')) {
+                 console.log('🎯 TARGET ARTICLE time check result:', isWithinTimeRange);
+               }
             } catch (dateError) {
               console.log('⚠️ Invalid date for article:', article.title, article.publishedAt);
             }
           }
           
+          const finalResult = article.title && article.url && isTopicRelated && isWithinTimeRange;
+          
           if (isTopicRelated && isWithinTimeRange) {
             console.log('✅ Including article from', feed.name, ':', article.title);
           } else if (isTopicRelated && !isWithinTimeRange) {
             console.log('❌ Excluding article (too old) from', feed.name, ':', article.title);
+          } else if (!isTopicRelated) {
+            console.log('❌ Excluding article (not topic related) from', feed.name, ':', article.title);
           }
           
-          return article.title && article.url && isTopicRelated && isWithinTimeRange;
+          // Special final logging for target article
+          if (article.title.toLowerCase().includes('phillies') && article.title.toLowerCase().includes('nationals')) {
+            console.log('🎯 TARGET ARTICLE FINAL RESULT:', finalResult, 'topic:', isTopicRelated, 'time:', isWithinTimeRange);
+          }
+          
+          return finalResult;
         });
 
         allRssArticles.push(...feedArticles);
