@@ -42,7 +42,7 @@ serve(async (req) => {
   }
 
   try {
-    const { topics = [], searchQuery = '' } = await req.json();
+    const { topics = [], searchQuery = '', hoursBack } = await req.json();
     
     console.log('📖 Getting cached articles for topics:', topics, 'search:', searchQuery);
 
@@ -52,11 +52,11 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    // Get configurable time range
-    const hoursBack = await getNewsTimeRange(supabase);
-    const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+    // Use provided hoursBack or get from user preferences
+    const timeRange = hoursBack || await getNewsTimeRange(supabase);
+    const cutoffTime = new Date(Date.now() - timeRange * 60 * 60 * 1000);
     
-    console.log('⏰ Using time range:', hoursBack, 'hours, cutoff:', cutoffTime.toISOString());
+    console.log('⏰ Using time range:', timeRange, 'hours, cutoff:', cutoffTime.toISOString());
 
     let query = supabase
       .from('cached_articles')

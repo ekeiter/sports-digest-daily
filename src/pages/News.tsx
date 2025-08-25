@@ -80,21 +80,28 @@ const News = () => {
       }
 
       if (topics.length === 0) {
-        console.log("⚠️ No user preferences found, loading default sports news");
-        // Load default sports news when no preferences are set
-        topics.push("MLB", "NFL", "NBA", "NHL", "MLS", "College Football", "College Basketball");
-        
         toast({
-          title: "Loading Default News",
-          description: "No preferences set - showing general sports news. Set up your preferences for personalized content!",
+          title: "No preferences set",
+          description: "Please add teams, players, or sports to your preferences first",
         });
+        setLoading(false);
+        return;
       }
 
       console.log("🎯 Searching cached articles for topics:", topics);
 
+      // Get user's time preference
+      const { data: configData } = await supabase
+        .from('news_config')
+        .select('hours_back')
+        .single();
+      
+      const hoursBack = configData?.hours_back || 24;
+      console.log("⏰ Using time preference:", hoursBack, "hours");
+
       // Call the cached articles function first
       const { data, error } = await supabase.functions.invoke('get-cached-articles', {
-        body: { topics }
+        body: { topics, hoursBack }
       });
 
       if (error) {
