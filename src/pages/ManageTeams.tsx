@@ -116,7 +116,7 @@ const ManageTeams = () => {
           .insert({
             league,
             team_name: teamName,
-            user_id: (await supabase.auth.getUser()).data.user?.id
+            user_id: 'test-user-id' // Temporary for testing without auth
           })
           .select()
           .single();
