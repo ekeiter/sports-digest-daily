@@ -162,15 +162,7 @@ export type Database = {
           sport?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_players_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_sports: {
         Row: {
@@ -191,15 +183,7 @@ export type Database = {
           sport_name?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_sports_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_teams: {
         Row: {
@@ -223,15 +207,7 @@ export type Database = {
           team_name?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_teams_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
