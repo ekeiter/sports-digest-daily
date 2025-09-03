@@ -66,6 +66,7 @@ const ManageTeams = () => {
       const { data, error } = await supabase
         .from('user_teams')
         .select('*')
+        .eq('user_id', 'test-user-id') // Filter by our test user
         .order('league, team_name');
 
       if (error) throw error;
@@ -128,11 +129,12 @@ const ManageTeams = () => {
           title: "Team added",
           description: `${teamName} has been added to your teams`,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error adding team:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
         toast({
           title: "Error",
-          description: "Failed to add team",
+          description: `Failed to add team: ${error.message || 'Unknown error'}`,
           variant: "destructive",
         });
       }
