@@ -66,7 +66,7 @@ const ManageTeams = () => {
       const { data, error } = await supabase
         .from('user_teams')
         .select('*')
-        .eq('user_id', 'test-user-id') // Filter by our test user
+        .eq('user_id', '00000000-0000-0000-0000-000000000000') // Test UUID
         .order('league, team_name');
 
       if (error) throw error;
@@ -117,7 +117,7 @@ const ManageTeams = () => {
           .insert({
             league,
             team_name: teamName,
-            user_id: 'test-user-id' // Temporary for testing without auth
+            user_id: '00000000-0000-0000-0000-000000000000' // Test UUID
           })
           .select()
           .single();
