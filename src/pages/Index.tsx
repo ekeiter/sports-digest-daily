@@ -61,7 +61,7 @@ const Index = () => {
             Stay updated with AI-generated summaries of the latest news.
           </p>
           <div className="space-y-4">
-            <Button size="lg" onClick={() => navigate('/auth')}>
+            <Button size="lg" onClick={() => navigate('/manage-teams')}>
               Get Started
             </Button>
             <p className="text-sm text-muted-foreground">
