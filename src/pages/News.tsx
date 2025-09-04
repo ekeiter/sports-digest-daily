@@ -391,8 +391,8 @@ const News = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
+      <main className="container mx-auto px-4 py-4">
+        <div className="space-y-4">
           {/* Info Banner */}
           {loadedPersonalized && (
             <Card className="bg-primary/5 border-primary/20">
@@ -438,66 +438,51 @@ const News = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-2">
               {articles.map((article, index) => (
-                <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  {article.urlToImage && (
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={article.urlToImage}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="text-xs">
-                        {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
-                      </Badge>
-                      {article.paywalled && (
-                        <Badge variant="secondary" className="text-xs flex items-center gap-1">
-                          <Lock className="h-3 w-3" />
-                          Premium
-                        </Badge>
-                      )}
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {getTimeAgo(article.publishedAt)}
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg line-clamp-2">
-                      {article.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {article.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                        {article.description}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        {formatDate(article.publishedAt)} at {formatTime(article.publishedAt)}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(article.url, '_blank')}
+                <Card key={index} className="hover:bg-accent/5 transition-colors">
+                  <CardContent className="p-4">
+                    <div className="space-y-2">
+                      {/* Article Title Link */}
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block font-semibold text-foreground hover:text-primary transition-colors line-clamp-2"
                       >
-                        <ExternalLink className="h-3 w-3 mr-1" />
-                        {article.paywalled ? 'View Article' : 'Read'}
-                      </Button>
+                        {article.title}
+                        <ExternalLink className="inline h-3 w-3 ml-1" />
+                      </a>
+                      
+                      {/* Article Description */}
+                      {article.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {article.description}
+                        </p>
+                      )}
+                      
+                      {/* Meta Information */}
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="font-medium">
+                          {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
+                        </span>
+                        <span>•</span>
+                        <span>{formatDate(article.publishedAt)}</span>
+                        <span>•</span>
+                        <span>{formatTime(article.publishedAt)}</span>
+                        <span>•</span>
+                        <span>{getTimeAgo(article.publishedAt)}</span>
+                        {article.paywalled && (
+                          <>
+                            <span>•</span>
+                            <Badge variant="secondary" className="text-xs flex items-center gap-1 h-4 px-1.5">
+                              <Lock className="h-2.5 w-2.5" />
+                              Premium
+                            </Badge>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    {article.author && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        By {article.author}
-                      </p>
-                    )}
                   </CardContent>
                 </Card>
               ))}
