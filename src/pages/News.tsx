@@ -332,7 +332,7 @@ const News = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+        <div className="container mx-auto px-4 py-3 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -391,12 +391,12 @@ const News = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-4">
-        <div className="space-y-4">
+      <main className="container mx-auto px-4 py-2">
+        <div className="space-y-2">
           {/* Info Banner */}
           {loadedPersonalized && (
             <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-4">
+              <CardContent className="p-3">
                 <p className="text-sm">
                   <strong>Personalized News:</strong> Showing articles based on your selected teams, sports, and players. 
                   Use the search below to find specific topics.
@@ -407,7 +407,7 @@ const News = () => {
           
           {/* Search Bar */}
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex gap-4">
                 <div className="flex-1">
                   <Input
@@ -427,22 +427,22 @@ const News = () => {
 
           {/* News Articles */}
           {loading ? (
-            <div className="text-center py-8">
+            <div className="text-center py-4">
               <p className="text-lg">Loading news...</p>
             </div>
           ) : articles.length === 0 ? (
             <Card>
-              <CardContent className="text-center py-8">
+              <CardContent className="text-center py-4">
                 <p className="text-lg text-muted-foreground">No articles found</p>
                 <p className="text-sm text-muted-foreground">Try searching for different keywords</p>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {articles.map((article, index) => (
                 <Card key={index} className="hover:bg-accent/5 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
+                  <CardContent className="p-3">
+                    <div className="space-y-1">
                       {/* Article Title Link */}
                       <a
                         href={article.url}
