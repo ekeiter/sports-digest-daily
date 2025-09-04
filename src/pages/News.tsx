@@ -448,7 +448,7 @@ const News = () => {
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block font-semibold text-foreground hover:text-primary transition-colors line-clamp-2"
+                        className="block font-semibold text-primary hover:text-primary/80 transition-colors line-clamp-2"
                       >
                         {article.title}
                         <ExternalLink className="inline h-3 w-3 ml-1" />
