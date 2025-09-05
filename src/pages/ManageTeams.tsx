@@ -145,6 +145,35 @@ const ManageTeams = () => {
     return selectedTeams.some(t => t.team_name === teamName && t.league === league);
   };
 
+  const clearAllTeams = async () => {
+    if (selectedTeams.length === 0) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('user_teams')
+        .delete()
+        .eq('user_id', '00000000-0000-0000-0000-000000000000');
+
+      if (error) throw error;
+      
+      setSelectedTeams([]);
+      toast({
+        title: "Teams cleared",
+        description: "All teams have been removed from your selections",
+      });
+    } catch (error) {
+      console.error('Error clearing teams:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear teams",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -163,7 +192,17 @@ const ManageTeams = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-2xl font-bold">Manage Teams</h1>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            {selectedTeams.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearAllTeams}
+                disabled={saving}
+              >
+                Clear All
+              </Button>
+            )}
             <Badge variant="secondary">
               {selectedTeams.length} team{selectedTeams.length !== 1 ? 's' : ''} selected
             </Badge>
