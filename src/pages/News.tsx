@@ -440,7 +440,7 @@ const News = () => {
           ) : (
             <div className="space-y-1">
               {articles.map((article, index) => (
-                <Card key={index} className="bg-gradient-to-br from-background to-accent/10 hover:from-accent/5 hover:to-accent/20 transition-all duration-300 shadow-sm hover:shadow-md border-l-4 border-l-primary/20">
+                <Card key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 shadow-lg hover:shadow-xl border border-blue-200 hover:border-blue-300">
                   <CardContent className="p-3">
                     <div className="space-y-1">
                       {/* Article Title Link */}
