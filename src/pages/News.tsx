@@ -463,15 +463,15 @@ const News = () => {
                       
                       {/* Meta Information */}
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="font-medium">
+                        <span className="font-bold">
                           {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
                         </span>
                         <span>•</span>
-                        <span>{formatDate(article.publishedAt)}</span>
+                        <span className="font-bold">{formatDate(article.publishedAt)}</span>
                         <span>•</span>
-                        <span>{formatTime(article.publishedAt)}</span>
+                        <span className="font-bold">{formatTime(article.publishedAt)}</span>
                         <span>•</span>
-                        <span>{getTimeAgo(article.publishedAt)}</span>
+                        <span className="font-bold">{getTimeAgo(article.publishedAt)}</span>
                         {article.paywalled && (
                           <>
                             <span>•</span>
