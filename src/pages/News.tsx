@@ -462,7 +462,7 @@ const News = () => {
                       )}
                       
                       {/* Meta Information */}
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 text-xs text-foreground">
                         <span className="font-bold">
                           {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
                         </span>
