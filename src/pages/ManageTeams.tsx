@@ -9,23 +9,150 @@ import { useToast } from "@/hooks/use-toast";
 
 // Function to get team logo URL
 const getTeamLogo = (teamName: string, league: string): string => {
-  // Convert team name to a format suitable for logo URLs
-  const teamKey = teamName.toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
-  
-  console.log(`Getting logo for ${teamName} in ${league}, teamKey: ${teamKey}`);
-  
-  // Using a more reliable team logo source
-  const leagueMap: { [key: string]: string } = {
-    'MLB': 'mlb',
-    'NFL': 'nfl', 
-    'NBA': 'nba',
-    'NHL': 'nhl'
+  // Create a mapping for team abbreviations/codes for better logo URLs
+  const teamMappings: { [key: string]: { [team: string]: string } } = {
+    MLB: {
+      "Arizona Diamondbacks": "ari",
+      "Atlanta Braves": "atl", 
+      "Baltimore Orioles": "bal",
+      "Boston Red Sox": "bos",
+      "Chicago Cubs": "chc",
+      "Chicago White Sox": "cws",
+      "Cincinnati Reds": "cin",
+      "Cleveland Guardians": "cle",
+      "Colorado Rockies": "col",
+      "Detroit Tigers": "det",
+      "Houston Astros": "hou",
+      "Kansas City Royals": "kc",
+      "Los Angeles Angels": "laa",
+      "Los Angeles Dodgers": "lad",
+      "Miami Marlins": "mia",
+      "Milwaukee Brewers": "mil",
+      "Minnesota Twins": "min",
+      "New York Mets": "nym",
+      "New York Yankees": "nyy",
+      "Oakland Athletics": "oak",
+      "Philadelphia Phillies": "phi",
+      "Pittsburgh Pirates": "pit",
+      "San Diego Padres": "sd",
+      "San Francisco Giants": "sf",
+      "Seattle Mariners": "sea",
+      "St. Louis Cardinals": "stl",
+      "Tampa Bay Rays": "tb",
+      "Texas Rangers": "tex",
+      "Toronto Blue Jays": "tor",
+      "Washington Nationals": "wsh"
+    },
+    NFL: {
+      "Arizona Cardinals": "ari",
+      "Atlanta Falcons": "atl",
+      "Baltimore Ravens": "bal",
+      "Buffalo Bills": "buf",
+      "Carolina Panthers": "car",
+      "Chicago Bears": "chi",
+      "Cincinnati Bengals": "cin",
+      "Cleveland Browns": "cle",
+      "Dallas Cowboys": "dal",
+      "Denver Broncos": "den",
+      "Detroit Lions": "det",
+      "Green Bay Packers": "gb",
+      "Houston Texans": "hou",
+      "Indianapolis Colts": "ind",
+      "Jacksonville Jaguars": "jax",
+      "Kansas City Chiefs": "kc",
+      "Las Vegas Raiders": "lv",
+      "Los Angeles Chargers": "lac",
+      "Los Angeles Rams": "lar",
+      "Miami Dolphins": "mia",
+      "Minnesota Vikings": "min",
+      "New England Patriots": "ne",
+      "New Orleans Saints": "no",
+      "New York Giants": "nyg",
+      "New York Jets": "nyj",
+      "Philadelphia Eagles": "phi",
+      "Pittsburgh Steelers": "pit",
+      "San Francisco 49ers": "sf",
+      "Seattle Seahawks": "sea",
+      "Tampa Bay Buccaneers": "tb",
+      "Tennessee Titans": "ten",
+      "Washington Commanders": "wsh"
+    },
+    NBA: {
+      "Atlanta Hawks": "atl",
+      "Boston Celtics": "bos",
+      "Brooklyn Nets": "bkn",
+      "Charlotte Hornets": "cha",
+      "Chicago Bulls": "chi",
+      "Cleveland Cavaliers": "cle",
+      "Dallas Mavericks": "dal",
+      "Denver Nuggets": "den",
+      "Detroit Pistons": "det",
+      "Golden State Warriors": "gsw",
+      "Houston Rockets": "hou",
+      "Indiana Pacers": "ind",
+      "Los Angeles Clippers": "lac",
+      "Los Angeles Lakers": "lal",
+      "Memphis Grizzlies": "mem",
+      "Miami Heat": "mia",
+      "Milwaukee Bucks": "mil",
+      "Minnesota Timberwolves": "min",
+      "New Orleans Pelicans": "no",
+      "New York Knicks": "nyk",
+      "Oklahoma City Thunder": "okc",
+      "Orlando Magic": "orl",
+      "Philadelphia 76ers": "phi",
+      "Phoenix Suns": "phx",
+      "Portland Trail Blazers": "por",
+      "Sacramento Kings": "sac",
+      "San Antonio Spurs": "sa",
+      "Toronto Raptors": "tor",
+      "Utah Jazz": "uta",
+      "Washington Wizards": "wsh"
+    },
+    NHL: {
+      "Anaheim Ducks": "ana",
+      "Arizona Coyotes": "ari",
+      "Boston Bruins": "bos",
+      "Buffalo Sabres": "buf",
+      "Calgary Flames": "cgy",
+      "Carolina Hurricanes": "car",
+      "Chicago Blackhawks": "chi",
+      "Colorado Avalanche": "col",
+      "Columbus Blue Jackets": "cbj",
+      "Dallas Stars": "dal",
+      "Detroit Red Wings": "det",
+      "Edmonton Oilers": "edm",
+      "Florida Panthers": "fla",
+      "Los Angeles Kings": "lak",
+      "Minnesota Wild": "min",
+      "Montreal Canadiens": "mtl",
+      "Nashville Predators": "nsh",
+      "New Jersey Devils": "njd",
+      "New York Islanders": "nyi",
+      "New York Rangers": "nyr",
+      "Ottawa Senators": "ott",
+      "Philadelphia Flyers": "phi",
+      "Pittsburgh Penguins": "pit",
+      "San Jose Sharks": "sjs",
+      "Seattle Kraken": "sea",
+      "St. Louis Blues": "stl",
+      "Tampa Bay Lightning": "tbl",
+      "Toronto Maple Leafs": "tor",
+      "Vancouver Canucks": "van",
+      "Vegas Golden Knights": "vgk",
+      "Washington Capitals": "wsh",
+      "Winnipeg Jets": "wpg"
+    }
   };
-  
-  // Try multiple potential sources
-  return `https://logos.sportslogos.net/logos/teams/${leagueMap[league]}/${teamKey}.png`;
+
+  const teamCode = teamMappings[league]?.[teamName];
+  if (!teamCode) {
+    console.log(`No team code found for ${teamName} in ${league}`);
+    return "";
+  }
+
+  // Using ESPN's logo API with proper team codes
+  return `https://a.espncdn.com/i/teamlogos/${league.toLowerCase()}/500/${teamCode}.png`;
 };
 
 const TEAMS_BY_LEAGUE = {
@@ -259,10 +386,11 @@ const ManageTeams = () => {
                             <img 
                               src={getTeamLogo(team, league)}
                               alt={`${team} logo`}
-                              className="w-6 h-6 object-contain"
+                              className="w-6 h-6 object-contain flex-shrink-0"
                               onError={(e) => {
                                 console.log(`Failed to load logo for ${team}`);
-                                e.currentTarget.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor">${league}</text></svg>`;
+                                // Hide the image if it fails to load
+                                e.currentTarget.style.display = 'none';
                               }}
                             />
                             <span className="text-sm">{team}</span>
