@@ -14,7 +14,9 @@ const getTeamLogo = (teamName: string, league: string): string => {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
   
-  // Using ESPN's team logo API (publicly available)
+  console.log(`Getting logo for ${teamName} in ${league}, teamKey: ${teamKey}`);
+  
+  // Using a more reliable team logo source
   const leagueMap: { [key: string]: string } = {
     'MLB': 'mlb',
     'NFL': 'nfl', 
@@ -22,7 +24,8 @@ const getTeamLogo = (teamName: string, league: string): string => {
     'NHL': 'nhl'
   };
   
-  return `https://a.espncdn.com/i/teamlogos/${leagueMap[league]}/${teamKey}.png`;
+  // Try multiple potential sources
+  return `https://logos.sportslogos.net/logos/teams/${leagueMap[league]}/${teamKey}.png`;
 };
 
 const TEAMS_BY_LEAGUE = {
@@ -258,7 +261,8 @@ const ManageTeams = () => {
                               alt={`${team} logo`}
                               className="w-6 h-6 object-contain"
                               onError={(e) => {
-                                e.currentTarget.style.display = 'none';
+                                console.log(`Failed to load logo for ${team}`);
+                                e.currentTarget.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor">${league}</text></svg>`;
                               }}
                             />
                             <span className="text-sm">{team}</span>
