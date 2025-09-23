@@ -111,7 +111,8 @@ const getTeamLogo = (teamName: string, league: string): string => {
     },
     NHL: {
       "Anaheim Ducks": "ana",
-      "Arizona Coyotes": "ari",
+      "Arizona Coyotes": "ari", // Keep old mapping for existing data
+      "Utah Mammoth": "uta",
       "Boston Bruins": "bos",
       "Buffalo Sabres": "buf",
       "Calgary Flames": "cgy",
@@ -187,7 +188,7 @@ const TEAMS_BY_LEAGUE = {
     "Utah Jazz", "Washington Wizards"
   ],
   NHL: [
-    "Anaheim Ducks", "Arizona Coyotes", "Boston Bruins", "Buffalo Sabres",
+    "Anaheim Ducks", "Boston Bruins", "Buffalo Sabres", "Utah Mammoth",
     "Calgary Flames", "Carolina Hurricanes", "Chicago Blackhawks", "Colorado Avalanche",
     "Columbus Blue Jackets", "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers",
     "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens",
