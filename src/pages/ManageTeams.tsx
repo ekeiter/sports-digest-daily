@@ -379,7 +379,7 @@ const ManageTeams = () => {
                       <Button
                         key={team}
                         variant={isSelected ? "default" : "outline"}
-                        className="justify-start h-auto p-3 text-left"
+                        className="justify-start h-auto py-2 px-3 text-left"
                         onClick={() => toggleTeam(league, team)}
                       >
                         <div className="flex items-center justify-between w-full">
