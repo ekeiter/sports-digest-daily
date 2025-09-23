@@ -7,6 +7,24 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+// Function to get team logo URL
+const getTeamLogo = (teamName: string, league: string): string => {
+  // Convert team name to a format suitable for logo URLs
+  const teamKey = teamName.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+  
+  // Using ESPN's team logo API (publicly available)
+  const leagueMap: { [key: string]: string } = {
+    'MLB': 'mlb',
+    'NFL': 'nfl', 
+    'NBA': 'nba',
+    'NHL': 'nhl'
+  };
+  
+  return `https://a.espncdn.com/i/teamlogos/${leagueMap[league]}/${teamKey}.png`;
+};
+
 const TEAMS_BY_LEAGUE = {
   MLB: [
     "Arizona Diamondbacks", "Atlanta Braves", "Baltimore Orioles", "Boston Red Sox", 
@@ -234,7 +252,17 @@ const ManageTeams = () => {
                         onClick={() => toggleTeam(league, team)}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="text-sm">{team}</span>
+                          <div className="flex items-center gap-2">
+                            <img 
+                              src={getTeamLogo(team, league)}
+                              alt={`${team} logo`}
+                              className="w-6 h-6 object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                            <span className="text-sm">{team}</span>
+                          </div>
                           {isSelected ? (
                             <X className="h-3 w-3 ml-2 flex-shrink-0" />
                           ) : (
