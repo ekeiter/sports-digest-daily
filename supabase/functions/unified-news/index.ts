@@ -10,6 +10,7 @@ interface NewsArticle {
   title: string;
   description?: string;
   url: string;
+  urlToImage?: string;
   source: string;
   publishedAt: string;
   paywalled?: boolean;
@@ -162,6 +163,7 @@ async function fetchFromNewsAPI(query: string, hoursBack: number): Promise<NewsA
       title: a.title,
       description: a.description,
       url: a.url,
+      urlToImage: a.urlToImage,
       source: a.source?.name || "",
       publishedAt: a.publishedAt,
       sourceType: "newsapi" as const
@@ -206,6 +208,7 @@ async function fetchFromGNews(query: string, hoursBack: number): Promise<NewsArt
       title: a.title,
       description: a.description,
       url: a.url,
+      urlToImage: a.image,
       source: a.source?.name || "",
       publishedAt: a.publishedAt || a.published_at,
       sourceType: "gnews" as const
