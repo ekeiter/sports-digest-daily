@@ -371,7 +371,7 @@ const ManageTeams = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                   {teams.map((team) => {
                     const isSelected = isTeamSelected(league, team);
                     return (
