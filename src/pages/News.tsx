@@ -121,7 +121,7 @@ const News = () => {
         title: article.title,
         description: article.description || "",
         url: article.url,
-        urlToImage: "", // Cached articles don't have images
+        urlToImage: article.urlToImage || "", // Now includes image from cached articles
         publishedAt: article.publishedAt,
         source: article.source,
         author: "",
@@ -187,7 +187,7 @@ const News = () => {
             title: article.title,
             description: article.description || "",
             url: article.url,
-            urlToImage: "",
+            urlToImage: article.urlToImage || "",
             publishedAt: article.publishedAt,
             source: article.source,
             author: "",
@@ -240,7 +240,7 @@ const News = () => {
           title: article.title,
           description: article.description || "",
           url: article.url,
-          urlToImage: "",
+          urlToImage: article.urlToImage || "",
           publishedAt: article.publishedAt,
           source: article.source,
           author: "",
@@ -442,45 +442,62 @@ const News = () => {
               {articles.map((article, index) => (
                 <Card key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 shadow-lg hover:shadow-xl border border-blue-200 hover:border-blue-300">
                   <CardContent className="p-3">
-                    <div className="space-y-1">
-                      {/* Article Title Link */}
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
-                      >
-                        {article.title}
-                        <ExternalLink className="inline h-3 w-3 ml-1" />
-                      </a>
-                      
-                      {/* Article Description */}
-                      {article.description && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {article.description}
-                        </p>
+                    <div className="flex gap-3">
+                      {/* Article Image */}
+                      {article.urlToImage && (
+                        <div className="flex-shrink-0">
+                          <img
+                            src={article.urlToImage}
+                            alt={article.title}
+                            className="w-24 h-16 object-cover rounded-md"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
                       )}
                       
-                      {/* Meta Information */}
-                      <div className="flex items-center gap-3 text-xs text-foreground">
-                        <span className="font-bold">
-                          {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
-                        </span>
-                        <span>•</span>
-                        <span className="font-bold">{formatDate(article.publishedAt)}</span>
-                        <span>•</span>
-                        <span className="font-bold">{formatTime(article.publishedAt)}</span>
-                        <span>•</span>
-                        <span className="font-bold">{getTimeAgo(article.publishedAt)}</span>
-                        {article.paywalled && (
-                          <>
-                            <span>•</span>
-                            <Badge variant="secondary" className="text-xs flex items-center gap-1 h-4 px-1.5">
-                              <Lock className="h-2.5 w-2.5" />
-                              Premium
-                            </Badge>
-                          </>
+                      {/* Article Content */}
+                      <div className="flex-1 space-y-1">
+                        {/* Article Title Link */}
+                        <a
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
+                        >
+                          {article.title}
+                          <ExternalLink className="inline h-3 w-3 ml-1" />
+                        </a>
+                        
+                        {/* Article Description */}
+                        {article.description && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {article.description}
+                          </p>
                         )}
+                        
+                        {/* Meta Information */}
+                        <div className="flex items-center gap-3 text-xs text-foreground">
+                          <span className="font-bold">
+                            {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
+                          </span>
+                          <span>•</span>
+                          <span className="font-bold">{formatDate(article.publishedAt)}</span>
+                          <span>•</span>
+                          <span className="font-bold">{formatTime(article.publishedAt)}</span>
+                          <span>•</span>
+                          <span className="font-bold">{getTimeAgo(article.publishedAt)}</span>
+                          {article.paywalled && (
+                            <>
+                              <span>•</span>
+                              <Badge variant="secondary" className="text-xs flex items-center gap-1 h-4 px-1.5">
+                                <Lock className="h-2.5 w-2.5" />
+                                Premium
+                              </Badge>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>

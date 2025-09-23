@@ -60,6 +60,7 @@ async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<vo
             .update({
               title: article.title,
               description: article.description || null,
+              image_url: article.urlToImage || null,
               published_at: article.publishedAt,
               last_fetched: new Date().toISOString(),
               source_type: article.sourceType
@@ -90,6 +91,7 @@ async function cacheArticles(articles: NewsArticle[], supabase: any): Promise<vo
             title: article.title,
             description: article.description || null,
             url: article.url,
+            image_url: article.urlToImage || null,
             source: article.source,
             published_at: article.publishedAt,
             cached_at: new Date().toISOString(),

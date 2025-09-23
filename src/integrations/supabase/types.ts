@@ -19,6 +19,7 @@ export type Database = {
           cached_at: string
           description: string | null
           id: number
+          image_url: string | null
           last_fetched: string
           published_at: string
           source: string
@@ -30,6 +31,7 @@ export type Database = {
           cached_at?: string
           description?: string | null
           id?: number
+          image_url?: string | null
           last_fetched?: string
           published_at: string
           source: string
@@ -41,6 +43,7 @@ export type Database = {
           cached_at?: string
           description?: string | null
           id?: number
+          image_url?: string | null
           last_fetched?: string
           published_at?: string
           source?: string

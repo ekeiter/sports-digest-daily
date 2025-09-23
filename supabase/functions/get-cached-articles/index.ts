@@ -11,6 +11,7 @@ interface CachedArticle {
   title: string;
   description: string | null;
   url: string;
+  image_url: string | null;
   source: string;
   published_at: string;
   cached_at: string;
@@ -100,6 +101,7 @@ serve(async (req) => {
       title: article.title,
       description: article.description,
       url: article.url,
+      urlToImage: article.image_url,
       source: article.source,
       publishedAt: article.published_at,
       paywalled: paywalledDomains.some(domain => article.url.includes(domain)),
