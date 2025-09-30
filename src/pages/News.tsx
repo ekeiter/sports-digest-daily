@@ -334,8 +334,8 @@ const News = () => {
   // Show article viewer if an article is selected
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-background border-b">
+    <div className="h-screen flex flex-col bg-background">
+      <header className="flex-shrink-0 bg-background border-b">
         <div className="container mx-auto px-4 py-3 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
             <ArrowLeft className="h-4 w-4" />
@@ -397,8 +397,8 @@ const News = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-2 space-y-2 pb-safe">
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-2 space-y-2">
           {/* Info Banner */}
           {loadedPersonalized && (
             <Card className="bg-primary/5 border-primary/20">
@@ -511,7 +511,7 @@ const News = () => {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 };
