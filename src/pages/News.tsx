@@ -399,7 +399,6 @@ const News = () => {
 
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-2 space-y-2 pb-safe">
-        <div className="space-y-2">
           {/* Info Banner */}
           {loadedPersonalized && (
             <Card className="bg-primary/5 border-primary/20">
@@ -511,7 +510,6 @@ const News = () => {
               ))}
             </div>
           )}
-        </div>
         </div>
       </main>
     </div>
