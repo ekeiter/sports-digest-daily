@@ -8,6 +8,7 @@ import { ArrowLeft, Search, ExternalLink, Calendar, Clock, Lock } from "lucide-r
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { fetchUnifiedNews } from "@/lib/universalNewsAggregator";
+import ArticleViewer from "@/components/ArticleViewer";
 
 interface NewsArticle {
   title: string;
@@ -34,6 +35,7 @@ const News = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [totalResults, setTotalResults] = useState(0);
   const [loadedPersonalized, setLoadedPersonalized] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -329,6 +331,16 @@ const News = () => {
     return formatDate(dateString);
   };
 
+  // Show article viewer if an article is selected
+  if (selectedArticle) {
+    return (
+      <ArticleViewer 
+        article={selectedArticle} 
+        onBack={() => setSelectedArticle(null)} 
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -460,15 +472,12 @@ const News = () => {
                       {/* Article Content */}
                       <div className="flex-1 space-y-1">
                         {/* Article Title Link */}
-                        <a
-                          href={article.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
+                        <button
+                          onClick={() => setSelectedArticle(article)}
+                          className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2 text-left w-full"
                         >
                           {article.title}
-                          <ExternalLink className="inline h-3 w-3 ml-1" />
-                        </a>
+                        </button>
                         
                         {/* Article Description */}
                         {article.description && (
