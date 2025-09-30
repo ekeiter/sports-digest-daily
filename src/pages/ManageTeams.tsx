@@ -334,83 +334,97 @@ const ManageTeams = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="border-b bg-background sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/news')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Manage Teams</h1>
-          <div className="ml-auto flex items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-bold">Manage Teams</h1>
+          <div className="ml-auto flex items-center gap-2 md:gap-3">
             {selectedTeams.length > 0 && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={clearAllTeams}
                 disabled={saving}
+                className="text-xs md:text-sm"
               >
                 Clear All
               </Button>
             )}
-            <Badge variant="secondary">
-              {selectedTeams.length} team{selectedTeams.length !== 1 ? 's' : ''} selected
+            <Badge variant="secondary" className="text-xs">
+              {selectedTeams.length} team{selectedTeams.length !== 1 ? 's' : ''}
             </Badge>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {Object.entries(TEAMS_BY_LEAGUE).map(([league, teams]) => (
-            <Card key={league}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {league}
-                  <Badge variant="outline">
-                    {selectedTeams.filter(t => t.league === league).length} selected
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {teams.map((team) => {
-                    const isSelected = isTeamSelected(league, team);
-                    return (
-                      <Button
-                        key={team}
-                        variant={isSelected ? "default" : "outline"}
-                        className="justify-start h-auto py-2 px-3 text-left"
-                        onClick={() => toggleTeam(league, team)}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center gap-2">
-                            <img 
-                              src={getTeamLogo(team, league)}
-                              alt={`${team} logo`}
-                              className="w-6 h-6 object-contain flex-shrink-0"
-                              onError={(e) => {
-                                console.log(`Failed to load logo for ${team}`);
-                                // Hide the image if it fails to load
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
-                            <span className="text-sm">{team}</span>
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 py-6 pb-20">
+          <div className="space-y-6">
+            {Object.entries(TEAMS_BY_LEAGUE).map(([league, teams]) => (
+              <Card key={league}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    {league}
+                    <Badge variant="outline" className="text-xs">
+                      {selectedTeams.filter(t => t.league === league).length} selected
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {teams.map((team) => {
+                      const isSelected = isTeamSelected(league, team);
+                      return (
+                        <Button
+                          key={team}
+                          variant={isSelected ? "default" : "outline"}
+                          className="justify-start h-auto py-3 px-3 text-left w-full"
+                          onClick={() => toggleTeam(league, team)}
+                        >
+                          <div className="flex items-center justify-between w-full min-w-0">
+                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                              <img 
+                                src={getTeamLogo(team, league)}
+                                alt={`${team} logo`}
+                                className="w-6 h-6 object-contain flex-shrink-0"
+                                onError={(e) => {
+                                  console.log(`Failed to load logo for ${team}`);
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                              <span className="text-sm truncate">{team}</span>
+                            </div>
+                            {isSelected ? (
+                              <X className="h-4 w-4 ml-2 flex-shrink-0" />
+                            ) : (
+                              <Plus className="h-4 w-4 ml-2 flex-shrink-0" />
+                            )}
                           </div>
-                          {isSelected ? (
-                            <X className="h-3 w-3 ml-2 flex-shrink-0" />
-                          ) : (
-                            <Plus className="h-3 w-3 ml-2 flex-shrink-0" />
-                          )}
-                        </div>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </main>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 safe-area-pb">
+        <div className="container mx-auto">
+          <Button 
+            onClick={() => navigate('/news')} 
+            className="w-full"
+            size="lg"
+          >
+            Continue to News
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
