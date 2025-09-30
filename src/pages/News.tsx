@@ -334,17 +334,18 @@ const News = () => {
   // Show article viewer if an article is selected
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="sticky top-0 z-10 bg-background border-b">
         <div className="container mx-auto px-4 py-3 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Sports News</h1>
-          <div className="ml-auto flex items-center gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">Sports News</h1>
+          <div className="ml-auto flex items-center gap-2 sm:gap-4">
             {!loadedPersonalized && (
               <Button 
                 variant="outline" 
+                size="sm"
                 onClick={handleRefreshPersonalized}
                 disabled={loading}
               >
@@ -353,6 +354,7 @@ const News = () => {
             )}
             <Button 
               variant="outline" 
+              size="sm"
               onClick={() => {
                 if (loadedPersonalized) {
                   // Get current topics and refresh from APIs
@@ -386,16 +388,17 @@ const News = () => {
               }}
               disabled={loading}
             >
-              🔄 Refresh
+              🔄
             </Button>
-            <Badge variant="secondary">
-              {totalResults.toLocaleString()} articles found
+            <Badge variant="secondary" className="text-xs">
+              {totalResults.toLocaleString()}
             </Badge>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-2">
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 py-2 space-y-2 pb-safe">
         <div className="space-y-2">
           {/* Info Banner */}
           {loadedPersonalized && (
@@ -508,6 +511,7 @@ const News = () => {
               ))}
             </div>
           )}
+        </div>
         </div>
       </main>
     </div>
