@@ -381,14 +381,37 @@ const ManageTeams = () => {
                         variant="ghost"
                         className="w-full justify-between p-6 h-auto hover:bg-accent"
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-semibold">{league}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {leagueSelectedTeams.length} selected
-                          </Badge>
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <span className="text-lg font-semibold flex-shrink-0">{league}</span>
+                          
+                          {/* Selected teams displayed inline */}
+                          {leagueSelectedTeams.length > 0 ? (
+                            <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+                              {leagueSelectedTeams.map((team) => (
+                                <Badge 
+                                  key={team.id} 
+                                  variant="secondary" 
+                                  className="flex items-center gap-1.5 py-1 px-2"
+                                >
+                                  <img 
+                                    src={getTeamLogo(team.team_name, team.league)}
+                                    alt={`${team.team_name} logo`}
+                                    className="w-4 h-4 object-contain"
+                                    onError={(e) => e.currentTarget.style.display = 'none'}
+                                  />
+                                  <span className="text-xs truncate max-w-[120px]">{team.team_name}</span>
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : (
+                            <Badge variant="outline" className="text-xs flex-shrink-0">
+                              No teams selected
+                            </Badge>
+                          )}
                         </div>
+                        
                         <ChevronDown 
-                          className={`h-5 w-5 transition-transform duration-200 ${
+                          className={`h-5 w-5 flex-shrink-0 ml-2 transition-transform duration-200 ${
                             openLeague === league ? 'transform rotate-180' : ''
                           }`}
                         />
