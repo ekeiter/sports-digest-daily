@@ -418,40 +418,7 @@ const ManageTeams = () => {
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <CardContent className="pt-0 space-y-4">
-                        {/* Selected Teams for this League */}
-                        {leagueSelectedTeams.length > 0 && (
-                          <div className="pb-4 border-b">
-                            <p className="text-sm font-medium mb-2">Your {league} Teams:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {leagueSelectedTeams.map((team) => (
-                                <Badge 
-                                  key={team.id} 
-                                  variant="secondary" 
-                                  className="flex items-center gap-2 py-1.5 px-3"
-                                >
-                                  <img 
-                                    src={getTeamLogo(team.team_name, team.league)}
-                                    alt={`${team.team_name} logo`}
-                                    className="w-4 h-4 object-contain"
-                                    onError={(e) => e.currentTarget.style.display = 'none'}
-                                  />
-                                  <span className="text-xs">{team.team_name}</span>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleTeam(team.league, team.team_name);
-                                    }}
-                                    className="ml-1 hover:text-destructive"
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
+                      <CardContent className="pt-0">
                         {/* All Teams Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                           {teams.map((team) => {
