@@ -456,7 +456,7 @@ const ManageTeams = () => {
                                     <img 
                                       src={getTeamLogo(team, league)}
                                       alt={`${team} logo`}
-                                      className="w-5 h-5 object-contain flex-shrink-0"
+                                      className="w-7 h-7 object-contain flex-shrink-0"
                                       onError={(e) => {
                                         console.log(`Failed to load logo for ${team}`);
                                         e.currentTarget.style.display = 'none';
