@@ -420,33 +420,33 @@ const ManageTeams = () => {
                     <CollapsibleContent>
                       <CardContent className="pt-0">
                         {/* All Teams Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                           {teams.map((team) => {
                             const isSelected = isTeamSelected(league, team);
                             return (
                               <Button
                                 key={team}
                                 variant={isSelected ? "default" : "outline"}
-                                className="justify-start h-auto py-3 px-3 text-left w-full"
+                                className="justify-start h-14 py-2 px-2 text-left w-full"
                                 onClick={() => toggleTeam(league, team)}
                               >
                                 <div className="flex items-center justify-between w-full min-w-0">
-                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
                                     <img 
                                       src={getTeamLogo(team, league)}
                                       alt={`${team} logo`}
-                                      className="w-6 h-6 object-contain flex-shrink-0"
+                                      className="w-5 h-5 object-contain flex-shrink-0"
                                       onError={(e) => {
                                         console.log(`Failed to load logo for ${team}`);
                                         e.currentTarget.style.display = 'none';
                                       }}
                                     />
-                                    <span className="text-sm truncate">{team}</span>
+                                    <span className="text-xs truncate">{team}</span>
                                   </div>
                                   {isSelected ? (
-                                    <X className="h-4 w-4 ml-2 flex-shrink-0" />
+                                    <X className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
                                   ) : (
-                                    <Plus className="h-4 w-4 ml-2 flex-shrink-0" />
+                                    <Plus className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
                                   )}
                                 </div>
                               </Button>
