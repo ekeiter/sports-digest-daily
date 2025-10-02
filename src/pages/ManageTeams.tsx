@@ -307,6 +307,11 @@ const getTeamLogo = (teamName: string, league: string): string => {
   }
 
   // Using ESPN's logo API with proper team codes
+  // College sports (NCAAF) use a different URL path
+  if (league === 'NCAAF') {
+    return `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamCode}.png`;
+  }
+  
   return `https://a.espncdn.com/i/teamlogos/${league.toLowerCase()}/500/${teamCode}.png`;
 };
 
