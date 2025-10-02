@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Plus, X, ChevronDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Plus, X, ChevronDown, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -419,8 +420,37 @@ const ManageTeams = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [openLeague, setOpenLeague] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Filter teams across all leagues based on search query
+  const getSearchResults = () => {
+    if (searchQuery.length < 3) return [];
+    
+    const results: Array<{ team: string; league: string }> = [];
+    const lowerQuery = searchQuery.toLowerCase();
+    
+    Object.entries(TEAMS_BY_LEAGUE).forEach(([league, teams]) => {
+      teams.forEach((team) => {
+        if (team.toLowerCase().includes(lowerQuery)) {
+          results.push({ team, league });
+        }
+      });
+    });
+    
+    return results;
+  };
+
+  // Update search results visibility when query changes
+  useEffect(() => {
+    if (searchQuery.length >= 3) {
+      setShowSearchResults(true);
+    } else if (searchQuery.length === 0) {
+      setShowSearchResults(false);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     loadUserTeams();
@@ -572,114 +602,191 @@ const ManageTeams = () => {
             <Badge variant="secondary" className="text-xs">
               {selectedTeams.length} team{selectedTeams.length !== 1 ? 's' : ''}
             </Badge>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search teams..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-6 pb-20">
-          {/* Collapsible League Sections */}
-          <div className="space-y-4">
-            {Object.entries(TEAMS_BY_LEAGUE).map(([league, teams]) => {
-              const leagueSelectedTeams = selectedTeams.filter(t => t.league === league);
-              
-              return (
-                <Collapsible 
-                  key={league}
-                  open={openLeague === league}
-                  onOpenChange={(isOpen) => setOpenLeague(isOpen ? league : null)}
+          {showSearchResults ? (
+            /* Search Results View */
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Search Results</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setShowSearchResults(false);
+                  }}
                 >
-                  <Card>
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between p-6 h-auto hover:bg-accent"
-                      >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <img 
-                            src={getLeagueLogo(league)}
-                            alt={`${league} logo`}
-                            className="w-10 h-10 object-contain flex-shrink-0"
-                            onError={(e) => e.currentTarget.style.display = 'none'}
-                          />
-                          <span className="text-lg font-semibold flex-shrink-0">{league}</span>
-                          
-                          {/* Selected teams displayed inline */}
-                          {leagueSelectedTeams.length > 0 ? (
-                            <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-                              {leagueSelectedTeams.map((team) => (
-                                <Badge 
-                                  key={team.id} 
-                                  variant="secondary" 
-                                  className="flex items-center gap-1.5 py-1 px-2"
-                                >
-                                  <img 
-                                    src={getTeamLogo(team.team_name, team.league)}
-                                    alt={`${team.team_name} logo`}
-                                    className="w-4 h-4 object-contain"
-                                    onError={(e) => e.currentTarget.style.display = 'none'}
-                                  />
-                                  <span className="text-xs truncate max-w-[120px]">{team.team_name}</span>
-                                </Badge>
-                              ))}
+                  <X className="h-4 w-4 mr-2" />
+                  Close
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {getSearchResults().length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {getSearchResults().map(({ team, league }) => {
+                      const isSelected = isTeamSelected(league, team);
+                      return (
+                        <Button
+                          key={`${league}-${team}`}
+                          variant={isSelected ? "default" : "outline"}
+                          className="justify-start h-auto py-3 px-3 text-left w-full"
+                          onClick={() => toggleTeam(league, team)}
+                        >
+                          <div className="flex flex-col gap-1 w-full min-w-0">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <img 
+                                src={getTeamLogo(team, league)}
+                                alt={`${team} logo`}
+                                className="w-6 h-6 object-contain flex-shrink-0"
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
+                              <span className="text-sm font-medium truncate flex-1">{team}</span>
+                              {isSelected ? (
+                                <X className="h-4 w-4 flex-shrink-0" />
+                              ) : (
+                                <Plus className="h-4 w-4 flex-shrink-0" />
+                              )}
                             </div>
-                          ) : (
-                            <Badge variant="outline" className="text-xs flex-shrink-0">
-                              No teams selected
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <ChevronDown 
-                          className={`h-5 w-5 flex-shrink-0 ml-2 transition-transform duration-200 ${
-                            openLeague === league ? 'transform rotate-180' : ''
-                          }`}
-                        />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <CardContent className="pt-0">
-                        {/* All Teams Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                          {teams.map((team) => {
-                            const isSelected = isTeamSelected(league, team);
-                            return (
-                              <Button
-                                key={team}
-                                variant={isSelected ? "default" : "outline"}
-                                className="justify-start h-14 py-2 px-2 text-left w-full"
-                                onClick={() => toggleTeam(league, team)}
-                              >
-                                <div className="flex items-center justify-between w-full min-w-0">
-                                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 ml-8">
+                              <img 
+                                src={getLeagueLogo(league)}
+                                alt={`${league} logo`}
+                                className="w-4 h-4 object-contain"
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
+                              <span className="text-xs text-muted-foreground">{league}</span>
+                            </div>
+                          </div>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No teams found matching "{searchQuery}"</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            /* Normal Collapsible League Sections */
+            <div className="space-y-4">
+              {Object.entries(TEAMS_BY_LEAGUE).map(([league, teams]) => {
+                const leagueSelectedTeams = selectedTeams.filter(t => t.league === league);
+                
+                return (
+                  <Collapsible 
+                    key={league}
+                    open={openLeague === league}
+                    onOpenChange={(isOpen) => setOpenLeague(isOpen ? league : null)}
+                  >
+                    <Card>
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-between p-6 h-auto hover:bg-accent"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <img 
+                              src={getLeagueLogo(league)}
+                              alt={`${league} logo`}
+                              className="w-10 h-10 object-contain flex-shrink-0"
+                              onError={(e) => e.currentTarget.style.display = 'none'}
+                            />
+                            <span className="text-lg font-semibold flex-shrink-0">{league}</span>
+                            
+                            {/* Selected teams displayed inline */}
+                            {leagueSelectedTeams.length > 0 ? (
+                              <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+                                {leagueSelectedTeams.map((team) => (
+                                  <Badge 
+                                    key={team.id} 
+                                    variant="secondary" 
+                                    className="flex items-center gap-1.5 py-1 px-2"
+                                  >
                                     <img 
-                                      src={getTeamLogo(team, league)}
-                                      alt={`${team} logo`}
-                                      className="w-7 h-7 object-contain flex-shrink-0"
-                                      onError={(e) => {
-                                        console.log(`Failed to load logo for ${team}`);
-                                        e.currentTarget.style.display = 'none';
-                                      }}
+                                      src={getTeamLogo(team.team_name, team.league)}
+                                      alt={`${team.team_name} logo`}
+                                      className="w-4 h-4 object-contain"
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
                                     />
-                                    <span className="text-xs truncate">{team}</span>
+                                    <span className="text-xs truncate max-w-[120px]">{team.team_name}</span>
+                                  </Badge>
+                                ))}
+                              </div>
+                            ) : (
+                              <Badge variant="outline" className="text-xs flex-shrink-0">
+                                No teams selected
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <ChevronDown 
+                            className={`h-5 w-5 flex-shrink-0 ml-2 transition-transform duration-200 ${
+                              openLeague === league ? 'transform rotate-180' : ''
+                            }`}
+                          />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <CardContent className="pt-0">
+                          {/* All Teams Grid */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                            {teams.map((team) => {
+                              const isSelected = isTeamSelected(league, team);
+                              return (
+                                <Button
+                                  key={team}
+                                  variant={isSelected ? "default" : "outline"}
+                                  className="justify-start h-14 py-2 px-2 text-left w-full"
+                                  onClick={() => toggleTeam(league, team)}
+                                >
+                                  <div className="flex items-center justify-between w-full min-w-0">
+                                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                      <img 
+                                        src={getTeamLogo(team, league)}
+                                        alt={`${team} logo`}
+                                        className="w-7 h-7 object-contain flex-shrink-0"
+                                        onError={(e) => {
+                                          console.log(`Failed to load logo for ${team}`);
+                                          e.currentTarget.style.display = 'none';
+                                        }}
+                                      />
+                                      <span className="text-xs truncate">{team}</span>
+                                    </div>
+                                    {isSelected ? (
+                                      <X className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
+                                    ) : (
+                                      <Plus className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
+                                    )}
                                   </div>
-                                  {isSelected ? (
-                                    <X className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
-                                  ) : (
-                                    <Plus className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
-                                  )}
-                                </div>
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </CardContent>
-                    </CollapsibleContent>
-                  </Card>
-                </Collapsible>
-              );
-            })}
-          </div>
+                                </Button>
+                              );
+                            })}
+                          </div>
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Card>
+                  </Collapsible>
+                );
+              })}
+            </div>
+          )}
         </div>
       </main>
 
