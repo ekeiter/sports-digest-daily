@@ -598,7 +598,7 @@ const ManageTeams = () => {
                           <img 
                             src={getLeagueLogo(league)}
                             alt={`${league} logo`}
-                            className="w-6 h-6 object-contain flex-shrink-0"
+                            className="w-10 h-10 object-contain flex-shrink-0"
                             onError={(e) => e.currentTarget.style.display = 'none'}
                           />
                           <span className="text-lg font-semibold flex-shrink-0">{league}</span>
