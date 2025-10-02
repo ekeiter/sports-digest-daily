@@ -8,6 +8,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
+// Function to get league logo URL
+const getLeagueLogo = (league: string): string => {
+  const leagueLogos: { [key: string]: string } = {
+    MLB: "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+    NFL: "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
+    NBA: "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
+    NHL: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
+    WNBA: "https://a.espncdn.com/i/teamlogos/leagues/500/wnba.png",
+    NCAAF: "https://a.espncdn.com/i/teamlogos/leagues/500/ncaa.png"
+  };
+  return leagueLogos[league] || "";
+};
+
 // Function to get team logo URL
 const getTeamLogo = (teamName: string, league: string): string => {
   // Create a mapping for team abbreviations/codes for better logo URLs
@@ -582,6 +595,12 @@ const ManageTeams = () => {
                         className="w-full justify-between p-6 h-auto hover:bg-accent"
                       >
                         <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <img 
+                            src={getLeagueLogo(league)}
+                            alt={`${league} logo`}
+                            className="w-6 h-6 object-contain flex-shrink-0"
+                            onError={(e) => e.currentTarget.style.display = 'none'}
+                          />
                           <span className="text-lg font-semibold flex-shrink-0">{league}</span>
                           
                           {/* Selected teams displayed inline */}
