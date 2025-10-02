@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ncaaLogo from "@/assets/ncaa-logo.png";
+import ncaamLogo from "@/assets/ncaam-logo.png";
 
 // Function to get league logo URL
 const getLeagueLogo = (league: string): string => {
@@ -19,7 +20,7 @@ const getLeagueLogo = (league: string): string => {
     NHL: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
     WNBA: "https://a.espncdn.com/i/teamlogos/leagues/500/wnba.png",
     NCAAF: ncaaLogo,
-    NCAAM: ncaaLogo
+    NCAAM: ncaamLogo
   };
   return leagueLogos[league] || "";
 };
