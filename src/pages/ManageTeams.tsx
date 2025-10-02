@@ -144,6 +144,21 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Vegas Golden Knights": "vgk",
       "Washington Capitals": "wsh",
       "Winnipeg Jets": "wpg"
+    },
+    WNBA: {
+      "Atlanta Dream": "atl",
+      "Chicago Sky": "chi",
+      "Connecticut Sun": "conn",
+      "Dallas Wings": "dal",
+      "Indiana Fever": "ind",
+      "Las Vegas Aces": "lv",
+      "Los Angeles Sparks": "la",
+      "Minnesota Lynx": "min",
+      "New York Liberty": "ny",
+      "Phoenix Mercury": "phx",
+      "Seattle Storm": "sea",
+      "Washington Mystics": "wsh",
+      "Golden State Valkyries": "gs"
     }
   };
 
@@ -197,6 +212,12 @@ const TEAMS_BY_LEAGUE = {
     "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks", "Seattle Kraken",
     "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs", "Utah Mammoth",
     "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets"
+  ],
+  WNBA: [
+    "Atlanta Dream", "Chicago Sky", "Connecticut Sun", "Dallas Wings",
+    "Golden State Valkyries", "Indiana Fever", "Las Vegas Aces", "Los Angeles Sparks",
+    "Minnesota Lynx", "New York Liberty", "Phoenix Mercury", "Seattle Storm",
+    "Washington Mystics"
   ]
 };
 
