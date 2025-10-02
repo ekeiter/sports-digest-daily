@@ -107,7 +107,7 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Sacramento Kings": "sac",
       "San Antonio Spurs": "sa",
       "Toronto Raptors": "tor",
-      "Utah Jazz": "uta",
+      "Utah Jazz": "utah",
       "Washington Wizards": "wsh"
     },
     NHL: {
@@ -135,10 +135,10 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Ottawa Senators": "ott",
       "Philadelphia Flyers": "phi",
       "Pittsburgh Penguins": "pit",
-      "San Jose Sharks": "sjs",
+      "San Jose Sharks": "sj",
       "Seattle Kraken": "sea",
       "St. Louis Blues": "stl",
-      "Tampa Bay Lightning": "tbl",
+      "Tampa Bay Lightning": "tb",
       "Toronto Maple Leafs": "tor",
       "Vancouver Canucks": "van",
       "Vegas Golden Knights": "vgk",
@@ -189,13 +189,13 @@ const TEAMS_BY_LEAGUE = {
     "Utah Jazz", "Washington Wizards"
   ],
   NHL: [
-    "Anaheim Ducks", "Boston Bruins", "Buffalo Sabres", "Utah Mammoth",
-    "Calgary Flames", "Carolina Hurricanes", "Chicago Blackhawks", "Colorado Avalanche",
-    "Columbus Blue Jackets", "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers",
-    "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens",
-    "Nashville Predators", "New Jersey Devils", "New York Islanders", "New York Rangers",
-    "Ottawa Senators", "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks",
-    "Seattle Kraken", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs",
+    "Anaheim Ducks", "Boston Bruins", "Buffalo Sabres", "Calgary Flames",
+    "Carolina Hurricanes", "Chicago Blackhawks", "Colorado Avalanche", "Columbus Blue Jackets",
+    "Dallas Stars", "Detroit Red Wings", "Edmonton Oilers", "Florida Panthers",
+    "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens", "Nashville Predators",
+    "New Jersey Devils", "New York Islanders", "New York Rangers", "Ottawa Senators",
+    "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks", "Seattle Kraken",
+    "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs", "Utah Mammoth",
     "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets"
   ]
 };
