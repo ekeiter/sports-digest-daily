@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ncaaLogo from "@/assets/ncaa-logo.png";
 import ncaamLogo from "@/assets/ncaam-logo.png";
+import mlsLogo from "@/assets/mls-logo.png";
 
 // Function to get league logo URL
 const getLeagueLogo = (league: string): string => {
@@ -20,7 +21,8 @@ const getLeagueLogo = (league: string): string => {
     NHL: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
     WNBA: "https://a.espncdn.com/i/teamlogos/leagues/500/wnba.png",
     NCAAF: ncaaLogo,
-    NCAAM: ncaamLogo
+    NCAAM: ncaamLogo,
+    MLS: mlsLogo
   };
   return leagueLogos[league] || "";
 };
@@ -875,6 +877,16 @@ const TEAMS_BY_LEAGUE = {
     "William & Mary Tribe", "Winthrop Eagles", "Wisconsin Badgers", "Wofford Terriers",
     "Wright State Raiders", "Wyoming Cowboys", "Xavier Musketeers", "Yale Bulldogs",
     "Youngstown State Penguins"
+  ],
+  MLS: [
+    "Atlanta United FC", "Austin FC", "CF Montréal", "Charlotte FC",
+    "Chicago Fire FC", "Colorado Rapids", "Columbus Crew", "D.C. United",
+    "FC Cincinnati", "FC Dallas", "Houston Dynamo FC", "Inter Miami CF",
+    "LA Galaxy", "Los Angeles FC", "Minnesota United FC", "Nashville SC",
+    "New England Revolution", "New York City FC", "New York Red Bulls", "Orlando City",
+    "Philadelphia Union", "Portland Timbers", "Real Salt Lake", "San Diego FC",
+    "San Jose Earthquakes", "Seattle Sounders FC", "Sporting Kansas City", "St. Louis City SC",
+    "Toronto FC", "Vancouver Whitecaps FC"
   ]
 };
 
