@@ -12,6 +12,38 @@ import ncaaLogo from "@/assets/ncaa-logo.png";
 import ncaamLogo from "@/assets/ncaam-logo.png";
 import mlsLogo from "@/assets/mls-logo.png";
 
+// Import MLS team logos
+import atlantaUnitedLogo from "@/assets/team-logos/atlanta-united.png";
+import austinFcLogo from "@/assets/team-logos/austin-fc.png";
+import charlotteFcLogo from "@/assets/team-logos/charlotte-fc.png";
+import chicagoFireLogo from "@/assets/team-logos/chicago-fire.png";
+import coloradoRapidsLogo from "@/assets/team-logos/colorado-rapids.png";
+import columbusCrewLogo from "@/assets/team-logos/columbus-crew.png";
+import fcCincinnatiLogo from "@/assets/team-logos/fc-cincinnati.png";
+import fcDallasLogo from "@/assets/team-logos/fc-dallas.png";
+import dcUnitedLogo from "@/assets/team-logos/dc-united.png";
+import houstonDynamoLogo from "@/assets/team-logos/houston-dynamo.png";
+import interMiamiLogo from "@/assets/team-logos/inter-miami.png";
+import laGalaxyLogo from "@/assets/team-logos/la-galaxy.png";
+import lafcLogo from "@/assets/team-logos/lafc.png";
+import cfMontrealLogo from "@/assets/team-logos/cf-montreal.png";
+import minnesotaUnitedLogo from "@/assets/team-logos/minnesota-united.png";
+import nashvilleScLogo from "@/assets/team-logos/nashville-sc.png";
+import newEnglandRevolutionLogo from "@/assets/team-logos/new-england-revolution.png";
+import nycfcLogo from "@/assets/team-logos/nycfc.png";
+import nyRedBullsLogo from "@/assets/team-logos/ny-red-bulls.png";
+import orlandoCityLogo from "@/assets/team-logos/orlando-city.png";
+import philadelphiaUnionLogo from "@/assets/team-logos/philadelphia-union.png";
+import portlandTimbersLogo from "@/assets/team-logos/portland-timbers.png";
+import realSaltLakeLogo from "@/assets/team-logos/real-salt-lake.png";
+import sanDiegoFcLogo from "@/assets/team-logos/san-diego-fc.png";
+import sanJoseEarthquakesLogo from "@/assets/team-logos/san-jose-earthquakes.png";
+import seattleSoundersLogo from "@/assets/team-logos/seattle-sounders.png";
+import sportingKcLogo from "@/assets/team-logos/sporting-kc.png";
+import stLouisCityLogo from "@/assets/team-logos/st-louis-city.png";
+import torontoFcLogo from "@/assets/team-logos/toronto-fc.png";
+import vancouverWhitecapsLogo from "@/assets/team-logos/vancouver-whitecaps.png";
+
 // Function to get league logo URL
 const getLeagueLogo = (league: string): string => {
   const leagueLogos: { [key: string]: string } = {
@@ -27,8 +59,47 @@ const getLeagueLogo = (league: string): string => {
   return leagueLogos[league] || "";
 };
 
+// MLS team logo mapping
+const mlsTeamLogos: { [team: string]: string } = {
+  "Atlanta United FC": atlantaUnitedLogo,
+  "Austin FC": austinFcLogo,
+  "CF Montréal": cfMontrealLogo,
+  "Charlotte FC": charlotteFcLogo,
+  "Chicago Fire FC": chicagoFireLogo,
+  "Colorado Rapids": coloradoRapidsLogo,
+  "Columbus Crew": columbusCrewLogo,
+  "D.C. United": dcUnitedLogo,
+  "FC Cincinnati": fcCincinnatiLogo,
+  "FC Dallas": fcDallasLogo,
+  "Houston Dynamo FC": houstonDynamoLogo,
+  "Inter Miami CF": interMiamiLogo,
+  "LA Galaxy": laGalaxyLogo,
+  "Los Angeles FC": lafcLogo,
+  "Minnesota United FC": minnesotaUnitedLogo,
+  "Nashville SC": nashvilleScLogo,
+  "New England Revolution": newEnglandRevolutionLogo,
+  "New York City FC": nycfcLogo,
+  "New York Red Bulls": nyRedBullsLogo,
+  "Orlando City": orlandoCityLogo,
+  "Philadelphia Union": philadelphiaUnionLogo,
+  "Portland Timbers": portlandTimbersLogo,
+  "Real Salt Lake": realSaltLakeLogo,
+  "San Diego FC": sanDiegoFcLogo,
+  "San Jose Earthquakes": sanJoseEarthquakesLogo,
+  "Seattle Sounders FC": seattleSoundersLogo,
+  "Sporting Kansas City": sportingKcLogo,
+  "St. Louis City SC": stLouisCityLogo,
+  "Toronto FC": torontoFcLogo,
+  "Vancouver Whitecaps FC": vancouverWhitecapsLogo
+};
+
 // Function to get team logo URL
 const getTeamLogo = (teamName: string, league: string): string => {
+  // MLS teams use local imported logos
+  if (league === 'MLS') {
+    return mlsTeamLogos[teamName] || "";
+  }
+
   // Create a mapping for team abbreviations/codes for better logo URLs
   const teamMappings: { [key: string]: { [team: string]: string } } = {
     MLB: {
@@ -683,38 +754,6 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Xavier Musketeers": "2752",
       "Yale Bulldogs": "43",
       "Youngstown State Penguins": "2755"
-    },
-    MLS: {
-      "Atlanta United FC": "9724",
-      "Austin FC": "15149",
-      "CF Montréal": "9708",
-      "Charlotte FC": "15607",
-      "Chicago Fire FC": "9716",
-      "Colorado Rapids": "9715",
-      "Columbus Crew": "9709",
-      "D.C. United": "9721",
-      "FC Cincinnati": "9714",
-      "FC Dallas": "9717",
-      "Houston Dynamo FC": "9719",
-      "Inter Miami CF": "9726",
-      "LA Galaxy": "9707",
-      "Los Angeles FC": "11238",
-      "Minnesota United FC": "9729",
-      "Nashville SC": "14281",
-      "New England Revolution": "9725",
-      "New York City FC": "9668",
-      "New York Red Bulls": "9773",
-      "Orlando City": "9678",
-      "Philadelphia Union": "9779",
-      "Portland Timbers": "9daemon",
-      "Real Salt Lake": "9771",
-      "San Diego FC": "20009",
-      "San Jose Earthquakes": "9777",
-      "Seattle Sounders FC": "9748",
-      "Sporting Kansas City": "9776",
-      "St. Louis City SC": "16158",
-      "Toronto FC": "9780",
-      "Vancouver Whitecaps FC": "9781"
     }
   };
 
@@ -728,11 +767,6 @@ const getTeamLogo = (teamName: string, league: string): string => {
   // College sports (NCAAF, NCAAM) use numeric IDs with the NCAA path
   if (league === 'NCAAF' || league === 'NCAAM') {
     return `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamCode}.png`;
-  }
-  
-  // MLS uses numeric team IDs with soccer path
-  if (league === 'MLS') {
-    return `https://a.espncdn.com/i/teamlogos/soccer/500/${teamCode}.png`;
   }
   
   return `https://a.espncdn.com/i/teamlogos/${league.toLowerCase()}/500/${teamCode}.png`;
