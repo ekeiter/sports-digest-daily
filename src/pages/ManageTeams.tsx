@@ -730,6 +730,11 @@ const getTeamLogo = (teamName: string, league: string): string => {
     return `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamCode}.png`;
   }
   
+  // MLS uses soccer path
+  if (league === 'MLS') {
+    return `https://a.espncdn.com/i/teamlogos/soccer/500/${teamCode}.png`;
+  }
+  
   return `https://a.espncdn.com/i/teamlogos/${league.toLowerCase()}/500/${teamCode}.png`;
 };
 
