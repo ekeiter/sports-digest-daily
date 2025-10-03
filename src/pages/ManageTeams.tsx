@@ -683,6 +683,38 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Xavier Musketeers": "2752",
       "Yale Bulldogs": "43",
       "Youngstown State Penguins": "2755"
+    },
+    MLS: {
+      "Atlanta United FC": "atl",
+      "Austin FC": "atx",
+      "CF Montréal": "mtl",
+      "Charlotte FC": "clt",
+      "Chicago Fire FC": "chi",
+      "Colorado Rapids": "col",
+      "Columbus Crew": "clb",
+      "D.C. United": "dc",
+      "FC Cincinnati": "cin",
+      "FC Dallas": "dal",
+      "Houston Dynamo FC": "hou",
+      "Inter Miami CF": "mia",
+      "LA Galaxy": "lag",
+      "Los Angeles FC": "lafc",
+      "Minnesota United FC": "min",
+      "Nashville SC": "nsh",
+      "New England Revolution": "ne",
+      "New York City FC": "nyc",
+      "New York Red Bulls": "ny",
+      "Orlando City": "orl",
+      "Philadelphia Union": "phi",
+      "Portland Timbers": "por",
+      "Real Salt Lake": "rsl",
+      "San Diego FC": "sd",
+      "San Jose Earthquakes": "sj",
+      "Seattle Sounders FC": "sea",
+      "Sporting Kansas City": "skc",
+      "St. Louis City SC": "stl",
+      "Toronto FC": "tor",
+      "Vancouver Whitecaps FC": "van"
     }
   };
 
