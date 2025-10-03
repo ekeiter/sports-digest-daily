@@ -685,36 +685,36 @@ const getTeamLogo = (teamName: string, league: string): string => {
       "Youngstown State Penguins": "2755"
     },
     MLS: {
-      "Atlanta United FC": "atl",
-      "Austin FC": "atx",
-      "CF Montréal": "mtl",
-      "Charlotte FC": "clt",
-      "Chicago Fire FC": "chi",
-      "Colorado Rapids": "col",
-      "Columbus Crew": "clb",
-      "D.C. United": "dc",
-      "FC Cincinnati": "cin",
-      "FC Dallas": "dal",
-      "Houston Dynamo FC": "hou",
-      "Inter Miami CF": "mia",
-      "LA Galaxy": "lag",
-      "Los Angeles FC": "lafc",
-      "Minnesota United FC": "min",
-      "Nashville SC": "nsh",
-      "New England Revolution": "ne",
-      "New York City FC": "nyc",
-      "New York Red Bulls": "ny",
-      "Orlando City": "orl",
-      "Philadelphia Union": "phi",
-      "Portland Timbers": "por",
-      "Real Salt Lake": "rsl",
-      "San Diego FC": "sd",
-      "San Jose Earthquakes": "sj",
-      "Seattle Sounders FC": "sea",
-      "Sporting Kansas City": "skc",
-      "St. Louis City SC": "stl",
-      "Toronto FC": "tor",
-      "Vancouver Whitecaps FC": "van"
+      "Atlanta United FC": "9724",
+      "Austin FC": "15149",
+      "CF Montréal": "9708",
+      "Charlotte FC": "15607",
+      "Chicago Fire FC": "9716",
+      "Colorado Rapids": "9715",
+      "Columbus Crew": "9709",
+      "D.C. United": "9721",
+      "FC Cincinnati": "9714",
+      "FC Dallas": "9717",
+      "Houston Dynamo FC": "9719",
+      "Inter Miami CF": "9726",
+      "LA Galaxy": "9707",
+      "Los Angeles FC": "11238",
+      "Minnesota United FC": "9729",
+      "Nashville SC": "14281",
+      "New England Revolution": "9725",
+      "New York City FC": "9668",
+      "New York Red Bulls": "9773",
+      "Orlando City": "9678",
+      "Philadelphia Union": "9779",
+      "Portland Timbers": "9daemon",
+      "Real Salt Lake": "9771",
+      "San Diego FC": "20009",
+      "San Jose Earthquakes": "9777",
+      "Seattle Sounders FC": "9748",
+      "Sporting Kansas City": "9776",
+      "St. Louis City SC": "16158",
+      "Toronto FC": "9780",
+      "Vancouver Whitecaps FC": "9781"
     }
   };
 
@@ -730,7 +730,7 @@ const getTeamLogo = (teamName: string, league: string): string => {
     return `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamCode}.png`;
   }
   
-  // MLS uses soccer path
+  // MLS uses numeric team IDs with soccer path
   if (league === 'MLS') {
     return `https://a.espncdn.com/i/teamlogos/soccer/500/${teamCode}.png`;
   }
