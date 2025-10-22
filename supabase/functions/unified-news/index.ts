@@ -282,6 +282,13 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
           const linkMatch = item.match(/<link[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/i);
           const pubDateMatch = item.match(/<pubDate[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/i);
           const descMatch = item.match(/<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/description>/i);
+          
+          // Extract image from various RSS image formats
+          const mediaContentMatch = item.match(/<media:content[^>]*url=["'](.*?)["']/i);
+          const enclosureMatch = item.match(/<enclosure[^>]*url=["'](.*?)["']/i);
+          const mediaThumbnailMatch = item.match(/<media:thumbnail[^>]*url=["'](.*?)["']/i);
+          
+          const imageUrl = mediaContentMatch?.[1] || enclosureMatch?.[1] || mediaThumbnailMatch?.[1] || null;
 
           const title = titleMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
           const description = descMatch?.[1]?.trim().replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'") || "";
@@ -327,6 +334,7 @@ async function fetchFromRSS(topics: string[], supabase: any, hoursBack: number):
             title,
             description,
             url,
+            urlToImage: imageUrl,
             source: feed.name,
             publishedAt: pubDate,
             sourceType: "rss" as const
