@@ -35,6 +35,9 @@ const News = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [totalResults, setTotalResults] = useState(0);
   const [loadedPersonalized, setLoadedPersonalized] = useState(false);
+  const [isPullRefreshing, setIsPullRefreshing] = useState(false);
+  const [pullStartY, setPullStartY] = useState(0);
+  const [pullDistance, setPullDistance] = useState(0);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -43,6 +46,46 @@ const News = () => {
     // Load personalized news based on user preferences
     loadPersonalizedNews();
   }, []);
+
+  // Pull-to-refresh handlers
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      const scrollableDiv = document.querySelector('.news-scrollable');
+      if (scrollableDiv && scrollableDiv.scrollTop === 0) {
+        setPullStartY(e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const scrollableDiv = document.querySelector('.news-scrollable');
+      if (scrollableDiv && scrollableDiv.scrollTop === 0 && pullStartY > 0) {
+        const pullDist = e.touches[0].clientY - pullStartY;
+        if (pullDist > 0) {
+          setPullDistance(Math.min(pullDist, 100));
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (pullDistance > 60 && !isPullRefreshing) {
+        setIsPullRefreshing(true);
+        await handleRefreshPersonalized();
+        setIsPullRefreshing(false);
+      }
+      setPullStartY(0);
+      setPullDistance(0);
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [pullStartY, pullDistance, isPullRefreshing]);
 
   const loadPersonalizedNews = async () => {
     setLoading(true);
@@ -330,7 +373,7 @@ const News = () => {
   // Show article viewer if an article is selected
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background" style={{ overscrollBehaviorY: 'auto' }}>
       <header className="flex-shrink-0 bg-background border-b">
         <div className="container mx-auto px-4 py-3 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
@@ -393,7 +436,22 @@ const News = () => {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto news-scrollable" style={{ position: 'relative' }}>
+        {pullDistance > 0 && (
+          <div 
+            style={{ 
+              height: pullDistance,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: pullDistance / 60
+            }}
+          >
+            <span className="text-sm text-muted-foreground">
+              {pullDistance > 60 ? '🔄 Release to refresh' : '⬇️ Pull to refresh'}
+            </span>
+          </div>
+        )}
         <div className="px-4 py-2 space-y-2">
           {/* Info Banner */}
           {loadedPersonalized && (
