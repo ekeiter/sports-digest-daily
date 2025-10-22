@@ -1126,9 +1126,9 @@ const ManageTeams = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       <header className="border-b bg-background sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+        <div className="container mx-auto px-4 py-4 flex items-center gap-4 max-w-full">
           <Button variant="ghost" size="icon" onClick={() => navigate('/news')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -1162,8 +1162,8 @@ const ManageTeams = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-6 pb-20">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="container mx-auto px-4 py-6 pb-20 max-w-full">
           {showSearchResults ? (
             /* Search Results View */
             <Card>
@@ -1337,10 +1337,10 @@ const ManageTeams = () => {
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 safe-area-pb">
-        <div className="container mx-auto">
+        <div className="container mx-auto max-w-full px-4">
           <Button 
             onClick={() => navigate('/news')} 
-            className="w-full"
+            className="w-full max-w-md mx-auto"
             size="lg"
           >
             Continue to News
