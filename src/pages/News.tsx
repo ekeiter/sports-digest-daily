@@ -447,7 +447,7 @@ const News = () => {
                     {/* Mobile Layout (md and below) */}
                     <div className="md:hidden">
                       {/* Meta Information - Top line */}
-                      <div className="px-3 pt-3 pb-2 flex items-center gap-2 text-xs text-foreground flex-wrap">
+                      <div className="px-3 pt-3 pb-2 flex items-center gap-2 text-sm text-foreground flex-wrap">
                         <span className="font-bold">
                           {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
                         </span>
