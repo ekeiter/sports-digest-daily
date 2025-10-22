@@ -297,12 +297,12 @@ const News = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string, includeYear = true) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      ...(includeYear && { year: 'numeric' })
     });
   };
 
@@ -320,15 +320,11 @@ const News = () => {
     const articleDate = new Date(dateString);
     const diffInHours = Math.floor((now.getTime() - articleDate.getTime()) / (1000 * 60 * 60));
     
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours === 1) return '1 hour ago';
-    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    if (diffInHours < 1) return '<1h';
+    if (diffInHours < 24) return `${diffInHours}h`;
     
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return '1 day ago';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    
-    return formatDate(dateString);
+    return `${diffInDays}d`;
   };
 
   // Show article viewer if an article is selected
@@ -447,15 +443,35 @@ const News = () => {
             <div className="space-y-1">
               {articles.map((article, index) => (
                 <Card key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 shadow-lg hover:shadow-xl border border-blue-200 hover:border-blue-300">
-                  <CardContent className="p-3">
-                    <div className="flex gap-3">
-                      {/* Article Image */}
+                  <CardContent className="p-0">
+                    {/* Mobile Layout (md and below) */}
+                    <div className="md:hidden">
+                      {/* Meta Information - Top line */}
+                      <div className="px-3 pt-3 pb-2 flex items-center gap-2 text-xs text-foreground flex-wrap">
+                        <span className="font-bold">
+                          {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
+                        </span>
+                        <span>•</span>
+                        <span>{formatDate(article.publishedAt, false)}</span>
+                        <span>•</span>
+                        <span>{formatTime(article.publishedAt)}</span>
+                        <span>•</span>
+                        <span className="text-muted-foreground">{getTimeAgo(article.publishedAt)}</span>
+                        {article.paywalled && (
+                          <>
+                            <span>•</span>
+                            <Lock className="h-3 w-3 text-muted-foreground" />
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Article Image - Full Width */}
                       {article.urlToImage && (
-                        <div className="flex-shrink-0">
+                        <div className="w-full">
                           <img
                             src={article.urlToImage}
                             alt={article.title}
-                            className="w-24 h-16 object-cover rounded-md"
+                            className="w-full h-48 object-cover"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
@@ -463,45 +479,76 @@ const News = () => {
                         </div>
                       )}
                       
-                      {/* Article Content */}
-                      <div className="flex-1 space-y-1">
-                        {/* Article Title Link */}
-                         <a
-                           href={article.url}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
-                         >
-                           {article.title}
-                         </a>
-                        
-                        {/* Article Description */}
-                        {article.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {article.description}
-                          </p>
+                      {/* Article Title */}
+                      <div className="px-3 pb-3 pt-2">
+                        <a
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block font-semibold text-link hover:text-link/80 transition-colors"
+                        >
+                          {article.title}
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout (md and above) */}
+                    <div className="hidden md:block p-3">
+                      <div className="flex gap-3">
+                        {/* Article Image */}
+                        {article.urlToImage && (
+                          <div className="flex-shrink-0">
+                            <img
+                              src={article.urlToImage}
+                              alt={article.title}
+                              className="w-24 h-16 object-cover rounded-md"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          </div>
                         )}
                         
-                        {/* Meta Information */}
-                        <div className="flex items-center gap-3 text-xs text-foreground">
-                          <span className="font-bold">
-                            {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
-                          </span>
-                          <span>•</span>
-                          <span className="font-bold">{formatDate(article.publishedAt)}</span>
-                          <span>•</span>
-                          <span className="font-bold">{formatTime(article.publishedAt)}</span>
-                          <span>•</span>
-                          <span className="font-bold">{getTimeAgo(article.publishedAt)}</span>
-                          {article.paywalled && (
-                            <>
-                              <span>•</span>
-                              <Badge variant="secondary" className="text-xs flex items-center gap-1 h-4 px-1.5">
-                                <Lock className="h-2.5 w-2.5" />
-                                Premium
-                              </Badge>
-                            </>
+                        {/* Article Content */}
+                        <div className="flex-1 space-y-1">
+                          {/* Article Title Link */}
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
+                          >
+                            {article.title}
+                          </a>
+                          
+                          {/* Article Description */}
+                          {article.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {article.description}
+                            </p>
                           )}
+                          
+                          {/* Meta Information */}
+                          <div className="flex items-center gap-3 text-xs text-foreground">
+                            <span className="font-bold">
+                              {typeof article.source === 'string' ? article.source : article.source?.name || 'Unknown Source'}
+                            </span>
+                            <span>•</span>
+                            <span className="font-bold">{formatDate(article.publishedAt)}</span>
+                            <span>•</span>
+                            <span className="font-bold">{formatTime(article.publishedAt)}</span>
+                            <span>•</span>
+                            <span className="font-bold">{getTimeAgo(article.publishedAt)}</span>
+                            {article.paywalled && (
+                              <>
+                                <span>•</span>
+                                <Badge variant="secondary" className="text-xs flex items-center gap-1 h-4 px-1.5">
+                                  <Lock className="h-2.5 w-2.5" />
+                                  Premium
+                                </Badge>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
