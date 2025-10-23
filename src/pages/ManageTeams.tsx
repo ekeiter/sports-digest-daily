@@ -1276,7 +1276,7 @@ const ManageTeams = () => {
                         key={league}
                         variant={isActive ? "secondary" : "ghost"}
                         className="w-full justify-start gap-3 h-auto py-3"
-                        onClick={() => setSelectedLeague(league)}
+                        onClick={() => setSelectedLeague(isActive ? null : league)}
                       >
                         <img 
                           src={getLeagueLogo(league)}
