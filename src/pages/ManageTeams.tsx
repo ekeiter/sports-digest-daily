@@ -1251,9 +1251,9 @@ const ManageTeams = () => {
           </div>
         ) : (
           /* Two-Column Layout: Leagues Left, Teams Right */
-          <div className="flex flex-col md:flex-row h-full">
+          <div className="flex flex-row h-full gap-0">
             {/* Left Column: Leagues */}
-            <div className="w-full md:w-64 lg:w-80 border-b md:border-b-0 md:border-r bg-muted/20">
+            <div className="w-48 sm:w-56 md:w-64 lg:w-80 border-r bg-muted/20 flex-shrink-0">
               <div className="p-4">
                 <div className="relative mb-4">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
