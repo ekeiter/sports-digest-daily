@@ -541,8 +541,6 @@ const News = () => {
                       <div className="px-3 pb-3 pt-2">
                         <a
                           href={article.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="block font-semibold text-link hover:text-link/80 transition-colors"
                         >
                           {article.title}
@@ -572,8 +570,6 @@ const News = () => {
                           {/* Article Title Link */}
                           <a
                             href={article.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
                           >
                             {article.title}
