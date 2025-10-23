@@ -1317,21 +1317,14 @@ const ManageTeams = () => {
                           className="w-full justify-start h-auto py-3 px-3"
                           onClick={() => toggleTeam(selectedLeague, team)}
                         >
-                          <div className="flex items-center justify-between w-full min-w-0">
-                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                              <img 
-                                src={getTeamLogo(team, selectedLeague)}
-                                alt={`${team} logo`}
-                                className="w-6 h-6 object-contain flex-shrink-0"
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                              <span className="text-sm truncate">{team}</span>
-                            </div>
-                            {isSelected ? (
-                              <X className="h-4 w-4 ml-2 flex-shrink-0" />
-                            ) : (
-                              <Plus className="h-4 w-4 ml-2 flex-shrink-0" />
-                            )}
+                          <div className="flex items-center gap-2 min-w-0">
+                            <img 
+                              src={getTeamLogo(team, selectedLeague)}
+                              alt={`${team} logo`}
+                              className="w-6 h-6 object-contain flex-shrink-0"
+                              onError={(e) => e.currentTarget.style.display = 'none'}
+                            />
+                            <span className="text-sm truncate">{team}</span>
                           </div>
                         </Button>
                       );
