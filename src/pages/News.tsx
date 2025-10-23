@@ -38,6 +38,7 @@ const News = () => {
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
   const [pullStartY, setPullStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
+  const [viewingArticle, setViewingArticle] = useState<string | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -370,6 +371,30 @@ const News = () => {
     return `${diffInDays}d`;
   };
 
+  // If viewing an article, show the article viewer
+  if (viewingArticle) {
+    return (
+      <div className="h-screen flex flex-col bg-background">
+        <header className="flex-shrink-0 bg-background border-b">
+          <div className="container mx-auto px-4 py-3 flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setViewingArticle(null)}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-xl sm:text-2xl font-bold truncate">Article</h1>
+          </div>
+        </header>
+        <div className="flex-1 overflow-hidden">
+          <iframe
+            src={viewingArticle}
+            className="w-full h-full border-0"
+            title="Article Viewer"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          />
+        </div>
+      </div>
+    );
+  }
+
   // Show article viewer if an article is selected
 
   return (
@@ -539,12 +564,12 @@ const News = () => {
                       
                       {/* Article Title */}
                       <div className="px-3 pb-3 pt-2">
-                        <a
-                          href={article.url}
-                          className="block font-semibold text-link hover:text-link/80 transition-colors"
+                        <button
+                          onClick={() => setViewingArticle(article.url)}
+                          className="block w-full text-left font-semibold text-link hover:text-link/80 transition-colors"
                         >
                           {article.title}
-                        </a>
+                        </button>
                       </div>
                     </div>
 
@@ -568,12 +593,12 @@ const News = () => {
                         {/* Article Content */}
                         <div className="flex-1 space-y-1">
                           {/* Article Title Link */}
-                          <a
-                            href={article.url}
-                            className="block font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
+                          <button
+                            onClick={() => setViewingArticle(article.url)}
+                            className="block w-full text-left font-semibold text-link hover:text-link/80 transition-colors line-clamp-2"
                           >
                             {article.title}
-                          </a>
+                          </button>
                           
                           {/* Article Description */}
                           {article.description && (
