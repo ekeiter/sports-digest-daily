@@ -263,7 +263,7 @@ export default function Preferences() {
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
-                  {sportTopics.map(topic => {
+                  {sportTopics.map((topic, index) => {
                     const topicTeams = getTeamsForTopic(topic.id);
                     const hasTeams = topic.kind === 'league' || topicTeams.length > 0;
                     const isExpanded = expandedTopics.includes(topic.id);
@@ -274,7 +274,19 @@ export default function Preferences() {
                     const isNHL = topic.name.toLowerCase().includes('national hockey league');
                     const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
                     const isNCAAF = topic.name.toLowerCase().includes('college football');
-                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isNHL ? 'NHL' : isWNBA ? 'WNBA' : isNCAAF ? 'NCAAF' : topic.name;
+                    
+                    // For college football, use index to differentiate FBS (0) and FCS (1)
+                    let displayName = topic.name;
+                    if (isMLB) displayName = 'MLB';
+                    else if (isNFL) displayName = 'NFL';
+                    else if (isNBA) displayName = 'NBA';
+                    else if (isNHL) displayName = 'NHL';
+                    else if (isWNBA) displayName = 'WNBA';
+                    else if (isNCAAF) {
+                      const ncaafTopics = sportTopics.filter(t => t.name.toLowerCase().includes('college football'));
+                      const ncaafIndex = ncaafTopics.findIndex(t => t.id === topic.id);
+                      displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
+                    }
                     
                     return (
                       <div key={topic.id} className="space-y-2">
