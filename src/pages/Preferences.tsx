@@ -11,6 +11,7 @@ import mlbLogo from "@/assets/mlb-logo.svg";
 import nflLogo from "@/assets/nfl-logo.png";
 import nbaLogo from "@/assets/nba-logo.png";
 import nhlLogo from "@/assets/nhl-logo.png";
+import wnbaLogo from "@/assets/wnba-logo.png";
 import { teamLogos } from "@/lib/teamLogos";
 
 interface Topic {
@@ -278,7 +279,7 @@ export default function Preferences() {
                               checked={selectedTopics.includes(topic.id)}
                               onCheckedChange={() => handleTopicToggle(topic.id)}
                             />
-                            {(isMLB || isNFL || isNBA || isNHL) && (
+                            {(isMLB || isNFL || isNBA || isNHL || isWNBA) && (
                               <div className="flex items-center justify-center w-16 h-16">
                                 {isMLB && (
                                   <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
@@ -291,6 +292,9 @@ export default function Preferences() {
                                 )}
                                 {isNHL && (
                                   <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
+                                )}
+                                {isWNBA && (
+                                  <img src={wnbaLogo} alt="WNBA" className="h-16 w-16 object-contain" />
                                 )}
                               </div>
                             )}
