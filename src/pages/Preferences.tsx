@@ -118,7 +118,7 @@ export default function Preferences() {
       other => topic.sport.toLowerCase().includes(other.toLowerCase())
     );
     
-    const groupKey = isOtherTopic ? 'other topics' : topic.sport;
+    const groupKey = isOtherTopic ? 'other sports' : topic.sport;
     
     if (!acc[groupKey]) {
       acc[groupKey] = [];
@@ -127,15 +127,15 @@ export default function Preferences() {
     return acc;
   }, {} as Record<string, Topic[]>);
 
-  // Sort "other topics" alphabetically by name
-  if (groupedTopics['other topics']) {
-    groupedTopics['other topics'].sort((a, b) => a.name.localeCompare(b.name));
+  // Sort "other sports" alphabetically by name
+  if (groupedTopics['other sports']) {
+    groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure "other topics" appears last
+  // Sort the groups to ensure "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
-    if (keyA === 'other topics') return 1;
-    if (keyB === 'other topics') return -1;
+    if (keyA === 'other sports') return 1;
+    if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
   });
 
