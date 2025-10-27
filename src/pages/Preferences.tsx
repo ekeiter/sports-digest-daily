@@ -154,8 +154,8 @@ export default function Preferences() {
       return acc;
     }
     
-    // Extract NBA to be standalone
-    if (topic.name.toLowerCase().includes('national basketball association')) {
+    // Extract NBA to be standalone (but not WNBA)
+    if (topic.name.toLowerCase().includes('national basketball association') && !topic.name.toLowerCase().includes('women')) {
       if (!acc['nba-standalone']) {
         acc['nba-standalone'] = [];
       }
