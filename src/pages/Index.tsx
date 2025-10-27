@@ -106,9 +106,9 @@ const Index = () => {
           </p>
           
           <div className="mt-8">
-            <p className="text-muted-foreground">
-              Preferences management coming soon...
-            </p>
+            <Button size="lg" onClick={() => navigate("/preferences")}>
+              Manage Feed Preferences
+            </Button>
           </div>
         </div>
       </main>
