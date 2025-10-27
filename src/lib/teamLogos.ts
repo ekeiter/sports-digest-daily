@@ -64,6 +64,38 @@ import tampaBayBuccaneersLogo from "@/assets/team-logos/tampa-bay-buccaneers.png
 import tennesseeTitansLogo from "@/assets/team-logos/tennessee-titans.png";
 import washingtonCommandersLogo from "@/assets/team-logos/washington-commanders.png";
 
+// NBA Team Logos
+import atlantaHawksLogo from "@/assets/team-logos/atlanta-hawks.png";
+import bostonCelticsLogo from "@/assets/team-logos/boston-celtics.png";
+import brooklynNetsLogo from "@/assets/team-logos/brooklyn-nets.png";
+import charlotteHornetsLogo from "@/assets/team-logos/charlotte-hornets.png";
+import chicagoBullsLogo from "@/assets/team-logos/chicago-bulls.png";
+import clevelandCavaliersLogo from "@/assets/team-logos/cleveland-cavaliers.png";
+import dallasMavericksLogo from "@/assets/team-logos/dallas-mavericks.png";
+import denverNuggetsLogo from "@/assets/team-logos/denver-nuggets.png";
+import detroitPistonsLogo from "@/assets/team-logos/detroit-pistons.png";
+import goldenStateWarriorsLogo from "@/assets/team-logos/golden-state-warriors.png";
+import houstonRocketsLogo from "@/assets/team-logos/houston-rockets.png";
+import indianaPacersLogo from "@/assets/team-logos/indiana-pacers.png";
+import laClippersLogo from "@/assets/team-logos/la-clippers.png";
+import losAngelesLakersLogo from "@/assets/team-logos/los-angeles-lakers.png";
+import memphisGrizzliesLogo from "@/assets/team-logos/memphis-grizzlies.png";
+import miamiHeatLogo from "@/assets/team-logos/miami-heat.png";
+import milwaukeeBucksLogo from "@/assets/team-logos/milwaukee-bucks.png";
+import minnesotaTimberwolvesLogo from "@/assets/team-logos/minnesota-timberwolves.png";
+import newOrleansPelicansLogo from "@/assets/team-logos/new-orleans-pelicans.png";
+import newYorkKnicksLogo from "@/assets/team-logos/new-york-knicks.png";
+import oklahomaCityThunderLogo from "@/assets/team-logos/oklahoma-city-thunder.png";
+import orlandoMagicLogo from "@/assets/team-logos/orlando-magic.png";
+import philadelphia76ersLogo from "@/assets/team-logos/philadelphia-76ers.png";
+import phoenixSunsLogo from "@/assets/team-logos/phoenix-suns.png";
+import portlandTrailBlazersLogo from "@/assets/team-logos/portland-trail-blazers.png";
+import sacramentoKingsLogo from "@/assets/team-logos/sacramento-kings.png";
+import sanAntonioSpursLogo from "@/assets/team-logos/san-antonio-spurs.png";
+import torontoRaptorsLogo from "@/assets/team-logos/toronto-raptors.png";
+import utahJazzLogo from "@/assets/team-logos/utah-jazz.png";
+import washingtonWizardsLogo from "@/assets/team-logos/washington-wizards.png";
+
 export const teamLogos: Record<string, string> = {
   // MLB Teams
   "Arizona Diamondbacks": arizonaDiamondbacksLogo,
@@ -130,4 +162,36 @@ export const teamLogos: Record<string, string> = {
   "Tampa Bay Buccaneers": tampaBayBuccaneersLogo,
   "Tennessee Titans": tennesseeTitansLogo,
   "Washington Commanders": washingtonCommandersLogo,
+  
+  // NBA Teams
+  "Atlanta Hawks": atlantaHawksLogo,
+  "Boston Celtics": bostonCelticsLogo,
+  "Brooklyn Nets": brooklynNetsLogo,
+  "Charlotte Hornets": charlotteHornetsLogo,
+  "Chicago Bulls": chicagoBullsLogo,
+  "Cleveland Cavaliers": clevelandCavaliersLogo,
+  "Dallas Mavericks": dallasMavericksLogo,
+  "Denver Nuggets": denverNuggetsLogo,
+  "Detroit Pistons": detroitPistonsLogo,
+  "Golden State Warriors": goldenStateWarriorsLogo,
+  "Houston Rockets": houstonRocketsLogo,
+  "Indiana Pacers": indianaPacersLogo,
+  "Los Angeles Clippers": laClippersLogo,
+  "Los Angeles Lakers": losAngelesLakersLogo,
+  "Memphis Grizzlies": memphisGrizzliesLogo,
+  "Miami Heat": miamiHeatLogo,
+  "Milwaukee Bucks": milwaukeeBucksLogo,
+  "Minnesota Timberwolves": minnesotaTimberwolvesLogo,
+  "New Orleans Pelicans": newOrleansPelicansLogo,
+  "New York Knicks": newYorkKnicksLogo,
+  "Oklahoma City Thunder": oklahomaCityThunderLogo,
+  "Orlando Magic": orlandoMagicLogo,
+  "Philadelphia 76ers": philadelphia76ersLogo,
+  "Phoenix Suns": phoenixSunsLogo,
+  "Portland Trail Blazers": portlandTrailBlazersLogo,
+  "Sacramento Kings": sacramentoKingsLogo,
+  "San Antonio Spurs": sanAntonioSpursLogo,
+  "Toronto Raptors": torontoRaptorsLogo,
+  "Utah Jazz": utahJazzLogo,
+  "Washington Wizards": washingtonWizardsLogo,
 };

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import mlbLogo from "@/assets/mlb-logo.svg";
 import nflLogo from "@/assets/nfl-logo.png";
+import nbaLogo from "@/assets/nba-logo.png";
 import { teamLogos } from "@/lib/teamLogos";
 
 interface Topic {
@@ -152,6 +153,15 @@ export default function Preferences() {
       return acc;
     }
     
+    // Extract NBA to be standalone
+    if (topic.name.toLowerCase().includes('national basketball association')) {
+      if (!acc['nba-standalone']) {
+        acc['nba-standalone'] = [];
+      }
+      acc['nba-standalone'].push(topic);
+      return acc;
+    }
+    
     const isOtherTopic = otherTopicsList.some(
       other => topic.sport.toLowerCase().includes(other.toLowerCase())
     );
@@ -170,12 +180,14 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL standalone is second, College Baseball is third, and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL standalone is second, NBA is third, College Baseball is fourth, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
     const aIsNFL = keyA === 'nfl-standalone';
     const bIsNFL = keyB === 'nfl-standalone';
+    const aIsNBA = keyA === 'nba-standalone';
+    const bIsNBA = keyB === 'nba-standalone';
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
     
@@ -183,6 +195,8 @@ export default function Preferences() {
     if (bIsBaseball) return 1;
     if (aIsNFL) return -1;
     if (bIsNFL) return 1;
+    if (aIsNBA) return -1;
+    if (bIsNBA) return 1;
     if (aIsCollegeBaseball) return -1;
     if (bIsCollegeBaseball) return 1;
     if (keyA === 'other sports') return 1;
@@ -221,7 +235,7 @@ export default function Preferences() {
             <CardContent className="space-y-6">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
-                  {(sportTopics.length > 1 || (sport !== 'nfl-standalone' && sport !== 'professional baseball' && sport === 'other sports')) && (
+                  {(sportTopics.length > 1 || (sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'professional baseball' && sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
@@ -232,7 +246,8 @@ export default function Preferences() {
                     
                     const isMLB = topic.name.toLowerCase().includes('major league baseball');
                     const isNFL = topic.name.toLowerCase().includes('national football league');
-                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : topic.name;
+                    const isNBA = topic.name.toLowerCase().includes('national basketball association');
+                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : topic.name;
                     
                     return (
                       <div key={topic.id} className="space-y-2">
@@ -248,6 +263,9 @@ export default function Preferences() {
                             )}
                             {isNFL && (
                               <img src={nflLogo} alt="NFL" className="h-16 w-16 object-contain" />
+                            )}
+                            {isNBA && (
+                              <img src={nbaLogo} alt="NBA" className="h-16 w-16 object-contain" />
                             )}
                             <label
                               htmlFor={`topic-${topic.id}`}
