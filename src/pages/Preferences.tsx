@@ -242,7 +242,7 @@ export default function Preferences() {
                               size="sm"
                               onClick={() => toggleTopicExpansion(topic.id)}
                             >
-                              {isExpanded ? "Hide Teams" : `Show ${topicTeams.length} Teams`}
+                              {isExpanded ? "Hide Teams" : "Show Teams"}
                             </Button>
                           )}
                         </div>
