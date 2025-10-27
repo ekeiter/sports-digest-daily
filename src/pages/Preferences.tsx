@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import mlbLogo from "@/assets/mlb-logo.png";
+import mlbLogo from "@/assets/mlb-logo.svg";
 
 interface Topic {
   id: number;
