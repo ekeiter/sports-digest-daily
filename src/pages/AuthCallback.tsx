@@ -18,17 +18,15 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Listen for auth state changes to detect password recovery
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setShowPasswordReset(true);
+      }
+    });
+
     const handleCallback = async () => {
       try {
-        // Check if this is a password recovery callback
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const type = hashParams.get('type');
-        
-        if (type === 'recovery') {
-          setShowPasswordReset(true);
-          return;
-        }
-
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error) throw error;
@@ -56,6 +54,8 @@ export default function AuthCallback() {
     };
 
     handleCallback();
+
+    return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
