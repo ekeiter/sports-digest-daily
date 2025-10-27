@@ -61,23 +61,16 @@ export default function Preferences() {
       if (topicsError) throw topicsError;
       setTopics(topicsData || []);
 
-      // Load all teams (limit to topics that have teams to reduce data)
+      // Load all teams
       const topicIds = topicsData?.map(t => t.id) || [];
       const { data: teamsData, error: teamsError } = await supabase
         .from("teams")
         .select("*")
         .in("topic_id", topicIds)
-        .order("display_name", { ascending: true });
+        .order("display_name", { ascending: true })
+        .limit(10000);
 
       if (teamsError) throw teamsError;
-      console.log("Total teams loaded:", teamsData?.length);
-      
-      // Check MLB teams specifically
-      const mlbTopicId = topicsData?.find(t => t.name === 'Major League Baseball')?.id;
-      const mlbTeams = teamsData?.filter(t => t.topic_id === mlbTopicId);
-      console.log("MLB topic ID:", mlbTopicId, "MLB teams count:", mlbTeams?.length);
-      console.log("MLB teams:", mlbTeams?.map(t => t.display_name));
-      
       setTeams(teamsData || []);
 
     } catch (error) {
