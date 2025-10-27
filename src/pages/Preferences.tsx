@@ -33,6 +33,7 @@ export default function Preferences() {
   const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [expandedTopics, setExpandedTopics] = useState<number[]>([]);
+  const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     checkUser();
@@ -61,23 +62,39 @@ export default function Preferences() {
       if (topicsError) throw topicsError;
       setTopics(topicsData || []);
 
-      // Load all teams
-      const topicIds = topicsData?.map(t => t.id) || [];
-      const { data: teamsData, error: teamsError } = await supabase
-        .from("teams")
-        .select("*")
-        .in("topic_id", topicIds)
-        .order("display_name", { ascending: true })
-        .limit(10000);
-
-      if (teamsError) throw teamsError;
-      setTeams(teamsData || []);
-
     } catch (error) {
       console.error("Error loading preferences:", error);
       toast.error("Failed to load preferences");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadTeamsForTopic = async (topicId: number) => {
+    if (teams.some(t => t.topic_id === topicId)) {
+      return; // Already loaded
+    }
+
+    setLoadingTeams(prev => new Set(prev).add(topicId));
+    
+    try {
+      const { data: teamsData, error: teamsError } = await supabase
+        .from("teams")
+        .select("*")
+        .eq("topic_id", topicId)
+        .order("display_name", { ascending: true });
+
+      if (teamsError) throw teamsError;
+      setTeams(prev => [...prev, ...(teamsData || [])]);
+    } catch (error) {
+      console.error(`Error loading teams for topic ${topicId}:`, error);
+      toast.error("Failed to load teams");
+    } finally {
+      setLoadingTeams(prev => {
+        const next = new Set(prev);
+        next.delete(topicId);
+        return next;
+      });
     }
   };
 
@@ -97,12 +114,18 @@ export default function Preferences() {
     );
   };
 
-  const toggleTopicExpansion = (topicId: number) => {
+  const toggleTopicExpansion = async (topicId: number) => {
+    const willExpand = !expandedTopics.includes(topicId);
+    
     setExpandedTopics(prev =>
       prev.includes(topicId)
         ? prev.filter(id => id !== topicId)
         : [...prev, topicId]
     );
+
+    if (willExpand) {
+      await loadTeamsForTopic(topicId);
+    }
   };
 
   const getTeamsForTopic = (topicId: number) => {
