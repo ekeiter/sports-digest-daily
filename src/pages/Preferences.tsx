@@ -278,17 +278,21 @@ export default function Preferences() {
                               checked={selectedTopics.includes(topic.id)}
                               onCheckedChange={() => handleTopicToggle(topic.id)}
                             />
-                            {isMLB && (
-                              <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
-                            )}
-                            {isNFL && (
-                              <img src={nflLogo} alt="NFL" className="h-16 w-16 object-contain" />
-                            )}
-                            {isNBA && (
-                              <img src={nbaLogo} alt="NBA" className="h-16 w-16 object-contain" />
-                            )}
-                            {isNHL && (
-                              <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
+                            {(isMLB || isNFL || isNBA || isNHL) && (
+                              <div className="flex items-center justify-center w-16 h-16">
+                                {isMLB && (
+                                  <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
+                                )}
+                                {isNFL && (
+                                  <img src={nflLogo} alt="NFL" className="h-14 w-14 object-contain" />
+                                )}
+                                {isNBA && (
+                                  <img src={nbaLogo} alt="NBA" className="h-14 w-14 object-contain" />
+                                )}
+                                {isNHL && (
+                                  <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
+                                )}
+                              </div>
                             )}
                             <label
                               htmlFor={`topic-${topic.id}`}
