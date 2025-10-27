@@ -52,18 +52,24 @@ const Index = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-6 p-8">
+        <div className="text-center space-y-6 p-8 max-w-3xl">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Sports Digest Daily
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
+          <p className="text-xl text-muted-foreground">
             Get personalized daily emails with sports articles from your favorite teams, players, and sports. 
             Stay updated with AI-generated summaries of the latest news.
           </p>
-          <div className="space-y-4">
-            <Button size="lg" onClick={() => navigate('/manage-teams')}>
-              Get Started
-            </Button>
+          
+          <div className="pt-6 space-y-4">
+            <div className="flex gap-4 justify-center">
+              <Button size="lg" onClick={() => navigate('/auth')}>
+                Sign In
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate('/auth')}>
+                Register
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">
               Free for one topic • Monthly subscription for multiple teams
             </p>
@@ -82,6 +88,9 @@ const Index = () => {
             <span className="text-sm text-muted-foreground">
               Welcome, {user.email}
             </span>
+            <Button variant="outline" onClick={() => navigate('/profile')}>
+              Profile
+            </Button>
             <Button variant="outline" onClick={handleSignOut}>
               Sign Out
             </Button>
@@ -96,45 +105,10 @@ const Index = () => {
             Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
           </p>
           
-          <div className="mb-8 space-y-4">
-            <Button size="lg" onClick={() => navigate('/news')}>
-              View Latest Sports News
-            </Button>
-            <div>
-              <Button variant="outline" onClick={() => navigate('/news-settings')}>
-                News Settings
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="p-6 border rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Teams</h3>
-              <p className="text-muted-foreground mb-4">
-                Follow your favorite teams from MLB, NFL, NBA, and NHL
-              </p>
-              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-teams')}>
-                Manage Teams
-              </Button>
-            </div>
-            <div className="p-6 border rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Sports</h3>
-              <p className="text-muted-foreground mb-4">
-                Stay updated on golf, auto racing, tennis, and more
-              </p>
-              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-sports')}>
-                Manage Sports
-              </Button>
-            </div>
-            <div className="p-6 border rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Players</h3>
-              <p className="text-muted-foreground mb-4">
-                Get news about your favorite individual players
-              </p>
-              <Button variant="outline" className="w-full" onClick={() => navigate('/manage-players')}>
-                Manage Players
-              </Button>
-            </div>
+          <div className="mt-8">
+            <p className="text-muted-foreground">
+              Preferences management coming soon...
+            </p>
           </div>
         </div>
       </main>
