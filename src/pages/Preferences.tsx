@@ -12,6 +12,7 @@ import nflLogo from "@/assets/nfl-logo.png";
 import nbaLogo from "@/assets/nba-logo.png";
 import nhlLogo from "@/assets/nhl-logo.png";
 import wnbaLogo from "@/assets/wnba-logo.png";
+import ncaafLogo from "@/assets/ncaaf-logo.png";
 import { teamLogos } from "@/lib/teamLogos";
 
 interface Topic {
@@ -191,7 +192,7 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL is second, NBA is third, NHL is fourth, then WNBA, College Baseball, and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL is second, NBA is third, NHL is fourth, then WNBA, College Football, College Baseball, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
@@ -203,6 +204,8 @@ export default function Preferences() {
     const bIsNHL = keyB === 'nhl-standalone';
     const aIsProBasketball = keyA.toLowerCase().includes('professional basketball');
     const bIsProBasketball = keyB.toLowerCase().includes('professional basketball');
+    const aIsCollegeFootball = keyA.toLowerCase().includes('college football');
+    const bIsCollegeFootball = keyB.toLowerCase().includes('college football');
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
     
@@ -216,6 +219,8 @@ export default function Preferences() {
     if (bIsNHL) return 1;
     if (aIsProBasketball) return -1;
     if (bIsProBasketball) return 1;
+    if (aIsCollegeFootball) return -1;
+    if (bIsCollegeFootball) return 1;
     if (aIsCollegeBaseball) return -1;
     if (bIsCollegeBaseball) return 1;
     if (keyA === 'other sports') return 1;
@@ -268,7 +273,8 @@ export default function Preferences() {
                     const isNBA = topic.name.toLowerCase().includes('national basketball association') && !topic.name.toLowerCase().includes('women');
                     const isNHL = topic.name.toLowerCase().includes('national hockey league');
                     const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
-                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isNHL ? 'NHL' : isWNBA ? 'WNBA' : topic.name;
+                    const isNCAAF = topic.name.toLowerCase().includes('college football');
+                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isNHL ? 'NHL' : isWNBA ? 'WNBA' : isNCAAF ? 'College Football' : topic.name;
                     
                     return (
                       <div key={topic.id} className="space-y-2">
@@ -279,7 +285,7 @@ export default function Preferences() {
                               checked={selectedTopics.includes(topic.id)}
                               onCheckedChange={() => handleTopicToggle(topic.id)}
                             />
-                            {(isMLB || isNFL || isNBA || isNHL || isWNBA) && (
+                            {(isMLB || isNFL || isNBA || isNHL || isWNBA || isNCAAF) && (
                               <div className="flex items-center justify-center w-16 h-16">
                                 {isMLB && (
                                   <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
@@ -295,6 +301,9 @@ export default function Preferences() {
                                 )}
                                 {isWNBA && (
                                   <img src={wnbaLogo} alt="WNBA" className="h-12 w-12 object-contain" />
+                                )}
+                                {isNCAAF && (
+                                  <img src={ncaafLogo} alt="College Football" className="h-12 w-12 object-contain" />
                                 )}
                               </div>
                             )}
