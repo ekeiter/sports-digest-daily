@@ -233,17 +233,21 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL standalone is second, and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL standalone is second, College Baseball is third, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
-    const aIsBaseball = keyA.toLowerCase().includes('baseball');
-    const bIsBaseball = keyB.toLowerCase().includes('baseball');
+    const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
+    const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
     const aIsNFL = keyA === 'nfl-standalone';
     const bIsNFL = keyB === 'nfl-standalone';
+    const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
+    const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
     
     if (aIsBaseball) return -1;
     if (bIsBaseball) return 1;
     if (aIsNFL) return -1;
     if (bIsNFL) return 1;
+    if (aIsCollegeBaseball) return -1;
+    if (bIsCollegeBaseball) return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
