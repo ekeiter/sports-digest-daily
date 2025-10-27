@@ -8,6 +8,36 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import mlbLogo from "@/assets/mlb-logo.svg";
+import arizonaDiamondbacksLogo from "@/assets/team-logos/arizona-diamondbacks.svg";
+import atlantaBravesLogo from "@/assets/team-logos/atlanta-braves.svg";
+import baltimoreOriolesLogo from "@/assets/team-logos/baltimore-orioles.svg";
+import bostonRedSoxLogo from "@/assets/team-logos/boston-red-sox.svg";
+import chicagoCubsLogo from "@/assets/team-logos/chicago-cubs.svg";
+import chicagoWhiteSoxLogo from "@/assets/team-logos/chicago-white-sox.svg";
+import cincinnatiRedsLogo from "@/assets/team-logos/cincinnati-reds.svg";
+import clevelandGuardiansLogo from "@/assets/team-logos/cleveland-guardians.svg";
+import coloradoRockiesLogo from "@/assets/team-logos/colorado-rockies.svg";
+import detroitTigersLogo from "@/assets/team-logos/detroit-tigers.svg";
+import houstonAstrosLogo from "@/assets/team-logos/houston-astros.svg";
+import kansasCityRoyalsLogo from "@/assets/team-logos/kansas-city-royals.svg";
+import losAngelesAngelsLogo from "@/assets/team-logos/los-angeles-angels.svg";
+import losAngelesDodgersLogo from "@/assets/team-logos/los-angeles-dodgers.svg";
+import miamiMarlinsLogo from "@/assets/team-logos/miami-marlins.svg";
+import milwaukeeBrewersLogo from "@/assets/team-logos/milwaukee-brewers.svg";
+import minnesotaTwinsLogo from "@/assets/team-logos/minnesota-twins.svg";
+import newYorkMetsLogo from "@/assets/team-logos/new-york-mets.svg";
+import newYorkYankeesLogo from "@/assets/team-logos/new-york-yankees.svg";
+import oaklandAthleticsLogo from "@/assets/team-logos/oakland-athletics.svg";
+import philadelphiaPhilliesLogo from "@/assets/team-logos/philadelphia-phillies.svg";
+import pittsburghPiratesLogo from "@/assets/team-logos/pittsburgh-pirates.svg";
+import sanDiegoPadresLogo from "@/assets/team-logos/san-diego-padres.svg";
+import sanFranciscoGiantsLogo from "@/assets/team-logos/san-francisco-giants.svg";
+import seattleMarinersLogo from "@/assets/team-logos/seattle-mariners.svg";
+import stLouisCardinalsLogo from "@/assets/team-logos/st-louis-cardinals.svg";
+import tampaBayRaysLogo from "@/assets/team-logos/tampa-bay-rays.svg";
+import texasRangersLogo from "@/assets/team-logos/texas-rangers.svg";
+import torontoBlueJaysLogo from "@/assets/team-logos/toronto-blue-jays.svg";
+import washingtonNationalsLogo from "@/assets/team-logos/washington-nationals.svg";
 
 interface Topic {
   id: number;
@@ -24,6 +54,40 @@ interface Team {
   topic_id: number;
   city_state_name: string;
 }
+
+
+const mlbTeamLogos: Record<string, string> = {
+  "Arizona Diamondbacks": arizonaDiamondbacksLogo,
+  "Atlanta Braves": atlantaBravesLogo,
+  "Baltimore Orioles": baltimoreOriolesLogo,
+  "Boston Red Sox": bostonRedSoxLogo,
+  "Chicago Cubs": chicagoCubsLogo,
+  "Chicago White Sox": chicagoWhiteSoxLogo,
+  "Cincinnati Reds": cincinnatiRedsLogo,
+  "Cleveland Guardians": clevelandGuardiansLogo,
+  "Colorado Rockies": coloradoRockiesLogo,
+  "Detroit Tigers": detroitTigersLogo,
+  "Houston Astros": houstonAstrosLogo,
+  "Kansas City Royals": kansasCityRoyalsLogo,
+  "Los Angeles Angels": losAngelesAngelsLogo,
+  "Los Angeles Dodgers": losAngelesDodgersLogo,
+  "Miami Marlins": miamiMarlinsLogo,
+  "Milwaukee Brewers": milwaukeeBrewersLogo,
+  "Minnesota Twins": minnesotaTwinsLogo,
+  "New York Mets": newYorkMetsLogo,
+  "New York Yankees": newYorkYankeesLogo,
+  "Oakland Athletics": oaklandAthleticsLogo,
+  "Philadelphia Phillies": philadelphiaPhilliesLogo,
+  "Pittsburgh Pirates": pittsburghPiratesLogo,
+  "San Diego Padres": sanDiegoPadresLogo,
+  "San Francisco Giants": sanFranciscoGiantsLogo,
+  "Seattle Mariners": seattleMarinersLogo,
+  "St. Louis Cardinals": stLouisCardinalsLogo,
+  "Tampa Bay Rays": tampaBayRaysLogo,
+  "Texas Rangers": texasRangersLogo,
+  "Toronto Blue Jays": torontoBlueJaysLogo,
+  "Washington Nationals": washingtonNationalsLogo,
+};
 
 export default function Preferences() {
   const navigate = useNavigate();
@@ -250,27 +314,30 @@ export default function Preferences() {
                         {hasTeams && isExpanded && (
                           <div className="ml-8 space-y-2 p-4 bg-muted/30 rounded-lg">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                              {topicTeams.map(team => (
-                                <div
-                                  key={team.id}
-                                  className="flex items-center gap-2 p-2 rounded hover:bg-background transition-colors"
-                                >
-                                  <Checkbox
-                                    id={`team-${team.id}`}
-                                    checked={selectedTeams.includes(team.id)}
-                                    onCheckedChange={() => handleTeamToggle(team.id)}
-                                  />
-                                  <label
-                                    htmlFor={`team-${team.id}`}
-                                    className="text-sm cursor-pointer flex-1"
+                              {topicTeams.map(team => {
+                                const teamLogo = mlbTeamLogos[team.display_name];
+                                return (
+                                  <div
+                                    key={team.id}
+                                    className="flex items-center gap-2 p-2 rounded hover:bg-background transition-colors"
                                   >
-                                    {team.display_name}
-                                    <span className="text-muted-foreground ml-2">
-                                      ({team.city_state_name})
-                                    </span>
-                                  </label>
-                                </div>
-                              ))}
+                                    <Checkbox
+                                      id={`team-${team.id}`}
+                                      checked={selectedTeams.includes(team.id)}
+                                      onCheckedChange={() => handleTeamToggle(team.id)}
+                                    />
+                                    {teamLogo && (
+                                      <img src={teamLogo} alt={team.display_name} className="h-6 w-6 object-contain" />
+                                    )}
+                                    <label
+                                      htmlFor={`team-${team.id}`}
+                                      className="text-sm cursor-pointer flex-1"
+                                    >
+                                      {team.display_name}
+                                    </label>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
