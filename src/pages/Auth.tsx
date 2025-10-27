@@ -63,13 +63,11 @@ export default function Auth() {
     setLoading(true);
     try {
       if (isSignUp) {
-        const redirectUrl = `${window.location.origin}/`;
-        
         const { error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: redirectUrl
+            emailRedirectTo: `${window.location.origin}/auth/callback`
           }
         });
 
@@ -84,6 +82,15 @@ export default function Auth() {
         });
 
         if (error) throw error;
+
+        // Check if email is confirmed and ensure subscriber record exists
+        const { data: { user } } = await supabase.auth.getUser();
+        const needsConfirm = !user?.email_confirmed_at;
+        
+        if (!needsConfirm) {
+          // Backfill subscriber record if it doesn't exist (for users who signed up before trigger)
+          await supabase.rpc("ensure_my_subscriber");
+        }
 
         toast({
           title: "Success",
