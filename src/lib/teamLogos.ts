@@ -96,6 +96,40 @@ import torontoRaptorsLogo from "@/assets/team-logos/toronto-raptors.png";
 import utahJazzLogo from "@/assets/team-logos/utah-jazz.png";
 import washingtonWizardsLogo from "@/assets/team-logos/washington-wizards.png";
 
+// NHL Team Logos
+import anaheimDucksLogo from "@/assets/team-logos/anaheim-ducks.png";
+import bostonBruinsLogo from "@/assets/team-logos/boston-bruins.png";
+import buffaloSabresLogo from "@/assets/team-logos/buffalo-sabres.png";
+import calgaryFlamesLogo from "@/assets/team-logos/calgary-flames.png";
+import carolinaHurricanesLogo from "@/assets/team-logos/carolina-hurricanes.png";
+import chicagoBlackhawksLogo from "@/assets/team-logos/chicago-blackhawks.png";
+import coloradoAvalancheLogo from "@/assets/team-logos/colorado-avalanche.png";
+import columbusBlueJacketsLogo from "@/assets/team-logos/columbus-blue-jackets.png";
+import dallasStarsLogo from "@/assets/team-logos/dallas-stars.png";
+import detroitRedWingsLogo from "@/assets/team-logos/detroit-red-wings.png";
+import edmontonOilersLogo from "@/assets/team-logos/edmonton-oilers.png";
+import floridaPanthersLogo from "@/assets/team-logos/florida-panthers.png";
+import losAngelesKingsLogo from "@/assets/team-logos/los-angeles-kings.png";
+import minnesotaWildLogo from "@/assets/team-logos/minnesota-wild.png";
+import montrealCanadiensLogo from "@/assets/team-logos/montreal-canadiens.png";
+import nashvillePredatorsLogo from "@/assets/team-logos/nashville-predators.png";
+import newJerseyDevilsLogo from "@/assets/team-logos/new-jersey-devils.png";
+import newYorkIslandersLogo from "@/assets/team-logos/new-york-islanders.png";
+import newYorkRangersLogo from "@/assets/team-logos/new-york-rangers.png";
+import ottawaSenatorsLogo from "@/assets/team-logos/ottawa-senators.png";
+import philadelphiaFlyersLogo from "@/assets/team-logos/philadelphia-flyers.png";
+import pittsburghPenguinsLogo from "@/assets/team-logos/pittsburgh-penguins.png";
+import sanJoseSharksLogo from "@/assets/team-logos/san-jose-sharks.png";
+import seattleKrakenLogo from "@/assets/team-logos/seattle-kraken.png";
+import stLouisBluesLogo from "@/assets/team-logos/st-louis-blues.png";
+import tampaBayLightningLogo from "@/assets/team-logos/tampa-bay-lightning.png";
+import torontoMapleLeafsLogo from "@/assets/team-logos/toronto-maple-leafs.png";
+import utahMammothLogo from "@/assets/team-logos/utah-mammoth.png";
+import vancouverCanucksLogo from "@/assets/team-logos/vancouver-canucks.png";
+import vegasGoldenKnightsLogo from "@/assets/team-logos/vegas-golden-knights.png";
+import washingtonCapitalsLogo from "@/assets/team-logos/washington-capitals.png";
+import winnipegJetsLogo from "@/assets/team-logos/winnipeg-jets.png";
+
 export const teamLogos: Record<string, string> = {
   // MLB Teams
   "Arizona Diamondbacks": arizonaDiamondbacksLogo,
@@ -194,4 +228,38 @@ export const teamLogos: Record<string, string> = {
   "Toronto Raptors": torontoRaptorsLogo,
   "Utah Jazz": utahJazzLogo,
   "Washington Wizards": washingtonWizardsLogo,
+  
+  // NHL Teams
+  "Anaheim Ducks": anaheimDucksLogo,
+  "Boston Bruins": bostonBruinsLogo,
+  "Buffalo Sabres": buffaloSabresLogo,
+  "Calgary Flames": calgaryFlamesLogo,
+  "Carolina Hurricanes": carolinaHurricanesLogo,
+  "Chicago Blackhawks": chicagoBlackhawksLogo,
+  "Colorado Avalanche": coloradoAvalancheLogo,
+  "Columbus Blue Jackets": columbusBlueJacketsLogo,
+  "Dallas Stars": dallasStarsLogo,
+  "Detroit Red Wings": detroitRedWingsLogo,
+  "Edmonton Oilers": edmontonOilersLogo,
+  "Florida Panthers": floridaPanthersLogo,
+  "Los Angeles Kings": losAngelesKingsLogo,
+  "Minnesota Wild": minnesotaWildLogo,
+  "Montreal Canadiens": montrealCanadiensLogo,
+  "Nashville Predators": nashvillePredatorsLogo,
+  "New Jersey Devils": newJerseyDevilsLogo,
+  "New York Islanders": newYorkIslandersLogo,
+  "New York Rangers": newYorkRangersLogo,
+  "Ottawa Senators": ottawaSenatorsLogo,
+  "Philadelphia Flyers": philadelphiaFlyersLogo,
+  "Pittsburgh Penguins": pittsburghPenguinsLogo,
+  "San Jose Sharks": sanJoseSharksLogo,
+  "Seattle Kraken": seattleKrakenLogo,
+  "St. Louis Blues": stLouisBluesLogo,
+  "Tampa Bay Lightning": tampaBayLightningLogo,
+  "Toronto Maple Leafs": torontoMapleLeafsLogo,
+  "Utah Mammoth": utahMammothLogo,
+  "Vancouver Canucks": vancouverCanucksLogo,
+  "Vegas Golden Knights": vegasGoldenKnightsLogo,
+  "Washington Capitals": washingtonCapitalsLogo,
+  "Winnipeg Jets": winnipegJetsLogo,
 };
