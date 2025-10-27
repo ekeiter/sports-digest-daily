@@ -145,6 +145,33 @@ import phoenixMercuryLogo from "@/assets/team-logos/phoenix-mercury.png";
 import seattleStormLogo from "@/assets/team-logos/seattle-storm.png";
 import washingtonMysticsLogo from "@/assets/team-logos/washington-mystics.png";
 
+// NCAAF Team Logos (First 25)
+import airForceFalconsLogo from "@/assets/team-logos/air-force-falcons.png";
+import akronZipsLogo from "@/assets/team-logos/akron-zips.png";
+import alabamaCrimsonTideLogo from "@/assets/team-logos/alabama-crimson-tide.png";
+import appStateMountaineersLogo from "@/assets/team-logos/app-state-mountaineers.png";
+import arizonaStateSunDevilsLogo from "@/assets/team-logos/arizona-state-sun-devils.png";
+import arizonaWildcatsLogo from "@/assets/team-logos/arizona-wildcats.png";
+import arkansasRazorbacksLogo from "@/assets/team-logos/arkansas-razorbacks.png";
+import arkansasStateRedWolvesLogo from "@/assets/team-logos/arkansas-state-red-wolves.png";
+import armyBlackKnightsLogo from "@/assets/team-logos/army-black-knights.png";
+import auburnTigersLogo from "@/assets/team-logos/auburn-tigers.png";
+import ballStateCardinalsLogo from "@/assets/team-logos/ball-state-cardinals.png";
+import baylorBearsLogo from "@/assets/team-logos/baylor-bears.png";
+import boiseStateBroncosLogo from "@/assets/team-logos/boise-state-broncos.png";
+import bostonCollegeEaglesLogo from "@/assets/team-logos/boston-college-eagles.png";
+import bowlingGreenFalconsLogo from "@/assets/team-logos/bowling-green-falcons.png";
+import buffaloBullsLogo from "@/assets/team-logos/buffalo-bulls.png";
+import byuCougarsLogo from "@/assets/team-logos/byu-cougars.png";
+import californiaGoldenBearsLogo from "@/assets/team-logos/california-golden-bears.png";
+import centralMichiganChippewasLogo from "@/assets/team-logos/central-michigan-chippewas.png";
+import charlotte49ersLogo from "@/assets/team-logos/charlotte-49ers.png";
+import cincinnatiBearcatsLogo from "@/assets/team-logos/cincinnati-bearcats.png";
+import clemsonTigersLogo from "@/assets/team-logos/clemson-tigers.png";
+import coastalCarolinaChanticleersLogo from "@/assets/team-logos/coastal-carolina-chanticleers.png";
+import coloradoBuffaloesLogo from "@/assets/team-logos/colorado-buffaloes.png";
+import coloradoStateRamsLogo from "@/assets/team-logos/colorado-state-rams.png";
+
 export const teamLogos: Record<string, string> = {
   // MLB Teams
   "Arizona Diamondbacks": arizonaDiamondbacksLogo,
@@ -292,4 +319,31 @@ export const teamLogos: Record<string, string> = {
   "Phoenix Mercury": phoenixMercuryLogo,
   "Seattle Storm": seattleStormLogo,
   "Washington Mystics": washingtonMysticsLogo,
+  
+  // NCAAF Teams (First 25)
+  "Air Force Falcons": airForceFalconsLogo,
+  "Akron Zips": akronZipsLogo,
+  "Alabama Crimson Tide": alabamaCrimsonTideLogo,
+  "App State Mountaineers": appStateMountaineersLogo,
+  "Arizona State Sun Devils": arizonaStateSunDevilsLogo,
+  "Arizona Wildcats": arizonaWildcatsLogo,
+  "Arkansas Razorbacks": arkansasRazorbacksLogo,
+  "Arkansas State Red Wolves": arkansasStateRedWolvesLogo,
+  "Army Black Knights": armyBlackKnightsLogo,
+  "Auburn Tigers": auburnTigersLogo,
+  "Ball State Cardinals": ballStateCardinalsLogo,
+  "Baylor Bears": baylorBearsLogo,
+  "Boise State Broncos": boiseStateBroncosLogo,
+  "Boston College Eagles": bostonCollegeEaglesLogo,
+  "Bowling Green Falcons": bowlingGreenFalconsLogo,
+  "Buffalo Bulls": buffaloBullsLogo,
+  "BYU Cougars": byuCougarsLogo,
+  "California Golden Bears": californiaGoldenBearsLogo,
+  "Central Michigan Chippewas": centralMichiganChippewasLogo,
+  "Charlotte 49ers": charlotte49ersLogo,
+  "Cincinnati Bearcats": cincinnatiBearcatsLogo,
+  "Clemson Tigers": clemsonTigersLogo,
+  "Coastal Carolina Chanticleers": coastalCarolinaChanticleersLogo,
+  "Colorado Buffaloes": coloradoBuffaloesLogo,
+  "Colorado State Rams": coloradoStateRamsLogo,
 };
