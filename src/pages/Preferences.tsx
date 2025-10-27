@@ -70,6 +70,14 @@ export default function Preferences() {
         .order("display_name", { ascending: true });
 
       if (teamsError) throw teamsError;
+      console.log("Total teams loaded:", teamsData?.length);
+      
+      // Check MLB teams specifically
+      const mlbTopicId = topicsData?.find(t => t.name === 'Major League Baseball')?.id;
+      const mlbTeams = teamsData?.filter(t => t.topic_id === mlbTopicId);
+      console.log("MLB topic ID:", mlbTopicId, "MLB teams count:", mlbTeams?.length);
+      console.log("MLB teams:", mlbTeams?.map(t => t.display_name));
+      
       setTeams(teamsData || []);
 
     } catch (error) {
