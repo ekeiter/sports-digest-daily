@@ -228,8 +228,8 @@ export default function Preferences() {
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('baseball');
     const bIsBaseball = keyB.toLowerCase().includes('baseball');
-    const aIsFootball = keyA.toLowerCase().includes('pro football');
-    const bIsFootball = keyB.toLowerCase().includes('pro football');
+    const aIsFootball = keyA.toLowerCase().includes('professional football');
+    const bIsFootball = keyB.toLowerCase().includes('professional football');
     
     if (aIsBaseball) return -1;
     if (bIsBaseball) return 1;
