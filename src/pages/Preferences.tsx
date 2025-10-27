@@ -235,7 +235,7 @@ export default function Preferences() {
             <CardContent className="space-y-6">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
-                  {(sportTopics.length > 1 || (sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'professional baseball' && sport === 'other sports')) && (
+                  {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && (sportTopics.length > 1 || sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
