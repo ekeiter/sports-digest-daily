@@ -190,7 +190,7 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL is second, NBA is third, NHL is fourth, College Baseball is fifth, and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL is second, NBA is third, NHL is fourth, then WNBA, College Baseball, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
@@ -200,6 +200,8 @@ export default function Preferences() {
     const bIsNBA = keyB === 'nba-standalone';
     const aIsNHL = keyA === 'nhl-standalone';
     const bIsNHL = keyB === 'nhl-standalone';
+    const aIsProBasketball = keyA.toLowerCase().includes('professional basketball');
+    const bIsProBasketball = keyB.toLowerCase().includes('professional basketball');
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
     
@@ -211,6 +213,8 @@ export default function Preferences() {
     if (bIsNBA) return 1;
     if (aIsNHL) return -1;
     if (bIsNHL) return 1;
+    if (aIsProBasketball) return -1;
+    if (bIsProBasketball) return 1;
     if (aIsCollegeBaseball) return -1;
     if (bIsCollegeBaseball) return 1;
     if (keyA === 'other sports') return 1;
@@ -284,7 +288,7 @@ export default function Preferences() {
                               <img src={nbaLogo} alt="NBA" className="h-16 w-16 object-contain" />
                             )}
                             {isNHL && (
-                              <img src={nhlLogo} alt="NHL" className="h-16 w-16 object-contain" />
+                              <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
                             )}
                             <label
                               htmlFor={`topic-${topic.id}`}
