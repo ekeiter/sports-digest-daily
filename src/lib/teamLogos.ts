@@ -145,7 +145,7 @@ import phoenixMercuryLogo from "@/assets/team-logos/phoenix-mercury.png";
 import seattleStormLogo from "@/assets/team-logos/seattle-storm.png";
 import washingtonMysticsLogo from "@/assets/team-logos/washington-mystics.png";
 
-// NCAAF Team Logos (First 25)
+// NCAAF Team Logos
 import airForceFalconsLogo from "@/assets/team-logos/air-force-falcons.png";
 import akronZipsLogo from "@/assets/team-logos/akron-zips.png";
 import alabamaCrimsonTideLogo from "@/assets/team-logos/alabama-crimson-tide.png";
@@ -171,6 +171,114 @@ import clemsonTigersLogo from "@/assets/team-logos/clemson-tigers.png";
 import coastalCarolinaChanticleersLogo from "@/assets/team-logos/coastal-carolina-chanticleers.png";
 import coloradoBuffaloesLogo from "@/assets/team-logos/colorado-buffaloes.png";
 import coloradoStateRamsLogo from "@/assets/team-logos/colorado-state-rams.png";
+import delawareBlueHensLogo from "@/assets/team-logos/delaware-blue-hens.png";
+import dukeBlueDevilsLogo from "@/assets/team-logos/duke-blue-devils.png";
+import eastCarolinaPiratesLogo from "@/assets/team-logos/east-carolina-pirates.png";
+import easternMichiganEaglesLogo from "@/assets/team-logos/eastern-michigan-eagles.png";
+import floridaAtlanticOwlsLogo from "@/assets/team-logos/florida-atlantic-owls.png";
+import floridaGatorsLogo from "@/assets/team-logos/florida-gators.png";
+import floridaInternationalPanthersLogo from "@/assets/team-logos/florida-international-panthers.png";
+import floridaStateSeminolesLogo from "@/assets/team-logos/florida-state-seminoles.png";
+import fresnoStateBulldogsLogo from "@/assets/team-logos/fresno-state-bulldogs.png";
+import georgiaBulldogsLogo from "@/assets/team-logos/georgia-bulldogs.png";
+import georgiaSouthernEaglesLogo from "@/assets/team-logos/georgia-southern-eagles.png";
+import georgiaStatePanthersLogo from "@/assets/team-logos/georgia-state-panthers.png";
+import georgiaTechYellowJacketsLogo from "@/assets/team-logos/georgia-tech-yellow-jackets.png";
+import hawaiiRainbowWarriorsLogo from "@/assets/team-logos/hawaii-rainbow-warriors.png";
+import houstonCougarsLogo from "@/assets/team-logos/houston-cougars.png";
+import illinoisFightingIlliniLogo from "@/assets/team-logos/illinois-fighting-illini.png";
+import indianaHoosiersLogo from "@/assets/team-logos/indiana-hoosiers.png";
+import iowaHawkeyesLogo from "@/assets/team-logos/iowa-hawkeyes.png";
+import iowaStateCyclonesLogo from "@/assets/team-logos/iowa-state-cyclones.png";
+import jacksonvilleStateGamecocksLogo from "@/assets/team-logos/jacksonville-state-gamecocks.png";
+import jamesMadisonDukesLogo from "@/assets/team-logos/james-madison-dukes.png";
+import kansasJayhawksLogo from "@/assets/team-logos/kansas-jayhawks.png";
+import kentStateGoldenFlashesLogo from "@/assets/team-logos/kent-state-golden-flashes.png";
+import kennesawStateOwlsLogo from "@/assets/team-logos/kennesaw-state-owls.png";
+import kentuckyWildcatsLogo from "@/assets/team-logos/kentucky-wildcats.png";
+import libertyFlamesLogo from "@/assets/team-logos/liberty-flames.png";
+import louisianaTechBulldogsLogo from "@/assets/team-logos/louisiana-tech-bulldogs.png";
+import louisianaRaginCajunsLogo from "@/assets/team-logos/louisiana-ragin-cajuns.png";
+import louisvilleCardinalsLogo from "@/assets/team-logos/louisville-cardinals.png";
+import lsuTigersLogo from "@/assets/team-logos/lsu-tigers.png";
+import marshallThunderingHerdLogo from "@/assets/team-logos/marshall-thundering-herd.png";
+import marylandTerrapinsLogo from "@/assets/team-logos/maryland-terrapins.png";
+import memphisTigersLogo from "@/assets/team-logos/memphis-tigers.png";
+import miamiOhioRedhawksLogo from "@/assets/team-logos/miami-ohio-redhawks.png";
+import miamiHurricanesLogo from "@/assets/team-logos/miami-hurricanes.png";
+import michiganWolverinesLogo from "@/assets/team-logos/michigan-wolverines.png";
+import michiganStateSpartansLogo from "@/assets/team-logos/michigan-state-spartans.png";
+import middleTennesseeBlueRaidersLogo from "@/assets/team-logos/middle-tennessee-blue-raiders.png";
+import minnesotaGoldenGophersLogo from "@/assets/team-logos/minnesota-golden-gophers.png";
+import mississippiStateBulldogsLogo from "@/assets/team-logos/mississippi-state-bulldogs.png";
+import missouriTigersLogo from "@/assets/team-logos/missouri-tigers.png";
+import navyMidshipmenLogo from "@/assets/team-logos/navy-midshipmen.png";
+import ncStateWolfpackLogo from "@/assets/team-logos/nc-state-wolfpack.png";
+import nebraskaCornhuskersLogo from "@/assets/team-logos/nebraska-cornhuskers.png";
+import nevadaWolfPackLogo from "@/assets/team-logos/nevada-wolf-pack.png";
+import unlvRebelsLogo from "@/assets/team-logos/unlv-rebels.png";
+import newMexicoLobosLogo from "@/assets/team-logos/new-mexico-lobos.png";
+import newMexicoStateAggiesLogo from "@/assets/team-logos/new-mexico-state-aggies.png";
+import northCarolinaTarHeelsLogo from "@/assets/team-logos/north-carolina-tar-heels.png";
+import northTexasMeanGreenLogo from "@/assets/team-logos/north-texas-mean-green.png";
+import northernIllinoisHuskiesLogo from "@/assets/team-logos/northern-illinois-huskies.png";
+import northwesternWildcatsLogo from "@/assets/team-logos/northwestern-wildcats.png";
+import notreDameFightingIrishLogo from "@/assets/team-logos/notre-dame-fighting-irish.png";
+import ohioBobcatsLogo from "@/assets/team-logos/ohio-bobcats.png";
+import ohioStateBuckeyesLogo from "@/assets/team-logos/ohio-state-buckeyes.png";
+import oklahomaSoonersLogo from "@/assets/team-logos/oklahoma-sooners.png";
+import oklahomaStateCowboysLogo from "@/assets/team-logos/oklahoma-state-cowboys.png";
+import oldDominionMonarchsLogo from "@/assets/team-logos/old-dominion-monarchs.png";
+import oleMissRebelsLogo from "@/assets/team-logos/ole-miss-rebels.png";
+import oregonDucksLogo from "@/assets/team-logos/oregon-ducks.png";
+import oregonStateBeaversLogo from "@/assets/team-logos/oregon-state-beavers.png";
+import pennStateNittanyLionsLogo from "@/assets/team-logos/penn-state-nittany-lions.png";
+import pittsburghPanthersLogo from "@/assets/team-logos/pittsburgh-panthers.png";
+import purdueBoilermakersLogo from "@/assets/team-logos/purdue-boilermakers.png";
+import riceOwlsLogo from "@/assets/team-logos/rice-owls.png";
+import rutgersScarletKnightsLogo from "@/assets/team-logos/rutgers-scarlet-knights.png";
+import samHoustonBearkatsLogo from "@/assets/team-logos/sam-houston-bearkats.png";
+import sanDiegoStateAztecsLogo from "@/assets/team-logos/san-diego-state-aztecs.png";
+import sanJoseStateSpartansLogo from "@/assets/team-logos/san-jose-state-spartans.png";
+import smuMustangsLogo from "@/assets/team-logos/smu-mustangs.png";
+import southAlabamaJaguarsLogo from "@/assets/team-logos/south-alabama-jaguars.png";
+import southCarolinaGamecocksLogo from "@/assets/team-logos/south-carolina-gamecocks.png";
+import southFloridaBullsLogo from "@/assets/team-logos/south-florida-bulls.png";
+import southernMissGoldenEaglesLogo from "@/assets/team-logos/southern-miss-golden-eagles.png";
+import stanfordCardinalLogo from "@/assets/team-logos/stanford-cardinal.png";
+import syracuseOrangeLogo from "@/assets/team-logos/syracuse-orange.png";
+import tcuHornedFrogsLogo from "@/assets/team-logos/tcu-horned-frogs.png";
+import templeOwlsLogo from "@/assets/team-logos/temple-owls.png";
+import tennesseeVolunteersLogo from "@/assets/team-logos/tennessee-volunteers.png";
+import texasLonghornsLogo from "@/assets/team-logos/texas-longhorns.png";
+import texasAmAggiesLogo from "@/assets/team-logos/texas-am-aggies.png";
+import texasStateBobcatsLogo from "@/assets/team-logos/texas-state-bobcats.png";
+import texasTechRedRaidersLogo from "@/assets/team-logos/texas-tech-red-raiders.png";
+import toledoRocketsLogo from "@/assets/team-logos/toledo-rockets.png";
+import troyTrojansLogo from "@/assets/team-logos/troy-trojans.png";
+import tulaneGreenWaveLogo from "@/assets/team-logos/tulane-green-wave.png";
+import tulsaGoldenHurricaneLogo from "@/assets/team-logos/tulsa-golden-hurricane.png";
+import uabBlazersLogo from "@/assets/team-logos/uab-blazers.png";
+import ucfKnightsLogo from "@/assets/team-logos/ucf-knights.png";
+import uclaBruinsLogo from "@/assets/team-logos/ucla-bruins.png";
+import uconnHuskiesLogo from "@/assets/team-logos/uconn-huskies.png";
+import umassMinutemenLogo from "@/assets/team-logos/umass-minutemen.png";
+import uscTrojansLogo from "@/assets/team-logos/usc-trojans.png";
+import utahUtesLogo from "@/assets/team-logos/utah-utes.png";
+import utahStateAggiesLogo from "@/assets/team-logos/utah-state-aggies.png";
+import utepMinersLogo from "@/assets/team-logos/utep-miners.png";
+import utsaRoadrunnersLogo from "@/assets/team-logos/utsa-roadrunners.png";
+import vanderbiltCommodoresLogo from "@/assets/team-logos/vanderbilt-commodores.png";
+import virginiaCavaliersLogo from "@/assets/team-logos/virginia-cavaliers.png";
+import virginiaTechHokiesLogo from "@/assets/team-logos/virginia-tech-hokies.png";
+import wakeForestDemonDeaconsLogo from "@/assets/team-logos/wake-forest-demon-deacons.png";
+import washingtonHuskiesLogo from "@/assets/team-logos/washington-huskies.png";
+import washingtonStateCougarsLogo from "@/assets/team-logos/washington-state-cougars.png";
+import westVirginiaMountaineersLogo from "@/assets/team-logos/west-virginia-mountaineers.png";
+import westernKentuckyHilltoppersLogo from "@/assets/team-logos/western-kentucky-hilltoppers.png";
+import westernMichiganBroncosLogo from "@/assets/team-logos/western-michigan-broncos.png";
+import wisconsinBadgersLogo from "@/assets/team-logos/wisconsin-badgers.png";
+import wyomingCowboysLogo from "@/assets/team-logos/wyoming-cowboys.png";
 
 export const teamLogos: Record<string, string> = {
   // MLB Teams
@@ -320,7 +428,7 @@ export const teamLogos: Record<string, string> = {
   "Seattle Storm": seattleStormLogo,
   "Washington Mystics": washingtonMysticsLogo,
   
-  // NCAAF Teams (First 25)
+  // NCAAF Teams
   "Air Force Falcons": airForceFalconsLogo,
   "Akron Zips": akronZipsLogo,
   "Alabama Crimson Tide": alabamaCrimsonTideLogo,
@@ -346,4 +454,112 @@ export const teamLogos: Record<string, string> = {
   "Coastal Carolina Chanticleers": coastalCarolinaChanticleersLogo,
   "Colorado Buffaloes": coloradoBuffaloesLogo,
   "Colorado State Rams": coloradoStateRamsLogo,
+  "Delaware Blue Hens": delawareBlueHensLogo,
+  "Duke Blue Devils": dukeBlueDevilsLogo,
+  "East Carolina Pirates": eastCarolinaPiratesLogo,
+  "Eastern Michigan Eagles": easternMichiganEaglesLogo,
+  "Florida Atlantic Owls": floridaAtlanticOwlsLogo,
+  "Florida Gators": floridaGatorsLogo,
+  "Florida International Panthers": floridaInternationalPanthersLogo,
+  "Florida State Seminoles": floridaStateSeminolesLogo,
+  "Fresno State Bulldogs": fresnoStateBulldogsLogo,
+  "Georgia Bulldogs": georgiaBulldogsLogo,
+  "Georgia Southern Eagles": georgiaSouthernEaglesLogo,
+  "Georgia State Panthers": georgiaStatePanthersLogo,
+  "Georgia Tech Yellow Jackets": georgiaTechYellowJacketsLogo,
+  "Hawaii Rainbow Warriors": hawaiiRainbowWarriorsLogo,
+  "Houston Cougars": houstonCougarsLogo,
+  "Illinois Fighting Illini": illinoisFightingIlliniLogo,
+  "Indiana Hoosiers": indianaHoosiersLogo,
+  "Iowa Hawkeyes": iowaHawkeyesLogo,
+  "Iowa State Cyclones": iowaStateCyclonesLogo,
+  "Jacksonville State Gamecocks": jacksonvilleStateGamecocksLogo,
+  "James Madison Dukes": jamesMadisonDukesLogo,
+  "Kansas Jayhawks": kansasJayhawksLogo,
+  "Kent State Golden Flashes": kentStateGoldenFlashesLogo,
+  "Kennesaw State Owls": kennesawStateOwlsLogo,
+  "Kentucky Wildcats": kentuckyWildcatsLogo,
+  "Liberty Flames": libertyFlamesLogo,
+  "Louisiana Tech Bulldogs": louisianaTechBulldogsLogo,
+  "Louisiana Ragin' Cajuns": louisianaRaginCajunsLogo,
+  "Louisville Cardinals": louisvilleCardinalsLogo,
+  "LSU Tigers": lsuTigersLogo,
+  "Marshall Thundering Herd": marshallThunderingHerdLogo,
+  "Maryland Terrapins": marylandTerrapinsLogo,
+  "Memphis Tigers": memphisTigersLogo,
+  "Miami (OH) RedHawks": miamiOhioRedhawksLogo,
+  "Miami Hurricanes": miamiHurricanesLogo,
+  "Michigan Wolverines": michiganWolverinesLogo,
+  "Michigan State Spartans": michiganStateSpartansLogo,
+  "Middle Tennessee Blue Raiders": middleTennesseeBlueRaidersLogo,
+  "Minnesota Golden Gophers": minnesotaGoldenGophersLogo,
+  "Mississippi State Bulldogs": mississippiStateBulldogsLogo,
+  "Missouri Tigers": missouriTigersLogo,
+  "Navy Midshipmen": navyMidshipmenLogo,
+  "NC State Wolfpack": ncStateWolfpackLogo,
+  "Nebraska Cornhuskers": nebraskaCornhuskersLogo,
+  "Nevada Wolf Pack": nevadaWolfPackLogo,
+  "UNLV Rebels": unlvRebelsLogo,
+  "New Mexico Lobos": newMexicoLobosLogo,
+  "New Mexico State Aggies": newMexicoStateAggiesLogo,
+  "North Carolina Tar Heels": northCarolinaTarHeelsLogo,
+  "North Texas Mean Green": northTexasMeanGreenLogo,
+  "Northern Illinois Huskies": northernIllinoisHuskiesLogo,
+  "Northwestern Wildcats": northwesternWildcatsLogo,
+  "Notre Dame Fighting Irish": notreDameFightingIrishLogo,
+  "Ohio Bobcats": ohioBobcatsLogo,
+  "Ohio State Buckeyes": ohioStateBuckeyesLogo,
+  "Oklahoma Sooners": oklahomaSoonersLogo,
+  "Oklahoma State Cowboys": oklahomaStateCowboysLogo,
+  "Old Dominion Monarchs": oldDominionMonarchsLogo,
+  "Ole Miss Rebels": oleMissRebelsLogo,
+  "Oregon Ducks": oregonDucksLogo,
+  "Oregon State Beavers": oregonStateBeaversLogo,
+  "Penn State Nittany Lions": pennStateNittanyLionsLogo,
+  "Pittsburgh Panthers": pittsburghPanthersLogo,
+  "Purdue Boilermakers": purdueBoilermakersLogo,
+  "Rice Owls": riceOwlsLogo,
+  "Rutgers Scarlet Knights": rutgersScarletKnightsLogo,
+  "Sam Houston Bearkats": samHoustonBearkatsLogo,
+  "San Diego State Aztecs": sanDiegoStateAztecsLogo,
+  "San José State Spartans": sanJoseStateSpartansLogo,
+  "SMU Mustangs": smuMustangsLogo,
+  "South Alabama Jaguars": southAlabamaJaguarsLogo,
+  "South Carolina Gamecocks": southCarolinaGamecocksLogo,
+  "South Florida Bulls": southFloridaBullsLogo,
+  "Southern Miss Golden Eagles": southernMissGoldenEaglesLogo,
+  "Stanford Cardinal": stanfordCardinalLogo,
+  "Syracuse Orange": syracuseOrangeLogo,
+  "TCU Horned Frogs": tcuHornedFrogsLogo,
+  "Temple Owls": templeOwlsLogo,
+  "Tennessee Volunteers": tennesseeVolunteersLogo,
+  "Texas Longhorns": texasLonghornsLogo,
+  "Texas A&M Aggies": texasAmAggiesLogo,
+  "Texas State Bobcats": texasStateBobcatsLogo,
+  "Texas Tech Red Raiders": texasTechRedRaidersLogo,
+  "Toledo Rockets": toledoRocketsLogo,
+  "Troy Trojans": troyTrojansLogo,
+  "Tulane Green Wave": tulaneGreenWaveLogo,
+  "Tulsa Golden Hurricane": tulsaGoldenHurricaneLogo,
+  "UAB Blazers": uabBlazersLogo,
+  "UCF Knights": ucfKnightsLogo,
+  "UCLA Bruins": uclaBruinsLogo,
+  "UConn Huskies": uconnHuskiesLogo,
+  "UMass Minutemen": umassMinutemenLogo,
+  "USC Trojans": uscTrojansLogo,
+  "Utah Utes": utahUtesLogo,
+  "Utah State Aggies": utahStateAggiesLogo,
+  "UTEP Miners": utepMinersLogo,
+  "UTSA Roadrunners": utsaRoadrunnersLogo,
+  "Vanderbilt Commodores": vanderbiltCommodoresLogo,
+  "Virginia Cavaliers": virginiaCavaliersLogo,
+  "Virginia Tech Hokies": virginiaTechHokiesLogo,
+  "Wake Forest Demon Deacons": wakeForestDemonDeaconsLogo,
+  "Washington Huskies": washingtonHuskiesLogo,
+  "Washington State Cougars": washingtonStateCougarsLogo,
+  "West Virginia Mountaineers": westVirginiaMountaineersLogo,
+  "Western Kentucky Hilltoppers": westernKentuckyHilltoppersLogo,
+  "Western Michigan Broncos": westernMichiganBroncosLogo,
+  "Wisconsin Badgers": wisconsinBadgersLogo,
+  "Wyoming Cowboys": wyomingCowboysLogo,
 };
