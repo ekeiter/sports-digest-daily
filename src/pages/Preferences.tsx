@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import mlbLogo from "@/assets/mlb-logo.svg";
+import nflLogo from "@/assets/nfl-logo.png";
 import arizonaDiamondbacksLogo from "@/assets/team-logos/arizona-diamondbacks.svg";
 import atlantaBravesLogo from "@/assets/team-logos/atlanta-braves.svg";
 import baltimoreOriolesLogo from "@/assets/team-logos/baltimore-orioles.svg";
@@ -223,10 +224,12 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL is second, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     if (keyA.toLowerCase().includes('baseball')) return -1;
     if (keyB.toLowerCase().includes('baseball')) return 1;
+    if (keyA.toLowerCase().includes('pro football')) return -1;
+    if (keyB.toLowerCase().includes('pro football')) return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
@@ -273,7 +276,8 @@ export default function Preferences() {
                     const isExpanded = expandedTopics.includes(topic.id);
                     
                     const isMLB = topic.name.toLowerCase().includes('major league baseball');
-                    const displayName = isMLB ? 'MLB' : topic.name;
+                    const isNFL = topic.name.toLowerCase().includes('national football league');
+                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : topic.name;
                     
                     return (
                       <div key={topic.id} className="space-y-2">
@@ -286,6 +290,9 @@ export default function Preferences() {
                             />
                             {isMLB && (
                               <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
+                            )}
+                            {isNFL && (
+                              <img src={nflLogo} alt="NFL" className="h-12 w-12 object-contain" />
                             )}
                             <label
                               htmlFor={`topic-${topic.id}`}
