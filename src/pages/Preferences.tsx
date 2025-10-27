@@ -205,7 +205,7 @@ export default function Preferences() {
                   
                   {sportTopics.map(topic => {
                     const topicTeams = getTeamsForTopic(topic.id);
-                    const hasTeams = topicTeams.length > 0;
+                    const hasTeams = topic.kind === 'league' || topicTeams.length > 0;
                     const isExpanded = expandedTopics.includes(topic.id);
                     
                     const isMLB = topic.name.toLowerCase().includes('major league baseball');
