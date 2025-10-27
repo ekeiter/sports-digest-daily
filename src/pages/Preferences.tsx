@@ -192,9 +192,11 @@ export default function Preferences() {
                             >
                               {topic.name}
                             </label>
-                            <Badge variant="secondary" className="text-xs">
-                              {topic.kind}
-                            </Badge>
+                            {hasTeams && (
+                              <Badge variant="secondary" className="text-xs">
+                                {topic.kind}
+                              </Badge>
+                            )}
                           </div>
                           
                           {hasTeams && (
