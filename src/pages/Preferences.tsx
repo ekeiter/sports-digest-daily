@@ -206,6 +206,15 @@ export default function Preferences() {
   ];
 
   const groupedTopics = topics.reduce((acc, topic) => {
+    // Extract NFL to be standalone
+    if (topic.name.toLowerCase().includes('national football league')) {
+      if (!acc['nfl-standalone']) {
+        acc['nfl-standalone'] = [];
+      }
+      acc['nfl-standalone'].push(topic);
+      return acc;
+    }
+    
     const isOtherTopic = otherTopicsList.some(
       other => topic.sport.toLowerCase().includes(other.toLowerCase())
     );
@@ -224,17 +233,17 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL is second, and "other sports" appears last
+  // Sort the groups to ensure MLB is first, NFL standalone is second, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('baseball');
     const bIsBaseball = keyB.toLowerCase().includes('baseball');
-    const aIsFootball = keyA.toLowerCase().includes('professional football');
-    const bIsFootball = keyB.toLowerCase().includes('professional football');
+    const aIsNFL = keyA === 'nfl-standalone';
+    const bIsNFL = keyB === 'nfl-standalone';
     
     if (aIsBaseball) return -1;
     if (bIsBaseball) return 1;
-    if (aIsFootball) return -1;
-    if (bIsFootball) return 1;
+    if (aIsNFL) return -1;
+    if (bIsNFL) return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
@@ -271,7 +280,7 @@ export default function Preferences() {
             <CardContent className="space-y-6">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
-                  {(sportTopics.length > 1 || sport === 'other sports') && (
+                  {(sportTopics.length > 1 || (sport !== 'nfl-standalone' && sport !== 'professional baseball' && sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
