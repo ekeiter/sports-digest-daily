@@ -105,13 +105,39 @@ export default function Preferences() {
     return teams.filter(team => team.topic_id === topicId);
   };
 
+  const otherTopicsList = [
+    'archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating',
+    'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating',
+    'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker',
+    'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding',
+    'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting'
+  ];
+
   const groupedTopics = topics.reduce((acc, topic) => {
-    if (!acc[topic.sport]) {
-      acc[topic.sport] = [];
+    const isOtherTopic = otherTopicsList.some(
+      other => topic.sport.toLowerCase().includes(other.toLowerCase())
+    );
+    
+    const groupKey = isOtherTopic ? 'other topics' : topic.sport;
+    
+    if (!acc[groupKey]) {
+      acc[groupKey] = [];
     }
-    acc[topic.sport].push(topic);
+    acc[groupKey].push(topic);
     return acc;
   }, {} as Record<string, Topic[]>);
+
+  // Sort "other topics" alphabetically by name
+  if (groupedTopics['other topics']) {
+    groupedTopics['other topics'].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // Sort the groups to ensure "other topics" appears last
+  const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
+    if (keyA === 'other topics') return 1;
+    if (keyB === 'other topics') return -1;
+    return keyA.localeCompare(keyB);
+  });
 
   if (loading) {
     return (
@@ -142,7 +168,7 @@ export default function Preferences() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {Object.entries(groupedTopics).map(([sport, sportTopics]) => (
+              {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
                   <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   
