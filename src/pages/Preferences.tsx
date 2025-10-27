@@ -12,7 +12,7 @@ import nflLogo from "@/assets/nfl-logo.png";
 import nbaLogo from "@/assets/nba-logo.png";
 import nhlLogo from "@/assets/nhl-logo.png";
 import wnbaLogo from "@/assets/wnba-logo.png";
-import ncaafLogo from "@/assets/ncaaf-logo.png";
+import ncaafLogo from "@/assets/ncaaf-logo.svg";
 import { teamLogos } from "@/lib/teamLogos";
 
 interface Topic {
