@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import mlbLogo from "@/assets/mlb-logo.png";
 
 interface Topic {
   id: number;
@@ -132,8 +133,10 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure "other sports" appears last
+  // Sort the groups to ensure MLB is first and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
+    if (keyA === 'baseball') return -1;
+    if (keyB === 'baseball') return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
@@ -179,6 +182,9 @@ export default function Preferences() {
                     const hasTeams = topicTeams.length > 0;
                     const isExpanded = expandedTopics.includes(topic.id);
                     
+                    const isMLB = topic.name.toLowerCase().includes('major league baseball');
+                    const displayName = isMLB ? 'MLB' : topic.name;
+                    
                     return (
                       <div key={topic.id} className="space-y-2">
                         <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
@@ -188,11 +194,14 @@ export default function Preferences() {
                               checked={selectedTopics.includes(topic.id)}
                               onCheckedChange={() => handleTopicToggle(topic.id)}
                             />
+                            {isMLB && (
+                              <img src={mlbLogo} alt="MLB" className="h-6 w-6 object-contain" />
+                            )}
                             <label
                               htmlFor={`topic-${topic.id}`}
                               className="font-medium cursor-pointer flex-1"
                             >
-                              {topic.name}
+                              {displayName}
                             </label>
                             {hasTeams && (
                               <Badge variant="secondary" className="text-xs">
