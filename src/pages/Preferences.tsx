@@ -226,10 +226,15 @@ export default function Preferences() {
 
   // Sort the groups to ensure MLB is first, NFL is second, and "other sports" appears last
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
-    if (keyA.toLowerCase().includes('baseball')) return -1;
-    if (keyB.toLowerCase().includes('baseball')) return 1;
-    if (keyA.toLowerCase().includes('pro football')) return -1;
-    if (keyB.toLowerCase().includes('pro football')) return 1;
+    const aIsBaseball = keyA.toLowerCase().includes('baseball');
+    const bIsBaseball = keyB.toLowerCase().includes('baseball');
+    const aIsFootball = keyA.toLowerCase().includes('pro football');
+    const bIsFootball = keyB.toLowerCase().includes('pro football');
+    
+    if (aIsBaseball) return -1;
+    if (bIsBaseball) return 1;
+    if (aIsFootball) return -1;
+    if (bIsFootball) return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
