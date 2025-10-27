@@ -279,6 +279,9 @@ import westernKentuckyHilltoppersLogo from "@/assets/team-logos/western-kentucky
 import westernMichiganBroncosLogo from "@/assets/team-logos/western-michigan-broncos.png";
 import wisconsinBadgersLogo from "@/assets/team-logos/wisconsin-badgers.png";
 import wyomingCowboysLogo from "@/assets/team-logos/wyoming-cowboys.png";
+import kansasStateWildcatsLogo from "@/assets/team-logos/kansas-state-wildcats.png";
+import missouriStateBearsLogo from "@/assets/team-logos/missouri-state-bears.png";
+import ulMonroeWarhawksLogo from "@/assets/team-logos/ul-monroe-warhawks.png";
 
 export const teamLogos: Record<string, string> = {
   // MLB Teams
@@ -562,4 +565,7 @@ export const teamLogos: Record<string, string> = {
   "Western Michigan Broncos": westernMichiganBroncosLogo,
   "Wisconsin Badgers": wisconsinBadgersLogo,
   "Wyoming Cowboys": wyomingCowboysLogo,
+  "Kansas State Wildcats": kansasStateWildcatsLogo,
+  "Missouri State Bears": missouriStateBearsLogo,
+  "UL Monroe Warhawks": ulMonroeWarhawksLogo,
 };
