@@ -8,13 +8,17 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AuthFormData {
   email: string;
+  password: string;
 }
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
@@ -56,21 +60,34 @@ export default function Auth() {
   const onSubmit = async (data: AuthFormData) => {
     setLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.signInWithOtp({
-        email: data.email,
-        options: {
-          emailRedirectTo: redirectUrl
-        }
-      });
+      if (isSignUp) {
+        const redirectUrl = `${window.location.origin}/`;
+        
+        const { error } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            emailRedirectTo: redirectUrl
+          }
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Check your email",
-        description: "We've sent you a magic link to sign in.",
-      });
+        setShowConfirmation(true);
+        reset();
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Signed in successfully.",
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Authentication Error",
@@ -83,15 +100,44 @@ export default function Auth() {
   };
 
 
+  if (showConfirmation) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">
+              Check your email
+            </CardTitle>
+            <CardDescription className="text-center">
+              We've sent you a confirmation link. Please check your email to verify your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => setShowConfirmation(false)}
+              variant="outline"
+              className="w-full"
+            >
+              Back to sign in
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">
-            Sign in to Sports Digest
+            {isSignUp ? "Create an account" : "Sign in to Sports Digest"}
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your email and we'll send you a magic link to sign in
+            {isSignUp 
+              ? "Enter your email and password to create your account"
+              : "Enter your email and password to sign in"
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -115,19 +161,48 @@ export default function Auth() {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                })}
+              />
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
+            </div>
+
             <Button 
               type="submit" 
               className="w-full" 
               disabled={loading}
             >
-              {loading ? "Sending magic link..." : "Send magic link"}
+              {loading ? "Please wait..." : (isSignUp ? "Sign up" : "Sign in")}
             </Button>
           </form>
 
           <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              No password required - we'll send you a secure login link
-            </p>
+            <Button
+              variant="link"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                reset();
+              }}
+              className="text-sm"
+            >
+              {isSignUp 
+                ? "Already have an account? Sign in"
+                : "Don't have an account? Sign up"
+              }
+            </Button>
           </div>
         </CardContent>
       </Card>
