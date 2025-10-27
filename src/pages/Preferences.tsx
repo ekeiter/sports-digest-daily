@@ -246,8 +246,9 @@ export default function Preferences() {
                     
                     const isMLB = topic.name.toLowerCase().includes('major league baseball');
                     const isNFL = topic.name.toLowerCase().includes('national football league');
-                    const isNBA = topic.name.toLowerCase().includes('national basketball association');
-                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : topic.name;
+                    const isNBA = topic.name.toLowerCase().includes('national basketball association') && !topic.name.toLowerCase().includes('women');
+                    const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
+                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isWNBA ? 'WNBA' : topic.name;
                     
                     return (
                       <div key={topic.id} className="space-y-2">
