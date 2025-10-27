@@ -289,7 +289,7 @@ export default function Preferences() {
                                       onCheckedChange={() => handleTeamToggle(team.id)}
                                     />
                                     {teamLogo && (
-                                      <img src={teamLogo} alt={team.display_name} className="h-6 w-6 object-contain" />
+                                      <img src={teamLogo} alt={team.display_name} className="h-8 w-8 object-contain" />
                                     )}
                                     <label
                                       htmlFor={`team-${team.id}`}
