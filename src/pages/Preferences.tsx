@@ -294,7 +294,7 @@ export default function Preferences() {
                                   <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
                                 )}
                                 {isWNBA && (
-                                  <img src={wnbaLogo} alt="WNBA" className="h-16 w-16 object-contain" />
+                                  <img src={wnbaLogo} alt="WNBA" className="h-12 w-12 object-contain" />
                                 )}
                               </div>
                             )}

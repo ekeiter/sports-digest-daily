@@ -130,6 +130,21 @@ import vegasGoldenKnightsLogo from "@/assets/team-logos/vegas-golden-knights.png
 import washingtonCapitalsLogo from "@/assets/team-logos/washington-capitals.png";
 import winnipegJetsLogo from "@/assets/team-logos/winnipeg-jets.png";
 
+// WNBA Team Logos
+import atlantaDreamLogo from "@/assets/team-logos/atlanta-dream.png";
+import chicagoskyLogo from "@/assets/team-logos/chicago-sky.png";
+import connecticutSunLogo from "@/assets/team-logos/connecticut-sun.png";
+import dallasWingsLogo from "@/assets/team-logos/dallas-wings.png";
+import goldenStateValkyriesLogo from "@/assets/team-logos/golden-state-valkyries.png";
+import indianaFeverLogo from "@/assets/team-logos/indiana-fever.png";
+import lasVegasAcesLogo from "@/assets/team-logos/las-vegas-aces.png";
+import losAngelesSparksLogo from "@/assets/team-logos/los-angeles-sparks.png";
+import minnesotaLynxLogo from "@/assets/team-logos/minnesota-lynx.png";
+import newYorkLibertyLogo from "@/assets/team-logos/new-york-liberty.png";
+import phoenixMercuryLogo from "@/assets/team-logos/phoenix-mercury.png";
+import seattleStormLogo from "@/assets/team-logos/seattle-storm.png";
+import washingtonMysticsLogo from "@/assets/team-logos/washington-mystics.png";
+
 export const teamLogos: Record<string, string> = {
   // MLB Teams
   "Arizona Diamondbacks": arizonaDiamondbacksLogo,
@@ -262,4 +277,19 @@ export const teamLogos: Record<string, string> = {
   "Vegas Golden Knights": vegasGoldenKnightsLogo,
   "Washington Capitals": washingtonCapitalsLogo,
   "Winnipeg Jets": winnipegJetsLogo,
+  
+  // WNBA Teams
+  "Atlanta Dream": atlantaDreamLogo,
+  "Chicago Sky": chicagoskyLogo,
+  "Connecticut Sun": connecticutSunLogo,
+  "Dallas Wings": dallasWingsLogo,
+  "Golden State Valkyries": goldenStateValkyriesLogo,
+  "Indiana Fever": indianaFeverLogo,
+  "Las Vegas Aces": lasVegasAcesLogo,
+  "Los Angeles Sparks": losAngelesSparksLogo,
+  "Minnesota Lynx": minnesotaLynxLogo,
+  "New York Liberty": newYorkLibertyLogo,
+  "Phoenix Mercury": phoenixMercuryLogo,
+  "Seattle Storm": seattleStormLogo,
+  "Washington Mystics": washingtonMysticsLogo,
 };
