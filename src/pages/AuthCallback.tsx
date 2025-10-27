@@ -18,24 +18,17 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isRecovery = false;
+    // Check URL hash for recovery type FIRST
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+    
+    if (type === 'recovery') {
+      setShowPasswordReset(true);
+      return; // Don't run the normal callback
+    }
 
-    // Listen for auth state changes to detect password recovery
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        isRecovery = true;
-        setShowPasswordReset(true);
-      }
-    });
-
+    // Normal email confirmation flow
     const handleCallback = async () => {
-      // Wait a moment for the auth state change to process
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      if (isRecovery) {
-        return; // Don't navigate if we're in password recovery mode
-      }
-
       try {
         const { data: { user }, error } = await supabase.auth.getUser();
         
@@ -64,8 +57,6 @@ export default function AuthCallback() {
     };
 
     handleCallback();
-
-    return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
