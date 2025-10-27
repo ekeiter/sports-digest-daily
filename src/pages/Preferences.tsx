@@ -61,10 +61,12 @@ export default function Preferences() {
       if (topicsError) throw topicsError;
       setTopics(topicsData || []);
 
-      // Load all teams
+      // Load all teams (limit to topics that have teams to reduce data)
+      const topicIds = topicsData?.map(t => t.id) || [];
       const { data: teamsData, error: teamsError } = await supabase
         .from("teams")
         .select("*")
+        .in("topic_id", topicIds)
         .order("display_name", { ascending: true });
 
       if (teamsError) throw teamsError;
