@@ -205,7 +205,7 @@ export default function Preferences() {
                             </label>
                             {hasTeams && (
                               <Badge variant="secondary" className="text-xs">
-                                {topic.kind}
+                                {topic.kind.replace(/league/gi, '').trim()}
                               </Badge>
                             )}
                           </div>
