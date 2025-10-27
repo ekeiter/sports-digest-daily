@@ -259,7 +259,7 @@ export default function Preferences() {
             <CardContent className="space-y-6">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
-                  {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && (sportTopics.length > 1 || sport === 'other sports')) && (
+                  {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && (sportTopics.length > 1 || sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
@@ -274,7 +274,7 @@ export default function Preferences() {
                     const isNHL = topic.name.toLowerCase().includes('national hockey league');
                     const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
                     const isNCAAF = topic.name.toLowerCase().includes('college football');
-                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isNHL ? 'NHL' : isWNBA ? 'WNBA' : isNCAAF ? 'College Football' : topic.name;
+                    const displayName = isMLB ? 'MLB' : isNFL ? 'NFL' : isNBA ? 'NBA' : isNHL ? 'NHL' : isWNBA ? 'WNBA' : isNCAAF ? 'NCAAF' : topic.name;
                     
                     return (
                       <div key={topic.id} className="space-y-2">
@@ -303,7 +303,7 @@ export default function Preferences() {
                                   <img src={wnbaLogo} alt="WNBA" className="h-12 w-12 object-contain" />
                                 )}
                                 {isNCAAF && (
-                                  <img src={ncaafLogo} alt="College Football" className="h-12 w-12 object-contain" />
+                                  <img src={ncaafLogo} alt="NCAAF" className="h-10 w-10 object-contain" />
                                 )}
                               </div>
                             )}
