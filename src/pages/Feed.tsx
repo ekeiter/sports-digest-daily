@@ -146,12 +146,11 @@ export default function Feed() {
                     className="block hover:opacity-80 transition-opacity"
                   >
                     <div className="flex flex-col md:flex-row md:gap-4">
-                      {/* Mobile: domain above thumbnail */}
-                      {article.domain && (
-                        <div className="text-sm text-muted-foreground mb-2 md:hidden">
-                          {article.domain}
-                        </div>
-                      )}
+                      {/* Mobile: domain and time above thumbnail */}
+                      <div className="flex justify-between items-center text-sm text-muted-foreground mb-2 md:hidden">
+                        <span>{article.domain || 'Unknown source'}</span>
+                        <span>{formatTimeAgo(article.published_effective)}</span>
+                      </div>
                       
                       {article.thumbnail_url && (
                         <img 
@@ -174,11 +173,6 @@ export default function Feed() {
                         <h3 className="font-semibold mb-2 md:mb-1 line-clamp-2">
                           {article.title}
                         </h3>
-                        
-                        {/* Mobile: time below title */}
-                        <div className="text-sm text-muted-foreground md:hidden">
-                          {formatTimeAgo(article.published_effective)}
-                        </div>
                       </div>
                     </div>
                   </a>
