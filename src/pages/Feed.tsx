@@ -156,7 +156,7 @@ export default function Feed() {
                   >
                     <div className="flex flex-col md:flex-row md:gap-4">
                       {/* Mobile: domain and time above thumbnail */}
-                      <div className="flex justify-between items-center text-sm text-muted-foreground mb-2 md:hidden">
+                      <div className="flex justify-between items-center text-sm text-foreground mb-2 md:hidden">
                         <span>{article.domain || 'Unknown source'}</span>
                         <span>{formatTimeAgo(article.published_effective)}</span>
                       </div>
@@ -172,7 +172,7 @@ export default function Feed() {
                       
                       <div className="flex-1 min-w-0">
                         {/* Desktop: domain and time in header */}
-                        <div className="hidden md:flex gap-2 text-sm text-muted-foreground mb-1">
+                        <div className="hidden md:flex gap-2 text-sm text-foreground mb-1">
                           {article.domain && <span>{article.domain}</span>}
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
