@@ -89,7 +89,16 @@ export default function Feed() {
 
   const formatTimeAgo = (dateString: string) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+      const publishedDate = new Date(dateString);
+      const now = new Date();
+      const hoursAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60));
+      
+      if (hoursAgo < 24) {
+        return `${hoursAgo}h`;
+      } else {
+        const daysAgo = Math.floor(hoursAgo / 24);
+        return `${daysAgo}d`;
+      }
     } catch {
       return dateString;
     }
