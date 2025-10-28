@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
+import Feed from "./pages/Feed";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/preferences" element={<Preferences />} />
+          <Route path="/feed" element={<Feed />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

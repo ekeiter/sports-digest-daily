@@ -105,8 +105,11 @@ const Index = () => {
             Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
           </p>
           
-          <div className="mt-8">
-            <Button size="lg" onClick={() => navigate("/preferences")}>
+          <div className="mt-8 flex gap-4 justify-center">
+            <Button size="lg" onClick={() => navigate("/feed")}>
+              Go To My Sports Feed
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
             </Button>
           </div>
