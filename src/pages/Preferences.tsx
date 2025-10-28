@@ -290,8 +290,8 @@ export default function Preferences() {
                     const isNHL = topic.name.toLowerCase().includes('national hockey league');
                     const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
                     const isNCAAF = topic.name.toLowerCase().includes('college football');
-                    const isNCAAM = topic.name.toLowerCase().includes('college basketball') && topic.name.toLowerCase().includes('men');
-                    const isNCAAW = topic.name.toLowerCase().includes('college basketball') && topic.name.toLowerCase().includes('women');
+                    const isNCAAM = topic.id === 10; // Men's College Basketball
+                    const isNCAAW = topic.id === 29; // Women's College Basketball
                     
                     // For college football, use index to differentiate FBS (0) and FCS (1)
                     let displayName = topic.name;
@@ -300,13 +300,13 @@ export default function Preferences() {
                     else if (isNBA) displayName = 'NBA';
                     else if (isNHL) displayName = 'NHL';
                     else if (isWNBA) displayName = 'WNBA';
+                    else if (isNCAAM) displayName = 'NCAAM';
+                    else if (isNCAAW) displayName = 'NCAAW';
                     else if (isNCAAF) {
                       const ncaafTopics = sportTopics.filter(t => t.name.toLowerCase().includes('college football'));
                       const ncaafIndex = ncaafTopics.findIndex(t => t.id === topic.id);
                       displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
                     }
-                    else if (isNCAAM) displayName = 'NCAAM';
-                    else if (isNCAAW) displayName = 'NCAAW';
                     
                     return (
                       <div key={topic.id} className="space-y-2">
