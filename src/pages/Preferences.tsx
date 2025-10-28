@@ -192,7 +192,7 @@ export default function Preferences() {
     groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups to ensure MLB is first, NFL is second, NBA is third, NHL is fourth, then WNBA, College Football, College Baseball, and "other sports" appears last
+  // Sort the groups: MLB, NFL, NBA, NHL, WNBA, College Football, Men's CBB, Women's CBB, PGA, LPGA, LIV Golf, Soccer, College Football - FCS, College Baseball, then others
   const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
@@ -208,6 +208,18 @@ export default function Preferences() {
     const bIsCollegeFootball = keyB.toLowerCase().includes('college football');
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
+    const aIsMensCollegeBasketball = keyA.toLowerCase().includes("men's college basketball");
+    const bIsMensCollegeBasketball = keyB.toLowerCase().includes("men's college basketball");
+    const aIsWomensCollegeBasketball = keyA.toLowerCase().includes("women's college basketball");
+    const bIsWomensCollegeBasketball = keyB.toLowerCase().includes("women's college basketball");
+    const aIsPGA = keyA.toLowerCase().includes('pga tour');
+    const bIsPGA = keyB.toLowerCase().includes('pga tour');
+    const aIsLPGA = keyA.toLowerCase().includes('lpga tour');
+    const bIsLPGA = keyB.toLowerCase().includes('lpga tour');
+    const aIsLIV = keyA.toLowerCase().includes('liv golf');
+    const bIsLIV = keyB.toLowerCase().includes('liv golf');
+    const aIsSoccer = keyA.toLowerCase().includes('soccer');
+    const bIsSoccer = keyB.toLowerCase().includes('soccer');
     
     if (aIsBaseball) return -1;
     if (bIsBaseball) return 1;
@@ -219,8 +231,24 @@ export default function Preferences() {
     if (bIsNHL) return 1;
     if (aIsProBasketball) return -1;
     if (bIsProBasketball) return 1;
-    if (aIsCollegeFootball) return -1;
-    if (bIsCollegeFootball) return 1;
+    if (aIsCollegeFootball && bIsCollegeFootball) {
+      // Keep NCAAF before NCAAF - FCS by checking topic name
+      return 0;
+    }
+    if (aIsCollegeFootball && !bIsCollegeFootball) return -1;
+    if (bIsCollegeFootball && !aIsCollegeFootball) return 1;
+    if (aIsMensCollegeBasketball) return -1;
+    if (bIsMensCollegeBasketball) return 1;
+    if (aIsWomensCollegeBasketball) return -1;
+    if (bIsWomensCollegeBasketball) return 1;
+    if (aIsPGA) return -1;
+    if (bIsPGA) return 1;
+    if (aIsLPGA) return -1;
+    if (bIsLPGA) return 1;
+    if (aIsLIV) return -1;
+    if (bIsLIV) return 1;
+    if (aIsSoccer) return -1;
+    if (bIsSoccer) return 1;
     if (aIsCollegeBaseball) return -1;
     if (bIsCollegeBaseball) return 1;
     if (keyA === 'other sports') return 1;
