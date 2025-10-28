@@ -208,16 +208,10 @@ export default function Preferences() {
     const bIsCollegeFootball = keyB.toLowerCase().includes('college football');
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
-    const aIsMensCollegeBasketball = keyA.toLowerCase().includes("men's college basketball");
-    const bIsMensCollegeBasketball = keyB.toLowerCase().includes("men's college basketball");
-    const aIsWomensCollegeBasketball = keyA.toLowerCase().includes("women's college basketball");
-    const bIsWomensCollegeBasketball = keyB.toLowerCase().includes("women's college basketball");
-    const aIsPGA = keyA.toLowerCase().includes('pga tour');
-    const bIsPGA = keyB.toLowerCase().includes('pga tour');
-    const aIsLPGA = keyA.toLowerCase().includes('lpga tour');
-    const bIsLPGA = keyB.toLowerCase().includes('lpga tour');
-    const aIsLIV = keyA.toLowerCase().includes('liv golf');
-    const bIsLIV = keyB.toLowerCase().includes('liv golf');
+    const aIsCollegeBasketball = keyA.toLowerCase() === 'college basketball';
+    const bIsCollegeBasketball = keyB.toLowerCase() === 'college basketball';
+    const aIsGolf = keyA.toLowerCase() === 'golf';
+    const bIsGolf = keyB.toLowerCase() === 'golf';
     const aIsSoccer = keyA.toLowerCase().includes('soccer');
     const bIsSoccer = keyB.toLowerCase().includes('soccer');
     
@@ -237,16 +231,10 @@ export default function Preferences() {
     }
     if (aIsCollegeFootball && !bIsCollegeFootball) return -1;
     if (bIsCollegeFootball && !aIsCollegeFootball) return 1;
-    if (aIsMensCollegeBasketball) return -1;
-    if (bIsMensCollegeBasketball) return 1;
-    if (aIsWomensCollegeBasketball) return -1;
-    if (bIsWomensCollegeBasketball) return 1;
-    if (aIsPGA) return -1;
-    if (bIsPGA) return 1;
-    if (aIsLPGA) return -1;
-    if (bIsLPGA) return 1;
-    if (aIsLIV) return -1;
-    if (bIsLIV) return 1;
+    if (aIsCollegeBasketball) return -1;
+    if (bIsCollegeBasketball) return 1;
+    if (aIsGolf) return -1;
+    if (bIsGolf) return 1;
     if (aIsSoccer) return -1;
     if (bIsSoccer) return 1;
     if (aIsCollegeBaseball) return -1;
