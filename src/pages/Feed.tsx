@@ -118,10 +118,7 @@ export default function Feed() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold mx-auto whitespace-nowrap">My Sports Feed</h1>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/preferences")}>
-                Manage Interests
-              </Button>
+            <div>
               <Button variant="outline" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
