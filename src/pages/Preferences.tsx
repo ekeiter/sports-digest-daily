@@ -275,7 +275,7 @@ export default function Preferences() {
             <CardContent className="space-y-6">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
                 <div key={sport} className="space-y-4">
-                  {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && (sportTopics.length > 1 || sport === 'other sports')) && (
+                  {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
                   
@@ -290,6 +290,8 @@ export default function Preferences() {
                     const isNHL = topic.name.toLowerCase().includes('national hockey league');
                     const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
                     const isNCAAF = topic.name.toLowerCase().includes('college football');
+                    const isNCAAM = topic.name.toLowerCase().includes('college basketball') && topic.name.toLowerCase().includes('men');
+                    const isNCAAW = topic.name.toLowerCase().includes('college basketball') && topic.name.toLowerCase().includes('women');
                     
                     // For college football, use index to differentiate FBS (0) and FCS (1)
                     let displayName = topic.name;
@@ -303,6 +305,8 @@ export default function Preferences() {
                       const ncaafIndex = ncaafTopics.findIndex(t => t.id === topic.id);
                       displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
                     }
+                    else if (isNCAAM) displayName = 'NCAAM';
+                    else if (isNCAAW) displayName = 'NCAAW';
                     
                     return (
                       <div key={topic.id} className="space-y-2">
