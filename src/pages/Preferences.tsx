@@ -14,6 +14,7 @@ import nhlLogo from "@/assets/nhl-logo.png";
 import wnbaLogo from "@/assets/wnba-logo.png";
 import ncaafLogo from "@/assets/ncaaf-logo.svg";
 import { teamLogos } from "@/lib/teamLogos";
+import { getNCAALogoUrl } from "@/lib/ncaaLogos";
 
 interface Topic {
   id: number;
@@ -367,17 +368,9 @@ export default function Preferences() {
                           <div className="ml-8 space-y-2 p-4 bg-muted/30 rounded-lg">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               {topicTeams.map(team => {
-                                const teamLogo = teamLogos[team.display_name];
-                                // Get team initials for fallback
-                                const getTeamInitials = (name: string) => {
-                                  const words = name.split(' ').filter(w => 
-                                    !['State', 'University', 'College', 'of'].includes(w)
-                                  );
-                                  if (words.length >= 2) {
-                                    return words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
-                                  }
-                                  return words[0]?.substring(0, 2).toUpperCase() || 'TM';
-                                };
+                                // Try local logo first, then NCAA CDN
+                                const localLogo = teamLogos[team.display_name];
+                                const ncaaLogoUrl = !localLogo ? getNCAALogoUrl(team.display_name) : null;
                                 
                                 return (
                                   <div
@@ -390,17 +383,25 @@ export default function Preferences() {
                                       onCheckedChange={() => handleTeamToggle(team.id)}
                                     />
                                     <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                      {teamLogo ? (
-                                        <img 
-                                          src={teamLogo} 
-                                          alt={team.display_name} 
-                                          className="h-8 w-8 object-contain" 
-                                        />
-                                      ) : (
-                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                                          {getTeamInitials(team.display_name)}
-                                        </div>
-                                      )}
+                                      <img 
+                                        src={localLogo || ncaaLogoUrl || ''} 
+                                        alt={team.display_name} 
+                                        className="h-8 w-8 object-contain" 
+                                        onError={(e) => {
+                                          // Fallback to initials if logo fails to load
+                                          const target = e.currentTarget;
+                                          const parent = target.parentElement;
+                                          if (parent) {
+                                            const words = team.display_name.split(' ').filter(w => 
+                                              !['State', 'University', 'College', 'of'].includes(w)
+                                            );
+                                            const initials = words.length >= 2
+                                              ? words.slice(0, 2).map(w => w[0]).join('').toUpperCase()
+                                              : (words[0]?.substring(0, 2).toUpperCase() || 'TM');
+                                            parent.innerHTML = `<div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">${initials}</div>`;
+                                          }
+                                        }}
+                                      />
                                     </div>
                                     <label
                                       htmlFor={`team-${team.id}`}
