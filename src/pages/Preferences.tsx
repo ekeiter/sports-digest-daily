@@ -52,12 +52,23 @@ export default function Preferences() {
       navigate("/auth");
       return;
     }
+    
+    // Ensure subscriber record exists
+    try {
+      await supabase.rpc('ensure_my_subscriber');
+    } catch (error) {
+      console.error("Error ensuring subscriber:", error);
+    }
+    
     await loadPreferences();
   };
 
   const loadPreferences = async () => {
     try {
       setLoading(true);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
       
       // Load all topics
       const { data: topicsData, error: topicsError } = await supabase
@@ -68,6 +79,21 @@ export default function Preferences() {
 
       if (topicsError) throw topicsError;
       setTopics(topicsData || []);
+
+      // Load user's current interests
+      const { data: interests, error: interestsError } = await supabase
+        .from("subscriber_interests")
+        .select("kind, subject_id")
+        .eq("subscriber_id", user.id);
+
+      if (interestsError) throw interestsError;
+
+      // Initialize selected topics and teams from interests
+      const topicIds = interests?.filter(i => i.kind === 'topic').map(i => i.subject_id) || [];
+      const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
+      
+      setSelectedTopics(topicIds);
+      setSelectedTeams(teamIds);
 
     } catch (error) {
       console.error("Error loading preferences:", error);
@@ -105,20 +131,56 @@ export default function Preferences() {
     }
   };
 
-  const handleTopicToggle = (topicId: number) => {
-    setSelectedTopics(prev => 
-      prev.includes(topicId) 
-        ? prev.filter(id => id !== topicId)
-        : [...prev, topicId]
-    );
+  const handleTopicToggle = async (topicId: number) => {
+    const topic = topics.find(t => t.id === topicId);
+    const label = topic?.code || topic?.name || 'topic';
+    
+    try {
+      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest' as any, {
+        p_kind: 'topic',
+        p_subject_id: topicId
+      });
+      
+      if (error) throw error;
+      
+      // Optimistic update
+      if (isNowFollowed) {
+        setSelectedTopics(prev => [...prev, topicId]);
+        toast.success(`Followed ${label}`);
+      } else {
+        setSelectedTopics(prev => prev.filter(id => id !== topicId));
+        toast(`Unfollowed ${label}`);
+      }
+    } catch (error) {
+      console.error("Error toggling topic:", error);
+      toast.error("Could not update your preferences. Please try again.");
+    }
   };
 
-  const handleTeamToggle = (teamId: number) => {
-    setSelectedTeams(prev => 
-      prev.includes(teamId) 
-        ? prev.filter(id => id !== teamId)
-        : [...prev, teamId]
-    );
+  const handleTeamToggle = async (teamId: number) => {
+    const team = teams.find(t => t.id === teamId);
+    const label = team?.display_name || 'team';
+    
+    try {
+      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest' as any, {
+        p_kind: 'team',
+        p_subject_id: teamId
+      });
+      
+      if (error) throw error;
+      
+      // Optimistic update
+      if (isNowFollowed) {
+        setSelectedTeams(prev => [...prev, teamId]);
+        toast.success(`Followed ${label}`);
+      } else {
+        setSelectedTeams(prev => prev.filter(id => id !== teamId));
+        toast(`Unfollowed ${label}`);
+      }
+    } catch (error) {
+      console.error("Error toggling team:", error);
+      toast.error("Could not update your preferences. Please try again.");
+    }
   };
 
   const toggleTopicExpansion = async (topicId: number) => {
@@ -423,13 +485,8 @@ export default function Preferences() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-muted-foreground">
-              {selectedTopics.length} topics, {selectedTeams.length} teams selected
-            </div>
-            <Button size="lg" disabled>
-              Save Preferences (Coming Soon)
-            </Button>
+          <div className="text-sm text-muted-foreground text-center">
+            {selectedTopics.length} topics, {selectedTeams.length} teams selected • Changes save automatically
           </div>
         </div>
       </main>
