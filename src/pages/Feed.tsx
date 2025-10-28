@@ -144,7 +144,7 @@ export default function Feed() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {articles.map((article) => (
               <Card key={article.article_id}>
                 <CardContent className="p-2">
