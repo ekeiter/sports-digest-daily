@@ -114,7 +114,7 @@ export default function Feed() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b">
+      <header className="border-b sticky top-0 bg-background z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold mx-auto whitespace-nowrap">My Sports Feed</h1>
@@ -127,7 +127,7 @@ export default function Feed() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-4">
         {articles.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
