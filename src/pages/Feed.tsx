@@ -149,7 +149,8 @@ export default function Feed() {
                       <img 
                         src={article.thumbnail_url} 
                         alt=""
-                        className="w-32 h-24 object-cover rounded flex-shrink-0"
+                        className="w-48 h-32 object-cover rounded flex-shrink-0"
+                        loading="lazy"
                       />
                     )}
                     <div className="flex-1 min-w-0">
