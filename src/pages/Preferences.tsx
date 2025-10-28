@@ -368,6 +368,17 @@ export default function Preferences() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               {topicTeams.map(team => {
                                 const teamLogo = teamLogos[team.display_name];
+                                // Get team initials for fallback
+                                const getTeamInitials = (name: string) => {
+                                  const words = name.split(' ').filter(w => 
+                                    !['State', 'University', 'College', 'of'].includes(w)
+                                  );
+                                  if (words.length >= 2) {
+                                    return words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                                  }
+                                  return words[0]?.substring(0, 2).toUpperCase() || 'TM';
+                                };
+                                
                                 return (
                                   <div
                                     key={team.id}
@@ -378,9 +389,19 @@ export default function Preferences() {
                                       checked={selectedTeams.includes(team.id)}
                                       onCheckedChange={() => handleTeamToggle(team.id)}
                                     />
-                                    {teamLogo && (
-                                      <img src={teamLogo} alt={team.display_name} className="h-8 w-8 object-contain" />
-                                    )}
+                                    <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                      {teamLogo ? (
+                                        <img 
+                                          src={teamLogo} 
+                                          alt={team.display_name} 
+                                          className="h-8 w-8 object-contain" 
+                                        />
+                                      ) : (
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                                          {getTeamInitials(team.display_name)}
+                                        </div>
+                                      )}
+                                    </div>
                                     <label
                                       htmlFor={`team-${team.id}`}
                                       className="text-sm cursor-pointer flex-1"
