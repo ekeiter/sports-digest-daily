@@ -147,7 +147,7 @@ export default function Feed() {
           <div className="space-y-4">
             {articles.map((article) => (
               <Card key={article.article_id}>
-                <CardContent className="p-3">
+                <CardContent className="p-2">
                   <a 
                     href={article.url} 
                     target="_blank" 
