@@ -143,24 +143,42 @@ export default function Feed() {
                     href={article.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex gap-4 hover:opacity-80 transition-opacity"
+                    className="block hover:opacity-80 transition-opacity"
                   >
-                    {article.thumbnail_url && (
-                      <img 
-                        src={article.thumbnail_url} 
-                        alt=""
-                        className="w-48 h-32 object-cover rounded flex-shrink-0"
-                        loading="lazy"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold mb-1 line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <div className="flex gap-2 text-sm text-muted-foreground">
-                        {article.domain && <span>{article.domain}</span>}
-                        <span>•</span>
-                        <span>{formatTimeAgo(article.published_effective)}</span>
+                    <div className="flex flex-col md:flex-row md:gap-4">
+                      {/* Mobile: domain above thumbnail */}
+                      {article.domain && (
+                        <div className="text-sm text-muted-foreground mb-2 md:hidden">
+                          {article.domain}
+                        </div>
+                      )}
+                      
+                      {article.thumbnail_url && (
+                        <img 
+                          src={article.thumbnail_url} 
+                          alt=""
+                          className="w-full md:w-48 h-48 md:h-32 object-cover rounded flex-shrink-0 mb-3 md:mb-0"
+                          loading="lazy"
+                        />
+                      )}
+                      
+                      <div className="flex-1 min-w-0">
+                        {/* Desktop: domain and time in header */}
+                        <div className="hidden md:flex gap-2 text-sm text-muted-foreground mb-1">
+                          {article.domain && <span>{article.domain}</span>}
+                          <span>•</span>
+                          <span>{formatTimeAgo(article.published_effective)}</span>
+                        </div>
+                        
+                        {/* Title */}
+                        <h3 className="font-semibold mb-2 md:mb-1 line-clamp-2">
+                          {article.title}
+                        </h3>
+                        
+                        {/* Mobile: time below title */}
+                        <div className="text-sm text-muted-foreground md:hidden">
+                          {formatTimeAgo(article.published_effective)}
+                        </div>
                       </div>
                     </div>
                   </a>
