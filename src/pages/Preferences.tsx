@@ -204,8 +204,10 @@ export default function Preferences() {
     const bIsNHL = keyB === 'nhl-standalone';
     const aIsProBasketball = keyA.toLowerCase().includes('professional basketball');
     const bIsProBasketball = keyB.toLowerCase().includes('professional basketball');
-    const aIsCollegeFootball = keyA.toLowerCase().includes('college football');
-    const bIsCollegeFootball = keyB.toLowerCase().includes('college football');
+    const aIsCollegeFootballFBS = keyA.toLowerCase().includes('college football') && !keyA.toLowerCase().includes('fcs');
+    const bIsCollegeFootballFBS = keyB.toLowerCase().includes('college football') && !keyB.toLowerCase().includes('fcs');
+    const aIsCollegeFootballFCS = keyA.toLowerCase().includes('college football') && keyA.toLowerCase().includes('fcs');
+    const bIsCollegeFootballFCS = keyB.toLowerCase().includes('college football') && keyB.toLowerCase().includes('fcs');
     const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
     const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
     const aIsCollegeBasketball = keyA.toLowerCase() === 'college basketball';
@@ -225,12 +227,8 @@ export default function Preferences() {
     if (bIsNHL) return 1;
     if (aIsProBasketball) return -1;
     if (bIsProBasketball) return 1;
-    if (aIsCollegeFootball && bIsCollegeFootball) {
-      // Keep NCAAF before NCAAF - FCS by checking topic name
-      return 0;
-    }
-    if (aIsCollegeFootball && !bIsCollegeFootball) return -1;
-    if (bIsCollegeFootball && !aIsCollegeFootball) return 1;
+    if (aIsCollegeFootballFBS) return -1;
+    if (bIsCollegeFootballFBS) return 1;
     if (aIsCollegeBasketball) return -1;
     if (bIsCollegeBasketball) return 1;
     if (aIsGolf) return -1;
@@ -239,6 +237,8 @@ export default function Preferences() {
     if (bIsSoccer) return 1;
     if (aIsCollegeBaseball) return -1;
     if (bIsCollegeBaseball) return 1;
+    if (aIsCollegeFootballFCS) return -1;
+    if (bIsCollegeFootballFCS) return 1;
     if (keyA === 'other sports') return 1;
     if (keyB === 'other sports') return -1;
     return keyA.localeCompare(keyB);
