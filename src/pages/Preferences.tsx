@@ -265,7 +265,7 @@ export default function Preferences() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Customize Your Sports Feed</CardTitle>
@@ -273,9 +273,9 @@ export default function Preferences() {
                 Select the leagues and teams you want to follow. Your feed will be personalized based on your selections.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-3">
               {sortedGroupEntries.map(([sport, sportTopics]) => (
-                <div key={sport} className="space-y-4">
+                <div key={sport} className="space-y-2">
                   {(sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports')) && (
                     <h3 className="text-lg font-semibold capitalize">{sport}</h3>
                   )}
