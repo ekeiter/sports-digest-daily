@@ -53,8 +53,8 @@ const Index = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-6 p-8 max-w-3xl">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Sports Digest Daily
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent whitespace-nowrap">
+            My Sports Digest
           </h1>
           <p className="text-xl text-muted-foreground">
             Get personalized daily emails with sports articles from your favorite teams, players, and sports. 
@@ -83,7 +83,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Sports Digest Daily</h1>
+          <h1 className="text-2xl font-bold whitespace-nowrap">My Sports Digest</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user.email}
