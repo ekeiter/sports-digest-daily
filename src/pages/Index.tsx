@@ -83,21 +83,24 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex-1"></div>
           <h1 className="text-2xl font-bold whitespace-nowrap">My Sports Digest</h1>
-          <div className="hidden md:flex items-center gap-4">
-            <Button variant="outline" onClick={() => navigate('/profile')}>
-              Profile
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
+          <div className="flex-1 flex justify-end">
+            <div className="hidden md:flex items-center gap-4">
+              <Button variant="outline" onClick={() => navigate('/profile')}>
+                Profile
+              </Button>
+              <Button variant="outline" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
       
-      <div className="container mx-auto px-4 pt-4">
+      <div className="container mx-auto px-4 pt-4 text-center">
         <p className="text-sm text-muted-foreground">
-          Welcome, {user.email}
+          {user.email}
         </p>
       </div>
       
