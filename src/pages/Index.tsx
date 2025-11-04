@@ -85,9 +85,6 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold whitespace-nowrap">My Sports Digest</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user.email}
-            </span>
             <Button variant="outline" onClick={() => navigate('/profile')}>
               Profile
             </Button>
@@ -97,6 +94,12 @@ const Index = () => {
           </div>
         </div>
       </header>
+      
+      <div className="container mx-auto px-4 pt-4">
+        <p className="text-sm text-muted-foreground">
+          Welcome, {user.email}
+        </p>
+      </div>
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-center space-y-6">
