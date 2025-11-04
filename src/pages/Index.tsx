@@ -84,7 +84,7 @@ const Index = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold whitespace-nowrap">My Sports Digest</h1>
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
             <Button variant="outline" onClick={() => navigate('/profile')}>
               Profile
             </Button>
@@ -108,12 +108,18 @@ const Index = () => {
             Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
           </p>
           
-          <div className="mt-8 flex gap-4 justify-center">
+          <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
             <Button size="lg" onClick={() => navigate("/feed")}>
               Go To My Sports Feed
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
+            </Button>
+            <Button size="lg" variant="outline" className="md:hidden" onClick={() => navigate('/profile')}>
+              Profile
+            </Button>
+            <Button size="lg" variant="outline" className="md:hidden" onClick={handleSignOut}>
+              Sign Out
             </Button>
           </div>
         </div>
