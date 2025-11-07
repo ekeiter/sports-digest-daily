@@ -399,13 +399,15 @@ export default function Preferences() {
                           </div>
                           
                           {hasTeams && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleTopicExpansion(topic.id)}
-                            >
-                              {isExpanded ? "Hide Teams" : "Show Teams"}
-                            </Button>
+                            <div className="flex justify-end">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleTopicExpansion(topic.id)}
+                              >
+                                Teams
+                              </Button>
+                            </div>
                           )}
                         </div>
 
