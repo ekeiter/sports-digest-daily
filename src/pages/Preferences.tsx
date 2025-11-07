@@ -7,14 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import mlbLogo from "@/assets/mlb-logo.svg";
-import nflLogo from "@/assets/nfl-logo.png";
-import nbaLogo from "@/assets/nba-logo.png";
-import nhlLogo from "@/assets/nhl-logo.png";
-import wnbaLogo from "@/assets/wnba-logo.png";
-import ncaafLogo from "@/assets/ncaaf-logo.svg";
-import { teamLogos } from "@/lib/teamLogos";
-import { getNCAALogoUrl } from "@/lib/ncaaLogos";
 
 interface Topic {
   id: number;
@@ -22,6 +14,7 @@ interface Topic {
   name: string;
   kind: string;
   sport: string;
+  logo_url?: string;
 }
 
 interface Team {
@@ -30,6 +23,7 @@ interface Team {
   slug: string;
   topic_id: number;
   city_state_name: string;
+  logo_url?: string;
 }
 
 export default function Preferences() {
@@ -73,7 +67,7 @@ export default function Preferences() {
       // Load all topics
       const { data: topicsData, error: topicsError } = await supabase
         .from("topics")
-        .select("*")
+        .select("id, code, name, kind, sport, logo_url")
         .order("sport", { ascending: true })
         .order("name", { ascending: true });
 
@@ -113,7 +107,7 @@ export default function Preferences() {
     try {
       const { data: teamsData, error: teamsError } = await supabase
         .from("teams")
-        .select("*")
+        .select("id, display_name, slug, topic_id, city_state_name, logo_url")
         .eq("topic_id", topicId)
         .order("display_name", { ascending: true });
 
@@ -380,26 +374,13 @@ export default function Preferences() {
                               checked={selectedTopics.includes(topic.id)}
                               onCheckedChange={() => handleTopicToggle(topic.id)}
                             />
-                            {(isMLB || isNFL || isNBA || isNHL || isWNBA || isNCAAF) && (
+                            {topic.logo_url && (
                               <div className="flex items-center justify-center w-16 h-16">
-                                {isMLB && (
-                                  <img src={mlbLogo} alt="MLB" className="h-12 w-12 object-contain" />
-                                )}
-                                {isNFL && (
-                                  <img src={nflLogo} alt="NFL" className="h-16 w-16 object-contain" />
-                                )}
-                                {isNBA && (
-                                  <img src={nbaLogo} alt="NBA" className="h-14 w-14 object-contain" />
-                                )}
-                                {isNHL && (
-                                  <img src={nhlLogo} alt="NHL" className="h-12 w-12 object-contain" />
-                                )}
-                                {isWNBA && (
-                                  <img src={wnbaLogo} alt="WNBA" className="h-12 w-12 object-contain" />
-                                )}
-                                {isNCAAF && (
-                                  <img src={ncaafLogo} alt="NCAAF" className="h-10 w-10 object-contain" />
-                                )}
+                                <img 
+                                  src={topic.logo_url} 
+                                  alt={displayName} 
+                                  className="h-12 w-12 object-contain" 
+                                />
                               </div>
                             )}
                             <label
@@ -430,10 +411,6 @@ export default function Preferences() {
                           <div className="ml-8 space-y-2 p-4 bg-muted/30 rounded-lg">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               {topicTeams.map(team => {
-                                // Try local logo first, then NCAA CDN
-                                const localLogo = teamLogos[team.display_name];
-                                const ncaaLogoUrl = !localLogo ? getNCAALogoUrl(team.display_name) : null;
-                                
                                 return (
                                   <div
                                     key={team.id}
@@ -444,27 +421,15 @@ export default function Preferences() {
                                       checked={selectedTeams.includes(team.id)}
                                       onCheckedChange={() => handleTeamToggle(team.id)}
                                     />
-                                    <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                      <img 
-                                        src={localLogo || ncaaLogoUrl || ''} 
-                                        alt={team.display_name} 
-                                        className="h-8 w-8 object-contain" 
-                                        onError={(e) => {
-                                          // Fallback to initials if logo fails to load
-                                          const target = e.currentTarget;
-                                          const parent = target.parentElement;
-                                          if (parent) {
-                                            const words = team.display_name.split(' ').filter(w => 
-                                              !['State', 'University', 'College', 'of'].includes(w)
-                                            );
-                                            const initials = words.length >= 2
-                                              ? words.slice(0, 2).map(w => w[0]).join('').toUpperCase()
-                                              : (words[0]?.substring(0, 2).toUpperCase() || 'TM');
-                                            parent.innerHTML = `<div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">${initials}</div>`;
-                                          }
-                                        }}
-                                      />
-                                    </div>
+                                    {team.logo_url && (
+                                      <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                        <img 
+                                          src={team.logo_url} 
+                                          alt={team.display_name} 
+                                          className="h-8 w-8 object-contain" 
+                                        />
+                                      </div>
+                                    )}
                                     <label
                                       htmlFor={`team-${team.id}`}
                                       className="text-sm cursor-pointer flex-1"
