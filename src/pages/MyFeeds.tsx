@@ -33,7 +33,6 @@ export default function MyFeeds() {
   const [loading, setLoading] = useState(true);
   const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
-  const [logoErrors, setLogoErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     checkUserAndLoadFeeds();
@@ -178,39 +177,21 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedTeams.map((team) => {
                     const logoUrl = teamLogos[team.slug];
-                    const hasLogoError = logoErrors.has(team.id);
-                    
-                    const getInitials = (name: string) => {
-                      return name
-                        .split(' ')
-                        .filter(word => word.length > 0)
-                        .map(word => word[0])
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 3);
-                    };
                     
                     return (
                       <div
                         key={team.id}
                         className="p-3 border rounded-lg bg-card flex items-center gap-3"
                       >
-                        <div className="flex items-center justify-center w-12 h-12 flex-shrink-0 bg-muted rounded-lg">
-                          {logoUrl && !hasLogoError ? (
+                        {logoUrl && (
+                          <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
                             <img 
                               src={logoUrl} 
                               alt={team.display_name}
                               className="h-10 w-10 object-contain"
-                              onError={() => {
-                                setLogoErrors(prev => new Set(prev).add(team.id));
-                              }}
                             />
-                          ) : (
-                            <span className="text-xs font-bold text-muted-foreground">
-                              {getInitials(team.display_name)}
-                            </span>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="font-semibold">{team.display_name}</div>
                       </div>
                     );
