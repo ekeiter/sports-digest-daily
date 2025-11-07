@@ -317,7 +317,12 @@ export default function Preferences() {
                         <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
                           <Checkbox id={`topic-${topic.id}`} checked={selectedTopics.includes(topic.id)} onCheckedChange={() => handleTopicToggle(topic.id)} />
                           {topic.logo_url && <div className="flex items-center justify-center w-10 h-10 shrink-0">
-                              <img src={topic.logo_url} alt={displayName} className="h-8 w-8 object-contain" />
+                              <img 
+                                src={topic.logo_url} 
+                                alt={displayName} 
+                                className="h-8 w-8 object-contain" 
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
                             </div>}
                           <label htmlFor={`topic-${topic.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
                             {displayName}
@@ -338,7 +343,12 @@ export default function Preferences() {
                         return <div key={team.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors">
                                     <Checkbox id={`team-${team.id}`} checked={selectedTeams.includes(team.id)} onCheckedChange={() => handleTeamToggle(team.id)} />
                                     {team.logo_url && <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
-                                        <img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" />
+                                        <img 
+                                          src={team.logo_url} 
+                                          alt={team.display_name} 
+                                          className="h-7 w-7 object-contain" 
+                                          onError={(e) => e.currentTarget.style.display = 'none'}
+                                        />
                                       </div>}
                                     <label htmlFor={`team-${team.id}`} className="text-sm cursor-pointer flex-1">
                                       {team.display_name}
