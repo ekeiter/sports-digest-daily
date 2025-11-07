@@ -322,7 +322,12 @@ export default function Preferences() {
                           <label htmlFor={`topic-${topic.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
                             {displayName}
                           </label>
-                          {hasTeams && <Button variant="outline" size="sm" onClick={() => toggleTopicExpansion(topic.id)} className="shrink-0">
+                          {hasTeams && <Button 
+                              variant={isExpanded ? "default" : "outline"} 
+                              size="sm" 
+                              onClick={() => toggleTopicExpansion(topic.id)} 
+                              className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+                            >
                               Teams
                             </Button>}
                         </div>
