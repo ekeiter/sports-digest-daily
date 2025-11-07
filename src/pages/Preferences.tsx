@@ -369,7 +369,7 @@ export default function Preferences() {
                     
                     return (
                       <div key={topic.id} className="space-y-2">
-                        <div className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                        <div className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
                           <div className="flex items-center gap-3 flex-1">
                             <Checkbox
                               id={`topic-${topic.id}`}
@@ -399,15 +399,14 @@ export default function Preferences() {
                           </div>
                           
                           {hasTeams && (
-                            <div className="flex justify-end">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => toggleTopicExpansion(topic.id)}
-                              >
-                                Teams
-                              </Button>
-                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleTopicExpansion(topic.id)}
+                              className="shrink-0"
+                            >
+                              Teams
+                            </Button>
                           )}
                         </div>
 
