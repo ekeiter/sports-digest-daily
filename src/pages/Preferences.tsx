@@ -316,7 +316,7 @@ export default function Preferences() {
           <div className="flex items-center justify-between">
             <h1 className="text-xl md:text-2xl font-bold mx-auto md:mx-0">Feed Preferences</h1>
             <Button className="w-auto" variant="outline" onClick={() => navigate("/")}>
-              Back to Dashboard
+              Dashboard
             </Button>
           </div>
         </div>
