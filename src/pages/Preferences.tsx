@@ -1,28 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-interface Topic {
-  id: number;
-  code: string;
-  name: string;
-  kind: string;
-  sport: string;
-  logo_url?: string;
-}
-interface Team {
-  id: number;
-  display_name: string;
-  slug: string;
-  topic_id: number;
-  city_state_name: string;
-  logo_url?: string;
-}
+
+type Topic = Database['public']['Tables']['topics']['Row'] & { logo_url?: string };
+type Team = Database['public']['Tables']['teams']['Row'] & { logo_url?: string };
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -68,13 +56,13 @@ export default function Preferences() {
       const {
         data: topicsData,
         error: topicsError
-      } = await supabase.from("topics").select("id, code, name, kind, sport, logo_url").order("sport", {
+      } = await supabase.from("topics").select("*").order("sport", {
         ascending: true
       }).order("name", {
         ascending: true
       });
       if (topicsError) throw topicsError;
-      setTopics(topicsData as unknown as Topic[] || []);
+      setTopics(topicsData as Topic[] || []);
 
       // Load user's current interests
       const {
@@ -104,11 +92,11 @@ export default function Preferences() {
       const {
         data: teamsData,
         error: teamsError
-      } = await supabase.from("teams").select("id, display_name, slug, topic_id, city_state_name, logo_url").eq("topic_id", topicId).order("display_name", {
+      } = await supabase.from("teams").select("*").eq("topic_id", topicId).order("display_name", {
         ascending: true
       });
       if (teamsError) throw teamsError;
-      setTeams(prev => [...prev, ...(teamsData as unknown as Team[] || [])]);
+      setTeams(prev => [...prev, ...(teamsData as Team[] || [])]);
     } catch (error) {
       console.error(`Error loading teams for topic ${topicId}:`, error);
       toast.error("Failed to load teams");
