@@ -85,14 +85,6 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-xl md:text-2xl font-bold mx-auto">My Sports Digest</h1>
-            <div className="hidden md:flex items-center gap-4">
-              <Button variant="outline" onClick={() => navigate('/profile')}>
-                Profile
-              </Button>
-              <Button variant="outline" onClick={handleSignOut}>
-                Sign Out
-              </Button>
-            </div>
           </div>
         </div>
       </header>
@@ -120,10 +112,10 @@ const Index = () => {
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
             </Button>
-            <Button className="w-full md:hidden" size="lg" variant="outline" onClick={() => navigate('/profile')}>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate('/profile')}>
               Profile
             </Button>
-            <Button className="w-full md:hidden" size="lg" variant="outline" onClick={handleSignOut}>
+            <Button className="w-full" size="lg" variant="outline" onClick={handleSignOut}>
               Sign Out
             </Button>
           </div>
