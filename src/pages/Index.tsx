@@ -51,22 +51,22 @@ const Index = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-6 p-8 max-w-3xl">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent whitespace-nowrap">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
+          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             My Sports Digest
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-base md:text-xl text-muted-foreground">
             Get personalized daily emails with sports articles from your favorite teams, players, and sports. 
             Stay updated with AI-generated summaries of the latest news.
           </p>
           
           <div className="pt-6 space-y-4">
-            <div className="flex gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')}>
+            <div className="flex flex-col md:flex-row gap-4 justify-center w-full">
+              <Button className="w-full md:w-auto" size="lg" onClick={() => navigate('/auth')}>
                 Sign In
               </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/auth')}>
+              <Button className="w-full md:w-auto" size="lg" variant="outline" onClick={() => navigate('/auth')}>
                 Register
               </Button>
             </div>
@@ -82,10 +82,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex-1"></div>
-          <h1 className="text-2xl font-bold whitespace-nowrap">My Sports Digest</h1>
-          <div className="flex-1 flex justify-end">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl md:text-2xl font-bold mx-auto">My Sports Digest</h1>
             <div className="hidden md:flex items-center gap-4">
               <Button variant="outline" onClick={() => navigate('/profile')}>
                 Profile
@@ -106,25 +105,25 @@ const Index = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-center space-y-6">
-          <h2 className="text-3xl font-bold">Dashboard</h2>
-          <p className="text-lg text-muted-foreground">
+          <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
+          <p className="text-base md:text-lg text-muted-foreground">
             Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
           </p>
           
-          <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate("/feed")}>
+          <div className="mt-8 flex flex-col gap-4 max-w-md mx-auto w-full">
+            <Button className="w-full" size="lg" onClick={() => navigate("/feed")}>
               Go To My Sports Feed
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
               My Current Feeds
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/preferences")}>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
             </Button>
-            <Button size="lg" variant="outline" className="md:hidden" onClick={() => navigate('/profile')}>
+            <Button className="w-full md:hidden" size="lg" variant="outline" onClick={() => navigate('/profile')}>
               Profile
             </Button>
-            <Button size="lg" variant="outline" className="md:hidden" onClick={handleSignOut}>
+            <Button className="w-full md:hidden" size="lg" variant="outline" onClick={handleSignOut}>
               Sign Out
             </Button>
           </div>

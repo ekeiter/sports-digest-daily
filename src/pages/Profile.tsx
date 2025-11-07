@@ -82,7 +82,7 @@ export default function Profile() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Your Profile</CardTitle>
+          <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>
           <CardDescription>
             Welcome to Sports Digest
           </CardDescription>
@@ -108,11 +108,11 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button onClick={() => navigate('/')} className="flex-1">
+          <div className="flex flex-col md:flex-row gap-2">
+            <Button onClick={() => navigate('/')} className="flex-1 w-full">
               Continue
             </Button>
-            <Button onClick={handleSignOut} variant="outline">
+            <Button onClick={handleSignOut} variant="outline" className="w-full md:w-auto">
               Sign out
             </Button>
           </div>

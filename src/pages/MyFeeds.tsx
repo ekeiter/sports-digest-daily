@@ -96,7 +96,7 @@ export default function MyFeeds() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-center">My Current Feeds</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-center">My Current Feeds</h1>
         </div>
       </header>
 
@@ -167,11 +167,11 @@ export default function MyFeeds() {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => navigate("/")}>
+          <div className="flex flex-col gap-4 max-w-md mx-auto w-full">
+            <Button className="w-full" onClick={() => navigate("/")}>
               Return to Dashboard
             </Button>
-            <Button variant="outline" onClick={() => navigate("/preferences")}>
+            <Button className="w-full" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
             </Button>
           </div>

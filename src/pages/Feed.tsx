@@ -117,12 +117,10 @@ export default function Feed() {
       <header className="border-b sticky top-0 bg-background z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold mx-auto whitespace-nowrap">My Sports Feed</h1>
-            <div>
-              <Button variant="outline" onClick={() => navigate("/")}>
-                Dashboard
-              </Button>
-            </div>
+            <h1 className="text-xl md:text-2xl font-bold mx-auto">My Sports Feed</h1>
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Dashboard
+            </Button>
           </div>
         </div>
       </header>
@@ -189,6 +187,7 @@ export default function Feed() {
             {articles.length >= 50 && (
               <div className="flex justify-center pt-4">
                 <Button 
+                  className="w-full md:w-auto"
                   onClick={loadMore} 
                   disabled={loadingMore}
                   variant="outline"

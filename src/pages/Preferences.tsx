@@ -312,11 +312,13 @@ export default function Preferences() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Feed Preferences</h1>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Back to Dashboard
-          </Button>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl md:text-2xl font-bold mx-auto md:mx-0">Feed Preferences</h1>
+            <Button className="w-auto" variant="outline" onClick={() => navigate("/")}>
+              Back to Dashboard
+            </Button>
+          </div>
         </div>
       </header>
 
