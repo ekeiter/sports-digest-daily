@@ -161,9 +161,10 @@ export default function Preferences() {
     }
   };
   const toggleTopicExpansion = async (topicId: number) => {
-    const willExpand = !expandedTopics.includes(topicId);
-    setExpandedTopics(prev => prev.includes(topicId) ? prev.filter(id => id !== topicId) : [...prev, topicId]);
-    if (willExpand) {
+    const isCurrentlyExpanded = expandedTopics.includes(topicId);
+    // If clicking the same topic, collapse it. Otherwise, expand only the new topic
+    setExpandedTopics(isCurrentlyExpanded ? [] : [topicId]);
+    if (!isCurrentlyExpanded) {
       await loadTeamsForTopic(topicId);
     }
   };
