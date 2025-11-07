@@ -401,7 +401,7 @@ export default function Preferences() {
                           {hasTeams && (
                             <div className="flex justify-end">
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
                                 onClick={() => toggleTopicExpansion(topic.id)}
                               >
