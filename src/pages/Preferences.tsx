@@ -289,7 +289,7 @@ export default function Preferences() {
                 Your feed will be personalized based on your topic and team selections
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2 pt-4">
+            <CardContent className="space-y-2 pt-2">
               {sortedGroupEntries.map(([sport, sportTopics]) => <div key={sport} className="space-y-1.5">
                   {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
                   
