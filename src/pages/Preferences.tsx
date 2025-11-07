@@ -369,35 +369,32 @@ export default function Preferences() {
                     
                     return (
                       <div key={topic.id} className="space-y-2">
-                        <div className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                          <div className="flex items-center gap-3 flex-1">
-                            <Checkbox
-                              id={`topic-${topic.id}`}
-                              checked={selectedTopics.includes(topic.id)}
-                              onCheckedChange={() => handleTopicToggle(topic.id)}
-                            />
-                            {topic.logo_url && (
-                              <div className="flex items-center justify-center w-16 h-16">
-                                <img 
-                                  src={topic.logo_url} 
-                                  alt={displayName} 
-                                  className="h-12 w-12 object-contain" 
-                                />
-                              </div>
-                            )}
-                            <label
-                              htmlFor={`topic-${topic.id}`}
-                              className="font-medium cursor-pointer flex-1"
-                            >
-                              {displayName}
-                            </label>
-                            {hasTeams && (
-                              <Badge variant="secondary" className="text-xs">
-                                {topic.kind.replace(/league/gi, '').trim()}
-                              </Badge>
-                            )}
-                          </div>
-                          
+                        <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                          <Checkbox
+                            id={`topic-${topic.id}`}
+                            checked={selectedTopics.includes(topic.id)}
+                            onCheckedChange={() => handleTopicToggle(topic.id)}
+                          />
+                          {topic.logo_url && (
+                            <div className="flex items-center justify-center w-12 h-12 shrink-0">
+                              <img 
+                                src={topic.logo_url} 
+                                alt={displayName} 
+                                className="h-10 w-10 object-contain" 
+                              />
+                            </div>
+                          )}
+                          <label
+                            htmlFor={`topic-${topic.id}`}
+                            className="font-medium cursor-pointer flex-1 min-w-0"
+                          >
+                            {displayName}
+                          </label>
+                          {hasTeams && (
+                            <Badge variant="secondary" className="text-xs shrink-0">
+                              {topic.kind.replace(/league/gi, '').trim()}
+                            </Badge>
+                          )}
                           {hasTeams && (
                             <Button
                               variant="outline"
