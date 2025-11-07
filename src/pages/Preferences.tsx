@@ -326,9 +326,9 @@ export default function Preferences() {
         <div className="max-w-4xl mx-auto space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Customize Your Sports Feed</CardTitle>
+              <CardTitle className="text-lg md:text-2xl">Customize Your Sports Feed</CardTitle>
               <CardDescription>
-                Select the leagues and teams you want to follow. Your feed will be personalized based on your selections.
+                Your feed will be personalized based on your topic and team selections
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
