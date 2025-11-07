@@ -177,24 +177,36 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedTeams.map((team) => {
                     const logoUrl = teamLogos[team.slug];
+                    const [logoError, setLogoError] = useState(false);
+                    const getInitials = (name: string) => {
+                      return name
+                        .split(' ')
+                        .filter(word => word.length > 0)
+                        .map(word => word[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 3);
+                    };
                     
                     return (
                       <div
                         key={team.id}
                         className="p-3 border rounded-lg bg-card flex items-center gap-3"
                       >
-                        {logoUrl && (
-                          <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                        <div className="flex items-center justify-center w-12 h-12 flex-shrink-0 bg-muted rounded-lg">
+                          {logoUrl && !logoError ? (
                             <img 
                               src={logoUrl} 
                               alt={team.display_name}
                               className="h-10 w-10 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
+                              onError={() => setLogoError(true)}
                             />
-                          </div>
-                        )}
+                          ) : (
+                            <span className="text-xs font-bold text-muted-foreground">
+                              {getInitials(team.display_name)}
+                            </span>
+                          )}
+                        </div>
                         <div className="font-semibold">{team.display_name}</div>
                       </div>
                     );
