@@ -333,7 +333,6 @@ export default function Preferences() {
                           <label htmlFor={`topic-${topic.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
                             {displayName}
                           </label>
-                          {hasTeams}
                           {hasTeams && <Button variant="outline" size="sm" onClick={() => toggleTopicExpansion(topic.id)} className="shrink-0">
                               Teams
                             </Button>}
