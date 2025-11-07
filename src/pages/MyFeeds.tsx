@@ -33,6 +33,7 @@ export default function MyFeeds() {
   const [loading, setLoading] = useState(true);
   const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
+  const [logoErrors, setLogoErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     checkUserAndLoadFeeds();
@@ -177,7 +178,8 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedTeams.map((team) => {
                     const logoUrl = teamLogos[team.slug];
-                    const [logoError, setLogoError] = useState(false);
+                    const hasLogoError = logoErrors.has(team.id);
+                    
                     const getInitials = (name: string) => {
                       return name
                         .split(' ')
@@ -194,12 +196,14 @@ export default function MyFeeds() {
                         className="p-3 border rounded-lg bg-card flex items-center gap-3"
                       >
                         <div className="flex items-center justify-center w-12 h-12 flex-shrink-0 bg-muted rounded-lg">
-                          {logoUrl && !logoError ? (
+                          {logoUrl && !hasLogoError ? (
                             <img 
                               src={logoUrl} 
                               alt={team.display_name}
                               className="h-10 w-10 object-contain"
-                              onError={() => setLogoError(true)}
+                              onError={() => {
+                                setLogoErrors(prev => new Set(prev).add(team.id));
+                              }}
                             />
                           ) : (
                             <span className="text-xs font-bold text-muted-foreground">
