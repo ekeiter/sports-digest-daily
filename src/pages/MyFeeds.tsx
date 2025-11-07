@@ -58,7 +58,7 @@ export default function MyFeeds() {
           .select("id, name, code, sport, logo_url")
           .in("id", topicIds);
         
-        if (topics) setSelectedTopics(topics);
+        if (topics) setSelectedTopics(topics as unknown as Topic[]);
       }
 
       // Fetch selected teams
@@ -75,7 +75,7 @@ export default function MyFeeds() {
           .select("id, display_name, slug, city_state_name, logo_url")
           .in("id", teamIds);
         
-        if (teams) setSelectedTeams(teams);
+        if (teams) setSelectedTeams(teams as unknown as Team[]);
       }
     } catch (error) {
       console.error("Error loading feeds:", error);

@@ -72,7 +72,7 @@ export default function Preferences() {
         .order("name", { ascending: true });
 
       if (topicsError) throw topicsError;
-      setTopics(topicsData || []);
+      setTopics((topicsData as unknown as Topic[]) || []);
 
       // Load user's current interests
       const { data: interests, error: interestsError } = await supabase
@@ -112,7 +112,7 @@ export default function Preferences() {
         .order("display_name", { ascending: true });
 
       if (teamsError) throw teamsError;
-      setTeams(prev => [...prev, ...(teamsData || [])]);
+      setTeams(prev => [...prev, ...((teamsData as unknown as Team[]) || [])]);
     } catch (error) {
       console.error(`Error loading teams for topic ${topicId}:`, error);
       toast.error("Failed to load teams");
