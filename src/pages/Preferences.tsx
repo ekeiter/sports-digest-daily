@@ -280,8 +280,8 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-4">
+      <main className="container mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto space-y-2">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg md:text-2xl">Customize Your Sports Feed</CardTitle>
@@ -289,9 +289,9 @@ export default function Preferences() {
                 Your feed will be personalized based on your topic and team selections
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {sortedGroupEntries.map(([sport, sportTopics]) => <div key={sport} className="space-y-2">
-                  {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports') && <h3 className="text-lg font-semibold capitalize">{sport}</h3>}
+            <CardContent className="space-y-2 pt-4">
+              {sortedGroupEntries.map(([sport, sportTopics]) => <div key={sport} className="space-y-1.5">
+                  {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
                   
                   {sportTopics.map((topic, index) => {
                 const topicTeams = getTeamsForTopic(topic.id);
@@ -313,11 +313,11 @@ export default function Preferences() {
                   const ncaafIndex = ncaafTopics.findIndex(t => t.id === topic.id);
                   displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
                 }
-                return <div key={topic.id} className="space-y-2">
-                        <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                return <div key={topic.id} className="space-y-1.5">
+                        <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
                           <Checkbox id={`topic-${topic.id}`} checked={selectedTopics.includes(topic.id)} onCheckedChange={() => handleTopicToggle(topic.id)} />
-                          {topic.logo_url && <div className="flex items-center justify-center w-12 h-12 shrink-0">
-                              <img src={topic.logo_url} alt={displayName} className="h-10 w-10 object-contain" />
+                          {topic.logo_url && <div className="flex items-center justify-center w-10 h-10 shrink-0">
+                              <img src={topic.logo_url} alt={displayName} className="h-8 w-8 object-contain" />
                             </div>}
                           <label htmlFor={`topic-${topic.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
                             {displayName}
@@ -332,13 +332,13 @@ export default function Preferences() {
                             </Button>}
                         </div>
 
-                        {hasTeams && isExpanded && <div className="ml-8 space-y-2 p-4 bg-muted/30 rounded-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {hasTeams && isExpanded && <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                               {topicTeams.map(team => {
-                        return <div key={team.id} className="flex items-center gap-2 p-2 rounded hover:bg-background transition-colors">
+                        return <div key={team.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors">
                                     <Checkbox id={`team-${team.id}`} checked={selectedTeams.includes(team.id)} onCheckedChange={() => handleTeamToggle(team.id)} />
-                                    {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                        <img src={team.logo_url} alt={team.display_name} className="h-8 w-8 object-contain" />
+                                    {team.logo_url && <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
+                                        <img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" />
                                       </div>}
                                     <label htmlFor={`team-${team.id}`} className="text-sm cursor-pointer flex-1">
                                       {team.display_name}
@@ -353,7 +353,7 @@ export default function Preferences() {
             </CardContent>
           </Card>
 
-          <div className="text-sm text-muted-foreground text-center">
+          <div className="text-xs text-muted-foreground text-center py-2">
             {selectedTopics.length} topics, {selectedTeams.length} teams selected • Changes save automatically
           </div>
         </div>
