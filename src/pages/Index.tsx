@@ -115,6 +115,9 @@ const Index = () => {
             <Button size="lg" onClick={() => navigate("/feed")}>
               Go To My Sports Feed
             </Button>
+            <Button size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
+              My Current Feeds
+            </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Feed Preferences
             </Button>
