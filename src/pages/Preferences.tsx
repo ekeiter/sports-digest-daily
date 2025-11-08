@@ -171,7 +171,7 @@ export default function Preferences() {
   const getTeamsForTopic = (topicId: number) => {
     return teams.filter(team => team.topic_id === topicId);
   };
-  const otherTopicsList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting'];
+  const otherTopicsList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
   const groupedTopics = topics.reduce((acc, topic) => {
     // Extract NFL to be standalone - only the actual NFL
     if (topic.name.toLowerCase().includes('national football league')) {
@@ -200,13 +200,7 @@ export default function Preferences() {
       return acc;
     }
     const isOtherTopic = otherTopicsList.some(other => topic.sport.toLowerCase().includes(other.toLowerCase()));
-    
-    // Don't group standalone professional football leagues - they should appear in their own groups
-    const isProfessionalFootballLeague = topic.sport.toLowerCase() === 'professional football';
-    
-    const groupKey = isOtherTopic ? 'other sports' : 
-                     isProfessionalFootballLeague ? `${topic.sport}-${topic.code}` : // Each pro football league gets its own group
-                     topic.sport;
+    const groupKey = isOtherTopic ? 'other sports' : topic.sport;
     if (!acc[groupKey]) {
       acc[groupKey] = [];
     }
