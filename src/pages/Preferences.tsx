@@ -200,7 +200,13 @@ export default function Preferences() {
       return acc;
     }
     const isOtherTopic = otherTopicsList.some(other => topic.sport.toLowerCase().includes(other.toLowerCase()));
-    const groupKey = isOtherTopic ? 'other sports' : topic.sport;
+    
+    // Don't group standalone professional football leagues - they should appear in their own groups
+    const isProfessionalFootballLeague = topic.sport.toLowerCase() === 'professional football';
+    
+    const groupKey = isOtherTopic ? 'other sports' : 
+                     isProfessionalFootballLeague ? `${topic.sport}-${topic.code}` : // Each pro football league gets its own group
+                     topic.sport;
     if (!acc[groupKey]) {
       acc[groupKey] = [];
     }
