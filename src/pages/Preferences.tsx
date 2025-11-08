@@ -173,8 +173,8 @@ export default function Preferences() {
   };
   const otherTopicsList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
   const groupedTopics = topics.reduce((acc, topic) => {
-    // Extract NFL to be standalone - only the actual NFL
-    if (topic.name.toLowerCase().includes('national football league')) {
+    // Extract NFL to be standalone - ONLY the actual NFL (id: 11), not other leagues with "National Football League" in the name
+    if (topic.id === 11) {
       if (!acc['nfl-standalone']) {
         acc['nfl-standalone'] = [];
       }
