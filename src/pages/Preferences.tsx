@@ -298,9 +298,9 @@ export default function Preferences() {
                 const hasTeams = topic.kind === 'league' || topicTeams.length > 0;
                 const isExpanded = expandedTopics.includes(topic.id);
                 const isMLB = topic.name.toLowerCase().includes('major league baseball');
-                const isNFL = topic.name.toLowerCase().includes('national football league');
-                const isNBA = topic.name.toLowerCase().includes('national basketball association') && !topic.name.toLowerCase().includes('women');
-                const isNHL = topic.name.toLowerCase().includes('national hockey league');
+                const isNFL = sport === 'nfl-standalone'; // Only true NFL from standalone group
+                const isNBA = sport === 'nba-standalone'; // Only true NBA from standalone group
+                const isNHL = sport === 'nhl-standalone'; // Only true NHL from standalone group
                 const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
                 const isNCAAF = topic.name.toLowerCase().includes('college football');
                 const isNCAAM = topic.id === 10; // Men's College Basketball
