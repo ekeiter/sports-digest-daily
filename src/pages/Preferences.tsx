@@ -174,7 +174,8 @@ export default function Preferences() {
   const otherTopicsList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting'];
   const groupedTopics = topics.reduce((acc, topic) => {
     // Extract NFL to be standalone
-    if (topic.name.toLowerCase().includes('national football league')) {
+    if (topic.name.toLowerCase().includes('national football league') || 
+        (topic.sport.toLowerCase().includes('professional football') && topic.kind === 'league')) {
       if (!acc['nfl-standalone']) {
         acc['nfl-standalone'] = [];
       }
@@ -192,7 +193,8 @@ export default function Preferences() {
     }
 
     // Extract NHL to be standalone
-    if (topic.name.toLowerCase().includes('national hockey league')) {
+    if (topic.name.toLowerCase().includes('national hockey league') || 
+        (topic.sport.toLowerCase().includes('professional hockey') && topic.kind === 'league')) {
       if (!acc['nhl-standalone']) {
         acc['nhl-standalone'] = [];
       }
