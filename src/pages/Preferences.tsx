@@ -11,11 +11,14 @@ import { Loader2 } from "lucide-react";
 
 type Topic = Database['public']['Tables']['topics']['Row'] & { logo_url?: string };
 type Team = Database['public']['Tables']['teams']['Row'] & { logo_url?: string };
+type Sport = Database['public']['Tables']['sports']['Row'];
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [sports, setSports] = useState<Sport[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedSports, setSelectedSports] = useState<number[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [expandedTopics, setExpandedTopics] = useState<number[]>([]);
@@ -52,6 +55,16 @@ export default function Preferences() {
       } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Load all sports
+      const {
+        data: sportsData,
+        error: sportsError
+      } = await supabase.from("sports").select("*").order("display_name", {
+        ascending: true
+      });
+      if (sportsError) throw sportsError;
+      setSports(sportsData as Sport[] || []);
+
       // Load all topics
       const {
         data: topicsData,
@@ -71,9 +84,11 @@ export default function Preferences() {
       } = await supabase.from("subscriber_interests").select("kind, subject_id").eq("subscriber_id", user.id);
       if (interestsError) throw interestsError;
 
-      // Initialize selected topics and teams from interests
+      // Initialize selected sports, topics and teams from interests
+      const sportIds = interests?.filter(i => i.kind === 'sport').map(i => i.subject_id) || [];
       const topicIds = interests?.filter(i => i.kind === 'topic').map(i => i.subject_id) || [];
       const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
+      setSelectedSports(sportIds);
       setSelectedTopics(topicIds);
       setSelectedTeams(teamIds);
     } catch (error) {
@@ -106,6 +121,32 @@ export default function Preferences() {
         next.delete(topicId);
         return next;
       });
+    }
+  };
+  const handleSportToggle = async (sportId: number) => {
+    const sport = sports.find(s => s.id === sportId);
+    const label = sport?.display_name || 'sport';
+    try {
+      const {
+        data: isNowFollowed,
+        error
+      } = await supabase.rpc('toggle_subscriber_interest' as any, {
+        p_kind: 'sport',
+        p_subject_id: sportId
+      });
+      if (error) throw error;
+
+      // Optimistic update
+      if (isNowFollowed) {
+        setSelectedSports(prev => [...prev, sportId]);
+        toast.success(`Followed ${label}`);
+      } else {
+        setSelectedSports(prev => prev.filter(id => id !== sportId));
+        toast(`Unfollowed ${label}`);
+      }
+    } catch (error) {
+      console.error("Error toggling sport:", error);
+      toast.error("Could not update your preferences. Please try again.");
     }
   };
   const handleTopicToggle = async (topicId: number) => {
@@ -290,6 +331,29 @@ export default function Preferences() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 pt-2">
+              {/* Sports Section */}
+              <div className="space-y-1.5 pb-4 border-b">
+                <h3 className="text-base font-semibold px-1">Sports</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                  {sports.map(sport => (
+                    <div key={sport.id} className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                      <Checkbox 
+                        id={`sport-${sport.id}`}
+                        checked={selectedSports.includes(sport.id)}
+                        onCheckedChange={() => handleSportToggle(sport.id)}
+                      />
+                      <label 
+                        htmlFor={`sport-${sport.id}`}
+                        className="font-medium cursor-pointer flex-1 min-w-0"
+                      >
+                        {sport.display_name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Topics & Teams Section */}
               {sortedGroupEntries.map(([sport, sportTopics]) => <div key={sport} className="space-y-1.5">
                   {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
                   
@@ -364,7 +428,7 @@ export default function Preferences() {
           </Card>
 
           <div className="text-xs text-muted-foreground text-center py-2">
-            {selectedTopics.length} topics, {selectedTeams.length} teams selected • Changes save automatically
+            {selectedSports.length} sports, {selectedTopics.length} topics, {selectedTeams.length} teams selected • Changes save automatically
           </div>
         </div>
       </main>
