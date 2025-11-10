@@ -21,11 +21,19 @@ interface Team {
   logo_url?: string;
 }
 
+interface Sport {
+  id: number;
+  display_name: string;
+  sport: string;
+  description?: string;
+}
+
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
+  const [selectedSports, setSelectedSports] = useState<Sport[]>([]);
 
   useEffect(() => {
     checkUserAndLoadFeeds();
@@ -77,6 +85,23 @@ export default function MyFeeds() {
         
         if (teams) setSelectedTeams(teams as unknown as Team[]);
       }
+
+      // Fetch selected sports
+      const { data: sportInterests } = await supabase
+        .from("subscriber_interests")
+        .select("subject_id")
+        .eq("subscriber_id", userId)
+        .eq("kind", "sport");
+
+      if (sportInterests && sportInterests.length > 0) {
+        const sportIds = sportInterests.map(s => s.subject_id);
+        const { data: sports } = await supabase
+          .from("sports")
+          .select("id, display_name, sport, description")
+          .in("id", sportIds);
+        
+        if (sports) setSelectedSports(sports as unknown as Sport[]);
+      }
     } catch (error) {
       console.error("Error loading feeds:", error);
     } finally {
@@ -102,6 +127,29 @@ export default function MyFeeds() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="space-y-6">
+          {/* Sports Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Sports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedSports.length === 0 ? (
+                <p className="text-muted-foreground">No sports selected</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {selectedSports.map((sport) => (
+                    <div
+                      key={sport.id}
+                      className="p-3 border rounded-lg bg-card flex items-center gap-3"
+                    >
+                      <div className="font-semibold">{sport.display_name}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Leagues/Topics Section */}
           <Card>
             <CardHeader>
