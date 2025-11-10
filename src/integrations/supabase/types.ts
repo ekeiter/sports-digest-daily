@@ -80,18 +80,24 @@ export type Database = {
           discovered_url: string
           endpoint_id: number
           first_seen_at: string | null
+          ingest_run_id: string | null
+          last_seen_at: string
         }
         Insert: {
           article_id: number
           discovered_url?: string
           endpoint_id: number
           first_seen_at?: string | null
+          ingest_run_id?: string | null
+          last_seen_at?: string
         }
         Update: {
           article_id?: number
           discovered_url?: string
           endpoint_id?: number
           first_seen_at?: string | null
+          ingest_run_id?: string | null
+          last_seen_at?: string
         }
         Relationships: [
           {
@@ -127,6 +133,53 @@ export type Database = {
             columns: ["endpoint_id"]
             isOneToOne: false
             referencedRelation: "endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_sport_map: {
+        Row: {
+          article_id: number
+          created_at: string | null
+          sport: string
+        }
+        Insert: {
+          article_id: number
+          created_at?: string | null
+          sport: string
+        }
+        Update: {
+          article_id?: number
+          created_at?: string | null
+          sport?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_sport_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_sport_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_sport_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_articles_only"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_sport_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_videos_only"
             referencedColumns: ["id"]
           },
         ]
@@ -284,6 +337,7 @@ export type Database = {
           score: number | null
           signals: Json | null
           source_display_name: string | null
+          sports: string[] | null
           teams: string[] | null
           thumbnail_url: string | null
           title: string | null
@@ -332,6 +386,7 @@ export type Database = {
           score?: number | null
           signals?: Json | null
           source_display_name?: string | null
+          sports?: string[] | null
           teams?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
@@ -380,6 +435,7 @@ export type Database = {
           score?: number | null
           signals?: Json | null
           source_display_name?: string | null
+          sports?: string[] | null
           teams?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
@@ -581,11 +637,124 @@ export type Database = {
           },
         ]
       }
+      ingest_run_endpoints: {
+        Row: {
+          articles_found: number | null
+          candidates: number | null
+          deduped_batch: number | null
+          deduped_db: number | null
+          duration_seconds: number | null
+          endpoint_id: number
+          error_message: string | null
+          exclusive_articles: number | null
+          feed_etag: string | null
+          feed_item_count: number | null
+          feed_last_modified_at: string | null
+          fetched: number | null
+          finished_at: string | null
+          http_status: number | null
+          id: string
+          ingest_run_id: string
+          inserted: number | null
+          known_guid: number | null
+          new_candidates: number | null
+          newest_item_pub_date: string | null
+          oldest_item_pub_date: string | null
+          pct_exclusive: number | null
+          rejection_reasons: Json | null
+          skipped: number | null
+          started_at: string
+          status: string | null
+          syndicated_articles: number | null
+          too_old: number | null
+          used_etag: boolean | null
+        }
+        Insert: {
+          articles_found?: number | null
+          candidates?: number | null
+          deduped_batch?: number | null
+          deduped_db?: number | null
+          duration_seconds?: number | null
+          endpoint_id: number
+          error_message?: string | null
+          exclusive_articles?: number | null
+          feed_etag?: string | null
+          feed_item_count?: number | null
+          feed_last_modified_at?: string | null
+          fetched?: number | null
+          finished_at?: string | null
+          http_status?: number | null
+          id?: string
+          ingest_run_id: string
+          inserted?: number | null
+          known_guid?: number | null
+          new_candidates?: number | null
+          newest_item_pub_date?: string | null
+          oldest_item_pub_date?: string | null
+          pct_exclusive?: number | null
+          rejection_reasons?: Json | null
+          skipped?: number | null
+          started_at?: string
+          status?: string | null
+          syndicated_articles?: number | null
+          too_old?: number | null
+          used_etag?: boolean | null
+        }
+        Update: {
+          articles_found?: number | null
+          candidates?: number | null
+          deduped_batch?: number | null
+          deduped_db?: number | null
+          duration_seconds?: number | null
+          endpoint_id?: number
+          error_message?: string | null
+          exclusive_articles?: number | null
+          feed_etag?: string | null
+          feed_item_count?: number | null
+          feed_last_modified_at?: string | null
+          fetched?: number | null
+          finished_at?: string | null
+          http_status?: number | null
+          id?: string
+          ingest_run_id?: string
+          inserted?: number | null
+          known_guid?: number | null
+          new_candidates?: number | null
+          newest_item_pub_date?: string | null
+          oldest_item_pub_date?: string | null
+          pct_exclusive?: number | null
+          rejection_reasons?: Json | null
+          skipped?: number | null
+          started_at?: string
+          status?: string | null
+          syndicated_articles?: number | null
+          too_old?: number | null
+          used_etag?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingest_run_endpoints_endpoint_id_fkey"
+            columns: ["endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "endpoints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingest_run_endpoints_ingest_run_id_fkey"
+            columns: ["ingest_run_id"]
+            isOneToOne: false
+            referencedRelation: "ingest_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingest_runs: {
         Row: {
           argv: Json | null
-          articles_deduped: number | null
+          articles_duplicates: number | null
           articles_inserted: number | null
+          avg_articles_per_endpoint: number | null
+          duration_seconds: number | null
           endpoints_error: number | null
           endpoints_ok: number | null
           endpoints_total: number | null
@@ -594,11 +763,14 @@ export type Database = {
           notes: string | null
           options: Json | null
           started_at: string
+          syndication_ratio: number | null
         }
         Insert: {
           argv?: Json | null
-          articles_deduped?: number | null
+          articles_duplicates?: number | null
           articles_inserted?: number | null
+          avg_articles_per_endpoint?: number | null
+          duration_seconds?: number | null
           endpoints_error?: number | null
           endpoints_ok?: number | null
           endpoints_total?: number | null
@@ -607,11 +779,14 @@ export type Database = {
           notes?: string | null
           options?: Json | null
           started_at?: string
+          syndication_ratio?: number | null
         }
         Update: {
           argv?: Json | null
-          articles_deduped?: number | null
+          articles_duplicates?: number | null
           articles_inserted?: number | null
+          avg_articles_per_endpoint?: number | null
+          duration_seconds?: number | null
           endpoints_error?: number | null
           endpoints_ok?: number | null
           endpoints_total?: number | null
@@ -620,6 +795,7 @@ export type Database = {
           notes?: string | null
           options?: Json | null
           started_at?: string
+          syndication_ratio?: number | null
         }
         Relationships: []
       }
@@ -686,6 +862,30 @@ export type Database = {
           kind?: string
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      sports: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_name: string
+          id: number
+          sport: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          id?: number
+          sport: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          id?: number
+          sport?: string
         }
         Relationships: []
       }
@@ -765,6 +965,7 @@ export type Database = {
       }
       teams: {
         Row: {
+          abbreviation: string | null
           actual_city: string | null
           aliases: string[]
           city_state_name: string
@@ -773,6 +974,7 @@ export type Database = {
           display_name: string
           id: number
           lat: number | null
+          logo_url: string | null
           lon: number | null
           nickname: string | null
           slug: string
@@ -782,6 +984,7 @@ export type Database = {
           venue: string | null
         }
         Insert: {
+          abbreviation?: string | null
           actual_city?: string | null
           aliases?: string[]
           city_state_name: string
@@ -790,6 +993,7 @@ export type Database = {
           display_name: string
           id?: number
           lat?: number | null
+          logo_url?: string | null
           lon?: number | null
           nickname?: string | null
           slug: string
@@ -799,6 +1003,7 @@ export type Database = {
           venue?: string | null
         }
         Update: {
+          abbreviation?: string | null
           actual_city?: string | null
           aliases?: string[]
           city_state_name?: string
@@ -807,6 +1012,7 @@ export type Database = {
           display_name?: string
           id?: number
           lat?: number | null
+          logo_url?: string | null
           lon?: number | null
           nickname?: string | null
           slug?: string
@@ -833,6 +1039,7 @@ export type Database = {
           description: string | null
           id: number
           kind: Database["public"]["Enums"]["topic_kind"]
+          logo_url: string | null
           name: string
           sport: string
           updated_at: string
@@ -844,6 +1051,7 @@ export type Database = {
           description?: string | null
           id?: number
           kind: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
           name: string
           sport: string
           updated_at?: string
@@ -855,6 +1063,7 @@ export type Database = {
           description?: string | null
           id?: number
           kind?: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
           name?: string
           sport?: string
           updated_at?: string
@@ -1301,6 +1510,19 @@ export type Database = {
           url: string
         }[]
       }
+      link_article_source: {
+        Args: {
+          p_article_id: number
+          p_discovered_url: string
+          p_endpoint_id: number
+          p_run_id: string
+        }
+        Returns: undefined
+      }
+      link_article_sources_bulk: {
+        Args: { p_rows: Json; p_run_id?: string }
+        Returns: undefined
+      }
       match_url_keys: {
         Args: { keys: string[] }
         Returns: {
@@ -1332,10 +1554,17 @@ export type Database = {
           team_id: number
         }[]
       }
+      toggle_subscriber_interest: {
+        Args: {
+          p_kind: Database["public"]["Enums"]["interest_kind"]
+          p_subject_id: number
+        }
+        Returns: boolean
+      }
       url_host: { Args: { u: string }; Returns: string }
     }
     Enums: {
-      interest_kind: "team" | "topic" | "person"
+      interest_kind: "team" | "topic" | "person" | "sport"
       media_type: "article" | "video"
       rule_kind: "html" | "rss" | "both"
       topic_kind: "league" | "topic"
@@ -1467,7 +1696,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      interest_kind: ["team", "topic", "person"],
+      interest_kind: ["team", "topic", "person", "sport"],
       media_type: ["article", "video"],
       rule_kind: ["html", "rss", "both"],
       topic_kind: ["league", "topic"],

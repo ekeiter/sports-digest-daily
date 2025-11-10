@@ -11,7 +11,13 @@ import { Loader2 } from "lucide-react";
 
 type Topic = Database['public']['Tables']['topics']['Row'] & { logo_url?: string };
 type Team = Database['public']['Tables']['teams']['Row'] & { logo_url?: string };
-type Sport = Database['public']['Tables']['sports']['Row'];
+type Sport = {
+  id: number;
+  sport: string;
+  display_name: string;
+  description: string | null;
+  created_at: string;
+};
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -59,11 +65,11 @@ export default function Preferences() {
       const {
         data: sportsData,
         error: sportsError
-      } = await supabase.from("sports").select("*").order("display_name", {
+      } = await supabase.from("sports" as any).select("*").order("display_name", {
         ascending: true
       });
       if (sportsError) throw sportsError;
-      setSports(sportsData as Sport[] || []);
+      setSports((sportsData as any) || []);
 
       // Load all topics
       const {
