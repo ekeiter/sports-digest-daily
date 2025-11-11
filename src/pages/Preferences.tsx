@@ -9,25 +9,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-type Topic = Database['public']['Tables']['topics']['Row'] & { logo_url?: string };
+type League = Database['public']['Tables']['leagues']['Row'] & { logo_url?: string };
 type Team = Database['public']['Tables']['teams']['Row'] & { logo_url?: string };
-type Sport = {
-  id: number;
-  sport: string;
-  display_name: string;
-  description: string | null;
-  created_at: string;
-};
+type Sport = Database['public']['Tables']['sports']['Row'];
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [sports, setSports] = useState<Sport[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [leagues, setLeagues] = useState<League[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
-  const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
+  const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
-  const [expandedTopics, setExpandedTopics] = useState<number[]>([]);
+  const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
   useEffect(() => {
     checkUser();
@@ -65,23 +59,23 @@ export default function Preferences() {
       const {
         data: sportsData,
         error: sportsError
-      } = await supabase.from("sports" as any).select("*").order("display_name", {
+      } = await supabase.from("sports").select("*").order("display_name", {
         ascending: true
       });
       if (sportsError) throw sportsError;
-      setSports((sportsData as any) || []);
+      setSports(sportsData || []);
 
-      // Load all topics
+      // Load all leagues
       const {
-        data: topicsData,
-        error: topicsError
-      } = await supabase.from("topics").select("*").order("sport", {
+        data: leaguesData,
+        error: leaguesError
+      } = await supabase.from("leagues").select("*").order("sport", {
         ascending: true
       }).order("name", {
         ascending: true
       });
-      if (topicsError) throw topicsError;
-      setTopics(topicsData as Topic[] || []);
+      if (leaguesError) throw leaguesError;
+      setLeagues(leaguesData || []);
 
       // Load user's current interests
       const {
@@ -90,12 +84,12 @@ export default function Preferences() {
       } = await supabase.from("subscriber_interests").select("kind, subject_id").eq("subscriber_id", user.id);
       if (interestsError) throw interestsError;
 
-      // Initialize selected sports, topics and teams from interests
+      // Initialize selected sports, leagues and teams from interests
       const sportIds = interests?.filter(i => i.kind === 'sport').map(i => i.subject_id) || [];
-      const topicIds = interests?.filter(i => i.kind === 'topic').map(i => i.subject_id) || [];
+      const leagueIds = interests?.filter(i => i.kind === 'league').map(i => i.subject_id) || [];
       const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
       setSelectedSports(sportIds);
-      setSelectedTopics(topicIds);
+      setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
     } catch (error) {
       console.error("Error loading preferences:", error);
@@ -104,27 +98,27 @@ export default function Preferences() {
       setLoading(false);
     }
   };
-  const loadTeamsForTopic = async (topicId: number) => {
-    if (teams.some(t => t.topic_id === topicId)) {
+  const loadTeamsForLeague = async (leagueId: number) => {
+    if (teams.some(t => t.topic_id === leagueId)) {
       return; // Already loaded
     }
-    setLoadingTeams(prev => new Set(prev).add(topicId));
+    setLoadingTeams(prev => new Set(prev).add(leagueId));
     try {
       const {
         data: teamsData,
         error: teamsError
-      } = await supabase.from("teams").select("*").eq("topic_id", topicId).order("display_name", {
+      } = await supabase.from("teams").select("*").eq("topic_id", leagueId).order("display_name", {
         ascending: true
       });
       if (teamsError) throw teamsError;
-      setTeams(prev => [...prev, ...(teamsData as Team[] || [])]);
+      setTeams(prev => [...prev, ...(teamsData || [])]);
     } catch (error) {
-      console.error(`Error loading teams for topic ${topicId}:`, error);
+      console.error(`Error loading teams for league ${leagueId}:`, error);
       toast.error("Failed to load teams");
     } finally {
       setLoadingTeams(prev => {
         const next = new Set(prev);
-        next.delete(topicId);
+        next.delete(leagueId);
         return next;
       });
     }
@@ -155,29 +149,29 @@ export default function Preferences() {
       toast.error("Could not update your preferences. Please try again.");
     }
   };
-  const handleTopicToggle = async (topicId: number) => {
-    const topic = topics.find(t => t.id === topicId);
-    const label = topic?.code || topic?.name || 'topic';
+  const handleLeagueToggle = async (leagueId: number) => {
+    const league = leagues.find(l => l.id === leagueId);
+    const label = league?.code || league?.name || 'league';
     try {
       const {
         data: isNowFollowed,
         error
       } = await supabase.rpc('toggle_subscriber_interest' as any, {
-        p_kind: 'topic',
-        p_subject_id: topicId
+        p_kind: 'league',
+        p_subject_id: leagueId
       });
       if (error) throw error;
 
       // Optimistic update
       if (isNowFollowed) {
-        setSelectedTopics(prev => [...prev, topicId]);
+        setSelectedLeagues(prev => [...prev, leagueId]);
         toast.success(`Followed ${label}`);
       } else {
-        setSelectedTopics(prev => prev.filter(id => id !== topicId));
+        setSelectedLeagues(prev => prev.filter(id => id !== leagueId));
         toast(`Unfollowed ${label}`);
       }
     } catch (error) {
-      console.error("Error toggling topic:", error);
+      console.error("Error toggling league:", error);
       toast.error("Could not update your preferences. Please try again.");
     }
   };
@@ -207,61 +201,61 @@ export default function Preferences() {
       toast.error("Could not update your preferences. Please try again.");
     }
   };
-  const toggleTopicExpansion = async (topicId: number) => {
-    const isCurrentlyExpanded = expandedTopics.includes(topicId);
-    // If clicking the same topic, collapse it. Otherwise, expand only the new topic
-    setExpandedTopics(isCurrentlyExpanded ? [] : [topicId]);
+  const toggleLeagueExpansion = async (leagueId: number) => {
+    const isCurrentlyExpanded = expandedLeagues.includes(leagueId);
+    // If clicking the same league, collapse it. Otherwise, expand only the new league
+    setExpandedLeagues(isCurrentlyExpanded ? [] : [leagueId]);
     if (!isCurrentlyExpanded) {
-      await loadTeamsForTopic(topicId);
+      await loadTeamsForLeague(leagueId);
     }
   };
-  const getTeamsForTopic = (topicId: number) => {
-    return teams.filter(team => team.topic_id === topicId);
+  const getTeamsForLeague = (leagueId: number) => {
+    return teams.filter(team => team.topic_id === leagueId);
   };
-  const otherTopicsList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
-  const groupedTopics = topics.reduce((acc, topic) => {
+  const otherLeaguesList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
+  const groupedLeagues = leagues.reduce((acc, league) => {
     // Extract NFL to be standalone - ONLY the actual NFL (id: 11), not other leagues with "National Football League" in the name
-    if (topic.id === 11) {
+    if (league.id === 11) {
       if (!acc['nfl-standalone']) {
         acc['nfl-standalone'] = [];
       }
-      acc['nfl-standalone'].push(topic);
+      acc['nfl-standalone'].push(league);
       return acc;
     }
 
     // Extract NBA to be standalone (but not WNBA)
-    if (topic.name.toLowerCase().includes('national basketball association') && !topic.name.toLowerCase().includes('women')) {
+    if (league.name.toLowerCase().includes('national basketball association') && !league.name.toLowerCase().includes('women')) {
       if (!acc['nba-standalone']) {
         acc['nba-standalone'] = [];
       }
-      acc['nba-standalone'].push(topic);
+      acc['nba-standalone'].push(league);
       return acc;
     }
 
     // Extract NHL to be standalone
-    if (topic.name.toLowerCase().includes('national hockey league')) {
+    if (league.name.toLowerCase().includes('national hockey league')) {
       if (!acc['nhl-standalone']) {
         acc['nhl-standalone'] = [];
       }
-      acc['nhl-standalone'].push(topic);
+      acc['nhl-standalone'].push(league);
       return acc;
     }
-    const isOtherTopic = otherTopicsList.some(other => topic.sport.toLowerCase().includes(other.toLowerCase()));
-    const groupKey = isOtherTopic ? 'other sports' : topic.sport;
+    const isOtherLeague = otherLeaguesList.some(other => league.sport.toLowerCase().includes(other.toLowerCase()));
+    const groupKey = isOtherLeague ? 'other sports' : league.sport;
     if (!acc[groupKey]) {
       acc[groupKey] = [];
     }
-    acc[groupKey].push(topic);
+    acc[groupKey].push(league);
     return acc;
-  }, {} as Record<string, Topic[]>);
+  }, {} as Record<string, League[]>);
 
   // Sort "other sports" alphabetically by name
-  if (groupedTopics['other sports']) {
-    groupedTopics['other sports'].sort((a, b) => a.name.localeCompare(b.name));
+  if (groupedLeagues['other sports']) {
+    groupedLeagues['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
   // Sort the groups: MLB, NFL, NBA, NHL, WNBA, College Football, Men's CBB, Women's CBB, PGA, LPGA, LIV Golf, Soccer, College Football - FCS, College Baseball, then others
-  const sortedGroupEntries = Object.entries(groupedTopics).sort(([keyA], [keyB]) => {
+  const sortedGroupEntries = Object.entries(groupedLeagues).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
     const aIsNFL = keyA === 'nfl-standalone';
@@ -359,48 +353,48 @@ export default function Preferences() {
                 </div>
               </div>
 
-              {/* Topics & Teams Section */}
-              {sortedGroupEntries.map(([sport, sportTopics]) => <div key={sport} className="space-y-1.5">
-                  {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportTopics.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
+              {/* Leagues & Teams Section */}
+              {sortedGroupEntries.map(([sport, sportLeagues]) => <div key={sport} className="space-y-1.5">
+                  {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportLeagues.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
                   
-                  {sportTopics.map((topic, index) => {
-                const topicTeams = getTeamsForTopic(topic.id);
-                const hasTeams = topic.kind === 'league' || topicTeams.length > 0;
-                const isExpanded = expandedTopics.includes(topic.id);
-                const isMLB = topic.name.toLowerCase().includes('major league baseball');
+                  {sportLeagues.map((league, index) => {
+                const leagueTeams = getTeamsForLeague(league.id);
+                const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
+                const isExpanded = expandedLeagues.includes(league.id);
+                const isMLB = league.name.toLowerCase().includes('major league baseball');
                 const isNFL = sport === 'nfl-standalone'; // Only true NFL from standalone group
                 const isNBA = sport === 'nba-standalone'; // Only true NBA from standalone group
                 const isNHL = sport === 'nhl-standalone'; // Only true NHL from standalone group
-                const isWNBA = topic.name.toLowerCase().includes('women') && topic.name.toLowerCase().includes('national basketball association');
-                const isNCAAF = topic.name.toLowerCase().includes('college football');
-                const isNCAAM = topic.id === 10; // Men's College Basketball
-                const isNCAAW = topic.id === 29; // Women's College Basketball
+                const isWNBA = league.name.toLowerCase().includes('women') && league.name.toLowerCase().includes('national basketball association');
+                const isNCAAF = league.name.toLowerCase().includes('college football');
+                const isNCAAM = league.id === 10; // Men's College Basketball
+                const isNCAAW = league.id === 29; // Women's College Basketball
 
                 // For college football, use index to differentiate FBS (0) and FCS (1)
-                let displayName = topic.name;
+                let displayName = league.name;
                 if (isMLB) displayName = 'MLB';else if (isNFL) displayName = 'NFL';else if (isNBA) displayName = 'NBA';else if (isNHL) displayName = 'NHL';else if (isWNBA) displayName = 'WNBA';else if (isNCAAM) displayName = 'NCAAM';else if (isNCAAW) displayName = 'NCAAW';else if (isNCAAF) {
-                  const ncaafTopics = sportTopics.filter(t => t.name.toLowerCase().includes('college football'));
-                  const ncaafIndex = ncaafTopics.findIndex(t => t.id === topic.id);
+                  const ncaafLeagues = sportLeagues.filter(l => l.name.toLowerCase().includes('college football'));
+                  const ncaafIndex = ncaafLeagues.findIndex(l => l.id === league.id);
                   displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
                 }
-                return <div key={topic.id} className="space-y-1.5">
+                return <div key={league.id} className="space-y-1.5">
                         <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                          <Checkbox id={`topic-${topic.id}`} checked={selectedTopics.includes(topic.id)} onCheckedChange={() => handleTopicToggle(topic.id)} />
-                          {topic.logo_url && <div className="flex items-center justify-center w-10 h-10 shrink-0">
+                          <Checkbox id={`league-${league.id}`} checked={selectedLeagues.includes(league.id)} onCheckedChange={() => handleLeagueToggle(league.id)} />
+                          {league.logo_url && <div className="flex items-center justify-center w-10 h-10 shrink-0">
                               <img 
-                                src={topic.logo_url} 
+                                src={league.logo_url} 
                                 alt={displayName} 
                                 className="h-8 w-8 object-contain" 
                                 onError={(e) => e.currentTarget.style.display = 'none'}
                               />
                             </div>}
-                          <label htmlFor={`topic-${topic.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
+                          <label htmlFor={`league-${league.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
                             {displayName}
                           </label>
                           {hasTeams && <Button 
                               variant={isExpanded ? "default" : "outline"} 
                               size="sm" 
-                              onClick={() => toggleTopicExpansion(topic.id)} 
+                              onClick={() => toggleLeagueExpansion(league.id)} 
                               className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
                             >
                               Teams
@@ -409,7 +403,7 @@ export default function Preferences() {
 
                         {hasTeams && isExpanded && <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                              {topicTeams.map(team => {
+                              {leagueTeams.map(team => {
                         return <div key={team.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors">
                                     <Checkbox id={`team-${team.id}`} checked={selectedTeams.includes(team.id)} onCheckedChange={() => handleTeamToggle(team.id)} />
                                     {team.logo_url && <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
@@ -434,7 +428,7 @@ export default function Preferences() {
           </Card>
 
           <div className="text-xs text-muted-foreground text-center py-2">
-            {selectedSports.length} sports, {selectedTopics.length} topics, {selectedTeams.length} teams selected • Changes save automatically
+            {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
           </div>
         </div>
       </main>

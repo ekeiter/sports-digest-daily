@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-interface Topic {
+interface League {
   id: number;
   name: string;
   code: string;
@@ -28,7 +28,7 @@ type Sport = Tables<"sports">;
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
+  const [selectedLeagues, setSelectedLeagues] = useState<League[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
   const [selectedSports, setSelectedSports] = useState<Sport[]>([]);
 
@@ -49,21 +49,21 @@ export default function MyFeeds() {
   const loadFeeds = async (userId: string) => {
     setLoading(true);
     try {
-      // Fetch selected topics
-      const { data: topicInterests } = await supabase
+      // Fetch selected leagues
+      const { data: leagueInterests } = await supabase
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "topic");
+        .eq("kind", "league");
 
-      if (topicInterests && topicInterests.length > 0) {
-        const topicIds = topicInterests.map(t => t.subject_id);
-        const { data: topics } = await supabase
-          .from("topics")
+      if (leagueInterests && leagueInterests.length > 0) {
+        const leagueIds = leagueInterests.map(l => l.subject_id);
+        const { data: leagues } = await supabase
+          .from("leagues")
           .select("id, name, code, sport, logo_url")
-          .in("id", topicIds);
+          .in("id", leagueIds);
         
-        if (topics) setSelectedTopics(topics as unknown as Topic[]);
+        if (leagues) setSelectedLeagues(leagues as unknown as League[]);
       }
 
       // Fetch selected teams
