@@ -1578,7 +1578,7 @@ export type Database = {
       url_host: { Args: { u: string }; Returns: string }
     }
     Enums: {
-      interest_kind: "team" | "topic" | "person" | "sport"
+      interest_kind: "team" | "topic" | "person" | "sport" | "league"
       media_type: "article" | "video"
       rule_kind: "html" | "rss" | "both"
       topic_kind: "league" | "topic"
@@ -1710,7 +1710,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      interest_kind: ["team", "topic", "person", "sport"],
+      interest_kind: ["team", "topic", "person", "sport", "league"],
       media_type: ["article", "video"],
       rule_kind: ["html", "rss", "both"],
       topic_kind: ["league", "topic"],
