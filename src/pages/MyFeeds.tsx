@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -163,17 +162,20 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedSports.map((sport) => {
                     const key = `sport-${sport.id}`;
-                    const isChecked = toUnfollow.has(key);
+                    const isMarked = toUnfollow.has(key);
                     return (
                       <div
                         key={sport.id}
-                        className="p-3 border rounded-lg bg-card flex items-center gap-3"
+                        className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
                       >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={() => toggleUnfollow('sport', sport.id)}
-                        />
                         <div className="font-semibold">{sport.display_name}</div>
+                        <Button
+                          size="sm"
+                          variant={isMarked ? "default" : "outline"}
+                          onClick={() => toggleUnfollow('sport', sport.id)}
+                        >
+                          Unfollow
+                        </Button>
                       </div>
                     );
                   })}
@@ -194,26 +196,31 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedLeagues.map((league) => {
                     const key = `league-${league.id}`;
-                    const isChecked = toUnfollow.has(key);
+                    const isMarked = toUnfollow.has(key);
                     return (
                       <div
                         key={league.id}
-                        className="p-3 border rounded-lg bg-card flex items-center gap-3"
+                        className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
                       >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={() => toggleUnfollow('league', league.id)}
-                        />
-                        {league.logo_url && (
-                          <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
-                            <img 
-                              src={league.logo_url} 
-                              alt={league.name}
-                              className="h-10 w-10 object-contain" 
-                            />
-                          </div>
-                        )}
-                        <div className="font-semibold">{league.code || league.name}</div>
+                        <div className="flex items-center gap-3">
+                          {league.logo_url && (
+                            <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                              <img 
+                                src={league.logo_url} 
+                                alt={league.name}
+                                className="h-10 w-10 object-contain" 
+                              />
+                            </div>
+                          )}
+                          <div className="font-semibold">{league.code || league.name}</div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant={isMarked ? "default" : "outline"}
+                          onClick={() => toggleUnfollow('league', league.id)}
+                        >
+                          Unfollow
+                        </Button>
                       </div>
                     );
                   })}
@@ -234,26 +241,31 @@ export default function MyFeeds() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {selectedTeams.map((team) => {
                     const key = `team-${team.id}`;
-                    const isChecked = toUnfollow.has(key);
+                    const isMarked = toUnfollow.has(key);
                     return (
                       <div
                         key={team.id}
-                        className="p-3 border rounded-lg bg-card flex items-center gap-3"
+                        className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
                       >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={() => toggleUnfollow('team', team.id)}
-                        />
-                        {team.logo_url && (
-                          <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
-                            <img 
-                              src={team.logo_url} 
-                              alt={team.display_name}
-                              className="h-10 w-10 object-contain"
-                            />
-                          </div>
-                        )}
-                        <div className="font-semibold">{team.display_name}</div>
+                        <div className="flex items-center gap-3">
+                          {team.logo_url && (
+                            <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                              <img 
+                                src={team.logo_url} 
+                                alt={team.display_name}
+                                className="h-10 w-10 object-contain"
+                              />
+                            </div>
+                          )}
+                          <div className="font-semibold">{team.display_name}</div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant={isMarked ? "default" : "outline"}
+                          onClick={() => toggleUnfollow('team', team.id)}
+                        >
+                          Unfollow
+                        </Button>
                       </div>
                     );
                   })}
