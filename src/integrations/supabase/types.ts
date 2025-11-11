@@ -293,7 +293,7 @@ export type Database = {
             foreignKeyName: "article_topic_map_topic_id_fkey"
             columns: ["topic_id"]
             isOneToOne: false
-            referencedRelation: "topics"
+            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
         ]
@@ -632,7 +632,7 @@ export type Database = {
             foreignKeyName: "fk_endpoints_league"
             columns: ["league"]
             isOneToOne: false
-            referencedRelation: "topics"
+            referencedRelation: "leagues"
             referencedColumns: ["code"]
           },
         ]
@@ -799,6 +799,53 @@ export type Database = {
         }
         Relationships: []
       }
+      leagues: {
+        Row: {
+          aliases: string[]
+          code: string
+          created_at: string
+          description: string | null
+          id: number
+          kind: Database["public"]["Enums"]["topic_kind"]
+          logo_url: string | null
+          name: string
+          sport: string
+          updated_at: string
+        }
+        Insert: {
+          aliases?: string[]
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          kind: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
+          name: string
+          sport: string
+          updated_at?: string
+        }
+        Update: {
+          aliases?: string[]
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          kind?: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
+          name?: string
+          sport?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leagues_sport_fkey"
+            columns: ["sport"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["sport"]
+          },
+        ]
+      }
       people: {
         Row: {
           aliases: string[]
@@ -870,21 +917,27 @@ export type Database = {
           created_at: string | null
           description: string | null
           display_name: string
+          icon_emoji: string | null
           id: number
+          logo_url: string | null
           sport: string
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           display_name: string
+          icon_emoji?: string | null
           id?: number
+          logo_url?: string | null
           sport: string
         }
         Update: {
           created_at?: string | null
           description?: string | null
           display_name?: string
+          icon_emoji?: string | null
           id?: number
+          logo_url?: string | null
           sport?: string
         }
         Relationships: []
@@ -1023,52 +1076,13 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "teams_topic_id_fkey"
+            foreignKeyName: "teams_league_id_fkey"
             columns: ["topic_id"]
             isOneToOne: false
-            referencedRelation: "topics"
+            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
         ]
-      }
-      topics: {
-        Row: {
-          aliases: string[]
-          code: string
-          created_at: string
-          description: string | null
-          id: number
-          kind: Database["public"]["Enums"]["topic_kind"]
-          logo_url: string | null
-          name: string
-          sport: string
-          updated_at: string
-        }
-        Insert: {
-          aliases?: string[]
-          code: string
-          created_at?: string
-          description?: string | null
-          id?: number
-          kind: Database["public"]["Enums"]["topic_kind"]
-          logo_url?: string | null
-          name: string
-          sport: string
-          updated_at?: string
-        }
-        Update: {
-          aliases?: string[]
-          code?: string
-          created_at?: string
-          description?: string | null
-          id?: number
-          kind?: Database["public"]["Enums"]["topic_kind"]
-          logo_url?: string | null
-          name?: string
-          sport?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
     }
     Views: {
