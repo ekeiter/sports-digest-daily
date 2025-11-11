@@ -1,34 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-interface League {
-  id: number;
-  name: string;
-  code: string;
-  sport: string;
-  logo_url?: string;
-}
-
-interface Team {
-  id: number;
-  display_name: string;
-  slug: string;
-  city_state_name: string;
-  logo_url?: string;
-}
-
-interface Sport {
-  id: number;
-  sport: string;
-  display_name: string;
-  description?: string;
-  logo_url?: string;
-  icon_emoji?: string;
-}
+type League = Database['public']['Tables']['leagues']['Row'];
+type Team = Database['public']['Tables']['teams']['Row'];
+type Sport = Database['public']['Tables']['sports']['Row'];
 
 export default function MyFeeds() {
   const navigate = useNavigate();
@@ -59,16 +39,16 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "league" as any);
+        .eq("kind", "league");
 
       if (leagueInterests && leagueInterests.length > 0) {
         const leagueIds = leagueInterests.map(l => l.subject_id);
         const { data: leagues } = await supabase
-          .from("leagues" as any)
-          .select("id, name, code, sport, logo_url")
+          .from("leagues")
+          .select("*")
           .in("id", leagueIds);
         
-        if (leagues) setSelectedLeagues(leagues as unknown as League[]);
+        if (leagues) setSelectedLeagues(leagues);
       }
 
       // Fetch selected teams
@@ -76,16 +56,16 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "team" as any);
+        .eq("kind", "team");
 
       if (teamInterests && teamInterests.length > 0) {
         const teamIds = teamInterests.map(t => t.subject_id);
         const { data: teams } = await supabase
           .from("teams")
-          .select("id, display_name, slug, city_state_name, logo_url")
+          .select("*")
           .in("id", teamIds);
         
-        if (teams) setSelectedTeams(teams as Team[]);
+        if (teams) setSelectedTeams(teams);
       }
 
       // Fetch selected sports
@@ -93,16 +73,16 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "sport" as any);
+        .eq("kind", "sport");
 
       if (sportInterests && sportInterests.length > 0) {
         const sportIds = sportInterests.map(s => s.subject_id);
         const { data: sports } = await supabase
           .from("sports")
-          .select("id, display_name, sport, description")
+          .select("*")
           .in("id", sportIds);
         
-        if (sports) setSelectedSports(sports as unknown as Sport[]);
+        if (sports) setSelectedSports(sports);
       }
     } catch (error) {
       console.error("Error loading feeds:", error);

@@ -9,26 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-interface League {
-  id: number;
-  name: string;
-  code: string;
-  sport: string;
-  kind: string;
-  aliases: string[];
-  logo_url?: string;
-}
-
-interface Sport {
-  id: number;
-  sport: string;
-  display_name: string;
-  description?: string;
-  logo_url?: string;
-  icon_emoji?: string;
-}
-
-type Team = Database['public']['Tables']['teams']['Row'] & { logo_url?: string };
+type League = Database['public']['Tables']['leagues']['Row'];
+type Sport = Database['public']['Tables']['sports']['Row'];
+type Team = Database['public']['Tables']['teams']['Row'];
 
 
 export default function Preferences() {
@@ -88,13 +71,13 @@ export default function Preferences() {
       const {
         data: leaguesData,
         error: leaguesError
-      } = await supabase.from("leagues" as any).select("*").order("sport", {
+      } = await supabase.from("leagues").select("*").order("sport", {
         ascending: true
       }).order("name", {
         ascending: true
       });
       if (leaguesError) throw leaguesError;
-      setLeagues((leaguesData as unknown as League[]) || []);
+      setLeagues(leaguesData || []);
 
       // Load user's current interests
       const {
@@ -104,9 +87,9 @@ export default function Preferences() {
       if (interestsError) throw interestsError;
 
       // Initialize selected sports, leagues and teams from interests
-      const sportIds = interests?.filter(i => i.kind === 'sport' as any).map(i => i.subject_id) || [];
-      const leagueIds = interests?.filter(i => i.kind === 'league' as any).map(i => i.subject_id) || [];
-      const teamIds = interests?.filter(i => i.kind === 'team' as any).map(i => i.subject_id) || [];
+      const sportIds = interests?.filter(i => i.kind === 'sport').map(i => i.subject_id) || [];
+      const leagueIds = interests?.filter(i => i.kind === 'league').map(i => i.subject_id) || [];
+      const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
@@ -149,7 +132,7 @@ export default function Preferences() {
       const {
         data: isNowFollowed,
         error
-      } = await supabase.rpc('toggle_subscriber_interest' as any, {
+      } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'sport',
         p_subject_id: sportId
       });
@@ -175,7 +158,7 @@ export default function Preferences() {
       const {
         data: isNowFollowed,
         error
-      } = await supabase.rpc('toggle_subscriber_interest' as any, {
+      } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'league',
         p_subject_id: leagueId
       });
@@ -201,7 +184,7 @@ export default function Preferences() {
       const {
         data: isNowFollowed,
         error
-      } = await supabase.rpc('toggle_subscriber_interest' as any, {
+      } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'team',
         p_subject_id: teamId
       });
