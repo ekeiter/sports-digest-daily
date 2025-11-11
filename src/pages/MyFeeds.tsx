@@ -21,12 +21,9 @@ interface Team {
   logo_url?: string;
 }
 
-interface Sport {
-  id: number;
-  display_name: string;
-  sport: string;
-  description?: string;
-}
+import type { Tables } from "@/integrations/supabase/types";
+
+type Sport = Tables<"sports">;
 
 export default function MyFeeds() {
   const navigate = useNavigate();
