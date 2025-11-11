@@ -21,9 +21,14 @@ interface Team {
   logo_url?: string;
 }
 
-import type { Tables } from "@/integrations/supabase/types";
-
-type Sport = Tables<"sports">;
+interface Sport {
+  id: number;
+  sport: string;
+  display_name: string;
+  description?: string;
+  logo_url?: string;
+  icon_emoji?: string;
+}
 
 export default function MyFeeds() {
   const navigate = useNavigate();
@@ -54,12 +59,12 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "league");
+        .eq("kind", "league" as any);
 
       if (leagueInterests && leagueInterests.length > 0) {
         const leagueIds = leagueInterests.map(l => l.subject_id);
         const { data: leagues } = await supabase
-          .from("leagues")
+          .from("leagues" as any)
           .select("id, name, code, sport, logo_url")
           .in("id", leagueIds);
         
@@ -71,7 +76,7 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "team");
+        .eq("kind", "team" as any);
 
       if (teamInterests && teamInterests.length > 0) {
         const teamIds = teamInterests.map(t => t.subject_id);
@@ -80,7 +85,7 @@ export default function MyFeeds() {
           .select("id, display_name, slug, city_state_name, logo_url")
           .in("id", teamIds);
         
-        if (teams) setSelectedTeams(teams as unknown as Team[]);
+        if (teams) setSelectedTeams(teams as Team[]);
       }
 
       // Fetch selected sports
@@ -88,7 +93,7 @@ export default function MyFeeds() {
         .from("subscriber_interests")
         .select("subject_id")
         .eq("subscriber_id", userId)
-        .eq("kind", "sport");
+        .eq("kind", "sport" as any);
 
       if (sportInterests && sportInterests.length > 0) {
         const sportIds = sportInterests.map(s => s.subject_id);
@@ -147,31 +152,31 @@ export default function MyFeeds() {
             </CardContent>
           </Card>
 
-          {/* Leagues/Topics Section */}
+          {/* Leagues Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Leagues & Topics</CardTitle>
+              <CardTitle>Leagues</CardTitle>
             </CardHeader>
             <CardContent>
-              {selectedTopics.length === 0 ? (
-                <p className="text-muted-foreground">No leagues or topics selected</p>
+              {selectedLeagues.length === 0 ? (
+                <p className="text-muted-foreground">No leagues selected</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {selectedTopics.map((topic) => (
+                  {selectedLeagues.map((league) => (
                     <div
-                      key={topic.id}
+                      key={league.id}
                       className="p-3 border rounded-lg bg-card flex items-center gap-3"
                     >
-                      {topic.logo_url && (
+                      {league.logo_url && (
                         <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
                           <img 
-                            src={topic.logo_url} 
-                            alt={topic.name}
+                            src={league.logo_url} 
+                            alt={league.name}
                             className="h-10 w-10 object-contain" 
                           />
                         </div>
                       )}
-                      <div className="font-semibold">{topic.code || topic.name}</div>
+                      <div className="font-semibold">{league.code || league.name}</div>
                     </div>
                   ))}
                 </div>
