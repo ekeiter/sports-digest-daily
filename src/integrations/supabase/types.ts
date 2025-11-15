@@ -576,6 +576,7 @@ export type Database = {
           last_item_published_at: string | null
           last_modified_header: string | null
           league: string | null
+          metro_area_id: number | null
           notes: string | null
           priority: number
           sport: string | null
@@ -598,6 +599,7 @@ export type Database = {
           last_item_published_at?: string | null
           last_modified_header?: string | null
           league?: string | null
+          metro_area_id?: number | null
           notes?: string | null
           priority?: number
           sport?: string | null
@@ -620,6 +622,7 @@ export type Database = {
           last_item_published_at?: string | null
           last_modified_header?: string | null
           league?: string | null
+          metro_area_id?: number | null
           notes?: string | null
           priority?: number
           sport?: string | null
@@ -628,6 +631,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "endpoints_metro_area_id_fkey"
+            columns: ["metro_area_id"]
+            isOneToOne: false
+            referencedRelation: "metro_areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_endpoints_league"
             columns: ["league"]
@@ -846,6 +856,48 @@ export type Database = {
           },
         ]
       }
+      metro_areas: {
+        Row: {
+          country_code: string | null
+          created_at: string | null
+          id: number
+          metro_name: string
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string | null
+          id?: number
+          metro_name: string
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string | null
+          id?: number
+          metro_name?: string
+        }
+        Relationships: []
+      }
+      metro_mapping_import: {
+        Row: {
+          city_name: string | null
+          country_code: string | null
+          metro_area: string | null
+          state: string | null
+        }
+        Insert: {
+          city_name?: string | null
+          country_code?: string | null
+          metro_area?: string | null
+          state?: string | null
+        }
+        Update: {
+          city_name?: string | null
+          country_code?: string | null
+          metro_area?: string | null
+          state?: string | null
+        }
+        Relationships: []
+      }
       people: {
         Row: {
           aliases: string[]
@@ -1029,6 +1081,7 @@ export type Database = {
           lat: number | null
           logo_url: string | null
           lon: number | null
+          metro_area_id: number | null
           nickname: string | null
           slug: string
           state: string | null
@@ -1048,6 +1101,7 @@ export type Database = {
           lat?: number | null
           logo_url?: string | null
           lon?: number | null
+          metro_area_id?: number | null
           nickname?: string | null
           slug: string
           state?: string | null
@@ -1067,6 +1121,7 @@ export type Database = {
           lat?: number | null
           logo_url?: string | null
           lon?: number | null
+          metro_area_id?: number | null
           nickname?: string | null
           slug?: string
           state?: string | null
@@ -1082,10 +1137,61 @@ export type Database = {
             referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "teams_metro_area_id_fkey"
+            columns: ["metro_area_id"]
+            isOneToOne: false
+            referencedRelation: "metro_areas"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
+      subscriber_interests_detailed: {
+        Row: {
+          added_at: string | null
+          email: string | null
+          icon: string | null
+          kind: Database["public"]["Enums"]["interest_kind"] | null
+          notification_enabled: boolean | null
+          priority: number | null
+          subject_code: string | null
+          subject_id: number | null
+          subject_name: string | null
+          subscriber_id: string | null
+          subscriber_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriber_interests_with_details: {
+        Row: {
+          added_at: string | null
+          kind: Database["public"]["Enums"]["interest_kind"] | null
+          notification_enabled: boolean | null
+          priority: number | null
+          subject_id: number | null
+          subject_name: string | null
+          subscriber_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_articles: {
         Row: {
           author: string | null

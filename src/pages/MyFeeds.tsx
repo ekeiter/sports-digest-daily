@@ -111,16 +111,15 @@ export default function MyFeeds() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      for (const key of toUnfollow) {
-        const [kind, idStr] = key.split('-');
-        const subjectId = Number(idStr);
-        
-        await supabase.rpc('toggle_subscriber_interest', {
-          p_subscriber_id: user.id,
-          p_subject_id: subjectId,
-          p_kind: kind as 'sport' | 'league' | 'team'
-        });
-      }
+    for (const key of toUnfollow) {
+      const [kind, idStr] = key.split('-');
+      const subjectId = Number(idStr);
+      
+      await supabase.rpc('toggle_subscriber_interest', {
+        p_kind: kind as 'sport' | 'league' | 'team',
+        p_subject_id: subjectId
+      });
+    }
 
       toast.success("Feed preferences updated");
       navigate("/");
