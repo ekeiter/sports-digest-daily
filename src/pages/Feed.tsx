@@ -91,13 +91,18 @@ export default function Feed() {
     try {
       const publishedDate = new Date(dateString);
       const now = new Date();
-      const hoursAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60));
+      const minutesAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
       
-      if (hoursAgo < 24) {
-        return `${hoursAgo}h`;
+      if (minutesAgo < 120) {
+        return `${minutesAgo}m`;
       } else {
-        const daysAgo = Math.floor(hoursAgo / 24);
-        return `${daysAgo}d`;
+        const hoursAgo = Math.floor(minutesAgo / 60);
+        if (hoursAgo < 24) {
+          return `${hoursAgo}h`;
+        } else {
+          const daysAgo = Math.floor(hoursAgo / 24);
+          return `${daysAgo}d`;
+        }
       }
     } catch {
       return dateString;
