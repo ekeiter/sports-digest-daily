@@ -17,24 +17,48 @@ export type Database = {
       article_person_map: {
         Row: {
           article_id: number
+          confidence_score: number | null
           created_at: string
           detected_name: string | null
+          extraction_method: string | null
+          first_mention_position: number | null
+          in_title: boolean | null
+          is_primary_subject: boolean | null
+          match_context: string | null
+          mention_count: number | null
           person_id: number
           relevance: number | null
+          updated_at: string | null
         }
         Insert: {
           article_id: number
+          confidence_score?: number | null
           created_at?: string
           detected_name?: string | null
+          extraction_method?: string | null
+          first_mention_position?: number | null
+          in_title?: boolean | null
+          is_primary_subject?: boolean | null
+          match_context?: string | null
+          mention_count?: number | null
           person_id: number
           relevance?: number | null
+          updated_at?: string | null
         }
         Update: {
           article_id?: number
+          confidence_score?: number | null
           created_at?: string
           detected_name?: string | null
+          extraction_method?: string | null
+          first_mention_position?: number | null
+          in_title?: boolean | null
+          is_primary_subject?: boolean | null
+          match_context?: string | null
+          mention_count?: number | null
           person_id?: number
           relevance?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -140,18 +164,30 @@ export type Database = {
       article_sport_map: {
         Row: {
           article_id: number
+          confidence_score: number | null
           created_at: string | null
+          extraction_method: string | null
+          relevance: number | null
           sport: string
+          updated_at: string | null
         }
         Insert: {
           article_id: number
+          confidence_score?: number | null
           created_at?: string | null
+          extraction_method?: string | null
+          relevance?: number | null
           sport: string
+          updated_at?: string | null
         }
         Update: {
           article_id?: number
+          confidence_score?: number | null
           created_at?: string | null
+          extraction_method?: string | null
+          relevance?: number | null
           sport?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -187,24 +223,45 @@ export type Database = {
       article_team_map: {
         Row: {
           article_id: number
+          confidence_score: number | null
           created_at: string
           detected_name: string | null
+          extraction_method: string | null
+          first_mention_position: number | null
+          in_title: boolean | null
+          is_primary_subject: boolean | null
+          mention_count: number | null
           relevance: number | null
           team_id: number
+          updated_at: string | null
         }
         Insert: {
           article_id: number
+          confidence_score?: number | null
           created_at?: string
           detected_name?: string | null
+          extraction_method?: string | null
+          first_mention_position?: number | null
+          in_title?: boolean | null
+          is_primary_subject?: boolean | null
+          mention_count?: number | null
           relevance?: number | null
           team_id: number
+          updated_at?: string | null
         }
         Update: {
           article_id?: number
+          confidence_score?: number | null
           created_at?: string
           detected_name?: string | null
+          extraction_method?: string | null
+          first_mention_position?: number | null
+          in_title?: boolean | null
+          is_primary_subject?: boolean | null
+          mention_count?: number | null
           relevance?: number | null
           team_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -247,18 +304,30 @@ export type Database = {
       article_topic_map: {
         Row: {
           article_id: number
+          confidence_score: number | null
           created_at: string
+          extraction_method: string | null
+          relevance: number | null
           topic_id: number
+          updated_at: string | null
         }
         Insert: {
           article_id: number
+          confidence_score?: number | null
           created_at?: string
+          extraction_method?: string | null
+          relevance?: number | null
           topic_id: number
+          updated_at?: string | null
         }
         Update: {
           article_id?: number
+          confidence_score?: number | null
           created_at?: string
+          extraction_method?: string | null
+          relevance?: number | null
           topic_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -302,8 +371,10 @@ export type Database = {
         Row: {
           ai_extraction_cost: number | null
           ai_extraction_ms: number | null
+          ai_leagues: string[] | null
           ai_model: string | null
           ai_people: string[] | null
+          ai_sports: string[] | null
           ai_teams: string[] | null
           author: string | null
           canonical_url: string | null
@@ -351,8 +422,10 @@ export type Database = {
         Insert: {
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
+          ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
+          ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
           canonical_url?: string | null
@@ -400,8 +473,10 @@ export type Database = {
         Update: {
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
+          ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
+          ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
           canonical_url?: string | null
@@ -573,7 +648,6 @@ export type Database = {
           kind: string
           language: string | null
           last_checked_at: string | null
-          last_item_published_at: string | null
           last_modified_header: string | null
           league: string | null
           metro_area_id: number | null
@@ -596,7 +670,6 @@ export type Database = {
           kind?: string
           language?: string | null
           last_checked_at?: string | null
-          last_item_published_at?: string | null
           last_modified_header?: string | null
           league?: string | null
           metro_area_id?: number | null
@@ -619,7 +692,6 @@ export type Database = {
           kind?: string
           language?: string | null
           last_checked_at?: string | null
-          last_item_published_at?: string | null
           last_modified_header?: string | null
           league?: string | null
           metro_area_id?: number | null
@@ -900,39 +972,154 @@ export type Database = {
       }
       people: {
         Row: {
-          aliases: string[]
-          created_at: string
-          display_name: string
+          api_id: string | null
+          api_source: string | null
+          created_at: string | null
           id: number
+          is_active: boolean | null
+          jersey_number: string | null
+          last_updated: string | null
+          league_id: number | null
+          name: string
+          normalized_name: string
           position: string | null
-          slug: string
+          role: string
+          sport_id: number | null
           team_id: number | null
-          topic_id: number | null
-          updated_at: string
         }
         Insert: {
-          aliases?: string[]
-          created_at?: string
-          display_name: string
+          api_id?: string | null
+          api_source?: string | null
+          created_at?: string | null
           id?: number
+          is_active?: boolean | null
+          jersey_number?: string | null
+          last_updated?: string | null
+          league_id?: number | null
+          name: string
+          normalized_name: string
           position?: string | null
-          slug: string
+          role: string
+          sport_id?: number | null
           team_id?: number | null
-          topic_id?: number | null
-          updated_at?: string
         }
         Update: {
-          aliases?: string[]
-          created_at?: string
-          display_name?: string
+          api_id?: string | null
+          api_source?: string | null
+          created_at?: string | null
           id?: number
+          is_active?: boolean | null
+          jersey_number?: string | null
+          last_updated?: string | null
+          league_id?: number | null
+          name?: string
+          normalized_name?: string
           position?: string | null
-          slug?: string
+          role?: string
+          sport_id?: number | null
           team_id?: number | null
-          topic_id?: number | null
-          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "people_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roster_api_sources: {
+        Row: {
+          api_provider: string
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          last_sync_error: string | null
+          last_sync_status: string | null
+          last_synced_at: string | null
+          league_id: number | null
+          notes: string | null
+          rate_limit_delay_ms: number | null
+          request_headers: Json | null
+          requires_season: boolean | null
+          roster_url_pattern: string
+          sport_id: number | null
+          sync_priority: number | null
+          teams_url: string | null
+          updated_at: string | null
+          url_params: Json | null
+        }
+        Insert: {
+          api_provider: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          league_id?: number | null
+          notes?: string | null
+          rate_limit_delay_ms?: number | null
+          request_headers?: Json | null
+          requires_season?: boolean | null
+          roster_url_pattern: string
+          sport_id?: number | null
+          sync_priority?: number | null
+          teams_url?: string | null
+          updated_at?: string | null
+          url_params?: Json | null
+        }
+        Update: {
+          api_provider?: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          league_id?: number | null
+          notes?: string | null
+          rate_limit_delay_ms?: number | null
+          request_headers?: Json | null
+          requires_season?: boolean | null
+          roster_url_pattern?: string
+          sport_id?: number | null
+          sync_priority?: number | null
+          teams_url?: string | null
+          updated_at?: string | null
+          url_params?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roster_api_sources_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roster_api_sources_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_domains: {
         Row: {
@@ -1073,6 +1260,8 @@ export type Database = {
           abbreviation: string | null
           actual_city: string | null
           aliases: string[]
+          api_id: string | null
+          api_source: string | null
           city_state_name: string
           country_code: string | null
           created_at: string
@@ -1093,6 +1282,8 @@ export type Database = {
           abbreviation?: string | null
           actual_city?: string | null
           aliases?: string[]
+          api_id?: string | null
+          api_source?: string | null
           city_state_name: string
           country_code?: string | null
           created_at?: string
@@ -1113,6 +1304,8 @@ export type Database = {
           abbreviation?: string | null
           actual_city?: string | null
           aliases?: string[]
+          api_id?: string | null
+          api_source?: string | null
           city_state_name?: string
           country_code?: string | null
           created_at?: string
