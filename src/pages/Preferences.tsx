@@ -101,7 +101,7 @@ export default function Preferences() {
     }
   };
   const loadTeamsForLeague = async (leagueId: number) => {
-    if (teams.some(t => t.topic_id === leagueId)) {
+    if (teams.some(t => t.league_id === leagueId)) {
       return; // Already loaded
     }
     setLoadingTeams(prev => new Set(prev).add(leagueId));
@@ -109,7 +109,7 @@ export default function Preferences() {
       const {
         data: teamsData,
         error: teamsError
-      } = await supabase.from("teams").select("*").eq("topic_id", leagueId).order("display_name", {
+      } = await supabase.from("teams").select("*").eq("league_id", leagueId).order("display_name", {
         ascending: true
       });
       if (teamsError) throw teamsError;
@@ -212,7 +212,7 @@ export default function Preferences() {
     }
   };
   const getTeamsForLeague = (leagueId: number) => {
-    return teams.filter(team => team.topic_id === leagueId);
+    return teams.filter(team => team.league_id === leagueId);
   };
   const otherLeaguesList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
   const groupedLeagues = leagues.reduce((acc, league) => {

@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      _team_updates: {
+        Row: {
+          api_id: string | null
+          display_name: string
+          logo_url: string | null
+        }
+        Insert: {
+          api_id?: string | null
+          display_name: string
+          logo_url?: string | null
+        }
+        Update: {
+          api_id?: string | null
+          display_name?: string
+          logo_url?: string | null
+        }
+        Relationships: []
+      }
+      article_league_map: {
+        Row: {
+          article_id: number
+          confidence_score: number | null
+          created_at: string
+          extraction_method: string | null
+          league_id: number
+          relevance: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          article_id: number
+          confidence_score?: number | null
+          created_at?: string
+          extraction_method?: string | null
+          league_id: number
+          relevance?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          article_id?: number
+          confidence_score?: number | null
+          created_at?: string
+          extraction_method?: string | null
+          league_id?: number
+          relevance?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_league_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_league_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_league_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_articles_only"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_league_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "v_videos_only"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_league_map_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_person_map: {
         Row: {
           article_id: number
@@ -297,72 +381,6 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      article_topic_map: {
-        Row: {
-          article_id: number
-          confidence_score: number | null
-          created_at: string
-          extraction_method: string | null
-          relevance: number | null
-          topic_id: number
-          updated_at: string | null
-        }
-        Insert: {
-          article_id: number
-          confidence_score?: number | null
-          created_at?: string
-          extraction_method?: string | null
-          relevance?: number | null
-          topic_id: number
-          updated_at?: string | null
-        }
-        Update: {
-          article_id?: number
-          confidence_score?: number | null
-          created_at?: string
-          extraction_method?: string | null
-          relevance?: number | null
-          topic_id?: number
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "article_topic_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_topic_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_topic_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_topic_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_topic_map_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
         ]
@@ -1268,13 +1286,13 @@ export type Database = {
           display_name: string
           id: number
           lat: number | null
+          league_id: number
           logo_url: string | null
           lon: number | null
           metro_area_id: number | null
           nickname: string | null
           slug: string
           state: string | null
-          topic_id: number
           updated_at: string
           venue: string | null
         }
@@ -1290,13 +1308,13 @@ export type Database = {
           display_name: string
           id?: number
           lat?: number | null
+          league_id: number
           logo_url?: string | null
           lon?: number | null
           metro_area_id?: number | null
           nickname?: string | null
           slug: string
           state?: string | null
-          topic_id: number
           updated_at?: string
           venue?: string | null
         }
@@ -1312,20 +1330,20 @@ export type Database = {
           display_name?: string
           id?: number
           lat?: number | null
+          league_id?: number
           logo_url?: string | null
           lon?: number | null
           metro_area_id?: number | null
           nickname?: string | null
           slug?: string
           state?: string | null
-          topic_id?: number
           updated_at?: string
           venue?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "teams_league_id_fkey"
-            columns: ["topic_id"]
+            columns: ["league_id"]
             isOneToOne: false
             referencedRelation: "leagues"
             referencedColumns: ["id"]
