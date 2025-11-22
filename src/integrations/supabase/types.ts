@@ -1879,7 +1879,7 @@ export type Database = {
         }[]
       }
       resolve_teams: {
-        Args: { names: string[]; p_topic_id?: number }
+        Args: { names: string[]; p_league_id?: number }
         Returns: {
           input: string
           team_id: number
