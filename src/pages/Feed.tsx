@@ -136,7 +136,7 @@ export default function Feed() {
             <CardContent className="p-12 text-center">
               <h2 className="text-xl font-semibold mb-2">No articles yet</h2>
               <p className="text-muted-foreground mb-4">
-                Follow some teams or topics to see personalized sports news here.
+                Follow some teams or leagues to see personalized sports news here.
               </p>
               <Button onClick={() => navigate("/preferences")}>
                 Follow Teams & Topics
