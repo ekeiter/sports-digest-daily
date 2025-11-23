@@ -69,27 +69,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "article_league_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_league_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_league_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "article_league_map_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
@@ -153,27 +132,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "article_person_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_person_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_person_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "article_person_map_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
@@ -213,27 +171,6 @@ export type Database = {
             columns: ["article_id"]
             isOneToOne: false
             referencedRelation: "articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sources_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sources_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sources_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
             referencedColumns: ["id"]
           },
           {
@@ -282,27 +219,6 @@ export type Database = {
             columns: ["article_id"]
             isOneToOne: false
             referencedRelation: "articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sport_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sport_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_sport_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
             referencedColumns: ["id"]
           },
           {
@@ -366,27 +282,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "article_team_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_team_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_articles_only"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_team_map_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "v_videos_only"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "article_team_map_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -406,20 +301,17 @@ export type Database = {
           ai_teams: string[] | null
           author: string | null
           canonical_url: string | null
-          cities: string[] | null
           content: string | null
           content_hash: string | null
           created_at: string
           domain: string
           duration_seconds: number | null
-          entities: Json | null
           excerpt: string | null
           fetched_at: string | null
           first_seen_at: string | null
           guid: string | null
           id: number
           ingest_run_id: string | null
-          keywords: Json | null
           language: string | null
           lead_image_url: string | null
           leagues: string[] | null
@@ -433,7 +325,6 @@ export type Database = {
           published_fmt: string | null
           published_is_suspect: boolean | null
           rss_categories: Json | null
-          score: number | null
           signals: Json | null
           source_display_name: string | null
           sports: string[] | null
@@ -457,20 +348,17 @@ export type Database = {
           ai_teams?: string[] | null
           author?: string | null
           canonical_url?: string | null
-          cities?: string[] | null
           content?: string | null
           content_hash?: string | null
           created_at?: string
           domain: string
           duration_seconds?: number | null
-          entities?: Json | null
           excerpt?: string | null
           fetched_at?: string | null
           first_seen_at?: string | null
           guid?: string | null
           id?: number
           ingest_run_id?: string | null
-          keywords?: Json | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
@@ -484,7 +372,6 @@ export type Database = {
           published_fmt?: string | null
           published_is_suspect?: boolean | null
           rss_categories?: Json | null
-          score?: number | null
           signals?: Json | null
           source_display_name?: string | null
           sports?: string[] | null
@@ -508,20 +395,17 @@ export type Database = {
           ai_teams?: string[] | null
           author?: string | null
           canonical_url?: string | null
-          cities?: string[] | null
           content?: string | null
           content_hash?: string | null
           created_at?: string
           domain?: string
           duration_seconds?: number | null
-          entities?: Json | null
           excerpt?: string | null
           fetched_at?: string | null
           first_seen_at?: string | null
           guid?: string | null
           id?: number
           ingest_run_id?: string | null
-          keywords?: Json | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
@@ -535,7 +419,6 @@ export type Database = {
           published_fmt?: string | null
           published_is_suspect?: boolean | null
           rss_categories?: Json | null
-          score?: number | null
           signals?: Json | null
           source_display_name?: string | null
           sports?: string[] | null
@@ -1413,240 +1296,6 @@ export type Database = {
           },
         ]
       }
-      v_articles: {
-        Row: {
-          author: string | null
-          canonical_url: string | null
-          cities: string[] | null
-          content: string | null
-          content_hash: string | null
-          created_at: string | null
-          display_image_url: string | null
-          domain: string | null
-          duration_seconds: number | null
-          entities: Json | null
-          excerpt: string | null
-          fetched_at: string | null
-          first_seen_at: string | null
-          guid: string | null
-          hours_since: number | null
-          id: number | null
-          keywords: Json | null
-          language: string | null
-          lead_image_url: string | null
-          leagues: string[] | null
-          media_type: Database["public"]["Enums"]["media_type"] | null
-          media_url: string | null
-          paywalled: boolean | null
-          people: string[] | null
-          platform: string | null
-          published_at: string | null
-          published_fmt: string | null
-          score: number | null
-          source_display_name: string | null
-          teams: string[] | null
-          thumbnail_url: string | null
-          title: string | null
-          updated_at: string | null
-          url: string | null
-          url_hash: string | null
-          word_count: number | null
-        }
-        Insert: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Update: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Relationships: []
-      }
-      v_articles_only: {
-        Row: {
-          author: string | null
-          canonical_url: string | null
-          cities: string[] | null
-          content: string | null
-          content_hash: string | null
-          created_at: string | null
-          display_image_url: string | null
-          domain: string | null
-          duration_seconds: number | null
-          entities: Json | null
-          excerpt: string | null
-          fetched_at: string | null
-          first_seen_at: string | null
-          guid: string | null
-          hours_since: number | null
-          id: number | null
-          keywords: Json | null
-          language: string | null
-          lead_image_url: string | null
-          leagues: string[] | null
-          media_type: Database["public"]["Enums"]["media_type"] | null
-          media_url: string | null
-          paywalled: boolean | null
-          people: string[] | null
-          platform: string | null
-          published_at: string | null
-          published_fmt: string | null
-          score: number | null
-          source_display_name: string | null
-          teams: string[] | null
-          thumbnail_url: string | null
-          title: string | null
-          updated_at: string | null
-          url: string | null
-          url_hash: string | null
-          word_count: number | null
-        }
-        Insert: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Update: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Relationships: []
-      }
       v_endpoint_checks: {
         Row: {
           check_id: number | null
@@ -1697,123 +1346,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      v_videos_only: {
-        Row: {
-          author: string | null
-          canonical_url: string | null
-          cities: string[] | null
-          content: string | null
-          content_hash: string | null
-          created_at: string | null
-          display_image_url: string | null
-          domain: string | null
-          duration_seconds: number | null
-          entities: Json | null
-          excerpt: string | null
-          fetched_at: string | null
-          first_seen_at: string | null
-          guid: string | null
-          hours_since: number | null
-          id: number | null
-          keywords: Json | null
-          language: string | null
-          lead_image_url: string | null
-          leagues: string[] | null
-          media_type: Database["public"]["Enums"]["media_type"] | null
-          media_url: string | null
-          paywalled: boolean | null
-          people: string[] | null
-          platform: string | null
-          published_at: string | null
-          published_fmt: string | null
-          score: number | null
-          source_display_name: string | null
-          teams: string[] | null
-          thumbnail_url: string | null
-          title: string | null
-          updated_at: string | null
-          url: string | null
-          url_hash: string | null
-          word_count: number | null
-        }
-        Insert: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Update: {
-          author?: string | null
-          canonical_url?: string | null
-          cities?: string[] | null
-          content?: string | null
-          content_hash?: string | null
-          created_at?: string | null
-          display_image_url?: never
-          domain?: string | null
-          duration_seconds?: number | null
-          entities?: Json | null
-          excerpt?: string | null
-          fetched_at?: string | null
-          first_seen_at?: string | null
-          guid?: string | null
-          hours_since?: never
-          id?: number | null
-          keywords?: Json | null
-          language?: string | null
-          lead_image_url?: string | null
-          leagues?: string[] | null
-          media_type?: Database["public"]["Enums"]["media_type"] | null
-          media_url?: string | null
-          paywalled?: boolean | null
-          people?: string[] | null
-          platform?: string | null
-          published_at?: string | null
-          published_fmt?: string | null
-          score?: number | null
-          source_display_name?: string | null
-          teams?: string[] | null
-          thumbnail_url?: string | null
-          title?: string | null
-          updated_at?: string | null
-          url?: string | null
-          url_hash?: string | null
-          word_count?: number | null
-        }
-        Relationships: []
       }
     }
     Functions: {
