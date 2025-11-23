@@ -252,7 +252,8 @@ export type Database = {
           created_at: string | null
           extraction_method: string | null
           relevance: number | null
-          sport: string
+          sport: string | null
+          sport_id: number
           updated_at: string | null
         }
         Insert: {
@@ -261,7 +262,8 @@ export type Database = {
           created_at?: string | null
           extraction_method?: string | null
           relevance?: number | null
-          sport: string
+          sport?: string | null
+          sport_id: number
           updated_at?: string | null
         }
         Update: {
@@ -270,7 +272,8 @@ export type Database = {
           created_at?: string | null
           extraction_method?: string | null
           relevance?: number | null
-          sport?: string
+          sport?: string | null
+          sport_id?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -300,6 +303,13 @@ export type Database = {
             columns: ["article_id"]
             isOneToOne: false
             referencedRelation: "v_videos_only"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_sport_map_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
             referencedColumns: ["id"]
           },
         ]
