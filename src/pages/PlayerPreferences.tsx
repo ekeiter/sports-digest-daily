@@ -6,31 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Search, User, X } from "lucide-react";
 import { toast } from "sonner";
+import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 
-interface PersonSearchResult {
-  id: number;
-  name: string;
-  role: string;
-  position?: string;
-  team_id?: number;
-  teams?: {
-    id: number;
-    display_name: string;
-    nickname: string;
-  } | null;
-  league_id?: number;
-  leagues?: {
-    id: number;
-    code: string;
-    name: string;
-  } | null;
-  sport_id?: number;
-  sports?: {
-    id: number;
-    sport: string;
-    display_name: string;
-  } | null;
-}
 
 export default function PlayerPreferences() {
   const navigate = useNavigate();
@@ -108,91 +85,28 @@ export default function PlayerPreferences() {
   };
 
   const handleSearch = async () => {
-    if (searchTerm.trim().length < 2) {
+    const term = searchTerm.trim();
+    if (term.length < 2) {
       toast.error("Please enter at least 2 characters");
       return;
     }
 
     setSearching(true);
-    
-    // First try a simple query to test
-    const { data, error } = await supabase
-      .from("people")
-      .select("*")
-      .eq("is_active", true)
-      .ilike("name", `%${searchTerm}%`)
-      .order("name")
-      .limit(20);
 
-    setSearching(false);
+    try {
+      const results = await searchPeople(term);
 
-    console.log("Raw query result:", data, "Error:", error);
+      if (results.length === 0) {
+        toast.info("No players or coaches found matching your search");
+      }
 
-    if (error) {
+      setSearchResults(results);
+    } catch (error: any) {
       console.error("Search error:", error);
-      toast.error(`Search failed: ${error.message}`);
-      return;
+      toast.error(`Search failed: ${error.message ?? "Unknown error"}`);
+    } finally {
+      setSearching(false);
     }
-
-    // Now let's try to fetch related data separately if needed
-    if (data && data.length > 0) {
-      const enrichedResults: PersonSearchResult[] = await Promise.all(
-        data.map(async (person) => {
-          let teamData = null;
-          let leagueData = null;
-          let sportData = null;
-
-          if (person.team_id) {
-            const { data: team } = await supabase
-              .from("teams")
-              .select("id, display_name, nickname")
-              .eq("id", person.team_id)
-              .single();
-            teamData = team;
-          }
-
-          if (person.league_id) {
-            const { data: league } = await supabase
-              .from("leagues")
-              .select("id, code, name")
-              .eq("id", person.league_id)
-              .single();
-            leagueData = league;
-          }
-
-          if (person.sport_id) {
-            const { data: sport } = await supabase
-              .from("sports")
-              .select("id, sport, display_name")
-              .eq("id", person.sport_id)
-              .single();
-            sportData = sport;
-          }
-
-          return {
-            ...person,
-            teams: teamData,
-            leagues: leagueData,
-            sports: sportData
-          };
-        })
-      );
-
-      setSearchResults(enrichedResults);
-    } else {
-      setSearchResults([]);
-    }
-
-    setSearching(false);
-
-    if (error) {
-      console.error("Search error:", error);
-      toast.error(`Search failed: ${error.message}`);
-      return;
-    }
-
-    console.log("Search results:", data);
-    setSearchResults(data as PersonSearchResult[] || []);
   };
 
   const handleFollow = async (person: PersonSearchResult) => {
