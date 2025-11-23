@@ -114,32 +114,11 @@ export default function PlayerPreferences() {
     }
 
     setSearching(true);
+    
+    // First try a simple query to test
     const { data, error } = await supabase
       .from("people")
-      .select(`
-        id,
-        name,
-        role,
-        position,
-        team_id,
-        teams (
-          id,
-          display_name,
-          nickname
-        ),
-        league_id,
-        leagues (
-          id,
-          code,
-          name
-        ),
-        sport_id,
-        sports (
-          id,
-          sport,
-          display_name
-        )
-      `)
+      .select("*")
       .eq("is_active", true)
       .ilike("name", `%${searchTerm}%`)
       .order("name")
@@ -147,11 +126,72 @@ export default function PlayerPreferences() {
 
     setSearching(false);
 
+    console.log("Raw query result:", data, "Error:", error);
+
     if (error) {
-      toast.error("Search failed");
+      console.error("Search error:", error);
+      toast.error(`Search failed: ${error.message}`);
       return;
     }
 
+    // Now let's try to fetch related data separately if needed
+    if (data && data.length > 0) {
+      const enrichedResults: PersonSearchResult[] = await Promise.all(
+        data.map(async (person) => {
+          let teamData = null;
+          let leagueData = null;
+          let sportData = null;
+
+          if (person.team_id) {
+            const { data: team } = await supabase
+              .from("teams")
+              .select("id, display_name, nickname")
+              .eq("id", person.team_id)
+              .single();
+            teamData = team;
+          }
+
+          if (person.league_id) {
+            const { data: league } = await supabase
+              .from("leagues")
+              .select("id, code, name")
+              .eq("id", person.league_id)
+              .single();
+            leagueData = league;
+          }
+
+          if (person.sport_id) {
+            const { data: sport } = await supabase
+              .from("sports")
+              .select("id, sport, display_name")
+              .eq("id", person.sport_id)
+              .single();
+            sportData = sport;
+          }
+
+          return {
+            ...person,
+            teams: teamData,
+            leagues: leagueData,
+            sports: sportData
+          };
+        })
+      );
+
+      setSearchResults(enrichedResults);
+    } else {
+      setSearchResults([]);
+    }
+
+    setSearching(false);
+
+    if (error) {
+      console.error("Search error:", error);
+      toast.error(`Search failed: ${error.message}`);
+      return;
+    }
+
+    console.log("Search results:", data);
     setSearchResults(data as PersonSearchResult[] || []);
   };
 
