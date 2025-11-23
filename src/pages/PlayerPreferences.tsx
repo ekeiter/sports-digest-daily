@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,38 @@ export default function PlayerPreferences() {
   const [searchResults, setSearchResults] = useState<PersonSearchResult[]>([]);
   const [followedPeople, setFollowedPeople] = useState<PersonSearchResult[]>([]);
   const [followedIds, setFollowedIds] = useState<Set<number>>(new Set());
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const autocompleteRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     checkUserAndLoadData();
+  }, []);
+
+  // Debounced autocomplete search
+  useEffect(() => {
+    if (searchTerm.trim().length < 2) {
+      setSearchResults([]);
+      setShowAutocomplete(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      performSearch(true);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  // Click outside to close autocomplete
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const checkUserAndLoadData = async () => {
@@ -84,10 +113,12 @@ export default function PlayerPreferences() {
     if (people) setFollowedPeople(people as PersonSearchResult[]);
   };
 
-  const handleSearch = async () => {
+  const performSearch = async (isAutocomplete: boolean = false) => {
     const term = searchTerm.trim();
     if (term.length < 2) {
-      toast.error("Please enter at least 2 characters");
+      if (!isAutocomplete) {
+        toast.error("Please enter at least 2 characters");
+      }
       return;
     }
 
@@ -96,17 +127,27 @@ export default function PlayerPreferences() {
     try {
       const results = await searchPeople(term);
 
-      if (results.length === 0) {
+      if (results.length === 0 && !isAutocomplete) {
         toast.info("No players or coaches found matching your search");
       }
 
       setSearchResults(results);
+      if (isAutocomplete) {
+        setShowAutocomplete(results.length > 0);
+      }
     } catch (error: any) {
       console.error("Search error:", error);
-      toast.error(`Search failed: ${error.message ?? "Unknown error"}`);
+      if (!isAutocomplete) {
+        toast.error(`Search failed: ${error.message ?? "Unknown error"}`);
+      }
     } finally {
       setSearching(false);
     }
+  };
+
+  const handleSearch = () => {
+    setShowAutocomplete(false);
+    performSearch(false);
   };
 
   const handleFollow = async (person: PersonSearchResult) => {
@@ -132,6 +173,8 @@ export default function PlayerPreferences() {
     setFollowedIds(prev => new Set([...prev, person.id]));
     setFollowedPeople(prev => [...prev, person]);
     setSearchResults(prev => prev.filter(p => p.id !== person.id));
+    setShowAutocomplete(false);
+    setSearchTerm("");
   };
 
   const handleUnfollow = async (personId: number) => {
@@ -194,51 +237,54 @@ export default function PlayerPreferences() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Search by name (e.g., Paul Skenes, Caitlin Clark)"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-                <Button onClick={handleSearch} disabled={searching}>
-                  {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                </Button>
-              </div>
-
-              {searchResults.length > 0 && (
-                <div className="space-y-2 mt-4">
-                  {searchResults.map((person) => {
-                    const isFollowed = followedIds.has(person.id);
-                    return (
-                      <div
-                        key={person.id}
-                        className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
-                      >
-                        <div className="flex-1">
-                          <div className="font-semibold flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            {person.name}
-                            {person.role === 'coach' && (
-                              <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
-                            )}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {getContextDisplay(person)}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() => handleFollow(person)}
-                          disabled={isFollowed}
-                        >
-                          {isFollowed ? "Following" : "Follow"}
-                        </Button>
-                      </div>
-                    );
-                  })}
+              <div className="relative" ref={autocompleteRef}>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Search by name (e.g., Paul Skenes, Caitlin Clark)"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)}
+                  />
+                  <Button onClick={handleSearch} disabled={searching}>
+                    {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  </Button>
                 </div>
-              )}
+
+                {/* Autocomplete dropdown */}
+                {showAutocomplete && searchResults.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                    {searchResults.map((person) => {
+                      const isFollowed = followedIds.has(person.id);
+                      return (
+                        <div
+                          key={person.id}
+                          className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0 flex items-center justify-between"
+                          onClick={() => !isFollowed && handleFollow(person)}
+                        >
+                          <div className="flex-1">
+                            <div className="font-semibold flex items-center gap-2">
+                              <User className="h-4 w-4" />
+                              {person.name}
+                              {person.role === 'coach' && (
+                                <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
+                              )}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {getContextDisplay(person)}
+                            </div>
+                          </div>
+                          {isFollowed ? (
+                            <span className="text-sm text-muted-foreground">Following</span>
+                          ) : (
+                            <span className="text-sm text-primary">Click to follow</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
