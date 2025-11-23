@@ -92,7 +92,8 @@ export default function PlayerPreferences() {
         teams (
           id,
           display_name,
-          nickname
+          nickname,
+          logo_url
         ),
         league_id,
         leagues (
@@ -262,16 +263,25 @@ export default function PlayerPreferences() {
                           className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0 flex items-center justify-between"
                           onClick={() => !isFollowed && handleFollow(person)}
                         >
-                          <div className="flex-1">
-                            <div className="font-semibold flex items-center gap-2">
-                              <User className="h-4 w-4" />
-                              {person.name}
-                              {person.role === 'coach' && (
-                                <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
-                              )}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {getContextDisplay(person)}
+                          <div className="flex items-center gap-3 flex-1">
+                            {person.teams?.logo_url && (
+                              <img 
+                                src={person.teams.logo_url} 
+                                alt={person.teams.display_name} 
+                                className="h-8 w-8 object-contain"
+                              />
+                            )}
+                            <div className="flex-1">
+                              <div className="font-semibold flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                {person.name}
+                                {person.role === 'coach' && (
+                                  <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
+                                )}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {getContextDisplay(person)}
+                              </div>
                             </div>
                           </div>
                           {isFollowed ? (
@@ -303,16 +313,25 @@ export default function PlayerPreferences() {
                       key={person.id}
                       className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
                     >
-                      <div className="flex-1">
-                        <div className="font-semibold flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          {person.name}
-                          {person.role === 'coach' && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
-                          )}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {getContextDisplay(person)}
+                      <div className="flex items-center gap-3 flex-1">
+                        {person.teams?.logo_url && (
+                          <img 
+                            src={person.teams.logo_url} 
+                            alt={person.teams.display_name} 
+                            className="h-8 w-8 object-contain"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <div className="font-semibold flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            {person.name}
+                            {person.role === 'coach' && (
+                              <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
+                            )}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {getContextDisplay(person)}
+                          </div>
                         </div>
                       </div>
                       <Button
