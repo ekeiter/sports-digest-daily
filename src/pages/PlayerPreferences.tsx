@@ -1,0 +1,348 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Loader2, Search, User, X } from "lucide-react";
+import { toast } from "sonner";
+
+interface PersonSearchResult {
+  id: number;
+  name: string;
+  role: string;
+  position?: string;
+  team_id?: number;
+  teams?: {
+    id: number;
+    display_name: string;
+    nickname: string;
+  } | null;
+  league_id?: number;
+  leagues?: {
+    id: number;
+    code: string;
+    name: string;
+  } | null;
+  sport_id?: number;
+  sports?: {
+    id: number;
+    sport: string;
+    display_name: string;
+  } | null;
+}
+
+export default function PlayerPreferences() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<PersonSearchResult[]>([]);
+  const [followedPeople, setFollowedPeople] = useState<PersonSearchResult[]>([]);
+  const [followedIds, setFollowedIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    checkUserAndLoadData();
+  }, []);
+
+  const checkUserAndLoadData = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
+    await Promise.all([
+      loadFollowedPeople(user.id),
+      supabase.rpc('ensure_my_subscriber')
+    ]);
+    setLoading(false);
+  };
+
+  const loadFollowedPeople = async (userId: string) => {
+    const { data: interests } = await supabase
+      .from("subscriber_interests")
+      .select("subject_id")
+      .eq("subscriber_id", userId)
+      .eq("kind", "person");
+
+    if (!interests || interests.length === 0) {
+      setFollowedPeople([]);
+      setFollowedIds(new Set());
+      return;
+    }
+
+    const personIds = interests.map(i => i.subject_id);
+    setFollowedIds(new Set(personIds));
+
+    const { data: people } = await supabase
+      .from("people")
+      .select(`
+        id,
+        name,
+        role,
+        position,
+        team_id,
+        teams (
+          id,
+          display_name,
+          nickname
+        ),
+        league_id,
+        leagues (
+          id,
+          code,
+          name
+        ),
+        sport_id,
+        sports (
+          id,
+          sport,
+          display_name
+        )
+      `)
+      .in("id", personIds)
+      .eq("is_active", true);
+
+    if (people) setFollowedPeople(people as PersonSearchResult[]);
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim().length < 2) {
+      toast.error("Please enter at least 2 characters");
+      return;
+    }
+
+    setSearching(true);
+    const { data, error } = await supabase
+      .from("people")
+      .select(`
+        id,
+        name,
+        role,
+        position,
+        team_id,
+        teams (
+          id,
+          display_name,
+          nickname
+        ),
+        league_id,
+        leagues (
+          id,
+          code,
+          name
+        ),
+        sport_id,
+        sports (
+          id,
+          sport,
+          display_name
+        )
+      `)
+      .eq("is_active", true)
+      .ilike("name", `%${searchTerm}%`)
+      .order("name")
+      .limit(20);
+
+    setSearching(false);
+
+    if (error) {
+      toast.error("Search failed");
+      return;
+    }
+
+    setSearchResults(data as PersonSearchResult[] || []);
+  };
+
+  const handleFollow = async (person: PersonSearchResult) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .insert({
+        subscriber_id: user.id,
+        kind: "person",
+        subject_id: person.id,
+        notification_enabled: true,
+        priority: 1
+      });
+
+    if (error) {
+      toast.error("Failed to follow");
+      return;
+    }
+
+    toast.success(`Now following ${person.name}`);
+    setFollowedIds(prev => new Set([...prev, person.id]));
+    setFollowedPeople(prev => [...prev, person]);
+    setSearchResults(prev => prev.filter(p => p.id !== person.id));
+  };
+
+  const handleUnfollow = async (personId: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .delete()
+      .eq("subscriber_id", user.id)
+      .eq("kind", "person")
+      .eq("subject_id", personId);
+
+    if (error) {
+      toast.error("Failed to unfollow");
+      return;
+    }
+
+    toast.success("Unfollowed");
+    setFollowedIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(personId);
+      return newSet;
+    });
+    setFollowedPeople(prev => prev.filter(p => p.id !== personId));
+  };
+
+  const getContextDisplay = (person: PersonSearchResult) => {
+    const parts = [];
+    if (person.teams?.display_name) parts.push(person.teams.display_name);
+    if (person.leagues?.code) parts.push(person.leagues.code);
+    if (person.position) parts.push(person.position);
+    return parts.join(" • ");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-xl md:text-2xl font-bold text-center">Manage Player Preferences</h1>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="space-y-6">
+          {/* Search Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Search Players & Coaches
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Search by name (e.g., Paul Skenes, Caitlin Clark)"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <Button onClick={handleSearch} disabled={searching}>
+                  {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </Button>
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="space-y-2 mt-4">
+                  {searchResults.map((person) => {
+                    const isFollowed = followedIds.has(person.id);
+                    return (
+                      <div
+                        key={person.id}
+                        className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
+                      >
+                        <div className="flex-1">
+                          <div className="font-semibold flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            {person.name}
+                            {person.role === 'coach' && (
+                              <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
+                            )}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {getContextDisplay(person)}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => handleFollow(person)}
+                          disabled={isFollowed}
+                        >
+                          {isFollowed ? "Following" : "Follow"}
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Followed People Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Favorite Players ({followedPeople.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {followedPeople.length === 0 ? (
+                <p className="text-muted-foreground">No players or coaches followed yet. Search above to get started!</p>
+              ) : (
+                <div className="space-y-2">
+                  {followedPeople.map((person) => (
+                    <div
+                      key={person.id}
+                      className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
+                    >
+                      <div className="flex-1">
+                        <div className="font-semibold flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {person.name}
+                          {person.role === 'coach' && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
+                          )}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {getContextDisplay(person)}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleUnfollow(person.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex flex-col gap-4 max-w-md mx-auto w-full">
+            <Button className="w-full" variant="outline" onClick={() => navigate("/")}>
+              Return to Dashboard
+            </Button>
+            <Button className="w-full" variant="outline" onClick={() => navigate("/my-feeds")}>
+              My Current Feeds
+            </Button>
+            <Button className="w-full" variant="outline" onClick={() => navigate("/preferences")}>
+              Manage Sports/Leagues/Teams
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -110,7 +110,10 @@ const Index = () => {
               My Current Feeds
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
-              Manage Feed Preferences
+              Manage Sports/Leagues/Teams
+            </Button>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
+              Manage Player Preferences
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate('/profile')}>
               Profile
