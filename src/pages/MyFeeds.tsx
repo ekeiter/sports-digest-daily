@@ -11,6 +11,21 @@ type League = Database['public']['Tables']['leagues']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
 
+interface Person {
+  id: number;
+  name: string;
+  role: string;
+  position?: string;
+  teams?: {
+    display_name: string;
+    nickname: string;
+  } | null;
+  leagues?: {
+    code: string;
+    name: string;
+  } | null;
+}
+
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -18,6 +33,7 @@ export default function MyFeeds() {
   const [selectedLeagues, setSelectedLeagues] = useState<League[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
   const [selectedSports, setSelectedSports] = useState<Sport[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const [toUnfollow, setToUnfollow] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -87,6 +103,36 @@ export default function MyFeeds() {
         
         if (sports) setSelectedSports(sports);
       }
+
+      // Fetch selected people
+      const { data: personInterests } = await supabase
+        .from("subscriber_interests")
+        .select("subject_id")
+        .eq("subscriber_id", userId)
+        .eq("kind", "person");
+
+      if (personInterests && personInterests.length > 0) {
+        const personIds = personInterests.map(p => p.subject_id);
+        const { data: people } = await supabase
+          .from("people")
+          .select(`
+            id,
+            name,
+            role,
+            position,
+            teams (
+              display_name,
+              nickname
+            ),
+            leagues (
+              code,
+              name
+            )
+          `)
+          .in("id", personIds);
+        
+        if (people) setSelectedPeople(people as Person[]);
+      }
     } catch (error) {
       console.error("Error loading feeds:", error);
     } finally {
@@ -94,7 +140,7 @@ export default function MyFeeds() {
     }
   };
 
-  const toggleUnfollow = (kind: 'sport' | 'league' | 'team', id: number) => {
+  const toggleUnfollow = (kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
     const key = `${kind}-${id}`;
     const newSet = new Set(toUnfollow);
     if (newSet.has(key)) {
@@ -116,7 +162,7 @@ export default function MyFeeds() {
       const subjectId = Number(idStr);
       
       await supabase.rpc('toggle_subscriber_interest', {
-        p_kind: kind as 'sport' | 'league' | 'team',
+        p_kind: kind as 'sport' | 'league' | 'team' | 'person',
         p_subject_id: subjectId
       });
     }
@@ -273,6 +319,50 @@ export default function MyFeeds() {
             </CardContent>
           </Card>
 
+          {/* People Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Players & Coaches</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedPeople.length === 0 ? (
+                <p className="text-muted-foreground">No players or coaches selected</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {selectedPeople.map((person) => {
+                    const key = `person-${person.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const context = [];
+                    if (person.teams?.display_name) context.push(person.teams.display_name);
+                    if (person.leagues?.code) context.push(person.leagues.code);
+                    return (
+                      <div
+                        key={person.id}
+                        className="p-3 border rounded-lg bg-card flex flex-col gap-2"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="font-semibold">{person.name}</div>
+                          <Button
+                            size="sm"
+                            variant={isMarked ? "default" : "outline"}
+                            onClick={() => toggleUnfollow('person', person.id)}
+                          >
+                            Unfollow
+                          </Button>
+                        </div>
+                        {context.length > 0 && (
+                          <div className="text-xs text-muted-foreground">
+                            {context.join(" • ")}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Action Buttons */}
           <div className="flex flex-col gap-4 max-w-md mx-auto w-full">
             {toUnfollow.size > 0 && (
@@ -295,7 +385,10 @@ export default function MyFeeds() {
               Return to Dashboard
             </Button>
             <Button className="w-full" variant="outline" onClick={() => navigate("/preferences")}>
-              Manage Feed Preferences
+              Manage Sports/Leagues/Teams
+            </Button>
+            <Button className="w-full" variant="outline" onClick={() => navigate("/player-preferences")}>
+              Manage Player Preferences
             </Button>
           </div>
         </div>
