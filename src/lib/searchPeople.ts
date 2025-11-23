@@ -11,6 +11,7 @@ export interface PersonSearchResult {
     id: number;
     display_name: string;
     nickname: string;
+    logo_url: string | null;
   } | null;
   league_id?: number;
   leagues?: {
@@ -61,7 +62,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     teamIds.length > 0
       ? supabase
           .from("teams")
-          .select("id, display_name, nickname")
+          .select("id, display_name, nickname, logo_url")
           .in("id", teamIds)
       : Promise.resolve({ data: [], error: null }),
     leagueIds.length > 0
