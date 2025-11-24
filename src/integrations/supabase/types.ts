@@ -802,6 +802,7 @@ export type Database = {
           created_at: string
           description: string | null
           display_label: string | null
+          display_options: Json | null
           id: number
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url: string | null
@@ -816,6 +817,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_label?: string | null
+          display_options?: Json | null
           id?: number
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
@@ -830,6 +832,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_label?: string | null
+          display_options?: Json | null
           id?: number
           kind?: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
@@ -1130,6 +1133,7 @@ export type Database = {
           description: string | null
           display_label: string | null
           display_name: string
+          display_options: Json | null
           icon_emoji: string | null
           id: number
           logo_url: string | null
@@ -1141,6 +1145,7 @@ export type Database = {
           description?: string | null
           display_label?: string | null
           display_name: string
+          display_options?: Json | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null
@@ -1152,6 +1157,7 @@ export type Database = {
           description?: string | null
           display_label?: string | null
           display_name?: string
+          display_options?: Json | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null
