@@ -260,16 +260,19 @@ export default function Preferences() {
   // Define explicit priority order - lower number = higher priority (shows first)
   const priorityMap: Record<string, number> = {
     'professional baseball': 1,        // MLB
-    'nfl-standalone': 2,               // NFL
-    'nba-standalone': 3,               // NBA
-    'nhl-standalone': 4,               // NHL
+    'nfl-standalone': 2,               // NFL (extracted separately)
+    'nba-standalone': 3,               // NBA (extracted separately)
+    'nhl-standalone': 4,               // NHL (extracted separately)
     'professional basketball': 5,      // WNBA
     'college football': 6,             // NCAAF
     'college basketball': 7,           // NCAAM/NCAAW
     'golf': 8,                         // PGA/LPGA/LIV
-    'soccer': 9,                       // MLS/NWSL
+    'professional soccer': 9,          // MLS
+    'soccer': 9,                       // Other soccer leagues
     'college baseball': 10,            // NCAA Baseball
     'college football - fcs': 11,      // NCAAF-FCS
+    'professional football': 12,       // Other football leagues (CFL, etc)
+    'professional ice hockey': 13,     // Other hockey leagues
     'other sports': 999                // Everything else at the end
   };
 
