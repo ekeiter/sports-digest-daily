@@ -16,8 +16,8 @@ type Team = Database['public']['Tables']['teams']['Row'];
 // DISPLAY ORDER CONFIG - Change this array to reorder leagues
 // ============================================================
 const LEAGUE_DISPLAY_ORDER = [
-  1,   // MLB
   11,  // NFL
+  1,   // MLB
   8,   // NBA
   12,  // NHL
   13,  // WNBA
