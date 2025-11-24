@@ -561,7 +561,6 @@ export type Database = {
           last_checked_at: string | null
           last_modified_header: string | null
           league: string | null
-          metro_area_id: number | null
           notes: string | null
           priority: number
           sport: string | null
@@ -583,7 +582,6 @@ export type Database = {
           last_checked_at?: string | null
           last_modified_header?: string | null
           league?: string | null
-          metro_area_id?: number | null
           notes?: string | null
           priority?: number
           sport?: string | null
@@ -605,7 +603,6 @@ export type Database = {
           last_checked_at?: string | null
           last_modified_header?: string | null
           league?: string | null
-          metro_area_id?: number | null
           notes?: string | null
           priority?: number
           sport?: string | null
@@ -614,13 +611,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "endpoints_metro_area_id_fkey"
-            columns: ["metro_area_id"]
-            isOneToOne: false
-            referencedRelation: "metro_areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "fk_endpoints_league"
             columns: ["league"]
@@ -632,6 +622,10 @@ export type Database = {
       }
       ingest_run_endpoints: {
         Row: {
+          ai_calls_made: number | null
+          ai_calls_skipped: number | null
+          ai_total_cost: number | null
+          ai_total_ms: number | null
           articles_found: number | null
           candidates: number | null
           deduped_batch: number | null
@@ -663,6 +657,10 @@ export type Database = {
           used_etag: boolean | null
         }
         Insert: {
+          ai_calls_made?: number | null
+          ai_calls_skipped?: number | null
+          ai_total_cost?: number | null
+          ai_total_ms?: number | null
           articles_found?: number | null
           candidates?: number | null
           deduped_batch?: number | null
@@ -694,6 +692,10 @@ export type Database = {
           used_etag?: boolean | null
         }
         Update: {
+          ai_calls_made?: number | null
+          ai_calls_skipped?: number | null
+          ai_total_cost?: number | null
+          ai_total_ms?: number | null
           articles_found?: number | null
           candidates?: number | null
           deduped_batch?: number | null
@@ -954,6 +956,53 @@ export type Database = {
           },
         ]
       }
+      people_discovered: {
+        Row: {
+          article_id: number | null
+          detected_league: string | null
+          detected_sport: string | null
+          detected_teams: string[] | null
+          first_seen_at: string | null
+          id: number
+          last_seen_at: string | null
+          name: string
+          normalized_name: string
+          times_seen: number | null
+        }
+        Insert: {
+          article_id?: number | null
+          detected_league?: string | null
+          detected_sport?: string | null
+          detected_teams?: string[] | null
+          first_seen_at?: string | null
+          id?: number
+          last_seen_at?: string | null
+          name: string
+          normalized_name: string
+          times_seen?: number | null
+        }
+        Update: {
+          article_id?: number | null
+          detected_league?: string | null
+          detected_sport?: string | null
+          detected_teams?: string[] | null
+          first_seen_at?: string | null
+          id?: number
+          last_seen_at?: string | null
+          name?: string
+          normalized_name?: string
+          times_seen?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_discovered_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       roster_api_sources: {
         Row: {
           api_provider: string
@@ -961,7 +1010,9 @@ export type Database = {
           id: number
           is_active: boolean | null
           last_sync_error: string | null
+          last_sync_errors: number | null
           last_sync_status: string | null
+          last_sync_upserted: number | null
           last_synced_at: string | null
           league_id: number | null
           notes: string | null
@@ -981,7 +1032,9 @@ export type Database = {
           id?: number
           is_active?: boolean | null
           last_sync_error?: string | null
+          last_sync_errors?: number | null
           last_sync_status?: string | null
+          last_sync_upserted?: number | null
           last_synced_at?: string | null
           league_id?: number | null
           notes?: string | null
@@ -1001,7 +1054,9 @@ export type Database = {
           id?: number
           is_active?: boolean | null
           last_sync_error?: string | null
+          last_sync_errors?: number | null
           last_sync_status?: string | null
+          last_sync_upserted?: number | null
           last_synced_at?: string | null
           league_id?: number | null
           notes?: string | null
@@ -1433,6 +1488,17 @@ export type Database = {
           p_subject_id: number
         }
         Returns: boolean
+      }
+      upsert_discovered_person: {
+        Args: {
+          p_article_id: number
+          p_detected_league: string
+          p_detected_sport: string
+          p_detected_teams: string[]
+          p_name: string
+          p_normalized_name: string
+        }
+        Returns: undefined
       }
       url_host: { Args: { u: string }; Returns: string }
     }
