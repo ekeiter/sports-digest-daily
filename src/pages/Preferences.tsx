@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -13,6 +12,20 @@ type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 
+// ============================================================
+// DISPLAY ORDER CONFIG - Change this array to reorder leagues
+// ============================================================
+const LEAGUE_DISPLAY_ORDER = [
+  1,   // MLB
+  11,  // NFL
+  8,   // NBA
+  12,  // NHL
+  13,  // WNBA
+  9,   // College Football
+  10,  // Men's College Basketball
+  29,  // Women's College Basketball
+  // All other leagues will appear after these in alphabetical order
+];
 
 export default function Preferences() {
   const navigate = useNavigate();
@@ -25,15 +38,13 @@ export default function Preferences() {
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
+
   useEffect(() => {
     checkUser();
   }, []);
+
   const checkUser = async () => {
-    const {
-      data: {
-        user
-      }
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate("/auth");
       return;
@@ -45,51 +56,47 @@ export default function Preferences() {
     } catch (error) {
       console.error("Error ensuring subscriber:", error);
     }
+
     await loadPreferences();
   };
+
   const loadPreferences = async () => {
     try {
       setLoading(true);
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       // Load all sports
-      const {
-        data: sportsData,
-        error: sportsError
-      } = await supabase.from("sports").select("*").order("display_name", {
-        ascending: true
-      });
+      const { data: sportsData, error: sportsError } = await supabase
+        .from("sports")
+        .select("*")
+        .order("display_name", { ascending: true });
+
       if (sportsError) throw sportsError;
       setSports(sportsData || []);
 
       // Load all leagues
-      const {
-        data: leaguesData,
-        error: leaguesError
-      } = await supabase.from("leagues").select("*").order("sport", {
-        ascending: true
-      }).order("name", {
-        ascending: true
-      });
+      const { data: leaguesData, error: leaguesError } = await supabase
+        .from("leagues")
+        .select("*")
+        .order("name", { ascending: true });
+
       if (leaguesError) throw leaguesError;
       setLeagues(leaguesData || []);
 
       // Load user's current interests
-      const {
-        data: interests,
-        error: interestsError
-      } = await supabase.from("subscriber_interests").select("kind, subject_id").eq("subscriber_id", user.id);
+      const { data: interests, error: interestsError } = await supabase
+        .from("subscriber_interests")
+        .select("kind, subject_id")
+        .eq("subscriber_id", user.id);
+
       if (interestsError) throw interestsError;
 
       // Initialize selected sports, leagues and teams from interests
       const sportIds = interests?.filter(i => i.kind === 'sport').map(i => i.subject_id) || [];
       const leagueIds = interests?.filter(i => i.kind === 'league').map(i => i.subject_id) || [];
       const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
+
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
@@ -100,18 +107,21 @@ export default function Preferences() {
       setLoading(false);
     }
   };
+
   const loadTeamsForLeague = async (leagueId: number) => {
     if (teams.some(t => t.league_id === leagueId)) {
       return; // Already loaded
     }
+
     setLoadingTeams(prev => new Set(prev).add(leagueId));
+
     try {
-      const {
-        data: teamsData,
-        error: teamsError
-      } = await supabase.from("teams").select("*").eq("league_id", leagueId).order("display_name", {
-        ascending: true
-      });
+      const { data: teamsData, error: teamsError } = await supabase
+        .from("teams")
+        .select("*")
+        .eq("league_id", leagueId)
+        .order("display_name", { ascending: true });
+
       if (teamsError) throw teamsError;
       setTeams(prev => [...prev, ...(teamsData || [])]);
     } catch (error) {
@@ -125,17 +135,17 @@ export default function Preferences() {
       });
     }
   };
+
   const handleSportToggle = async (sportId: number) => {
     const sport = sports.find(s => s.id === sportId);
     const label = sport?.display_name || 'sport';
+
     try {
-      const {
-        data: isNowFollowed,
-        error
-      } = await supabase.rpc('toggle_subscriber_interest', {
+      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'sport',
         p_subject_id: sportId
       });
+
       if (error) throw error;
 
       // Optimistic update
@@ -151,17 +161,17 @@ export default function Preferences() {
       toast.error("Could not update your preferences. Please try again.");
     }
   };
+
   const handleLeagueToggle = async (leagueId: number) => {
     const league = leagues.find(l => l.id === leagueId);
     const label = league?.code || league?.name || 'league';
+
     try {
-      const {
-        data: isNowFollowed,
-        error
-      } = await supabase.rpc('toggle_subscriber_interest', {
+      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'league',
         p_subject_id: leagueId
       });
+
       if (error) throw error;
 
       // Optimistic update
@@ -177,17 +187,17 @@ export default function Preferences() {
       toast.error("Could not update your preferences. Please try again.");
     }
   };
+
   const handleTeamToggle = async (teamId: number) => {
     const team = teams.find(t => t.id === teamId);
     const label = team?.display_name || 'team';
+
     try {
-      const {
-        data: isNowFollowed,
-        error
-      } = await supabase.rpc('toggle_subscriber_interest', {
+      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
         p_kind: 'team',
         p_subject_id: teamId
       });
+
       if (error) throw error;
 
       // Optimistic update
@@ -203,97 +213,52 @@ export default function Preferences() {
       toast.error("Could not update your preferences. Please try again.");
     }
   };
+
   const toggleLeagueExpansion = async (leagueId: number) => {
     const isCurrentlyExpanded = expandedLeagues.includes(leagueId);
+
     // If clicking the same league, collapse it. Otherwise, expand only the new league
     setExpandedLeagues(isCurrentlyExpanded ? [] : [leagueId]);
+
     if (!isCurrentlyExpanded) {
       await loadTeamsForLeague(leagueId);
     }
   };
+
   const getTeamsForLeague = (leagueId: number) => {
     return teams.filter(team => team.league_id === leagueId);
   };
-  const otherLeaguesList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
-  
-  const groupedLeagues = leagues.reduce((acc, league) => {
-    // Extract NFL to be standalone - ONLY the actual NFL (id: 11), not other leagues with "National Football League" in the name
-    if (league.id === 11) {
-      if (!acc['nfl-standalone']) {
-        acc['nfl-standalone'] = [];
-      }
-      acc['nfl-standalone'].push(league);
-      return acc;
-    }
 
-    // Extract NBA to be standalone (but not WNBA)
-    if (league.name.toLowerCase().includes('national basketball association') && !league.name.toLowerCase().includes('women')) {
-      if (!acc['nba-standalone']) {
-        acc['nba-standalone'] = [];
-      }
-      acc['nba-standalone'].push(league);
-      return acc;
-    }
-
-    // Extract NHL to be standalone
-    if (league.name.toLowerCase().includes('national hockey league')) {
-      if (!acc['nhl-standalone']) {
-        acc['nhl-standalone'] = [];
-      }
-      acc['nhl-standalone'].push(league);
-      return acc;
-    }
-    const isOtherLeague = otherLeaguesList.some(other => league.sport.toLowerCase().includes(other.toLowerCase()));
-    const groupKey = isOtherLeague ? 'other sports' : league.sport;
-    if (!acc[groupKey]) {
-      acc[groupKey] = [];
-    }
-    acc[groupKey].push(league);
-    return acc;
-  }, {} as Record<string, League[]>);
-
-  // Sort "other sports" alphabetically by name
-  if (groupedLeagues['other sports']) {
-    groupedLeagues['other sports'].sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  // Define explicit priority order - lower number = higher priority (shows first)
-  const priorityMap: Record<string, number> = {
-    'professional baseball': 1,        // MLB
-    'nfl-standalone': 2,               // NFL (extracted separately)
-    'nba-standalone': 3,               // NBA (extracted separately)
-    'nhl-standalone': 4,               // NHL (extracted separately)
-    'professional basketball': 5,      // WNBA
-    'college football': 6,             // NCAAF
-    'college basketball': 7,           // NCAAM/NCAAW
-    'golf': 8,                         // PGA/LPGA/LIV
-    'professional soccer': 9,          // MLS
-    'soccer': 9,                       // Other soccer leagues
-    'college baseball': 10,            // NCAA Baseball
-    'college football - fcs': 11,      // NCAAF-FCS
-    'professional football': 12,       // Other football leagues (CFL, etc)
-    'professional ice hockey': 13,     // Other hockey leagues
-    'other sports': 999                // Everything else at the end
-  };
-
-  // Sort the groups using the priority map
-  const sortedGroupEntries = Object.entries(groupedLeagues).sort(([keyA], [keyB]) => {
-    const priorityA = priorityMap[keyA.toLowerCase()] ?? 100; // Default priority for unmatched items
-    const priorityB = priorityMap[keyB.toLowerCase()] ?? 100;
+  // Sort leagues based on LEAGUE_DISPLAY_ORDER config
+  const sortedLeagues = [...leagues].sort((a, b) => {
+    const indexA = LEAGUE_DISPLAY_ORDER.indexOf(a.id);
+    const indexB = LEAGUE_DISPLAY_ORDER.indexOf(b.id);
     
-    if (priorityA !== priorityB) {
-      return priorityA - priorityB;
+    // If both are in the config, sort by config order
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
     }
     
-    // If same priority, sort alphabetically
-    return keyA.localeCompare(keyB);
+    // If only A is in config, it comes first
+    if (indexA !== -1) return -1;
+    
+    // If only B is in config, it comes first
+    if (indexB !== -1) return 1;
+    
+    // Neither in config - sort alphabetically by name
+    return a.name.localeCompare(b.name);
   });
+
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
+    return (
+      <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>;
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -338,76 +303,98 @@ export default function Preferences() {
               </div>
 
               {/* Leagues & Teams Section */}
-              {sortedGroupEntries.map(([sport, sportLeagues]) => <div key={sport} className="space-y-1.5">
-                  {sport !== 'nfl-standalone' && sport !== 'nba-standalone' && sport !== 'nhl-standalone' && !sport.toLowerCase().includes('college football') && !sport.toLowerCase().includes('college basketball') && (sportLeagues.length > 1 || sport === 'other sports') && <h3 className="text-base font-semibold capitalize px-1">{sport}</h3>}
-                  
-                  {sportLeagues.map((league, index) => {
+              {sortedLeagues.map((league) => {
                 const leagueTeams = getTeamsForLeague(league.id);
                 const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
                 const isExpanded = expandedLeagues.includes(league.id);
-                const isMLB = league.name.toLowerCase().includes('major league baseball');
-                const isNFL = sport === 'nfl-standalone'; // Only true NFL from standalone group
-                const isNBA = sport === 'nba-standalone'; // Only true NBA from standalone group
-                const isNHL = sport === 'nhl-standalone'; // Only true NHL from standalone group
-                const isWNBA = league.name.toLowerCase().includes('women') && league.name.toLowerCase().includes('national basketball association');
-                const isNCAAF = league.name.toLowerCase().includes('college football');
-                const isNCAAM = league.id === 10; // Men's College Basketball
-                const isNCAAW = league.id === 29; // Women's College Basketball
+                
+                // Display name mapping
+                const displayNameMap: Record<number, string> = {
+                  1: 'MLB',
+                  11: 'NFL', 
+                  8: 'NBA',
+                  12: 'NHL',
+                  13: 'WNBA',
+                  9: 'NCAAF',
+                  10: 'NCAAM',
+                  29: 'NCAAW',
+                };
+                
+                const displayName = displayNameMap[league.id] || league.name;
 
-                // For college football, use index to differentiate FBS (0) and FCS (1)
-                let displayName = league.name;
-                if (isMLB) displayName = 'MLB';else if (isNFL) displayName = 'NFL';else if (isNBA) displayName = 'NBA';else if (isNHL) displayName = 'NHL';else if (isWNBA) displayName = 'WNBA';else if (isNCAAM) displayName = 'NCAAM';else if (isNCAAW) displayName = 'NCAAW';else if (isNCAAF) {
-                  const ncaafLeagues = sportLeagues.filter(l => l.name.toLowerCase().includes('college football'));
-                  const ncaafIndex = ncaafLeagues.findIndex(l => l.id === league.id);
-                  displayName = ncaafIndex === 0 ? 'NCAAF' : 'NCAAF - FCS';
-                }
-                return <div key={league.id} className="space-y-1.5">
-                        <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                          <Checkbox id={`league-${league.id}`} checked={selectedLeagues.includes(league.id)} onCheckedChange={() => handleLeagueToggle(league.id)} />
-                          {league.logo_url && <div className="flex items-center justify-center w-10 h-10 shrink-0">
-                              <img 
-                                src={league.logo_url} 
-                                alt={displayName} 
-                                className="h-8 w-8 object-contain" 
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                            </div>}
-                          <label htmlFor={`league-${league.id}`} className="font-medium cursor-pointer flex-1 min-w-0">
-                            {displayName}
-                          </label>
-                          {hasTeams && <Button 
-                              variant={isExpanded ? "default" : "outline"} 
-                              size="sm" 
-                              onClick={() => toggleLeagueExpansion(league.id)} 
-                              className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
-                            >
-                              Teams
-                            </Button>}
+                return (
+                  <div key={league.id} className="space-y-1.5 pb-3">
+                    <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                      <Checkbox 
+                        id={`league-${league.id}`} 
+                        checked={selectedLeagues.includes(league.id)} 
+                        onCheckedChange={() => handleLeagueToggle(league.id)} 
+                      />
+                      {league.logo_url && (
+                        <div className="flex items-center justify-center w-10 h-10 shrink-0">
+                          <img 
+                            src={league.logo_url} 
+                            alt={displayName} 
+                            className="h-8 w-8 object-contain" 
+                            onError={(e) => e.currentTarget.style.display = 'none'}
+                          />
                         </div>
+                      )}
+                      <label 
+                        htmlFor={`league-${league.id}`} 
+                        className="font-medium cursor-pointer flex-1 min-w-0"
+                      >
+                        {displayName}
+                      </label>
+                      {hasTeams && (
+                        <Button 
+                          variant={isExpanded ? "default" : "outline"} 
+                          size="sm" 
+                          onClick={() => toggleLeagueExpansion(league.id)} 
+                          className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+                        >
+                          Teams
+                        </Button>
+                      )}
+                    </div>
 
-                        {hasTeams && isExpanded && <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                              {leagueTeams.map(team => {
-                        return <div key={team.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors">
-                                    <Checkbox id={`team-${team.id}`} checked={selectedTeams.includes(team.id)} onCheckedChange={() => handleTeamToggle(team.id)} />
-                                    {team.logo_url && <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
-                                        <img 
-                                          src={team.logo_url} 
-                                          alt={team.display_name} 
-                                          className="h-7 w-7 object-contain" 
-                                          onError={(e) => e.currentTarget.style.display = 'none'}
-                                        />
-                                      </div>}
-                                    <label htmlFor={`team-${team.id}`} className="text-sm cursor-pointer flex-1">
-                                      {team.display_name}
-                                    </label>
-                                  </div>;
-                      })}
+                    {hasTeams && isExpanded && (
+                      <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                          {leagueTeams.map(team => (
+                            <div 
+                              key={team.id} 
+                              className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors"
+                            >
+                              <Checkbox 
+                                id={`team-${team.id}`} 
+                                checked={selectedTeams.includes(team.id)} 
+                                onCheckedChange={() => handleTeamToggle(team.id)} 
+                              />
+                              {team.logo_url && (
+                                <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
+                                  <img 
+                                    src={team.logo_url} 
+                                    alt={team.display_name} 
+                                    className="h-7 w-7 object-contain" 
+                                    onError={(e) => e.currentTarget.style.display = 'none'}
+                                  />
+                                </div>
+                              )}
+                              <label 
+                                htmlFor={`team-${team.id}`} 
+                                className="text-sm cursor-pointer flex-1"
+                              >
+                                {team.display_name}
+                              </label>
                             </div>
-                          </div>}
-                      </div>;
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
               })}
-                </div>)}
             </CardContent>
           </Card>
 
@@ -416,5 +403,6 @@ export default function Preferences() {
           </div>
         </div>
       </main>
-    </div>;
+    </div>
+  );
 }
