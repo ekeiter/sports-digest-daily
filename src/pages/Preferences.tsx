@@ -215,6 +215,7 @@ export default function Preferences() {
     return teams.filter(team => team.league_id === leagueId);
   };
   const otherLeaguesList = ['archery', 'badminton', 'beach volleyball', 'canoe and kayak', 'competitive eating', 'darts', 'diving', 'equestrian', 'fencing', 'field hockey', 'figure skating', 'gymnastics', 'handball', 'judo', 'modern pentathlon', 'pickleball', 'poker', 'rodeo', 'rowing', 'sailing', 'shooting', 'skateboarding', 'skiing and snowboarding', 'surfing', 'swimming', 'table tennis', 'triathlon', 'water polo', 'weightlifting', 'professional football'];
+  
   const groupedLeagues = leagues.reduce((acc, league) => {
     // Extract NFL to be standalone - ONLY the actual NFL (id: 11), not other leagues with "National Football League" in the name
     if (league.id === 11) {
@@ -256,58 +257,32 @@ export default function Preferences() {
     groupedLeagues['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups: MLB, NFL, NBA, NHL, WNBA first, then College Football, Men's CBB, Women's CBB, PGA, LPGA, LIV Golf, Soccer, College Football - FCS, College Baseball, then others
+  // Define explicit priority order - lower number = higher priority (shows first)
+  const priorityMap: Record<string, number> = {
+    'professional baseball': 1,        // MLB
+    'nfl-standalone': 2,               // NFL
+    'nba-standalone': 3,               // NBA
+    'nhl-standalone': 4,               // NHL
+    'professional basketball': 5,      // WNBA
+    'college football': 6,             // NCAAF
+    'college basketball': 7,           // NCAAM/NCAAW
+    'golf': 8,                         // PGA/LPGA/LIV
+    'soccer': 9,                       // MLS/NWSL
+    'college baseball': 10,            // NCAA Baseball
+    'college football - fcs': 11,      // NCAAF-FCS
+    'other sports': 999                // Everything else at the end
+  };
+
+  // Sort the groups using the priority map
   const sortedGroupEntries = Object.entries(groupedLeagues).sort(([keyA], [keyB]) => {
-    const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
-    const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
-    const aIsNFL = keyA === 'nfl-standalone';
-    const bIsNFL = keyB === 'nfl-standalone';
-    const aIsNBA = keyA === 'nba-standalone';
-    const bIsNBA = keyB === 'nba-standalone';
-    const aIsNHL = keyA === 'nhl-standalone';
-    const bIsNHL = keyB === 'nhl-standalone';
-    const aIsProBasketball = keyA.toLowerCase().includes('professional basketball');
-    const bIsProBasketball = keyB.toLowerCase().includes('professional basketball');
-    const aIsCollegeFootballFBS = keyA.toLowerCase().includes('college football') && !keyA.toLowerCase().includes('fcs');
-    const bIsCollegeFootballFBS = keyB.toLowerCase().includes('college football') && !keyB.toLowerCase().includes('fcs');
-    const aIsCollegeFootballFCS = keyA.toLowerCase().includes('college football') && keyA.toLowerCase().includes('fcs');
-    const bIsCollegeFootballFCS = keyB.toLowerCase().includes('college football') && keyB.toLowerCase().includes('fcs');
-    const aIsCollegeBaseball = keyA.toLowerCase().includes('college baseball');
-    const bIsCollegeBaseball = keyB.toLowerCase().includes('college baseball');
-    const aIsCollegeBasketball = keyA.toLowerCase() === 'college basketball';
-    const bIsCollegeBasketball = keyB.toLowerCase() === 'college basketball';
-    const aIsGolf = keyA.toLowerCase() === 'golf';
-    const bIsGolf = keyB.toLowerCase() === 'golf';
-    const aIsSoccer = keyA.toLowerCase().includes('soccer');
-    const bIsSoccer = keyB.toLowerCase().includes('soccer');
+    const priorityA = priorityMap[keyA.toLowerCase()] ?? 100; // Default priority for unmatched items
+    const priorityB = priorityMap[keyB.toLowerCase()] ?? 100;
     
-    // Priority order: MLB, NFL, NBA, NHL, WNBA
-    if (aIsBaseball) return -1;
-    if (bIsBaseball) return 1;
-    if (aIsNFL) return -1;
-    if (bIsNFL) return 1;
-    if (aIsNBA) return -1;
-    if (bIsNBA) return 1;
-    if (aIsNHL) return -1;
-    if (bIsNHL) return 1;
-    if (aIsProBasketball) return -1;  // WNBA
-    if (bIsProBasketball) return 1;
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
     
-    // Then college sports and others
-    if (aIsCollegeFootballFBS) return -1;
-    if (bIsCollegeFootballFBS) return 1;
-    if (aIsCollegeBasketball) return -1;
-    if (bIsCollegeBasketball) return 1;
-    if (aIsGolf) return -1;
-    if (bIsGolf) return 1;
-    if (aIsSoccer) return -1;
-    if (bIsSoccer) return 1;
-    if (aIsCollegeBaseball) return -1;
-    if (bIsCollegeBaseball) return 1;
-    if (aIsCollegeFootballFCS) return -1;
-    if (bIsCollegeFootballFCS) return 1;
-    if (keyA === 'other sports') return 1;
-    if (keyB === 'other sports') return -1;
+    // If same priority, sort alphabetically
     return keyA.localeCompare(keyB);
   });
   if (loading) {
