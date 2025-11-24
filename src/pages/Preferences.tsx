@@ -12,19 +12,25 @@ type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 
+type DisplayItem = 
+  | { type: 'league'; id: number; label?: string }
+  | { type: 'sport'; id: number };
+
 // ============================================================
-// DISPLAY ORDER CONFIG - Change this array to reorder leagues
+// DISPLAY ORDER CONFIG - Mix sports and leagues in any order
 // ============================================================
-const LEAGUE_DISPLAY_ORDER = [
-  11,  // NFL
-  1,   // MLB
-  8,   // NBA
-  12,  // NHL
-  13,  // WNBA
-  9,   // College Football
-  10,  // Men's College Basketball
-  29,  // Women's College Basketball
-  // All other leagues will appear after these in alphabetical order
+const DISPLAY_ORDER: DisplayItem[] = [
+  { type: 'league', id: 11, label: 'NFL' },
+  { type: 'league', id: 1, label: 'MLB' },
+  { type: 'league', id: 8, label: 'NBA' },
+  { type: 'league', id: 12, label: 'NHL' },
+  { type: 'league', id: 13, label: 'WNBA' },
+  { type: 'league', id: 9, label: 'NCAAF' },
+  { type: 'league', id: 10, label: 'NCAAM' },
+  { type: 'league', id: 29, label: 'NCAAW' },
+  // Add sports to group their leagues together:
+  // { type: 'sport', id: X }
+  // All other leagues/sports will appear after these in alphabetical order
 ];
 
 export default function Preferences() {
@@ -229,24 +235,36 @@ export default function Preferences() {
     return teams.filter(team => team.league_id === leagueId);
   };
 
-  // Sort leagues based on LEAGUE_DISPLAY_ORDER config
-  const sortedLeagues = [...leagues].sort((a, b) => {
-    const indexA = LEAGUE_DISPLAY_ORDER.indexOf(a.id);
-    const indexB = LEAGUE_DISPLAY_ORDER.indexOf(b.id);
-    
-    // If both are in the config, sort by config order
-    if (indexA !== -1 && indexB !== -1) {
-      return indexA - indexB;
+  // Build ordered display items
+  const orderedItems: Array<{ type: 'league' | 'sport', item: League | Sport, leagues?: League[] }> = [];
+  const renderedLeagueIds = new Set<number>();
+  const renderedSportIds = new Set<number>();
+
+  // First, add items from DISPLAY_ORDER
+  DISPLAY_ORDER.forEach(displayItem => {
+    if (displayItem.type === 'league') {
+      const league = leagues.find(l => l.id === displayItem.id);
+      if (league) {
+        orderedItems.push({ type: 'league', item: league });
+        renderedLeagueIds.add(league.id);
+      }
+    } else {
+      const sport = sports.find(s => s.id === displayItem.id);
+      if (sport) {
+        const sportLeagues = leagues.filter(l => l.sport === sport.sport && !renderedLeagueIds.has(l.id));
+        if (sportLeagues.length > 0) {
+          orderedItems.push({ type: 'sport', item: sport, leagues: sportLeagues });
+          sportLeagues.forEach(l => renderedLeagueIds.add(l.id));
+          renderedSportIds.add(sport.id);
+        }
+      }
     }
-    
-    // If only A is in config, it comes first
-    if (indexA !== -1) return -1;
-    
-    // If only B is in config, it comes first
-    if (indexB !== -1) return 1;
-    
-    // Neither in config - sort alphabetically by name
-    return a.name.localeCompare(b.name);
+  });
+
+  // Then add remaining leagues alphabetically
+  const remainingLeagues = leagues.filter(l => !renderedLeagueIds.has(l.id)).sort((a, b) => a.name.localeCompare(b.name));
+  remainingLeagues.forEach(league => {
+    orderedItems.push({ type: 'league', item: league });
   });
 
   if (loading) {
@@ -303,97 +321,178 @@ export default function Preferences() {
               </div>
 
               {/* Leagues & Teams Section */}
-              {sortedLeagues.map((league) => {
-                const leagueTeams = getTeamsForLeague(league.id);
-                const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
-                const isExpanded = expandedLeagues.includes(league.id);
-                
-                // Display name mapping
-                const displayNameMap: Record<number, string> = {
-                  1: 'MLB',
-                  11: 'NFL', 
-                  8: 'NBA',
-                  12: 'NHL',
-                  13: 'WNBA',
-                  9: 'NCAAF',
-                  10: 'NCAAM',
-                  29: 'NCAAW',
-                };
-                
-                const displayName = displayNameMap[league.id] || league.name;
+              {orderedItems.map((item, index) => {
+                if (item.type === 'sport' && item.leagues) {
+                  // Render sport header with its leagues
+                  return (
+                    <div key={`sport-${(item.item as Sport).id}`} className="space-y-2 pb-4">
+                      <h3 className="text-base font-semibold capitalize px-1">
+                        {(item.item as Sport).display_name}
+                      </h3>
+                      {item.leagues.map(league => {
+                        const leagueTeams = getTeamsForLeague(league.id);
+                        const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
+                        const isExpanded = expandedLeagues.includes(league.id);
 
-                return (
-                  <div key={league.id} className="space-y-1.5 pb-3">
-                    <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                      <Checkbox 
-                        id={`league-${league.id}`} 
-                        checked={selectedLeagues.includes(league.id)} 
-                        onCheckedChange={() => handleLeagueToggle(league.id)} 
-                      />
-                      {league.logo_url && (
-                        <div className="flex items-center justify-center w-10 h-10 shrink-0">
-                          <img 
-                            src={league.logo_url} 
-                            alt={displayName} 
-                            className="h-8 w-8 object-contain" 
-                            onError={(e) => e.currentTarget.style.display = 'none'}
-                          />
-                        </div>
-                      )}
-                      <label 
-                        htmlFor={`league-${league.id}`} 
-                        className="font-medium cursor-pointer flex-1 min-w-0"
-                      >
-                        {displayName}
-                      </label>
-                      {hasTeams && (
-                        <Button 
-                          variant={isExpanded ? "default" : "outline"} 
-                          size="sm" 
-                          onClick={() => toggleLeagueExpansion(league.id)} 
-                          className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
-                        >
-                          Teams
-                        </Button>
-                      )}
-                    </div>
-
-                    {hasTeams && isExpanded && (
-                      <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                          {leagueTeams.map(team => (
-                            <div 
-                              key={team.id} 
-                              className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors"
-                            >
+                        return (
+                          <div key={league.id} className="space-y-1.5">
+                            <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
                               <Checkbox 
-                                id={`team-${team.id}`} 
-                                checked={selectedTeams.includes(team.id)} 
-                                onCheckedChange={() => handleTeamToggle(team.id)} 
+                                id={`league-${league.id}`} 
+                                checked={selectedLeagues.includes(league.id)} 
+                                onCheckedChange={() => handleLeagueToggle(league.id)} 
                               />
-                              {team.logo_url && (
-                                <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
+                              {league.logo_url && (
+                                <div className="flex items-center justify-center w-10 h-10 shrink-0">
                                   <img 
-                                    src={team.logo_url} 
-                                    alt={team.display_name} 
-                                    className="h-7 w-7 object-contain" 
+                                    src={league.logo_url} 
+                                    alt={league.name} 
+                                    className="h-8 w-8 object-contain" 
                                     onError={(e) => e.currentTarget.style.display = 'none'}
                                   />
                                 </div>
                               )}
                               <label 
-                                htmlFor={`team-${team.id}`} 
-                                className="text-sm cursor-pointer flex-1"
+                                htmlFor={`league-${league.id}`} 
+                                className="font-medium cursor-pointer flex-1 min-w-0"
                               >
-                                {team.display_name}
+                                {league.name}
                               </label>
+                              {hasTeams && (
+                                <Button 
+                                  variant={isExpanded ? "default" : "outline"} 
+                                  size="sm" 
+                                  onClick={() => toggleLeagueExpansion(league.id)} 
+                                  className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+                                >
+                                  Teams
+                                </Button>
+                              )}
                             </div>
-                          ))}
-                        </div>
+
+                            {hasTeams && isExpanded && (
+                              <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                                  {leagueTeams.map(team => (
+                                    <div 
+                                      key={team.id} 
+                                      className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors"
+                                    >
+                                      <Checkbox 
+                                        id={`team-${team.id}`} 
+                                        checked={selectedTeams.includes(team.id)} 
+                                        onCheckedChange={() => handleTeamToggle(team.id)} 
+                                      />
+                                      {team.logo_url && (
+                                        <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
+                                          <img 
+                                            src={team.logo_url} 
+                                            alt={team.display_name} 
+                                            className="h-7 w-7 object-contain" 
+                                            onError={(e) => e.currentTarget.style.display = 'none'}
+                                          />
+                                        </div>
+                                      )}
+                                      <label 
+                                        htmlFor={`team-${team.id}`} 
+                                        className="text-sm cursor-pointer flex-1"
+                                      >
+                                        {team.display_name}
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                } else {
+                  // Render individual league
+                  const league = item.item as League;
+                  const leagueTeams = getTeamsForLeague(league.id);
+                  const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
+                  const isExpanded = expandedLeagues.includes(league.id);
+                  
+                  // Get custom label from config or use name
+                  const displayConfig = DISPLAY_ORDER.find(d => d.type === 'league' && d.id === league.id);
+                  const displayName = (displayConfig?.type === 'league' && displayConfig.label) || league.name;
+
+                  return (
+                    <div key={league.id} className="space-y-1.5 pb-3">
+                      <div className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                        <Checkbox 
+                          id={`league-${league.id}`} 
+                          checked={selectedLeagues.includes(league.id)} 
+                          onCheckedChange={() => handleLeagueToggle(league.id)} 
+                        />
+                        {league.logo_url && (
+                          <div className="flex items-center justify-center w-10 h-10 shrink-0">
+                            <img 
+                              src={league.logo_url} 
+                              alt={displayName} 
+                              className="h-8 w-8 object-contain" 
+                              onError={(e) => e.currentTarget.style.display = 'none'}
+                            />
+                          </div>
+                        )}
+                        <label 
+                          htmlFor={`league-${league.id}`} 
+                          className="font-medium cursor-pointer flex-1 min-w-0"
+                        >
+                          {displayName}
+                        </label>
+                        {hasTeams && (
+                          <Button 
+                            variant={isExpanded ? "default" : "outline"} 
+                            size="sm" 
+                            onClick={() => toggleLeagueExpansion(league.id)} 
+                            className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+                          >
+                            Teams
+                          </Button>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
+
+                      {hasTeams && isExpanded && (
+                        <div className="ml-6 space-y-1.5 p-3 bg-muted/30 rounded-lg">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                            {leagueTeams.map(team => (
+                              <div 
+                                key={team.id} 
+                                className="flex items-center gap-2 p-1.5 rounded hover:bg-background transition-colors"
+                              >
+                                <Checkbox 
+                                  id={`team-${team.id}`} 
+                                  checked={selectedTeams.includes(team.id)} 
+                                  onCheckedChange={() => handleTeamToggle(team.id)} 
+                                />
+                                {team.logo_url && (
+                                  <div className="flex items-center justify-center w-7 h-7 flex-shrink-0">
+                                    <img 
+                                      src={team.logo_url} 
+                                      alt={team.display_name} 
+                                      className="h-7 w-7 object-contain" 
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
+                                    />
+                                  </div>
+                                )}
+                                <label 
+                                  htmlFor={`team-${team.id}`} 
+                                  className="text-sm cursor-pointer flex-1"
+                                >
+                                  {team.display_name}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
               })}
             </CardContent>
           </Card>
