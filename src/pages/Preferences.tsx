@@ -256,7 +256,7 @@ export default function Preferences() {
     groupedLeagues['other sports'].sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Sort the groups: MLB, NFL, NBA, NHL, WNBA, College Football, Men's CBB, Women's CBB, PGA, LPGA, LIV Golf, Soccer, College Football - FCS, College Baseball, then others
+  // Sort the groups: MLB, NFL, NBA, NHL, WNBA first, then College Football, Men's CBB, Women's CBB, PGA, LPGA, LIV Golf, Soccer, College Football - FCS, College Baseball, then others
   const sortedGroupEntries = Object.entries(groupedLeagues).sort(([keyA], [keyB]) => {
     const aIsBaseball = keyA.toLowerCase().includes('professional baseball');
     const bIsBaseball = keyB.toLowerCase().includes('professional baseball');
@@ -280,6 +280,8 @@ export default function Preferences() {
     const bIsGolf = keyB.toLowerCase() === 'golf';
     const aIsSoccer = keyA.toLowerCase().includes('soccer');
     const bIsSoccer = keyB.toLowerCase().includes('soccer');
+    
+    // Priority order: MLB, NFL, NBA, NHL, WNBA
     if (aIsBaseball) return -1;
     if (bIsBaseball) return 1;
     if (aIsNFL) return -1;
@@ -288,8 +290,10 @@ export default function Preferences() {
     if (bIsNBA) return 1;
     if (aIsNHL) return -1;
     if (bIsNHL) return 1;
-    if (aIsProBasketball) return -1;
+    if (aIsProBasketball) return -1;  // WNBA
     if (bIsProBasketball) return 1;
+    
+    // Then college sports and others
     if (aIsCollegeFootballFBS) return -1;
     if (bIsCollegeFootballFBS) return 1;
     if (aIsCollegeBasketball) return -1;
