@@ -13,32 +13,13 @@ type Sport = Database['public']['Tables']['sports']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 
 type DisplayItem = 
-  | { type: 'league'; id: number; label?: string }
-  | { type: 'sport'; id: number };
-
-// ============================================================
-// UNIFIED DISPLAY ORDER - Sports and Leagues mixed together
-// Position in this array = display order
-// ============================================================
-const DISPLAY_ORDER: DisplayItem[] = [
-  { type: 'league', id: 11, label: 'NFL' },
-  { type: 'sport', id: 1 },  // Professional Baseball
-  { type: 'sport', id: 2 },  // Professional Basketball
-  { type: 'league', id: 1, label: 'MLB' },
-  { type: 'league', id: 8, label: 'NBA' },
-  { type: 'league', id: 12, label: 'NHL' },
-  { type: 'league', id: 13, label: 'WNBA' },
-  { type: 'league', id: 9, label: 'NCAAF' },
-  { type: 'league', id: 10, label: 'NCAAM' },
-  { type: 'league', id: 29, label: 'NCAAW' },
-  // Everything else appears after in alphabetical order
-];
+  | { type: 'league'; data: League }
+  | { type: 'sport'; data: Sport };
 
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [sports, setSports] = useState<Sport[]>([]);
-  const [leagues, setLeagues] = useState<League[]>([]);
+  const [displayItems, setDisplayItems] = useState<DisplayItem[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
@@ -72,22 +53,39 @@ export default function Preferences() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Load sports with app_order_id NOT NULL
       const { data: sportsData, error: sportsError } = await supabase
         .from("sports")
         .select("*")
-        .order("display_name", { ascending: true });
+        .not("app_order_id", "is", null)
+        .order("app_order_id", { ascending: true });
 
       if (sportsError) throw sportsError;
-      setSports(sportsData || []);
 
+      // Load leagues with app_order_id NOT NULL
       const { data: leaguesData, error: leaguesError } = await supabase
         .from("leagues")
         .select("*")
-        .order("name", { ascending: true });
+        .not("app_order_id", "is", null)
+        .order("app_order_id", { ascending: true });
 
       if (leaguesError) throw leaguesError;
-      setLeagues(leaguesData || []);
 
+      // Merge sports and leagues into unified display list, sorted by app_order_id
+      const combined: DisplayItem[] = [
+        ...(sportsData || []).map(s => ({ type: 'sport' as const, data: s })),
+        ...(leaguesData || []).map(l => ({ type: 'league' as const, data: l }))
+      ];
+
+      combined.sort((a, b) => {
+        const orderA = a.type === 'sport' ? a.data.app_order_id : a.data.app_order_id;
+        const orderB = b.type === 'sport' ? b.data.app_order_id : b.data.app_order_id;
+        return (orderA || 0) - (orderB || 0);
+      });
+
+      setDisplayItems(combined);
+
+      // Load user's current interests
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
         .select("kind, subject_id")
@@ -139,8 +137,9 @@ export default function Preferences() {
   };
 
   const handleSportToggle = async (sportId: number) => {
-    const sport = sports.find(s => s.id === sportId);
-    const label = sport?.display_name || 'sport';
+    const item = displayItems.find(i => i.type === 'sport' && i.data.id === sportId);
+    const sport = item?.type === 'sport' ? item.data : null;
+    const label = sport?.display_label || sport?.display_name || 'sport';
 
     try {
       const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
@@ -164,8 +163,9 @@ export default function Preferences() {
   };
 
   const handleLeagueToggle = async (leagueId: number) => {
-    const league = leagues.find(l => l.id === leagueId);
-    const label = league?.code || league?.name || 'league';
+    const item = displayItems.find(i => i.type === 'league' && i.data.id === leagueId);
+    const league = item?.type === 'league' ? item.data : null;
+    const label = league?.display_label || league?.code || league?.name || 'league';
 
     try {
       const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
@@ -226,37 +226,6 @@ export default function Preferences() {
     return teams.filter(team => team.league_id === leagueId);
   };
 
-  // Build unified ordered list from config
-  const orderedItems: Array<{ type: 'league' | 'sport', data: League | Sport }> = [];
-  const renderedIds = new Set<string>();
-
-  // Add items from DISPLAY_ORDER
-  DISPLAY_ORDER.forEach(item => {
-    const key = `${item.type}-${item.id}`;
-    if (renderedIds.has(key)) return;
-
-    if (item.type === 'league') {
-      const league = leagues.find(l => l.id === item.id);
-      if (league) {
-        orderedItems.push({ type: 'league', data: league });
-        renderedIds.add(key);
-      }
-    } else {
-      const sport = sports.find(s => s.id === item.id);
-      if (sport) {
-        orderedItems.push({ type: 'sport', data: sport });
-        renderedIds.add(key);
-      }
-    }
-  });
-
-  // Add remaining items alphabetically
-  const remainingSports = sports.filter(s => !renderedIds.has(`sport-${s.id}`)).sort((a, b) => a.display_name.localeCompare(b.display_name));
-  const remainingLeagues = leagues.filter(l => !renderedIds.has(`league-${l.id}`)).sort((a, b) => a.name.localeCompare(b.name));
-
-  remainingSports.forEach(sport => orderedItems.push({ type: 'sport', data: sport }));
-  remainingLeagues.forEach(league => orderedItems.push({ type: 'league', data: league }));
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -288,10 +257,11 @@ export default function Preferences() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 pt-2">
-              {/* Unified list of sports and leagues */}
-              {orderedItems.map((item, index) => {
+              {displayItems.map((item, index) => {
                 if (item.type === 'sport') {
-                  const sport = item.data as Sport;
+                  const sport = item.data;
+                  const displayName = sport.display_label || sport.display_name;
+                  
                   return (
                     <div key={`sport-${sport.id}`} className="flex items-center gap-2 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
                       <Checkbox 
@@ -303,19 +273,16 @@ export default function Preferences() {
                         htmlFor={`sport-${sport.id}`}
                         className="font-medium cursor-pointer flex-1 min-w-0"
                       >
-                        {sport.display_name}
+                        {displayName}
                       </label>
                     </div>
                   );
                 } else {
-                  const league = item.data as League;
+                  const league = item.data;
                   const leagueTeams = getTeamsForLeague(league.id);
                   const hasTeams = league.kind === 'league' || leagueTeams.length > 0;
                   const isExpanded = expandedLeagues.includes(league.id);
-                  
-                  // Get custom label from config
-                  const displayConfig = DISPLAY_ORDER.find(d => d.type === 'league' && d.id === league.id);
-                  const displayName = (displayConfig?.type === 'league' && displayConfig.label) || league.name;
+                  const displayName = league.display_label || league.name;
 
                   return (
                     <div key={`league-${league.id}`} className="space-y-1.5">

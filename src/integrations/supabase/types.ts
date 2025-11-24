@@ -797,9 +797,11 @@ export type Database = {
       leagues: {
         Row: {
           aliases: string[]
+          app_order_id: number | null
           code: string
           created_at: string
           description: string | null
+          display_label: string | null
           id: number
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url: string | null
@@ -809,9 +811,11 @@ export type Database = {
         }
         Insert: {
           aliases?: string[]
+          app_order_id?: number | null
           code: string
           created_at?: string
           description?: string | null
+          display_label?: string | null
           id?: number
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
@@ -821,9 +825,11 @@ export type Database = {
         }
         Update: {
           aliases?: string[]
+          app_order_id?: number | null
           code?: string
           created_at?: string
           description?: string | null
+          display_label?: string | null
           id?: number
           kind?: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
@@ -1119,8 +1125,10 @@ export type Database = {
       }
       sports: {
         Row: {
+          app_order_id: number | null
           created_at: string | null
           description: string | null
+          display_label: string | null
           display_name: string
           icon_emoji: string | null
           id: number
@@ -1128,8 +1136,10 @@ export type Database = {
           sport: string
         }
         Insert: {
+          app_order_id?: number | null
           created_at?: string | null
           description?: string | null
+          display_label?: string | null
           display_name: string
           icon_emoji?: string | null
           id?: number
@@ -1137,8 +1147,10 @@ export type Database = {
           sport: string
         }
         Update: {
+          app_order_id?: number | null
           created_at?: string | null
           description?: string | null
+          display_label?: string | null
           display_name?: string
           icon_emoji?: string | null
           id?: number
