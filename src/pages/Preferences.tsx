@@ -249,7 +249,7 @@ export default function Preferences() {
 
       <main className="container mx-auto px-4 py-4">
         <div className="max-w-4xl mx-auto space-y-2">
-          <Card>
+          <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle className="text-lg md:text-2xl">Customize Your Sports Feed</CardTitle>
               <CardDescription>
