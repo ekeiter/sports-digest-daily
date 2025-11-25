@@ -172,32 +172,24 @@ export default function Feed() {
                     rel="noopener noreferrer"
                     className="block hover:opacity-80 transition-opacity"
                   >
-                    <div className="flex flex-col md:flex-row">
-                      {/* Mobile: domain and time above thumbnail */}
-                      <div className="flex justify-between items-center text-sm text-foreground px-3 pt-2 md:hidden">
-                        <span>{article.domain || 'Unknown source'}</span>
-                        <span>{formatTimeAgo(article.published_effective)}</span>
-                      </div>
-                      
+                    <div className="flex">
                       {article.thumbnail_url && (
                         <img 
                           src={article.thumbnail_url} 
                           alt=""
-                          className="w-full md:w-48 h-44 md:h-32 object-cover flex-shrink-0 md:rounded-l"
+                          className="w-24 h-20 md:w-48 md:h-32 object-cover flex-shrink-0"
                           loading="lazy"
                         />
                       )}
                       
-                      <div className="flex-1 min-w-0 p-3 md:py-2">
-                        {/* Desktop: domain and time in header */}
-                        <div className="hidden md:flex gap-2 text-sm text-foreground mb-1">
-                          {article.domain && <span>{article.domain}</span>}
+                      <div className="flex-1 min-w-0 p-2 md:p-3">
+                        <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-1">
+                          <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
                         </div>
                         
-                        {/* Title */}
-                        <h3 className="font-semibold line-clamp-2">
+                        <h3 className="font-semibold text-sm md:text-base line-clamp-2">
                           {article.title}
                         </h3>
                       </div>
