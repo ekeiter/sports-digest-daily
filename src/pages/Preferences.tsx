@@ -373,25 +373,30 @@ export default function Preferences() {
                                   <div 
                                     key={team.id} 
                                     onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border ${
+                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border h-14 ${
                                       isSelected 
                                         ? 'bg-primary/15 border-primary' 
                                         : 'bg-card hover:bg-accent/5 border-border'
                                     }`}
                                   >
                                     {team.logo_url && (
-                                      <div className="flex items-center justify-center w-6 h-6 flex-shrink-0">
+                                      <div className="flex items-center justify-center w-10 h-10 flex-shrink-0">
                                         <img 
                                           src={team.logo_url} 
                                           alt={team.display_name} 
-                                          className="h-6 w-6 object-contain" 
+                                          className="h-9 w-9 object-contain" 
                                           onError={(e) => e.currentTarget.style.display = 'none'}
                                         />
                                       </div>
                                     )}
-                                    <span className="text-sm flex-1">
-                                      {team.display_name}
-                                    </span>
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                      <span className="text-xs text-muted-foreground truncate">
+                                        {team.city_state_name}
+                                      </span>
+                                      <span className="text-sm font-medium truncate">
+                                        {team.nickname || team.display_name}
+                                      </span>
+                                    </div>
                                   </div>
                                 );
                               })}
