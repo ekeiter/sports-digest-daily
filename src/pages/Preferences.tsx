@@ -367,10 +367,10 @@ export default function Preferences() {
                                   <div 
                                     key={team.id} 
                                     onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors ${
+                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border ${
                                       isSelected 
-                                        ? 'bg-primary/15 border border-primary' 
-                                        : 'hover:bg-accent/5 border border-transparent'
+                                        ? 'bg-primary/15 border-primary' 
+                                        : 'bg-card hover:bg-accent/5 border-border'
                                     }`}
                                   >
                                     {team.logo_url && (
