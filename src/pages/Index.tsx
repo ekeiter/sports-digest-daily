@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
+import sportsDigLogo from "@/assets/sportsdig-logo.jpg";
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -83,8 +84,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl md:text-2xl font-bold mx-auto">My Sports Digest</h1>
+          <div className="flex items-center justify-center">
+            <img src={sportsDigLogo} alt="SportsDigg" className="h-8 md:h-10" />
           </div>
         </div>
       </header>
