@@ -390,10 +390,10 @@ export default function Preferences() {
                                       </div>
                                     )}
                                     <div className="flex flex-col flex-1 min-w-0">
-                                      <span className="text-[10px] text-muted-foreground truncate">
+                                      <span className="text-xs text-muted-foreground truncate">
                                         {team.city_state_name}
                                       </span>
-                                      <span className="text-xs font-medium truncate">
+                                      <span className="text-sm font-medium truncate">
                                         {team.nickname || team.display_name}
                                       </span>
                                     </div>
