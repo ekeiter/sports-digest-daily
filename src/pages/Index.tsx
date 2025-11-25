@@ -105,7 +105,7 @@ Set up your preferences to start receiving personalized sports news.
               Go To My Sports Feed
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
-              My Current Feeds
+              My Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Sports/Leagues/Teams
