@@ -100,6 +100,18 @@ export default function Preferences() {
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
+
+      // Load teams that are selected so we can show counts
+      if (teamIds.length > 0) {
+        const { data: selectedTeamsData } = await supabase
+          .from("teams")
+          .select("*")
+          .in("id", teamIds);
+        
+        if (selectedTeamsData) {
+          setTeams(selectedTeamsData);
+        }
+      }
     } catch (error) {
       console.error("Error loading preferences:", error);
       toast.error("Failed to load preferences");
@@ -226,6 +238,11 @@ export default function Preferences() {
     return teams.filter(team => team.league_id === leagueId);
   };
 
+  const getSelectedTeamCountForLeague = (leagueId: number) => {
+    const leagueTeams = teams.filter(t => t.league_id === leagueId);
+    return leagueTeams.filter(t => selectedTeams.includes(t.id)).length;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -337,11 +354,17 @@ export default function Preferences() {
                               size="sm" 
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleLeagueExpansion(league.id);
+                                loadTeamsForLeague(league.id).then(() => {
+                                  toggleLeagueExpansion(league.id);
+                                });
                               }} 
                               className="shrink-0 transition-colors"
                             >
                               Teams
+                              {(() => {
+                                const count = getSelectedTeamCountForLeague(league.id);
+                                return count > 0 ? ` (${count})` : '';
+                              })()}
                             </Button>
                           )}
                         </div>
