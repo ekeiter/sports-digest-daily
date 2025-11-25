@@ -128,27 +128,27 @@ export default function Feed() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b sticky top-0 bg-background z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold">SportsDig Feed</h1>
+        <div className="container mx-auto px-3 py-2">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-bold">SportsDig Feed</h1>
             <div className="flex gap-2">
-              <Button onClick={() => navigate("/")}>
+              <Button size="sm" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button onClick={handleRefresh} disabled={refreshing}>
+              <Button size="sm" onClick={handleRefresh} disabled={refreshing}>
                 {refreshing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <RefreshCw className="h-4 w-4" />
                 )}
-                <span className="ml-2">Refresh</span>
+                <span className="ml-1">Refresh</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-4">
+      <main className="container mx-auto px-2 py-2">
         {articles.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
@@ -164,17 +164,17 @@ export default function Feed() {
         ) : (
           <div className="space-y-2">
             {articles.map((article) => (
-              <Card key={article.article_id}>
-                <CardContent className="px-2 pt-2 pb-1">
+              <Card key={article.article_id} className="overflow-hidden">
+                <CardContent className="p-0">
                   <a 
                     href={article.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="block hover:opacity-80 transition-opacity"
                   >
-                    <div className="flex flex-col md:flex-row md:gap-4">
+                    <div className="flex flex-col md:flex-row">
                       {/* Mobile: domain and time above thumbnail */}
-                      <div className="flex justify-between items-center text-sm text-foreground mb-2 md:hidden">
+                      <div className="flex justify-between items-center text-sm text-foreground px-3 pt-2 md:hidden">
                         <span>{article.domain || 'Unknown source'}</span>
                         <span>{formatTimeAgo(article.published_effective)}</span>
                       </div>
@@ -183,12 +183,12 @@ export default function Feed() {
                         <img 
                           src={article.thumbnail_url} 
                           alt=""
-                          className="w-full md:w-48 h-48 md:h-32 object-cover rounded flex-shrink-0 mb-3 md:mb-0"
+                          className="w-full md:w-48 h-44 md:h-32 object-cover flex-shrink-0 md:rounded-l"
                           loading="lazy"
                         />
                       )}
                       
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 p-3 md:py-2">
                         {/* Desktop: domain and time in header */}
                         <div className="hidden md:flex gap-2 text-sm text-foreground mb-1">
                           {article.domain && <span>{article.domain}</span>}
@@ -197,7 +197,7 @@ export default function Feed() {
                         </div>
                         
                         {/* Title */}
-                        <h3 className="font-semibold mb-2 md:mb-1 line-clamp-2">
+                        <h3 className="font-semibold line-clamp-2">
                           {article.title}
                         </h3>
                       </div>
