@@ -121,10 +121,6 @@ export default function Preferences() {
   };
 
   const loadTeamsForLeague = async (leagueId: number) => {
-    if (teams.some(t => t.league_id === leagueId)) {
-      return;
-    }
-
     setLoadingTeams(prev => new Set(prev).add(leagueId));
 
     try {
@@ -135,7 +131,13 @@ export default function Preferences() {
         .order("display_name", { ascending: true });
 
       if (teamsError) throw teamsError;
-      setTeams(prev => [...prev, ...(teamsData || [])]);
+      
+      // Merge teams, avoiding duplicates by filtering out existing IDs
+      setTeams(prev => {
+        const existingIds = new Set(prev.map(t => t.id));
+        const newTeams = (teamsData || []).filter(t => !existingIds.has(t.id));
+        return [...prev, ...newTeams];
+      });
     } catch (error) {
       console.error(`Error loading teams for league ${leagueId}:`, error);
       toast.error("Failed to load teams");
