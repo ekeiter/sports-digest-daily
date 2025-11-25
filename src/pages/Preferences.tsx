@@ -238,8 +238,8 @@ export default function Preferences() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl md:text-2xl font-bold mx-auto md:mx-0">Feed Preferences</h1>
+          <div className="flex flex-col items-center gap-3">
+            <h1 className="text-xl md:text-2xl font-bold">Sports Feed Preferences</h1>
             <Button className="w-auto" variant="outline" onClick={() => navigate("/")}>
               Dashboard
             </Button>
