@@ -4,55 +4,54 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import sportsDigLogo from "@/assets/sportsdig-logo.jpg";
-
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+    const {
+      data: {
+        subscription
       }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
+    // Check for existing session
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
     return () => subscription.unsubscribe();
   }, []);
-
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut({ scope: 'global' });
+      await supabase.auth.signOut({
+        scope: 'global'
+      });
       navigate('/auth');
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg">Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    return <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             My Sports Digest
@@ -76,12 +75,9 @@ const Index = () => {
             </p>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
@@ -100,7 +96,8 @@ const Index = () => {
         <div className="text-center space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
           <p className="text-base md:text-lg text-muted-foreground">
-            Welcome to your Sports Digest! Set up your preferences to start receiving personalized sports news.
+            Welcome to SportsDig!
+Set up your preferences to start receiving personalized sports news.
           </p>
           
           <div className="mt-8 flex flex-col gap-4 max-w-md mx-auto w-full">
@@ -125,8 +122,6 @@ const Index = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
