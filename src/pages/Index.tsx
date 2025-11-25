@@ -120,7 +120,7 @@ Set up your preferences to start receiving personalized sports news.
               Profile
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={handleSignOut}>
-              Sign Out
+              Sign Out ({user.email})
             </Button>
           </div>
         </div>
