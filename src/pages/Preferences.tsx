@@ -251,9 +251,8 @@ export default function Preferences() {
         <div className="max-w-5xl mx-auto">
           <Card className="border-0 shadow-none">
             <CardHeader className="pb-2 pt-0">
-              <CardTitle className="text-lg md:text-2xl">Customize Your Sports Feed</CardTitle>
               <CardDescription>
-                Your feed will be personalized based on your selections
+                Select your sport and teams by clicking on them directly
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-2">
