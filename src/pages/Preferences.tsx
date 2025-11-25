@@ -269,6 +269,16 @@ export default function Preferences() {
                         checked={selectedSports.includes(sport.id)}
                         onCheckedChange={() => handleSportToggle(sport.id)}
                       />
+                      {sport.logo_url && (
+                        <div className="flex items-center justify-center w-10 h-10 shrink-0">
+                          <img 
+                            src={sport.logo_url} 
+                            alt={displayName} 
+                            className="h-8 w-8 object-contain" 
+                            onError={(e) => e.currentTarget.style.display = 'none'}
+                          />
+                        </div>
+                      )}
                       <label 
                         htmlFor={`sport-${sport.id}`}
                         className="font-medium cursor-pointer flex-1 min-w-0"
