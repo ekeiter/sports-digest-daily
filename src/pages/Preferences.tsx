@@ -237,7 +237,9 @@ export default function Preferences() {
   };
 
   const getTeamsForLeague = (leagueId: number) => {
-    return teams.filter(team => team.league_id === leagueId);
+    return teams
+      .filter(team => team.league_id === leagueId)
+      .sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
