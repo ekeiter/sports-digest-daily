@@ -562,6 +562,7 @@ export type Database = {
           last_modified_header: string | null
           league: string | null
           notes: string | null
+          poll_tier: number | null
           priority: number
           sport: string | null
           status_code: number | null
@@ -583,6 +584,7 @@ export type Database = {
           last_modified_header?: string | null
           league?: string | null
           notes?: string | null
+          poll_tier?: number | null
           priority?: number
           sport?: string | null
           status_code?: number | null
@@ -604,6 +606,7 @@ export type Database = {
           last_modified_header?: string | null
           league?: string | null
           notes?: string | null
+          poll_tier?: number | null
           priority?: number
           sport?: string | null
           status_code?: number | null
