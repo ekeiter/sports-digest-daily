@@ -132,10 +132,10 @@ export default function Feed() {
           <div className="flex flex-col items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">SportsDig Feed</h1>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/")}>
+              <Button onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
+              <Button onClick={handleRefresh} disabled={refreshing}>
                 {refreshing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
