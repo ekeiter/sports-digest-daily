@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 type FeedRow = {
@@ -22,6 +22,7 @@ export default function Feed() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [articles, setArticles] = useState<FeedRow[]>([]);
 
   useEffect(() => {
@@ -87,6 +88,13 @@ export default function Feed() {
     await fetchFeed(7, { time: last.published_effective, id: last.article_id });
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setArticles([]);
+    await fetchFeed(7);
+    setRefreshing(false);
+  };
+
   const formatTimeAgo = (dateString: string) => {
     try {
       const publishedDate = new Date(dateString);
@@ -121,11 +129,21 @@ export default function Feed() {
     <div className="min-h-screen bg-background">
       <header className="border-b sticky top-0 bg-background z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl md:text-2xl font-bold mx-auto">My Sports Feed</h1>
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Dashboard
-            </Button>
+          <div className="flex flex-col items-center gap-3">
+            <h1 className="text-xl md:text-2xl font-bold">SportsDig Feed</h1>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Dashboard
+              </Button>
+              <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
+                {refreshing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                <span className="ml-2">Refresh</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
