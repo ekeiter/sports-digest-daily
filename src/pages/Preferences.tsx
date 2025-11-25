@@ -240,9 +240,16 @@ export default function Preferences() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">Sports Feed Preferences</h1>
-            <Button className="w-auto" onClick={() => navigate("/")}>
-              Dashboard
-            </Button>
+            <div className="flex gap-2">
+              <Button className="w-auto" onClick={() => navigate("/")}>
+                Dashboard
+              </Button>
+              {expandedLeagues.length > 0 && (
+                <Button className="w-auto" onClick={() => setExpandedLeagues([])}>
+                  Close Teams
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -324,15 +331,15 @@ export default function Preferences() {
                               {displayName}
                             </span>
                           </div>
-                          {hasTeams && (
+                          {hasTeams && expandedLeagues.length === 0 && (
                             <Button 
-                              variant={isExpanded ? "default" : "outline"} 
+                              variant="outline" 
                               size="sm" 
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleLeagueExpansion(league.id);
                               }} 
-                              className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+                              className="shrink-0 transition-colors"
                             >
                               Teams
                             </Button>
