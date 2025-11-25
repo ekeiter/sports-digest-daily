@@ -380,20 +380,20 @@ export default function Preferences() {
                                     }`}
                                   >
                                     {team.logo_url && (
-                                      <div className="flex items-center justify-center w-10 h-10 flex-shrink-0">
+                                      <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                         <img 
                                           src={team.logo_url} 
                                           alt={team.display_name} 
-                                          className="h-9 w-9 object-contain" 
+                                          className="h-7 w-7 object-contain" 
                                           onError={(e) => e.currentTarget.style.display = 'none'}
                                         />
                                       </div>
                                     )}
                                     <div className="flex flex-col flex-1 min-w-0">
-                                      <span className="text-xs text-muted-foreground truncate">
+                                      <span className="text-[10px] text-muted-foreground truncate">
                                         {team.city_state_name}
                                       </span>
-                                      <span className="text-sm font-medium truncate">
+                                      <span className="text-xs font-medium truncate">
                                         {team.nickname || team.display_name}
                                       </span>
                                     </div>
