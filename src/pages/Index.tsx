@@ -86,10 +86,10 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-4">
+      <main className="container mx-auto px-4 py-4 text-gray-950">
         <div className="text-center space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
-          <p className="text-base md:text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-slate-950">
             Welcome to SportsDig!
 Set up your preferences to start receiving personalized sports news.
           </p>
