@@ -113,6 +113,9 @@ Set up your preferences to start receiving personalized sports news.
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
               Manage Player Preferences
             </Button>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/why-sportsdig")}>
+              Why SportsDig
+            </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate('/profile')}>
               Profile
             </Button>
