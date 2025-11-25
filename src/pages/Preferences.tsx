@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -264,14 +264,18 @@ export default function Preferences() {
                     if (item.type === 'sport') {
                       const sport = item.data;
                       const displayName = sport.display_label || sport.display_name;
+                      const isSelected = selectedSports.includes(sport.id);
                       
                       return (
-                        <div key={`sport-${sport.id}`} className="flex items-center gap-1.5 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                          <Checkbox 
-                            id={`sport-${sport.id}`}
-                            checked={selectedSports.includes(sport.id)}
-                            onCheckedChange={() => handleSportToggle(sport.id)}
-                          />
+                        <div 
+                          key={`sport-${sport.id}`} 
+                          onClick={() => handleSportToggle(sport.id)}
+                          className={`flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-colors ${
+                            isSelected 
+                              ? 'bg-primary/15 border-primary text-foreground' 
+                              : 'bg-card hover:bg-accent/5 border-border'
+                          }`}
+                        >
                           {sport.logo_url && (
                             <div className="flex items-center justify-center w-8 h-8 shrink-0">
                               <img 
@@ -282,12 +286,9 @@ export default function Preferences() {
                               />
                             </div>
                           )}
-                          <label 
-                            htmlFor={`sport-${sport.id}`}
-                            className="font-medium cursor-pointer flex-1 min-w-0"
-                          >
+                          <span className="font-medium flex-1 min-w-0">
                             {displayName}
-                          </label>
+                          </span>
                         </div>
                       );
                     } else {
@@ -295,35 +296,43 @@ export default function Preferences() {
                       const hasTeams = league.kind === 'league';
                       const isExpanded = expandedLeagues.includes(league.id);
                       const displayName = league.display_label || league.name;
+                      const isSelected = selectedLeagues.includes(league.id);
 
                       return (
-                        <div key={`league-${league.id}`} className="flex items-center gap-1.5 p-2 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                          <Checkbox 
-                            id={`league-${league.id}`} 
-                            checked={selectedLeagues.includes(league.id)} 
-                            onCheckedChange={() => handleLeagueToggle(league.id)} 
-                          />
-                          {league.logo_url && (
-                            <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                              <img 
-                                src={league.logo_url} 
-                                alt={displayName} 
-                                className="h-7 w-7 object-contain" 
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                            </div>
-                          )}
-                          <label 
-                            htmlFor={`league-${league.id}`} 
-                            className="font-medium cursor-pointer flex-1 min-w-0"
+                        <div 
+                          key={`league-${league.id}`} 
+                          className={`flex items-center gap-1.5 p-2 rounded-lg border transition-colors ${
+                            isSelected 
+                              ? 'bg-primary/15 border-primary text-foreground' 
+                              : 'bg-card hover:bg-accent/5 border-border'
+                          }`}
+                        >
+                          <div 
+                            onClick={() => handleLeagueToggle(league.id)}
+                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                           >
-                            {displayName}
-                          </label>
+                            {league.logo_url && (
+                              <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                <img 
+                                  src={league.logo_url} 
+                                  alt={displayName} 
+                                  className="h-7 w-7 object-contain" 
+                                  onError={(e) => e.currentTarget.style.display = 'none'}
+                                />
+                              </div>
+                            )}
+                            <span className="font-medium flex-1 min-w-0">
+                              {displayName}
+                            </span>
+                          </div>
                           {hasTeams && (
                             <Button 
                               variant={isExpanded ? "default" : "outline"} 
                               size="sm" 
-                              onClick={() => toggleLeagueExpansion(league.id)} 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleLeagueExpansion(league.id);
+                              }} 
                               className={`shrink-0 transition-colors ${isExpanded ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
                             >
                               Teams
@@ -352,34 +361,34 @@ export default function Preferences() {
                             </div>
                           ) : (
                             <div className="space-y-1">
-                              {leagueTeams.map(team => (
-                                <div 
-                                  key={team.id} 
-                                  className="flex items-center gap-1.5 p-1.5 rounded hover:bg-accent/5 transition-colors"
-                                >
-                                  <Checkbox 
-                                    id={`team-${team.id}`} 
-                                    checked={selectedTeams.includes(team.id)} 
-                                    onCheckedChange={() => handleTeamToggle(team.id)} 
-                                  />
-                                  {team.logo_url && (
-                                    <div className="flex items-center justify-center w-6 h-6 flex-shrink-0">
-                                      <img 
-                                        src={team.logo_url} 
-                                        alt={team.display_name} 
-                                        className="h-6 w-6 object-contain" 
-                                        onError={(e) => e.currentTarget.style.display = 'none'}
-                                      />
-                                    </div>
-                                  )}
-                                  <label 
-                                    htmlFor={`team-${team.id}`} 
-                                    className="text-sm cursor-pointer flex-1"
+                              {leagueTeams.map(team => {
+                                const isSelected = selectedTeams.includes(team.id);
+                                return (
+                                  <div 
+                                    key={team.id} 
+                                    onClick={() => handleTeamToggle(team.id)}
+                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors ${
+                                      isSelected 
+                                        ? 'bg-primary/15 border border-primary' 
+                                        : 'hover:bg-accent/5 border border-transparent'
+                                    }`}
                                   >
-                                    {team.display_name}
-                                  </label>
-                                </div>
-                              ))}
+                                    {team.logo_url && (
+                                      <div className="flex items-center justify-center w-6 h-6 flex-shrink-0">
+                                        <img 
+                                          src={team.logo_url} 
+                                          alt={team.display_name} 
+                                          className="h-6 w-6 object-contain" 
+                                          onError={(e) => e.currentTarget.style.display = 'none'}
+                                        />
+                                      </div>
+                                    )}
+                                    <span className="text-sm flex-1">
+                                      {team.display_name}
+                                    </span>
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>
