@@ -177,7 +177,7 @@ export default function Feed() {
                         <img 
                           src={article.thumbnail_url} 
                           alt=""
-                          className="w-24 h-20 md:w-48 md:h-32 object-cover flex-shrink-0"
+                          className="w-28 h-24 md:w-48 md:h-32 object-cover flex-shrink-0"
                           loading="lazy"
                         />
                       )}
@@ -189,7 +189,7 @@ export default function Feed() {
                           <span>{formatTimeAgo(article.published_effective)}</span>
                         </div>
                         
-                        <h3 className="font-semibold text-sm md:text-base line-clamp-2">
+                        <h3 className="font-semibold text-sm md:text-base line-clamp-3">
                           {article.title}
                         </h3>
                       </div>
