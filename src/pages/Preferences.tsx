@@ -247,7 +247,7 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-4">
+      <main className="container mx-auto pl-0 pr-4 sm:px-4 py-4">
         <div className="max-w-4xl mx-auto space-y-2">
           <Card className="border-0 shadow-none">
             <CardHeader>
