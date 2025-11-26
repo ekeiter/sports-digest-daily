@@ -18,12 +18,14 @@ export interface PersonSearchResult {
     id: number;
     code: string;
     name: string;
+    logo_url: string | null;
   } | null;
   sport_id?: number;
   sports?: {
     id: number;
     sport: string;
     display_name: string;
+    logo_url: string | null;
   } | null;
 }
 
@@ -68,13 +70,13 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     leagueIds.length > 0
       ? supabase
           .from("leagues")
-          .select("id, code, name")
+          .select("id, code, name, logo_url")
           .in("id", leagueIds)
       : Promise.resolve({ data: [], error: null }),
     sportIds.length > 0
       ? supabase
           .from("sports")
-          .select("id, sport, display_name")
+          .select("id, sport, display_name, logo_url")
           .in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
