@@ -192,8 +192,9 @@ export default function MyFeeds() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-center">SportsDig Current Feeds</h1>
+        <div className="container mx-auto px-4 py-3 text-center">
+          <h1 className="text-xl font-bold">SportsDig Current Feeds</h1>
+          <p className="text-sm text-muted-foreground">(Select item to delete)</p>
         </div>
       </header>
 
