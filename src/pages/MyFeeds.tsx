@@ -309,7 +309,7 @@ export default function MyFeeds() {
               {selectedPeople.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-2">
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
                     const isMarked = toUnfollow.has(key);
@@ -319,7 +319,7 @@ export default function MyFeeds() {
                     return (
                       <div
                         key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors ${
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
                           isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
                         }`}
                         onClick={() => toggleUnfollow('person', person.id)}
