@@ -24,8 +24,27 @@ interface Person {
   leagues?: {
     code: string;
     name: string;
+    logo_url: string | null;
+  } | null;
+  sports?: {
+    sport: string;
+    display_name: string;
+    logo_url: string | null;
   } | null;
 }
+
+const getPersonLogo = (person: Person) => {
+  if (person.teams?.logo_url) {
+    return { url: person.teams.logo_url, alt: person.teams.display_name || 'Team' };
+  }
+  if (person.leagues?.logo_url) {
+    return { url: person.leagues.logo_url, alt: person.leagues.name || 'League' };
+  }
+  if (person.sports?.logo_url) {
+    return { url: person.sports.logo_url, alt: person.sports.display_name || 'Sport' };
+  }
+  return null;
+};
 
 export default function MyFeeds() {
   const navigate = useNavigate();
@@ -128,7 +147,13 @@ export default function MyFeeds() {
             ),
             leagues (
               code,
-              name
+              name,
+              logo_url
+            ),
+            sports (
+              sport,
+              display_name,
+              logo_url
             )
           `)
           .in("id", personIds);
@@ -331,13 +356,16 @@ export default function MyFeeds() {
                         }`}
                         onClick={() => toggleUnfollow('person', person.id)}
                       >
-                        {person.teams?.logo_url && (
-                          <img 
-                            src={person.teams.logo_url} 
-                            alt={person.teams.display_name} 
-                            className="h-5 w-5 object-contain flex-shrink-0"
-                          />
-                        )}
+                        {(() => {
+                          const logo = getPersonLogo(person);
+                          return logo ? (
+                            <img 
+                              src={logo.url} 
+                              alt={logo.alt} 
+                              className="h-5 w-5 object-contain flex-shrink-0"
+                            />
+                          ) : null;
+                        })()}
                         <span className="text-sm font-medium">{person.name}</span>
                         {context.length > 0 && (
                           <span className="text-xs text-muted-foreground">({context.join(" • ")})</span>
