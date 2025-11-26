@@ -303,7 +303,7 @@ export default function PlayerPreferences() {
             <CardHeader>
               <CardTitle>Your Favorite Players ({followedPeople.length})</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3">
               {followedPeople.length === 0 ? (
                 <p className="text-muted-foreground">No players or coaches followed yet. Search above to get started!</p>
               ) : (
