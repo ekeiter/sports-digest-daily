@@ -299,7 +299,7 @@ export default function PlayerPreferences() {
           </Card>
 
           {/* Followed People Section */}
-          <Card>
+          <Card className="border-2">
             <CardHeader>
               <CardTitle>Your Favorite Players ({followedPeople.length})</CardTitle>
             </CardHeader>
@@ -307,29 +307,29 @@ export default function PlayerPreferences() {
               {followedPeople.length === 0 ? (
                 <p className="text-muted-foreground">No players or coaches followed yet. Search above to get started!</p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {followedPeople.map((person) => (
                     <div
                       key={person.id}
-                      className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
+                      className="p-4 border-2 rounded-lg bg-card flex items-center justify-between gap-4"
                     >
-                      <div className="flex items-center gap-3 flex-1">
+                      <div className="flex items-center gap-4 flex-1">
                         {person.teams?.logo_url && (
                           <img 
                             src={person.teams.logo_url} 
                             alt={person.teams.display_name} 
-                            className="h-8 w-8 object-contain"
+                            className="h-10 w-10 object-contain"
                           />
                         )}
                         <div className="flex-1">
-                          <div className="font-semibold flex items-center gap-2">
-                            <User className="h-4 w-4" />
+                          <div className="font-semibold flex items-center gap-2 text-base">
+                            <User className="h-5 w-5" />
                             {person.name}
                             {person.role === 'coach' && (
                               <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>
                             )}
                           </div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-sm text-muted-foreground mt-1">
                             {getContextDisplay(person)}
                           </div>
                         </div>
