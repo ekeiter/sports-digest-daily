@@ -182,14 +182,14 @@ export default function Feed() {
                         />
                       )}
                       
-                      <div className="p-3">
-                        <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-1">
+                      <div className="px-3 pt-1.5 pb-2">
+                        <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
                         </div>
                         
-                        <h3 className="font-semibold text-sm md:text-base line-clamp-2">
+                        <h3 className="font-semibold text-sm md:text-base line-clamp-3">
                           {article.title}
                         </h3>
                       </div>
