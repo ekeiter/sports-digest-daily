@@ -229,9 +229,11 @@ export default function PlayerPreferences() {
 
       <div className="container mx-auto px-4 py-4 max-w-6xl">
         <div className="space-y-4">
-          <Button variant="default" onClick={() => navigate("/")}>
-            Dashboard
-          </Button>
+          <div className="flex justify-center">
+            <Button variant="default" onClick={() => navigate("/")}>
+              Dashboard
+            </Button>
+          </div>
 
           {/* Search Section */}
           <Card>
