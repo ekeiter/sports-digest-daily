@@ -198,16 +198,10 @@ export default function MyFeeds() {
       </header>
 
       <div className="container mx-auto px-4 py-4 max-w-4xl">
-        {/* Action Buttons - Moved to top */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/")}>
+        {/* Dashboard Button - Centered at top */}
+        <div className="flex justify-center gap-2 mb-4">
+          <Button size="sm" onClick={() => navigate("/")}>
             Dashboard
-          </Button>
-          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/preferences")}>
-            Manage Sports/Leagues/Teams
-          </Button>
-          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/player-preferences")}>
-            Manage Player Preferences
           </Button>
           {toUnfollow.size > 0 && (
             <Button 
@@ -233,7 +227,7 @@ export default function MyFeeds() {
             <CardHeader className="py-3">
               <CardTitle className="text-base">Sports / Leagues / Teams</CardTitle>
             </CardHeader>
-            <CardContent className="py-2">
+            <CardContent className="py-2 space-y-3">
               {!hasSportsLeaguesTeams ? (
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
@@ -299,6 +293,9 @@ export default function MyFeeds() {
                   })}
                 </div>
               )}
+              <Button size="sm" variant="outline" onClick={() => navigate("/preferences")}>
+                Manage
+              </Button>
             </CardContent>
           </Card>
 
@@ -307,7 +304,7 @@ export default function MyFeeds() {
             <CardHeader className="py-3">
               <CardTitle className="text-base">Players & Coaches</CardTitle>
             </CardHeader>
-            <CardContent className="py-2">
+            <CardContent className="py-2 space-y-3">
               {selectedPeople.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
@@ -342,6 +339,9 @@ export default function MyFeeds() {
                   })}
                 </div>
               )}
+              <Button size="sm" variant="outline" onClick={() => navigate("/player-preferences")}>
+                Manage
+              </Button>
             </CardContent>
           </Card>
         </div>
