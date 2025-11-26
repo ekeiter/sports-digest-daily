@@ -198,13 +198,13 @@ export default function MyFeeds() {
       <div className="container mx-auto px-4 py-4 max-w-4xl">
         {/* Action Buttons - Moved to top */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <Button size="sm" variant="outline" onClick={() => navigate("/")}>
+          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/")}>
             Dashboard
           </Button>
-          <Button size="sm" variant="outline" onClick={() => navigate("/preferences")}>
+          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/preferences")}>
             Manage Sports/Leagues/Teams
           </Button>
-          <Button size="sm" variant="outline" onClick={() => navigate("/player-preferences")}>
+          <Button size="sm" variant="outline" className="h-9" onClick={() => navigate("/player-preferences")}>
             Manage Player Preferences
           </Button>
           {toUnfollow.size > 0 && (
