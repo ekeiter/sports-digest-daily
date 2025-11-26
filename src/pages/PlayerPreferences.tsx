@@ -229,6 +229,10 @@ export default function PlayerPreferences() {
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="space-y-6">
+          <Button variant="outline" onClick={() => navigate("/")}>
+            Return to Dashboard
+          </Button>
+
           {/* Search Section */}
           <Card>
             <CardHeader>
@@ -348,19 +352,6 @@ export default function PlayerPreferences() {
               )}
             </CardContent>
           </Card>
-
-          {/* Navigation Buttons */}
-          <div className="flex flex-col gap-4 max-w-md mx-auto w-full">
-            <Button className="w-full" variant="outline" onClick={() => navigate("/")}>
-              Return to Dashboard
-            </Button>
-            <Button className="w-full" variant="outline" onClick={() => navigate("/my-feeds")}>
-              My Current Feeds
-            </Button>
-            <Button className="w-full" variant="outline" onClick={() => navigate("/preferences")}>
-              Manage Sports/Leagues/Teams
-            </Button>
-          </div>
         </div>
       </div>
     </div>
