@@ -224,10 +224,15 @@ export default function MyFeeds() {
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
           <Card>
-            <CardHeader className="py-3">
-              <CardTitle className="text-base">Sports / Leagues / Teams</CardTitle>
+            <CardHeader className="py-3 space-y-2">
+              <CardTitle className="text-base text-center">Sports / Leagues / Teams</CardTitle>
+              <div className="flex justify-center">
+                <Button size="sm" onClick={() => navigate("/preferences")}>
+                  Manage
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="py-2 space-y-3">
+            <CardContent className="py-2">
               {!hasSportsLeaguesTeams ? (
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
@@ -293,18 +298,20 @@ export default function MyFeeds() {
                   })}
                 </div>
               )}
-              <Button size="sm" variant="outline" onClick={() => navigate("/preferences")}>
-                Manage
-              </Button>
             </CardContent>
           </Card>
 
           {/* People Section */}
           <Card>
-            <CardHeader className="py-3">
-              <CardTitle className="text-base">Players & Coaches</CardTitle>
+            <CardHeader className="py-3 space-y-2">
+              <CardTitle className="text-base text-center">Players & Coaches</CardTitle>
+              <div className="flex justify-center">
+                <Button size="sm" onClick={() => navigate("/player-preferences")}>
+                  Manage
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="py-2 space-y-3">
+            <CardContent className="py-2">
               {selectedPeople.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
@@ -339,9 +346,6 @@ export default function MyFeeds() {
                   })}
                 </div>
               )}
-              <Button size="sm" variant="outline" onClick={() => navigate("/player-preferences")}>
-                Manage
-              </Button>
             </CardContent>
           </Card>
         </div>
