@@ -99,13 +99,15 @@ export default function PlayerPreferences() {
         leagues (
           id,
           code,
-          name
+          name,
+          logo_url
         ),
         sport_id,
         sports (
           id,
           sport,
-          display_name
+          display_name,
+          logo_url
         )
       `)
       .in("id", personIds)
@@ -211,6 +213,19 @@ export default function PlayerPreferences() {
     return parts.join(" • ");
   };
 
+  const getPersonLogo = (person: PersonSearchResult) => {
+    if (person.teams?.logo_url) {
+      return { url: person.teams.logo_url, alt: person.teams.display_name || 'Team' };
+    }
+    if (person.leagues?.logo_url) {
+      return { url: person.leagues.logo_url, alt: person.leagues.name || 'League' };
+    }
+    if (person.sports?.logo_url) {
+      return { url: person.sports.logo_url, alt: person.sports.display_name || 'Sport' };
+    }
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -270,13 +285,16 @@ export default function PlayerPreferences() {
                           onClick={() => !isFollowed && handleFollow(person)}
                         >
                           <div className="flex items-center gap-3 flex-1">
-                            {person.teams?.logo_url && (
-                              <img 
-                                src={person.teams.logo_url} 
-                                alt={person.teams.display_name} 
-                                className="h-8 w-8 object-contain"
-                              />
-                            )}
+                            {(() => {
+                              const logo = getPersonLogo(person);
+                              return logo ? (
+                                <img 
+                                  src={logo.url} 
+                                  alt={logo.alt} 
+                                  className="h-8 w-8 object-contain"
+                                />
+                              ) : null;
+                            })()}
                             <div className="flex-1">
                               <div className="font-semibold flex items-center gap-2">
                                 <User className="h-4 w-4" />
@@ -320,13 +338,16 @@ export default function PlayerPreferences() {
                       className="p-3 border rounded-lg bg-card flex items-center justify-between gap-3"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        {person.teams?.logo_url && (
-                          <img 
-                            src={person.teams.logo_url} 
-                            alt={person.teams.display_name} 
-                            className="h-8 w-8 object-contain flex-shrink-0"
-                          />
-                        )}
+                        {(() => {
+                          const logo = getPersonLogo(person);
+                          return logo ? (
+                            <img 
+                              src={logo.url} 
+                              alt={logo.alt} 
+                              className="h-8 w-8 object-contain flex-shrink-0"
+                            />
+                          ) : null;
+                        })()}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 flex-1 min-w-0">
                           <div className="font-semibold flex items-center gap-2 whitespace-nowrap">
                             <User className="h-4 w-4 flex-shrink-0" />
