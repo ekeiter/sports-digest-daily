@@ -19,6 +19,7 @@ interface Person {
   teams?: {
     display_name: string;
     nickname: string;
+    logo_url: string | null;
   } | null;
   leagues?: {
     code: string;
@@ -122,7 +123,8 @@ export default function MyFeeds() {
             position,
             teams (
               display_name,
-              nickname
+              nickname,
+              logo_url
             ),
             leagues (
               code,
@@ -324,6 +326,13 @@ export default function MyFeeds() {
                         }`}
                         onClick={() => toggleUnfollow('person', person.id)}
                       >
+                        {person.teams?.logo_url && (
+                          <img 
+                            src={person.teams.logo_url} 
+                            alt={person.teams.display_name} 
+                            className="h-5 w-5 object-contain flex-shrink-0"
+                          />
+                        )}
                         <span className="text-sm font-medium">{person.name}</span>
                         {context.length > 0 && (
                           <span className="text-xs text-muted-foreground">({context.join(" • ")})</span>
