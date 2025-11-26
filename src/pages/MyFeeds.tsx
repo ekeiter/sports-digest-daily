@@ -205,7 +205,7 @@ export default function MyFeeds() {
             Manage Sports/Leagues/Teams
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate("/player-preferences")}>
-            Manage Players
+            Manage Player Preferences
           </Button>
           {toUnfollow.size > 0 && (
             <Button 
