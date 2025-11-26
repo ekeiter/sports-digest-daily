@@ -236,7 +236,7 @@ export default function MyFeeds() {
               {!hasSportsLeaguesTeams ? (
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-2">
                   {/* Sports */}
                   {selectedSports.map((sport) => {
                     const key = `sport-${sport.id}`;
@@ -244,13 +244,13 @@ export default function MyFeeds() {
                     return (
                       <div
                         key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors ${
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
                           isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
                         }`}
                         onClick={() => toggleUnfollow('sport', sport.id)}
                       >
                         {sport.logo_url && (
-                          <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain" />
+                          <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
                         <span className="text-sm font-medium">{sport.display_name}</span>
                       </div>
@@ -264,13 +264,13 @@ export default function MyFeeds() {
                     return (
                       <div
                         key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors ${
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
                           isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
                         }`}
                         onClick={() => toggleUnfollow('league', league.id)}
                       >
                         {league.logo_url && (
-                          <img src={league.logo_url} alt="" className="h-5 w-5 object-contain" />
+                          <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
                         <span className="text-sm font-medium">{league.code || league.name}</span>
                       </div>
@@ -284,13 +284,13 @@ export default function MyFeeds() {
                     return (
                       <div
                         key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors ${
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
                           isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
                         }`}
                         onClick={() => toggleUnfollow('team', team.id)}
                       >
                         {team.logo_url && (
-                          <img src={team.logo_url} alt="" className="h-5 w-5 object-contain" />
+                          <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
                         <span className="text-sm font-medium">{team.display_name}</span>
                       </div>
