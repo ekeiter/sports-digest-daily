@@ -247,7 +247,7 @@ export default function PlayerPreferences() {
               <div className="relative" ref={autocompleteRef}>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Search by name (e.g., Paul Skenes, Caitlin Clark)"
+                    placeholder="Enter name"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
