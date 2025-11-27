@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
@@ -26,6 +26,7 @@ export default function Preferences() {
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
+  const [teamSearchTerm, setTeamSearchTerm] = useState("");
 
   useEffect(() => {
     checkUser();
@@ -239,6 +240,15 @@ export default function Preferences() {
   const getTeamsForLeague = (leagueId: number) => {
     return teams
       .filter(team => team.league_id === leagueId)
+      .filter(team => {
+        if (!teamSearchTerm) return true;
+        const searchLower = teamSearchTerm.toLowerCase();
+        return (
+          team.display_name.toLowerCase().includes(searchLower) ||
+          team.nickname?.toLowerCase().includes(searchLower) ||
+          team.city_state_name.toLowerCase().includes(searchLower)
+        );
+      })
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
 
@@ -284,6 +294,18 @@ export default function Preferences() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-2">
+              {expandedLeagues.length > 0 && (
+                <div className="mb-4 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search teams..."
+                    value={teamSearchTerm}
+                    onChange={(e) => setTeamSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              )}
               <div className="flex">
                 {/* Left panel - Sports/Leagues */}
                 <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'w-1/2 border-r pr-3' : 'w-full'}`}>
