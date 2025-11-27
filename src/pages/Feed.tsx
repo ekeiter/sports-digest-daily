@@ -58,7 +58,7 @@ export default function Feed() {
       const since = new Date(Date.now() - daysBack * 24 * 3600 * 1000).toISOString();
       const uid = user?.id || (await supabase.auth.getUser()).data.user!.id;
 
-      const args: any = { p_subscriber_id: uid, p_since: since, p_limit: 50 };
+      const args: any = { p_subscriber_id: uid, p_since: since, p_limit: 100 };
       if (cursor) {
         args.p_cursor_time = cursor.time;
         args.p_cursor_id = cursor.id;
@@ -199,7 +199,7 @@ export default function Feed() {
               </Card>
             ))}
             
-            {articles.length >= 50 && (
+            {articles.length >= 100 && (
               <div className="flex justify-center pt-4">
                 <Button 
                   className="w-full md:w-auto"
