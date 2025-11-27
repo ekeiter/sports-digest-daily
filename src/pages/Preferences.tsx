@@ -27,6 +27,8 @@ export default function Preferences() {
   const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
+  const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
+  const [loadingAllTeams, setLoadingAllTeams] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -118,6 +120,28 @@ export default function Preferences() {
       toast.error("Failed to load preferences");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAllTeams = async () => {
+    if (allTeamsLoaded) return;
+    
+    setLoadingAllTeams(true);
+    try {
+      const { data: teamsData, error: teamsError } = await supabase
+        .from("teams")
+        .select("*")
+        .order("display_name", { ascending: true });
+
+      if (teamsError) throw teamsError;
+      
+      setTeams(teamsData || []);
+      setAllTeamsLoaded(true);
+    } catch (error) {
+      console.error("Error loading all teams:", error);
+      toast.error("Failed to load teams");
+    } finally {
+      setLoadingAllTeams(false);
     }
   };
 
@@ -237,18 +261,22 @@ export default function Preferences() {
     }
   };
 
+  const getFilteredTeams = () => {
+    if (!teamSearchTerm) return [];
+    
+    const searchLower = teamSearchTerm.toLowerCase();
+    return teams
+      .filter(team => 
+        team.display_name.toLowerCase().includes(searchLower) ||
+        team.nickname?.toLowerCase().includes(searchLower) ||
+        team.city_state_name.toLowerCase().includes(searchLower)
+      )
+      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+  };
+
   const getTeamsForLeague = (leagueId: number) => {
     return teams
       .filter(team => team.league_id === leagueId)
-      .filter(team => {
-        if (!teamSearchTerm) return true;
-        const searchLower = teamSearchTerm.toLowerCase();
-        return (
-          team.display_name.toLowerCase().includes(searchLower) ||
-          team.nickname?.toLowerCase().includes(searchLower) ||
-          team.city_state_name.toLowerCase().includes(searchLower)
-        );
-      })
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
 
@@ -294,18 +322,75 @@ export default function Preferences() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-2">
-              {expandedLeagues.length > 0 && (
-                <div className="mb-4 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Search teams..."
-                    value={teamSearchTerm}
-                    onChange={(e) => setTeamSearchTerm(e.target.value)}
-                    className="pl-9"
-                  />
+              <div className="mb-4 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search all teams..."
+                  value={teamSearchTerm}
+                  onChange={(e) => {
+                    setTeamSearchTerm(e.target.value);
+                    if (e.target.value && !allTeamsLoaded) {
+                      loadAllTeams();
+                    }
+                  }}
+                  className="pl-9"
+                />
+              </div>
+
+              {teamSearchTerm && (
+                <div className="mb-4">
+                  <h3 className="font-semibold text-sm text-muted-foreground mb-2">Search Results</h3>
+                  {loadingAllTeams ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-1 max-h-96 overflow-y-auto">
+                      {getFilteredTeams().map(team => {
+                        const isSelected = selectedTeams.includes(team.id);
+                        const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
+                        const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
+                        
+                        return (
+                          <div 
+                            key={team.id} 
+                            onClick={() => handleTeamToggle(team.id)}
+                            className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border ${
+                              isSelected 
+                                ? 'bg-primary/15 border-primary' 
+                                : 'bg-card hover:bg-accent/5 border-border'
+                            }`}
+                          >
+                            {team.logo_url && (
+                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                <img 
+                                  src={team.logo_url} 
+                                  alt={team.display_name} 
+                                  className="h-7 w-7 object-contain" 
+                                  onError={(e) => e.currentTarget.style.display = 'none'}
+                                />
+                              </div>
+                            )}
+                            <div className="flex flex-col flex-1 min-w-0">
+                              <span className="text-sm font-medium truncate">
+                                {team.display_name}
+                              </span>
+                              <span className="text-xs text-muted-foreground truncate">
+                                {leagueName}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {getFilteredTeams().length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
+
               <div className="flex">
                 {/* Left panel - Sports/Leagues */}
                 <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'w-1/2 border-r pr-3' : 'w-full'}`}>
