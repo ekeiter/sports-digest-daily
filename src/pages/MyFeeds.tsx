@@ -330,7 +330,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'sport', sport.id)}
                         >
-                          <Star size={22} className={`${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -359,7 +359,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'league', league.id)}
                         >
-                          <Star size={22} className={`${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -388,7 +388,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'team', team.id)}
                         >
-                          <Star size={22} className={`${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -453,7 +453,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0 flex-shrink-0"
                           onClick={(e) => toggleFocus(e, 'person', person.id)}
                         >
-                          <Star size={22} className={`${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
