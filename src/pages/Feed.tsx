@@ -24,6 +24,7 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [articles, setArticles] = useState<FeedRow[]>([]);
+  const [isFocusMode, setIsFocusMode] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -44,7 +45,25 @@ export default function Feed() {
       console.error("Error ensuring subscriber:", error);
     }
     
+    // Check if focus mode is active
+    await checkFocusMode(user.id);
+    
     await fetchFeed();
+  };
+
+  const checkFocusMode = async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from("subscriber_interests")
+        .select("is_focused")
+        .eq("subscriber_id", userId)
+        .eq("is_focused", true)
+        .limit(1);
+      
+      setIsFocusMode(data && data.length > 0);
+    } catch (error) {
+      console.error("Error checking focus mode:", error);
+    }
   };
 
   const fetchFeed = async (cursor?: { time: string; id: number } | null) => {
@@ -128,13 +147,15 @@ export default function Feed() {
     <div className="min-h-screen bg-background">
       <header className="border-b sticky top-0 bg-background z-10">
         <div className="container mx-auto px-3 py-2">
-          <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold">SportsDig Feed</h1>
-            <div className="flex gap-1.5">
-              <Button size="sm" className="h-9 px-3" onClick={() => navigate("/")}>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-lg font-bold text-center">
+              SportsDig Feed{isFocusMode ? " - Focused" : ""}
+            </h1>
+            <div className="flex gap-1.5 justify-center">
+              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button size="sm" className="h-9 px-3" onClick={handleRefresh} disabled={refreshing}>
+              <Button size="sm" className="h-7 px-3" onClick={handleRefresh} disabled={refreshing}>
                 {refreshing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
