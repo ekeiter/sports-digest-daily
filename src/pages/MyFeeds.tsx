@@ -305,7 +305,7 @@ export default function MyFeeds() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2 mb-1">
-                    <span className="text-xs text-foreground font-medium">Focus</span>
+                    <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {/* Sports */}
                   {selectedSports.map((sport) => {
@@ -414,7 +414,7 @@ export default function MyFeeds() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2 mb-1">
-                    <span className="text-xs text-foreground font-medium">Focus</span>
+                    <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
