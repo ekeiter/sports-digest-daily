@@ -44,10 +44,10 @@ export default function Feed() {
       console.error("Error ensuring subscriber:", error);
     }
     
-    await fetchFeed(7);
+    await fetchFeed();
   };
 
-  const fetchFeed = async (daysBack = 7, cursor?: { time: string; id: number } | null) => {
+  const fetchFeed = async (cursor?: { time: string; id: number } | null) => {
     try {
       if (cursor) {
         setLoadingMore(true);
@@ -55,10 +55,9 @@ export default function Feed() {
         setLoading(true);
       }
 
-      const since = new Date(Date.now() - daysBack * 24 * 3600 * 1000).toISOString();
       const uid = user?.id || (await supabase.auth.getUser()).data.user!.id;
 
-      const args: any = { p_subscriber_id: uid, p_since: since, p_limit: 100 };
+      const args: any = { p_subscriber_id: uid, p_limit: 100 };
       if (cursor) {
         args.p_cursor_time = cursor.time;
         args.p_cursor_id = cursor.id;
@@ -85,13 +84,13 @@ export default function Feed() {
   const loadMore = async () => {
     if (articles.length === 0) return;
     const last = articles[articles.length - 1];
-    await fetchFeed(7, { time: last.published_effective, id: last.article_id });
+    await fetchFeed({ time: last.published_effective, id: last.article_id });
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
     setArticles([]);
-    await fetchFeed(7);
+    await fetchFeed();
     setRefreshing(false);
   };
 
