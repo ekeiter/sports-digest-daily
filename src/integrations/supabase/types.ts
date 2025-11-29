@@ -1171,6 +1171,7 @@ export type Database = {
       subscriber_interests: {
         Row: {
           added_at: string | null
+          is_focused: boolean
           kind: Database["public"]["Enums"]["interest_kind"]
           notification_enabled: boolean | null
           priority: number | null
@@ -1179,6 +1180,7 @@ export type Database = {
         }
         Insert: {
           added_at?: string | null
+          is_focused?: boolean
           kind: Database["public"]["Enums"]["interest_kind"]
           notification_enabled?: boolean | null
           priority?: number | null
@@ -1187,6 +1189,7 @@ export type Database = {
         }
         Update: {
           added_at?: string | null
+          is_focused?: boolean
           kind?: Database["public"]["Enums"]["interest_kind"]
           notification_enabled?: boolean | null
           priority?: number | null
