@@ -327,10 +327,10 @@ export default function MyFeeds() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'sport', sport.id)}
                         >
-                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -356,10 +356,10 @@ export default function MyFeeds() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'league', league.id)}
                         >
-                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -385,10 +385,10 @@ export default function MyFeeds() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'team', team.id)}
                         >
-                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -450,10 +450,10 @@ export default function MyFeeds() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 w-8 p-0 flex-shrink-0"
+                          className="h-7 w-7 p-0 flex-shrink-0"
                           onClick={(e) => toggleFocus(e, 'person', person.id)}
                         >
-                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
