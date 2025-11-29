@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 type League = Database['public']['Tables']['leagues']['Row'];
@@ -55,6 +55,7 @@ export default function MyFeeds() {
   const [selectedSports, setSelectedSports] = useState<Sport[]>([]);
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const [toUnfollow, setToUnfollow] = useState<Set<string>>(new Set());
+  const [focusedItems, setFocusedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     checkUserAndLoadFeeds();
@@ -73,6 +74,22 @@ export default function MyFeeds() {
   const loadFeeds = async (userId: string) => {
     setLoading(true);
     try {
+      // Fetch all interests with focus status
+      const { data: allInterests } = await supabase
+        .from("subscriber_interests")
+        .select("kind, subject_id, is_focused")
+        .eq("subscriber_id", userId);
+
+      if (allInterests) {
+        const focused = new Set<string>();
+        allInterests.forEach(interest => {
+          if (interest.is_focused) {
+            focused.add(`${interest.kind}-${interest.subject_id}`);
+          }
+        });
+        setFocusedItems(focused);
+      }
+
       // Fetch selected leagues
       const { data: leagueInterests } = await supabase
         .from("subscriber_interests")
@@ -178,6 +195,30 @@ export default function MyFeeds() {
     setToUnfollow(newSet);
   };
 
+  const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
+    e.stopPropagation();
+    try {
+      const { data: isFocused } = await supabase.rpc('toggle_interest_focus', {
+        p_kind: kind,
+        p_subject_id: id
+      });
+
+      const key = `${kind}-${id}`;
+      const newFocused = new Set(focusedItems);
+      if (isFocused) {
+        newFocused.add(key);
+      } else {
+        newFocused.delete(key);
+      }
+      setFocusedItems(newFocused);
+      
+      toast.success(isFocused ? "Added to focus" : "Removed from focus");
+    } catch (error) {
+      console.error("Error toggling focus:", error);
+      toast.error("Failed to update focus");
+    }
+  };
+
   const handleSaveChanges = async () => {
     setSaving(true);
     try {
@@ -267,6 +308,7 @@ export default function MyFeeds() {
                   {selectedSports.map((sport) => {
                     const key = `sport-${sport.id}`;
                     const isMarked = toUnfollow.has(key);
+                    const isFocused = focusedItems.has(key);
                     return (
                       <div
                         key={key}
@@ -278,7 +320,15 @@ export default function MyFeeds() {
                         {sport.logo_url && (
                           <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium">{sport.display_name}</span>
+                        <span className="text-sm font-medium flex-1">{sport.display_name}</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={(e) => toggleFocus(e, 'sport', sport.id)}
+                        >
+                          <Star className={`h-4 w-4 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        </Button>
                       </div>
                     );
                   })}
@@ -287,6 +337,7 @@ export default function MyFeeds() {
                   {selectedLeagues.map((league) => {
                     const key = `league-${league.id}`;
                     const isMarked = toUnfollow.has(key);
+                    const isFocused = focusedItems.has(key);
                     return (
                       <div
                         key={key}
@@ -298,7 +349,15 @@ export default function MyFeeds() {
                         {league.logo_url && (
                           <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium">{league.code || league.name}</span>
+                        <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={(e) => toggleFocus(e, 'league', league.id)}
+                        >
+                          <Star className={`h-4 w-4 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        </Button>
                       </div>
                     );
                   })}
@@ -307,6 +366,7 @@ export default function MyFeeds() {
                   {selectedTeams.map((team) => {
                     const key = `team-${team.id}`;
                     const isMarked = toUnfollow.has(key);
+                    const isFocused = focusedItems.has(key);
                     return (
                       <div
                         key={key}
@@ -318,7 +378,15 @@ export default function MyFeeds() {
                         {team.logo_url && (
                           <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium">{team.display_name}</span>
+                        <span className="text-sm font-medium flex-1">{team.display_name}</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={(e) => toggleFocus(e, 'team', team.id)}
+                        >
+                          <Star className={`h-4 w-4 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        </Button>
                       </div>
                     );
                   })}
@@ -345,6 +413,7 @@ export default function MyFeeds() {
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
                     const isMarked = toUnfollow.has(key);
+                    const isFocused = focusedItems.has(key);
                     const context = [];
                     if (person.teams?.display_name) context.push(person.teams.display_name);
                     if (person.leagues?.code) context.push(person.leagues.code);
@@ -366,10 +435,20 @@ export default function MyFeeds() {
                             />
                           ) : null;
                         })()}
-                        <span className="text-sm font-medium">{person.name}</span>
-                        {context.length > 0 && (
-                          <span className="text-xs text-muted-foreground">({context.join(" • ")})</span>
-                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium">{person.name}</span>
+                          {context.length > 0 && (
+                            <span className="text-xs text-muted-foreground ml-1">({context.join(" • ")})</span>
+                          )}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 flex-shrink-0"
+                          onClick={(e) => toggleFocus(e, 'person', person.id)}
+                        >
+                          <Star className={`h-4 w-4 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        </Button>
                       </div>
                     );
                   })}
