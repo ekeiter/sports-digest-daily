@@ -264,7 +264,7 @@ export default function MyFeeds() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-4 max-w-4xl">
+      <div className="container mx-auto px-2 py-4 max-w-[95%]">
         {/* Dashboard Button - Centered at top */}
         <div className="flex justify-center gap-2 mb-4">
           <Button size="sm" onClick={() => navigate("/")}>
@@ -304,6 +304,9 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-end px-2 mb-1">
+                    <span className="text-xs text-muted-foreground font-medium">Focus</span>
+                  </div>
                   {/* Sports */}
                   {selectedSports.map((sport) => {
                     const key = `sport-${sport.id}`;
@@ -410,6 +413,9 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-end px-2 mb-1">
+                    <span className="text-xs text-muted-foreground font-medium">Focus</span>
+                  </div>
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
                     const isMarked = toUnfollow.has(key);
