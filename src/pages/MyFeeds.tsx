@@ -299,7 +299,7 @@ export default function MyFeeds() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="py-2">
+            <CardContent className="p-2">
               {!hasSportsLeaguesTeams ? (
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
@@ -408,7 +408,7 @@ export default function MyFeeds() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="py-2">
+            <CardContent className="p-2">
               {selectedPeople.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
