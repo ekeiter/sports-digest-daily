@@ -305,7 +305,7 @@ export default function MyFeeds() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2 mb-1">
-                    <span className="text-xs text-muted-foreground font-medium">Focus</span>
+                    <span className="text-xs text-foreground font-medium">Focus</span>
                   </div>
                   {/* Sports */}
                   {selectedSports.map((sport) => {
@@ -330,7 +330,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'sport', sport.id)}
                         >
-                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -359,7 +359,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'league', league.id)}
                         >
-                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -388,7 +388,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0"
                           onClick={(e) => toggleFocus(e, 'team', team.id)}
                         >
-                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
@@ -414,7 +414,7 @@ export default function MyFeeds() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2 mb-1">
-                    <span className="text-xs text-muted-foreground font-medium">Focus</span>
+                    <span className="text-xs text-foreground font-medium">Focus</span>
                   </div>
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
@@ -453,7 +453,7 @@ export default function MyFeeds() {
                           className="h-7 w-7 p-0 flex-shrink-0"
                           onClick={(e) => toggleFocus(e, 'person', person.id)}
                         >
-                          <Star className={`h-5 w-5 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                          <Star className={`h-6 w-6 ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
