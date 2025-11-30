@@ -25,6 +25,7 @@ export default function Preferences() {
   const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
+  const [expandedLeagueTeamIds, setExpandedLeagueTeamIds] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
   const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
@@ -149,19 +150,26 @@ export default function Preferences() {
     setLoadingTeams(prev => new Set(prev).add(leagueId));
 
     try {
-      const { data: teamsData, error: teamsError } = await supabase
-        .from("teams")
-        .select("*")
-        .eq("league_id", leagueId)
-        .order("display_name", { ascending: true });
+      // Use team_league_map junction table to get teams for this league
+      const { data: mappings, error: teamsError } = await supabase
+        .from("team_league_map")
+        .select("teams(*)")
+        .eq("league_id", leagueId);
 
       if (teamsError) throw teamsError;
+      
+      // Extract teams from the junction table results
+      const teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
+      const teamIds = teamsData.map(t => t.id);
+      
+      // Store team IDs for this league
+      setExpandedLeagueTeamIds(teamIds);
       
       // Merge teams, avoiding duplicates by filtering out existing IDs
       setTeams(prev => {
         const existingIds = new Set(prev.map(t => t.id));
-        const newTeams = (teamsData || []).filter(t => !existingIds.has(t.id));
-        return [...prev, ...newTeams];
+        const newTeams = teamsData.filter(t => t && !existingIds.has(t.id));
+        return [...prev, ...newTeams].sort((a, b) => a.display_name.localeCompare(b.display_name));
       });
     } catch (error) {
       console.error(`Error loading teams for league ${leagueId}:`, error);
@@ -258,6 +266,9 @@ export default function Preferences() {
 
     if (!isCurrentlyExpanded) {
       await loadTeamsForLeague(leagueId);
+    } else {
+      // Clear expanded league team IDs when collapsing
+      setExpandedLeagueTeamIds([]);
     }
   };
 
@@ -275,14 +286,22 @@ export default function Preferences() {
   };
 
   const getTeamsForLeague = (leagueId: number) => {
-    return teams
-      .filter(team => team.league_id === leagueId)
-      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+    // Use expandedLeagueTeamIds if this is the currently expanded league
+    if (expandedLeagues.includes(leagueId)) {
+      return teams
+        .filter(team => expandedLeagueTeamIds.includes(team.id))
+        .sort((a, b) => a.display_name.localeCompare(b.display_name));
+    }
+    return [];
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
-    const leagueTeams = teams.filter(t => t.league_id === leagueId);
-    return leagueTeams.filter(t => selectedTeams.includes(t.id)).length;
+    // Use expandedLeagueTeamIds if this is the currently expanded league
+    if (expandedLeagues.includes(leagueId)) {
+      return expandedLeagueTeamIds.filter(teamId => selectedTeams.includes(teamId)).length;
+    }
+    // For non-expanded leagues, we can't accurately count without loading the teams
+    return 0;
   };
 
   if (loading) {

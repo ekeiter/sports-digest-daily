@@ -1245,6 +1245,45 @@ export type Database = {
         }
         Relationships: []
       }
+      team_league_map: {
+        Row: {
+          created_at: string
+          id: number
+          is_primary: boolean
+          league_id: number
+          team_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          is_primary?: boolean
+          league_id: number
+          team_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          is_primary?: boolean
+          league_id?: number
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_league_map_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_league_map_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           abbreviation: string | null
