@@ -30,6 +30,7 @@ export default function Preferences() {
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
   const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
+  const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
 
   useEffect(() => {
     checkUser();
@@ -104,6 +105,22 @@ export default function Preferences() {
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
+
+      // Load all team_league_map data to enable accurate counting
+      const { data: teamLeagueMappings } = await supabase
+        .from("team_league_map")
+        .select("league_id, team_id");
+      
+      if (teamLeagueMappings) {
+        const mapping: Record<number, number[]> = {};
+        teamLeagueMappings.forEach(m => {
+          if (!mapping[m.league_id]) {
+            mapping[m.league_id] = [];
+          }
+          mapping[m.league_id].push(m.team_id);
+        });
+        setLeagueTeamMap(mapping);
+      }
 
       // Load teams that are selected so we can show counts
       if (teamIds.length > 0) {
@@ -296,12 +313,9 @@ export default function Preferences() {
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
-    // Use expandedLeagueTeamIds if this is the currently expanded league
-    if (expandedLeagues.includes(leagueId)) {
-      return expandedLeagueTeamIds.filter(teamId => selectedTeams.includes(teamId)).length;
-    }
-    // For non-expanded leagues, we can't accurately count without loading the teams
-    return 0;
+    // Use the leagueTeamMap to count selected teams for this league
+    const teamIdsForLeague = leagueTeamMap[leagueId] || [];
+    return teamIdsForLeague.filter(teamId => selectedTeams.includes(teamId)).length;
   };
 
   if (loading) {
