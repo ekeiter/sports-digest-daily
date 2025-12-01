@@ -426,7 +426,7 @@ export default function Preferences() {
 
               <div className="flex">
                 {/* Left panel - Sports/Leagues */}
-                <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'w-1/2 border-r pr-3' : 'w-full'}`}>
+                <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'hidden' : 'w-full'}`}>
                   {displayItems.map((item) => {
                     if (item.type === 'sport') {
                       const sport = item.data;
@@ -519,39 +519,39 @@ export default function Preferences() {
 
                 {/* Right panel - Teams */}
                 {expandedLeagues.length > 0 && (
-                  <div className="w-1/2 pl-3">
+                  <div className="w-full">
                     {expandedLeagues.map(leagueId => {
                       const leagueTeams = getTeamsForLeague(leagueId);
                       const league = displayItems.find(i => i.type === 'league' && i.data.id === leagueId);
                       const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
                       
                       return (
-                        <div key={leagueId} className="space-y-2">
-                          <h3 className="font-semibold text-sm text-muted-foreground">{leagueName} Teams</h3>
+                        <div key={leagueId} className="space-y-3">
+                          <h2 className="text-2xl font-bold text-center">{leagueName} Teams</h2>
                           {loadingTeams.has(leagueId) ? (
                             <div className="flex items-center justify-center py-4">
                               <Loader2 className="h-5 w-5 animate-spin" />
                             </div>
                           ) : (
-                            <div className="space-y-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                               {leagueTeams.map(team => {
                                 const isSelected = selectedTeams.includes(team.id);
                                 return (
                                   <div 
                                     key={team.id} 
                                     onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border h-14 ${
+                                    className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors border ${
                                       isSelected 
                                         ? 'bg-primary/15 border-primary' 
                                         : 'bg-card hover:bg-accent/5 border-border'
                                     }`}
                                   >
                                     {team.logo_url && (
-                                      <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                      <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
                                         <img 
                                           src={team.logo_url} 
                                           alt={team.display_name} 
-                                          className="h-7 w-7 object-contain" 
+                                          className="h-10 w-10 object-contain" 
                                           onError={(e) => e.currentTarget.style.display = 'none'}
                                         />
                                       </div>
@@ -560,7 +560,7 @@ export default function Preferences() {
                                       <span className="text-xs text-muted-foreground truncate">
                                         {team.city_state_name}
                                       </span>
-                                      <span className="text-sm font-medium truncate">
+                                      <span className="text-base font-medium truncate">
                                         {team.nickname || team.display_name}
                                       </span>
                                     </div>
