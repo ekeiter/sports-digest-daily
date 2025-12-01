@@ -533,25 +533,25 @@ export default function Preferences() {
                               <Loader2 className="h-5 w-5 animate-spin" />
                             </div>
                           ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                               {leagueTeams.map(team => {
                                 const isSelected = selectedTeams.includes(team.id);
                                 return (
                                   <div 
                                     key={team.id} 
                                     onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors border ${
+                                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors border ${
                                       isSelected 
                                         ? 'bg-primary/15 border-primary' 
                                         : 'bg-card hover:bg-accent/5 border-border'
                                     }`}
                                   >
                                     {team.logo_url && (
-                                      <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                                      <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                         <img 
                                           src={team.logo_url} 
                                           alt={team.display_name} 
-                                          className="h-10 w-10 object-contain" 
+                                          className="h-7 w-7 object-contain" 
                                           onError={(e) => e.currentTarget.style.display = 'none'}
                                         />
                                       </div>
@@ -560,7 +560,7 @@ export default function Preferences() {
                                       <span className="text-xs text-muted-foreground truncate">
                                         {team.city_state_name}
                                       </span>
-                                      <span className="text-base font-medium truncate">
+                                      <span className="text-sm font-medium truncate">
                                         {team.nickname || team.display_name}
                                       </span>
                                     </div>
