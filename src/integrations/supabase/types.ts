@@ -899,6 +899,7 @@ export type Database = {
         Row: {
           api_id: string | null
           api_source: string | null
+          country_code: string | null
           created_at: string | null
           id: number
           is_active: boolean | null
@@ -915,6 +916,7 @@ export type Database = {
         Insert: {
           api_id?: string | null
           api_source?: string | null
+          country_code?: string | null
           created_at?: string | null
           id?: number
           is_active?: boolean | null
@@ -931,6 +933,7 @@ export type Database = {
         Update: {
           api_id?: string | null
           api_source?: string | null
+          country_code?: string | null
           created_at?: string | null
           id?: number
           is_active?: boolean | null
