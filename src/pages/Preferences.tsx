@@ -460,7 +460,7 @@ export default function Preferences() {
                       );
                     } else {
                       const league = item.data;
-                      const hasTeams = league.kind === 'league';
+                      const hasTeams = (leagueTeamMap[league.id]?.length || 0) > 0;
                       const isExpanded = expandedLeagues.includes(league.id);
                       const displayName = league.display_label || league.name;
                       const isSelected = selectedLeagues.includes(league.id);
