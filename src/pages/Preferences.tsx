@@ -439,7 +439,7 @@ export default function Preferences() {
                       
                       return (
                         <div key={`sport-${sport.id}`}>
-                          {showDivider && <hr className="border-t border-border my-3" />}
+                          {showDivider && <hr className="border-t border-black my-3" />}
                           <div 
                             onClick={() => handleSportToggle(sport.id)}
                             className={`flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-colors ${
@@ -473,7 +473,7 @@ export default function Preferences() {
 
                       return (
                         <div key={`league-${league.id}`}>
-                          {showDivider && <hr className="border-t border-border my-3" />}
+                          {showDivider && <hr className="border-t border-black my-3" />}
                           <div 
                             className={`flex items-center gap-1.5 p-2 rounded-lg border transition-colors ${
                               isSelected 
