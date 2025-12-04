@@ -1373,36 +1373,11 @@ export type Database = {
       }
     }
     Views: {
-      subscriber_interests_detailed: {
+      subscriber_interests_detail: {
         Row: {
           added_at: string | null
           email: string | null
-          icon: string | null
-          kind: Database["public"]["Enums"]["interest_kind"] | null
-          notification_enabled: boolean | null
-          priority: number | null
-          subject_code: string | null
-          subject_id: number | null
-          subject_name: string | null
-          subscriber_id: string | null
-          subscriber_name: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      subscriber_interests_with_details: {
-        Row: {
-          added_at: string | null
-          kind: Database["public"]["Enums"]["interest_kind"] | null
-          notification_enabled: boolean | null
-          priority: number | null
+          kind: string | null
           subject_id: number | null
           subject_name: string | null
           subscriber_id: string | null
