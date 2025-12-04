@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Loader2, Search } from "lucide-react";
 
@@ -428,60 +429,29 @@ export default function Preferences() {
                 {/* Left panel - Sports/Leagues */}
                 <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'hidden' : 'w-full'}`}>
                   {displayItems.map((item) => {
+                    const displayOptions = item.data.display_options as { divider_above?: boolean } | null;
+                    const showDivider = displayOptions?.divider_above === true;
+                    
                     if (item.type === 'sport') {
                       const sport = item.data;
                       const displayName = sport.display_label || sport.display_name;
                       const isSelected = selectedSports.includes(sport.id);
                       
                       return (
-                        <div 
-                          key={`sport-${sport.id}`} 
-                          onClick={() => handleSportToggle(sport.id)}
-                          className={`flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-colors ${
-                            isSelected 
-                              ? 'bg-primary/15 border-primary text-foreground' 
-                              : 'bg-card hover:bg-accent/5 border-border'
-                          }`}
-                        >
-                          {sport.logo_url && (
-                            <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                              <img 
-                                src={sport.logo_url} 
-                                alt={displayName} 
-                                className="h-7 w-7 object-contain" 
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                            </div>
-                          )}
-                          <span className="font-medium flex-1 min-w-0">
-                            {displayName}
-                          </span>
-                        </div>
-                      );
-                    } else {
-                      const league = item.data;
-                      const hasTeams = league.kind === 'league';
-                      const isExpanded = expandedLeagues.includes(league.id);
-                      const displayName = league.display_label || league.name;
-                      const isSelected = selectedLeagues.includes(league.id);
-
-                      return (
-                        <div 
-                          key={`league-${league.id}`} 
-                          className={`flex items-center gap-1.5 p-2 rounded-lg border transition-colors ${
-                            isSelected 
-                              ? 'bg-primary/15 border-primary text-foreground' 
-                              : 'bg-card hover:bg-accent/5 border-border'
-                          }`}
-                        >
+                        <React.Fragment key={`sport-${sport.id}`}>
+                          {showDivider && <Separator className="my-2" />}
                           <div 
-                            onClick={() => handleLeagueToggle(league.id)}
-                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                            onClick={() => handleSportToggle(sport.id)}
+                            className={`flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-colors ${
+                              isSelected 
+                                ? 'bg-primary/15 border-primary text-foreground' 
+                                : 'bg-card hover:bg-accent/5 border-border'
+                            }`}
                           >
-                            {league.logo_url && (
+                            {sport.logo_url && (
                               <div className="flex items-center justify-center w-8 h-8 shrink-0">
                                 <img 
-                                  src={league.logo_url} 
+                                  src={sport.logo_url} 
                                   alt={displayName} 
                                   className="h-7 w-7 object-contain" 
                                   onError={(e) => e.currentTarget.style.display = 'none'}
@@ -492,26 +462,64 @@ export default function Preferences() {
                               {displayName}
                             </span>
                           </div>
-                          {hasTeams && expandedLeagues.length === 0 && (
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                loadTeamsForLeague(league.id).then(() => {
-                                  toggleLeagueExpansion(league.id);
-                                });
-                              }} 
-                              className="shrink-0 transition-colors w-20 justify-center"
+                        </React.Fragment>
+                      );
+                    } else {
+                      const league = item.data;
+                      const hasTeams = league.kind === 'league';
+                      const isExpanded = expandedLeagues.includes(league.id);
+                      const displayName = league.display_label || league.name;
+                      const isSelected = selectedLeagues.includes(league.id);
+
+                      return (
+                        <React.Fragment key={`league-${league.id}`}>
+                          {showDivider && <Separator className="my-2" />}
+                          <div 
+                            className={`flex items-center gap-1.5 p-2 rounded-lg border transition-colors ${
+                              isSelected 
+                                ? 'bg-primary/15 border-primary text-foreground' 
+                                : 'bg-card hover:bg-accent/5 border-border'
+                            }`}
+                          >
+                            <div 
+                              onClick={() => handleLeagueToggle(league.id)}
+                              className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                             >
-                              Teams
-                              {(() => {
-                                const count = getSelectedTeamCountForLeague(league.id);
-                                return count > 0 ? ` (${count})` : '';
-                              })()}
-                            </Button>
-                          )}
-                        </div>
+                              {league.logo_url && (
+                                <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                  <img 
+                                    src={league.logo_url} 
+                                    alt={displayName} 
+                                    className="h-7 w-7 object-contain" 
+                                    onError={(e) => e.currentTarget.style.display = 'none'}
+                                  />
+                                </div>
+                              )}
+                              <span className="font-medium flex-1 min-w-0">
+                                {displayName}
+                              </span>
+                            </div>
+                            {hasTeams && expandedLeagues.length === 0 && (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  loadTeamsForLeague(league.id).then(() => {
+                                    toggleLeagueExpansion(league.id);
+                                  });
+                                }} 
+                                className="shrink-0 transition-colors w-20 justify-center"
+                              >
+                                Teams
+                                {(() => {
+                                  const count = getSelectedTeamCountForLeague(league.id);
+                                  return count > 0 ? ` (${count})` : '';
+                                })()}
+                              </Button>
+                            )}
+                          </div>
+                        </React.Fragment>
                       );
                     }
                   })}
