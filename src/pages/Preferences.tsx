@@ -564,14 +564,9 @@ export default function Preferences() {
                                         />
                                       </div>
                                     )}
-                                    <div className="flex flex-col flex-1 min-w-0">
-                                      <span className="text-xs text-muted-foreground truncate">
-                                        {team.city_state_name}
-                                      </span>
-                                      <span className="text-sm font-medium truncate">
-                                        {team.nickname || team.display_name}
-                                      </span>
-                                    </div>
+                                    <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                      {team.display_name}
+                                    </span>
                                   </div>
                                 );
                               })}
