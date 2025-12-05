@@ -8,8 +8,12 @@ import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 type League = Database['public']['Tables']['leagues']['Row'];
-type Team = Database['public']['Tables']['teams']['Row'];
+type Team = Database['public']['Tables']['teams']['Row'] & {
+  leagues?: { code: string } | null;
+};
 type Sport = Database['public']['Tables']['sports']['Row'];
+
+const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
 
 interface Person {
   id: number;
@@ -118,10 +122,10 @@ export default function MyFeeds() {
         const teamIds = teamInterests.map(t => t.subject_id);
         const { data: teams } = await supabase
           .from("teams")
-          .select("*")
+          .select("*, leagues(code)")
           .in("id", teamIds);
         
-        if (teams) setSelectedTeams(teams);
+        if (teams) setSelectedTeams(teams as Team[]);
       }
 
       // Fetch selected sports
@@ -389,7 +393,12 @@ export default function MyFeeds() {
                         {team.logo_url && (
                           <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium flex-1">{team.display_name}</span>
+                        <span className="text-sm font-medium flex-1">
+                          {team.display_name}
+                          {team.leagues?.code && COLLEGE_LEAGUES.includes(team.leagues.code) && (
+                            <span className="text-muted-foreground"> ({team.leagues.code})</span>
+                          )}
+                        </span>
                         <Button
                           size="sm"
                           variant="ghost"
