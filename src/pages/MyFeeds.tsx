@@ -219,27 +219,35 @@ export default function MyFeeds() {
     }
   };
 
-  const handleSaveChanges = async () => {
+  const handleDeleteSelections = async () => {
     setSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-    for (const key of toUnfollow) {
-      const [kind, idStr] = key.split('-');
-      const subjectId = Number(idStr);
-      
-      await supabase.rpc('toggle_subscriber_interest', {
-        p_kind: kind as 'sport' | 'league' | 'team' | 'person',
-        p_subject_id: subjectId
-      });
-    }
+      for (const key of toUnfollow) {
+        const [kind, idStr] = key.split('-');
+        const subjectId = Number(idStr);
+        
+        await supabase.rpc('toggle_subscriber_interest', {
+          p_kind: kind as 'sport' | 'league' | 'team' | 'person',
+          p_subject_id: subjectId
+        });
+      }
 
-      toast.success("Feed preferences updated");
-      navigate("/");
+      // Remove deleted items from state
+      setSelectedSports(prev => prev.filter(s => !toUnfollow.has(`sport-${s.id}`)));
+      setSelectedLeagues(prev => prev.filter(l => !toUnfollow.has(`league-${l.id}`)));
+      setSelectedTeams(prev => prev.filter(t => !toUnfollow.has(`team-${t.id}`)));
+      setSelectedPeople(prev => prev.filter(p => !toUnfollow.has(`person-${p.id}`)));
+      
+      // Clear the unfollow set and hide button
+      setToUnfollow(new Set());
+      
+      toast.success("Selections deleted");
     } catch (error) {
-      console.error("Error saving changes:", error);
-      toast.error("Failed to save changes");
+      console.error("Error deleting selections:", error);
+      toast.error("Failed to delete selections");
     } finally {
       setSaving(false);
     }
@@ -273,16 +281,16 @@ export default function MyFeeds() {
           {toUnfollow.size > 0 && (
             <Button 
               size="sm"
-              onClick={handleSaveChanges}
+              onClick={handleDeleteSelections}
               disabled={saving}
             >
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                  Saving...
+                  Deleting...
                 </>
               ) : (
-                "Save Changes"
+                "Delete Selections"
               )}
             </Button>
           )}
