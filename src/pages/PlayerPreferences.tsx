@@ -229,7 +229,7 @@ export default function PlayerPreferences() {
 
           {/* Search Section */}
           <Card>
-            <CardHeader className="pb-1 pt-3">
+            <CardHeader className="py-1">
             <CardDescription className="flex items-center gap-2 text-foreground font-bold">
                 <Search className="h-4 w-4" />
                 Search Players & Coaches
