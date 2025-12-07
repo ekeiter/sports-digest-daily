@@ -238,7 +238,18 @@ export default function PlayerPreferences() {
             <CardContent className="py-2">
               <div className="relative" ref={autocompleteRef}>
                 <div className="flex gap-2">
-                  <Input placeholder="Enter name" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)} />
+                  <div className="relative flex-1">
+                    <Input placeholder="Enter name" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)} className="pr-8" />
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        onClick={() => { setSearchTerm(""); setSearchResults([]); setShowAutocomplete(false); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                   <Button onClick={handleSearch} disabled={searching}>
                     {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                   </Button>
