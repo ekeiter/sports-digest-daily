@@ -230,7 +230,7 @@ export default function PlayerPreferences() {
           {/* Search Section */}
           <Card>
             <CardHeader className="pb-2 pt-0">
-              <CardDescription className="flex items-center gap-2 text-foreground">
+            <CardDescription className="flex items-center gap-2 text-foreground font-bold">
                 <Search className="h-4 w-4" />
                 Search Players & Coaches
               </CardDescription>

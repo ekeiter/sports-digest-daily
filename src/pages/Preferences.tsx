@@ -350,7 +350,7 @@ export default function Preferences() {
         <div className="max-w-5xl mx-auto">
           <Card className="border-0 shadow-none">
             <CardHeader className="pb-2 pt-0">
-              <CardDescription className="text-foreground">
+              <CardDescription className="text-foreground font-bold">
                 Select your sport and teams by clicking on them directly
               </CardDescription>
             </CardHeader>
