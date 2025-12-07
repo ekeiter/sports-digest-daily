@@ -44,6 +44,18 @@ export default function PlayerPreferences() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Prevent body scroll when dropdown is open
+  useEffect(() => {
+    if (showAutocomplete) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showAutocomplete]);
   const checkUserAndLoadData = async () => {
     const {
       data: {
