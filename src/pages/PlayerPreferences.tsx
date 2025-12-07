@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Search, User, X } from "lucide-react";
 import { toast } from "sonner";
@@ -229,11 +229,11 @@ export default function PlayerPreferences() {
 
           {/* Search Section */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
+            <CardHeader className="pb-2 pt-0">
+              <CardDescription className="flex items-center gap-2 text-foreground">
+                <Search className="h-4 w-4" />
                 Search Players & Coaches
-              </CardTitle>
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="relative" ref={autocompleteRef}>
