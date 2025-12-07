@@ -459,9 +459,9 @@ export default function MyFeeds() {
                           ) : null;
                         })()}
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm font-medium">{person.name}</span>
+                          <span className="text-sm">{person.name}</span>
                           {context.length > 0 && (
-                            <span className="text-xs text-muted-foreground ml-1">({context.join(" • ")})</span>
+                            <span className="text-sm text-muted-foreground ml-1">({context.join(" • ")})</span>
                           )}
                         </div>
                         <Button
