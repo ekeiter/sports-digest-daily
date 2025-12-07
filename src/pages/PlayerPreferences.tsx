@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search, User, X } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 export default function PlayerPreferences() {
@@ -267,7 +267,6 @@ export default function PlayerPreferences() {
                       })()}
                             <div className="flex-1">
                               <div className="font-semibold flex items-center gap-2">
-                                <User className="h-4 w-4" />
                                 {person.name}
                                 {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                               </div>
@@ -299,7 +298,6 @@ export default function PlayerPreferences() {
                   })()}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 flex-1 min-w-0">
                           <div className="font-semibold flex items-center gap-2 whitespace-nowrap">
-                            <User className="h-4 w-4 flex-shrink-0" />
                             {person.name}
                             {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                           </div>
