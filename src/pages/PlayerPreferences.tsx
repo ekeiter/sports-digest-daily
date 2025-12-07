@@ -275,8 +275,8 @@ export default function PlayerPreferences() {
 
           {/* Followed People Section */}
           <Card>
-            <CardHeader>
-              <CardTitle>Your Favorite Players ({followedPeople.length})</CardTitle>
+            <CardHeader className="py-1">
+              <CardDescription className="text-foreground font-bold">Your Favorite Players ({followedPeople.length})</CardDescription>
             </CardHeader>
             <CardContent className="px-3">
               {followedPeople.length === 0 ? <p className="text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-2">
