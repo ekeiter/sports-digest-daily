@@ -303,7 +303,7 @@ export default function MyFeeds() {
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
           <Card>
-            <CardHeader className="py-3 space-y-2">
+            <CardHeader className="py-2 space-y-1">
               <CardTitle className="text-base text-center">Sports / Leagues / Teams</CardTitle>
               <div className="flex justify-center">
                 <Button size="sm" onClick={() => navigate("/preferences")}>
@@ -311,12 +311,12 @@ export default function MyFeeds() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-2">
+            <CardContent className="p-2 pt-0">
               {!hasSportsLeaguesTeams ? (
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-end px-2 mb-1">
+                  <div className="flex items-center justify-end px-2">
                     <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {/* Sports */}
@@ -417,7 +417,7 @@ export default function MyFeeds() {
 
           {/* People Section */}
           <Card>
-            <CardHeader className="py-3 space-y-2">
+            <CardHeader className="py-2 space-y-1">
               <CardTitle className="text-base text-center">Players & Coaches</CardTitle>
               <div className="flex justify-center">
                 <Button size="sm" onClick={() => navigate("/player-preferences")}>
@@ -425,12 +425,12 @@ export default function MyFeeds() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-2">
+            <CardContent className="p-2 pt-0">
               {selectedPeople.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-end px-2 mb-1">
+                  <div className="flex items-center justify-end px-2">
                     <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {selectedPeople.map((person) => {
