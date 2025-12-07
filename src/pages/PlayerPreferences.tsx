@@ -289,8 +289,8 @@ export default function PlayerPreferences() {
               <CardDescription className="text-foreground font-bold">Your Favorite Players ({followedPeople.length})</CardDescription>
             </CardHeader>
             <CardContent className="px-3">
-              {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-2">
-                  {followedPeople.map(person => <div key={person.id} className="p-2 border rounded-lg bg-card flex items-center justify-between gap-2">
+              {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-1">
+                  {followedPeople.map(person => <div key={person.id} className="px-2 py-1 border rounded-lg bg-card flex items-center justify-between gap-2">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         {(() => {
                     const logo = getPersonLogo(person);
