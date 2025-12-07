@@ -296,12 +296,12 @@ export default function PlayerPreferences() {
                     const logo = getPersonLogo(person);
                     return logo ? <img src={logo.url} alt={logo.alt} className="h-8 w-8 object-contain flex-shrink-0" /> : null;
                   })()}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 flex-1 min-w-0">
+                        <div className="flex-1 min-w-0">
                           <div className="font-semibold flex items-center gap-2 whitespace-nowrap">
                             {person.name}
                             {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                           </div>
-                          <div className="text-sm text-muted-foreground truncate">
+                          <div className="text-sm text-muted-foreground">
                             {getContextDisplay(person)}
                           </div>
                         </div>
