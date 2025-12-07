@@ -105,7 +105,7 @@ Set up your preferences to start receiving personalized sports news.
               Manage Sports/Leagues/Teams
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
-              Manage Player Preferences
+              Manage Player &amp; Coach Preferences
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/why-sportsdig")}>
               Why SportsDig?
