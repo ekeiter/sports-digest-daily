@@ -235,7 +235,7 @@ export default function PlayerPreferences() {
                 Search Players & Coaches
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 py-6">
               <div className="relative" ref={autocompleteRef}>
                 <div className="flex gap-2">
                   <Input placeholder="Enter name" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)} />
