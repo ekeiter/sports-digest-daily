@@ -215,17 +215,17 @@ export default function PlayerPreferences() {
   return <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-xl md:text-2xl font-bold text-center">Player & Coach Preferences</h1>
+          <div className="flex flex-col items-center gap-3">
+            <h1 className="text-xl md:text-2xl font-bold text-center">Player & Coach Preferences</h1>
+            <Button variant="default" onClick={() => navigate("/")}>
+              Dashboard
+            </Button>
+          </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-4 max-w-6xl">
         <div className="space-y-4">
-          <div className="flex justify-center">
-            <Button variant="default" onClick={() => navigate("/")}>
-              Dashboard
-            </Button>
-          </div>
 
           {/* Search Section */}
           <Card>
