@@ -1132,6 +1132,39 @@ export type Database = {
         }
         Relationships: []
       }
+      skipped_article_urls: {
+        Row: {
+          article_date: string | null
+          domain: string
+          endpoint_id: number | null
+          last_seen_at: string | null
+          reason: string
+          skipped_at: string | null
+          url: string
+          url_hash: string
+        }
+        Insert: {
+          article_date?: string | null
+          domain: string
+          endpoint_id?: number | null
+          last_seen_at?: string | null
+          reason: string
+          skipped_at?: string | null
+          url: string
+          url_hash: string
+        }
+        Update: {
+          article_date?: string | null
+          domain?: string
+          endpoint_id?: number | null
+          last_seen_at?: string | null
+          reason?: string
+          skipped_at?: string | null
+          url?: string
+          url_hash?: string
+        }
+        Relationships: []
+      }
       sports: {
         Row: {
           app_order_id: number | null
@@ -1461,6 +1494,7 @@ export type Database = {
       }
       clear_all_focus: { Args: never; Returns: undefined }
       ensure_my_subscriber: { Args: never; Returns: undefined }
+      extract_domain: { Args: { url: string }; Returns: string }
       get_subscriber_feed: {
         Args: {
           p_cursor_id?: number
