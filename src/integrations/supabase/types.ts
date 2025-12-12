@@ -1533,6 +1533,7 @@ export type Database = {
           url_key: string
         }[]
       }
+      normalize_person_name: { Args: { name: string }; Returns: string }
       personalized_feed: {
         Args: { n?: number; uid: string }
         Returns: {
@@ -1571,6 +1572,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      unaccent: { Args: { "": string }; Returns: string }
       upsert_discovered_person: {
         Args: {
           p_article_id: number
