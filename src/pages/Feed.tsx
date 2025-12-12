@@ -192,17 +192,17 @@ export default function Feed() {
                     rel="noopener noreferrer"
                     className="block hover:opacity-80 transition-opacity"
                   >
-                    <div className="flex flex-col">
+                    <div className="flex flex-col md:flex-row">
                       {article.thumbnail_url && (
                         <img 
                           src={article.thumbnail_url} 
                           alt=""
-                          className="w-full h-48 md:h-56 object-cover"
+                          className="w-full h-48 md:w-48 md:h-32 lg:w-56 lg:h-36 object-cover md:flex-shrink-0"
                           loading="lazy"
                         />
                       )}
                       
-                      <div className="px-3 pt-1.5 pb-2">
+                      <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
