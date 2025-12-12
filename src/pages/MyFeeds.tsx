@@ -277,10 +277,13 @@ export default function MyFeeds() {
       </header>
 
       <div className="container mx-auto px-2 py-4 max-w-[95%]">
-        {/* Dashboard Button - Centered at top */}
+        {/* Navigation Buttons - Centered at top */}
         <div className="flex justify-center gap-2 mb-4">
           <Button size="sm" onClick={() => navigate("/")}>
             Dashboard
+          </Button>
+          <Button size="sm" onClick={() => navigate("/feed")}>
+            Sports Feed
           </Button>
           {toUnfollow.size > 0 && (
             <Button 
