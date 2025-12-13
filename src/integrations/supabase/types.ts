@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -1443,57 +1443,6 @@ export type Database = {
             columns: ["subscriber_id"]
             isOneToOne: false
             referencedRelation: "subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      v_endpoint_checks: {
-        Row: {
-          check_id: number | null
-          checked_at: string | null
-          display_name: string | null
-          domain: string | null
-          endpoint_id: number | null
-          endpoint_url: string | null
-          error_count: number | null
-          items_found: number | null
-          kind: string | null
-          notes: string | null
-          priority: number | null
-          status_code: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "endpoint_checks_endpoint_id_fkey"
-            columns: ["endpoint_id"]
-            isOneToOne: false
-            referencedRelation: "endpoints"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      v_endpoint_checks_latest: {
-        Row: {
-          check_id: number | null
-          checked_at: string | null
-          display_name: string | null
-          domain: string | null
-          endpoint_id: number | null
-          endpoint_url: string | null
-          error_count: number | null
-          items_found: number | null
-          kind: string | null
-          notes: string | null
-          priority: number | null
-          rn: number | null
-          status_code: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "endpoint_checks_endpoint_id_fkey"
-            columns: ["endpoint_id"]
-            isOneToOne: false
-            referencedRelation: "endpoints"
             referencedColumns: ["id"]
           },
         ]
