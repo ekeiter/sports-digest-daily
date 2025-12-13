@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
@@ -195,17 +194,14 @@ export default function Feed() {
                   >
                     <div className="flex flex-col md:flex-row">
                       {article.thumbnail_url && (
-                        <AspectRatio
-                          ratio={16 / 9}
-                          className="w-full md:w-72 lg:w-72 md:flex-shrink-0"
-                        >
-                          <img
-                            src={article.thumbnail_url}
+                        <div className="w-full md:w-64 md:flex-shrink-0">
+                          <img 
+                            src={article.thumbnail_url} 
                             alt=""
-                            className="w-full h-full object-cover"
+                            className="w-full aspect-video object-cover"
                             loading="lazy"
                           />
-                        </AspectRatio>
+                        </div>
                       )}
                       
                       <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
