@@ -146,7 +146,7 @@ export default function Feed() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b sticky top-0 bg-background z-10">
-        <div className="container mx-auto px-3 py-2">
+        <div className="container mx-auto px-3 py-2 max-w-3xl">
           <div className="flex flex-col gap-2">
             <h1 className="text-lg font-bold text-center">
               SportsDig Feed{isFocusMode ? " - Focused" : ""}
@@ -168,7 +168,7 @@ export default function Feed() {
         </div>
       </header>
 
-      <main className="container mx-auto px-2 py-2">
+      <main className="container mx-auto px-2 py-2 max-w-3xl">
         {articles.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
