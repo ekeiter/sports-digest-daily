@@ -197,7 +197,7 @@ export default function Feed() {
                         <img 
                           src={article.thumbnail_url} 
                           alt=""
-                          className="w-full h-48 md:w-56 md:h-40 lg:w-72 lg:h-48 object-cover md:flex-shrink-0"
+                          className="w-full h-48 md:w-56 md:h-40 object-cover md:flex-shrink-0"
                           loading="lazy"
                         />
                       )}
