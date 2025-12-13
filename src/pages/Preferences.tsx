@@ -346,8 +346,7 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-0 sm:px-4 py-2">
-        <div className="max-w-5xl mx-auto">
+      <main className="container mx-auto px-0 sm:px-4 py-2 max-w-3xl">
           <Card className="border-0 shadow-none">
             <CardHeader className="pb-2 pt-0">
               <CardDescription className="text-foreground font-bold">
@@ -584,7 +583,6 @@ export default function Preferences() {
           <div className="text-xs text-muted-foreground text-center py-2">
             {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
           </div>
-        </div>
       </main>
     </div>
   );

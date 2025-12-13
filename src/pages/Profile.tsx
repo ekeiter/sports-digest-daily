@@ -70,7 +70,7 @@ export default function Profile() {
       </div>;
   }
   return <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-3xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>
           <CardDescription>
