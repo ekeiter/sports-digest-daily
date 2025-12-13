@@ -305,6 +305,7 @@ export type Database = {
           content_hash: string | null
           created_at: string
           domain: string
+          duplicate_of_id: number | null
           duration_seconds: number | null
           excerpt: string | null
           fetched_at: string | null
@@ -312,11 +313,15 @@ export type Database = {
           guid: string | null
           id: number
           ingest_run_id: string | null
+          is_duplicate: boolean | null
           language: string | null
           lead_image_url: string | null
           leagues: string[] | null
+          lede_hash: string | null
           media_type: Database["public"]["Enums"]["media_type"]
           media_url: string | null
+          normalized_author: string | null
+          normalized_title: string | null
           paywalled: boolean | null
           people: string[] | null
           platform: string | null
@@ -352,6 +357,7 @@ export type Database = {
           content_hash?: string | null
           created_at?: string
           domain: string
+          duplicate_of_id?: number | null
           duration_seconds?: number | null
           excerpt?: string | null
           fetched_at?: string | null
@@ -359,11 +365,15 @@ export type Database = {
           guid?: string | null
           id?: number
           ingest_run_id?: string | null
+          is_duplicate?: boolean | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
+          lede_hash?: string | null
           media_type?: Database["public"]["Enums"]["media_type"]
           media_url?: string | null
+          normalized_author?: string | null
+          normalized_title?: string | null
           paywalled?: boolean | null
           people?: string[] | null
           platform?: string | null
@@ -399,6 +409,7 @@ export type Database = {
           content_hash?: string | null
           created_at?: string
           domain?: string
+          duplicate_of_id?: number | null
           duration_seconds?: number | null
           excerpt?: string | null
           fetched_at?: string | null
@@ -406,11 +417,15 @@ export type Database = {
           guid?: string | null
           id?: number
           ingest_run_id?: string | null
+          is_duplicate?: boolean | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
+          lede_hash?: string | null
           media_type?: Database["public"]["Enums"]["media_type"]
           media_url?: string | null
+          normalized_author?: string | null
+          normalized_title?: string | null
           paywalled?: boolean | null
           people?: string[] | null
           platform?: string | null
@@ -433,6 +448,13 @@ export type Database = {
           word_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "articles_duplicate_of_id_fkey"
+            columns: ["duplicate_of_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "articles_ingest_run_id_fkey"
             columns: ["ingest_run_id"]
