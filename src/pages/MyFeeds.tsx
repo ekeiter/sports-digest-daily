@@ -276,7 +276,7 @@ export default function MyFeeds() {
         </div>
       </header>
 
-      <div className="container mx-auto px-2 py-4 max-w-[95%]">
+      <div className="container mx-auto px-2 py-4 max-w-3xl">
         {/* Navigation Buttons - Centered at top */}
         <div className="flex justify-center gap-2 mb-4">
           <Button size="sm" onClick={() => navigate("/")}>

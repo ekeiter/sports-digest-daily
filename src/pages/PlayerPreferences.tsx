@@ -236,7 +236,7 @@ export default function PlayerPreferences() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
+      <div className="container mx-auto px-4 py-4 max-w-3xl">
         <div className="space-y-4">
 
           {/* Search Section */}
