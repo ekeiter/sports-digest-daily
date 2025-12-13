@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import sportsdigLogo from "@/assets/sportsdig-logo.jpg";
 
 type FeedRow = {
   article_id: number;
@@ -193,16 +194,14 @@ export default function Feed() {
                     className="block hover:opacity-80 transition-opacity"
                   >
                     <div className="flex flex-col md:flex-row">
-                      {article.thumbnail_url && (
-                        <div className="w-full md:w-64 md:flex-shrink-0">
-                          <img 
-                            src={article.thumbnail_url} 
-                            alt=""
-                            className="w-full aspect-video object-cover"
-                            loading="lazy"
-                          />
-                        </div>
-                      )}
+                      <div className="w-full md:w-64 md:flex-shrink-0">
+                        <img 
+                          src={article.thumbnail_url || sportsdigLogo} 
+                          alt=""
+                          className="w-full aspect-video object-cover"
+                          loading="lazy"
+                        />
+                      </div>
                       
                       <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
