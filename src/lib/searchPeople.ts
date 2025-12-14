@@ -67,7 +67,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const filteredPeople = (people as any[]).filter(person => {
     const normalizedName = person.normalized_name?.toLowerCase() || "";
     return words.every(word => normalizedName.includes(word));
-  }).slice(0, 20);
+  }).slice(0, 50);
 
   if (filteredPeople.length === 0) {
     return [];
