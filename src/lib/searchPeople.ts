@@ -36,16 +36,23 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     return [];
   }
 
-  const pattern = `%${term}%`;
-  const normalizedPattern = `%${term.toLowerCase()}%`;
+  // Split search into words for fuzzy matching (e.g., "brooke hen" matches "brooke m henderson")
+  const words = term.toLowerCase().split(/\s+/).filter(w => w.length >= 2);
+  
+  if (words.length === 0) {
+    return [];
+  }
+
+  // Use first word for initial DB query, then filter client-side for all words
+  const firstWordPattern = `%${words[0]}%`;
 
   const { data: people, error: peopleError } = await supabase
     .from("people")
     .select("id, name, normalized_name, role, position, team_id, league_id, sport_id")
     .eq("is_active", true)
-    .or(`name.ilike.${pattern},normalized_name.ilike.${normalizedPattern}`)
+    .ilike("normalized_name", firstWordPattern)
     .order("name")
-    .limit(20);
+    .limit(100);
 
   if (peopleError) {
     console.error("Error searching people:", peopleError);
@@ -56,9 +63,19 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     return [];
   }
 
-  const teamIds = [...new Set(people.map((p: any) => p.team_id).filter(Boolean))] as number[];
-  const leagueIds = [...new Set(people.map((p: any) => p.league_id).filter(Boolean))] as number[];
-  const sportIds = [...new Set(people.map((p: any) => p.sport_id).filter(Boolean))] as number[];
+  // Filter to only include results where ALL words appear in normalized_name
+  const filteredPeople = (people as any[]).filter(person => {
+    const normalizedName = person.normalized_name?.toLowerCase() || "";
+    return words.every(word => normalizedName.includes(word));
+  }).slice(0, 20);
+
+  if (filteredPeople.length === 0) {
+    return [];
+  }
+
+  const teamIds = [...new Set(filteredPeople.map((p: any) => p.team_id).filter(Boolean))] as number[];
+  const leagueIds = [...new Set(filteredPeople.map((p: any) => p.league_id).filter(Boolean))] as number[];
+  const sportIds = [...new Set(filteredPeople.map((p: any) => p.sport_id).filter(Boolean))] as number[];
 
   const [teamsResult, leaguesResult, sportsResult] = await Promise.all([
     teamIds.length > 0
@@ -89,7 +106,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const leaguesMap = new Map<number, any>((leaguesResult.data || []).map((l: any) => [l.id, l]));
   const sportsMap = new Map<number, any>((sportsResult.data || []).map((s: any) => [s.id, s]));
 
-  return (people as any[]).map((person) => ({
+  return filteredPeople.map((person) => ({
     ...person,
     teams: person.team_id ? teamsMap.get(person.team_id) || null : null,
     leagues: person.league_id ? leaguesMap.get(person.league_id) || null : null,
