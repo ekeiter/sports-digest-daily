@@ -575,6 +575,7 @@ export type Database = {
           display_name: string | null
           domain: string
           endpoint_url: string
+          epgroup: string | null
           etag: string | null
           fix_pubdate_via_html: boolean | null
           id: number
@@ -597,6 +598,7 @@ export type Database = {
           display_name?: string | null
           domain: string
           endpoint_url: string
+          epgroup?: string | null
           etag?: string | null
           fix_pubdate_via_html?: boolean | null
           id?: number
@@ -619,6 +621,7 @@ export type Database = {
           display_name?: string | null
           domain?: string
           endpoint_url?: string
+          epgroup?: string | null
           etag?: string | null
           fix_pubdate_via_html?: boolean | null
           id?: number
