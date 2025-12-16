@@ -208,6 +208,8 @@ export default function Feed() {
                           <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
+                          <span>•</span>
+                          <span className="text-muted-foreground/60">{article.article_id}</span>
                         </div>
                         
                         <h3 className="font-semibold text-sm md:text-base line-clamp-3">
