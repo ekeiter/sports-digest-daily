@@ -32,6 +32,66 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_processor_runs: {
+        Row: {
+          ai_calls: number | null
+          ai_total_cost: number | null
+          ai_total_ms: number | null
+          articles_failed: number | null
+          articles_processed: number | null
+          articles_success: number | null
+          duration_seconds: number | null
+          finished_at: string | null
+          id: string
+          last_error: string | null
+          leagues_mapped: number | null
+          people_mapped: number | null
+          sports_mapped: number | null
+          started_at: string
+          status: string | null
+          teams_mapped: number | null
+          worker_id: string
+        }
+        Insert: {
+          ai_calls?: number | null
+          ai_total_cost?: number | null
+          ai_total_ms?: number | null
+          articles_failed?: number | null
+          articles_processed?: number | null
+          articles_success?: number | null
+          duration_seconds?: number | null
+          finished_at?: string | null
+          id?: string
+          last_error?: string | null
+          leagues_mapped?: number | null
+          people_mapped?: number | null
+          sports_mapped?: number | null
+          started_at?: string
+          status?: string | null
+          teams_mapped?: number | null
+          worker_id: string
+        }
+        Update: {
+          ai_calls?: number | null
+          ai_total_cost?: number | null
+          ai_total_ms?: number | null
+          articles_failed?: number | null
+          articles_processed?: number | null
+          articles_success?: number | null
+          duration_seconds?: number | null
+          finished_at?: string | null
+          id?: string
+          last_error?: string | null
+          leagues_mapped?: number | null
+          people_mapped?: number | null
+          sports_mapped?: number | null
+          started_at?: string
+          status?: string | null
+          teams_mapped?: number | null
+          worker_id?: string
+        }
+        Relationships: []
+      }
       article_league_map: {
         Row: {
           article_id: number
@@ -297,6 +357,7 @@ export type Database = {
           ai_leagues: string[] | null
           ai_model: string | null
           ai_people: string[] | null
+          ai_processed: boolean | null
           ai_sports: string[] | null
           ai_teams: string[] | null
           author: string | null
@@ -336,6 +397,7 @@ export type Database = {
           teams: string[] | null
           thumbnail_url: string | null
           title: string | null
+          unmatched_rss: string[] | null
           updated_at: string
           url: string
           url_domain: string
@@ -349,6 +411,7 @@ export type Database = {
           ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
+          ai_processed?: boolean | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
@@ -388,6 +451,7 @@ export type Database = {
           teams?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
+          unmatched_rss?: string[] | null
           updated_at?: string
           url: string
           url_domain: string
@@ -401,6 +465,7 @@ export type Database = {
           ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
+          ai_processed?: boolean | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
@@ -440,6 +505,7 @@ export type Database = {
           teams?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
+          unmatched_rss?: string[] | null
           updated_at?: string
           url?: string
           url_domain?: string
@@ -1465,6 +1531,69 @@ export type Database = {
           title: string
           url: string
         }[]
+      }
+      claim_articles_for_processing: {
+        Args: { p_batch_size?: number; p_worker_id?: string }
+        Returns: {
+          ai_extraction_cost: number | null
+          ai_extraction_ms: number | null
+          ai_leagues: string[] | null
+          ai_model: string | null
+          ai_people: string[] | null
+          ai_processed: boolean | null
+          ai_sports: string[] | null
+          ai_teams: string[] | null
+          author: string | null
+          canonical_url: string | null
+          content: string | null
+          content_hash: string | null
+          created_at: string
+          domain: string
+          duplicate_of_id: number | null
+          duration_seconds: number | null
+          excerpt: string | null
+          fetched_at: string | null
+          first_seen_at: string | null
+          guid: string | null
+          id: number
+          ingest_run_id: string | null
+          is_duplicate: boolean | null
+          language: string | null
+          lead_image_url: string | null
+          leagues: string[] | null
+          lede_hash: string | null
+          media_type: Database["public"]["Enums"]["media_type"]
+          media_url: string | null
+          normalized_author: string | null
+          normalized_title: string | null
+          paywalled: boolean | null
+          people: string[] | null
+          platform: string | null
+          published_at: string | null
+          published_extracted_from: string | null
+          published_fmt: string | null
+          published_is_suspect: boolean | null
+          rss_categories: Json | null
+          signals: Json | null
+          source_display_name: string | null
+          sports: string[] | null
+          teams: string[] | null
+          thumbnail_url: string | null
+          title: string | null
+          unmatched_rss: string[] | null
+          updated_at: string
+          url: string
+          url_domain: string
+          url_hash: string | null
+          url_key: string | null
+          word_count: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "articles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       clear_all_focus: { Args: never; Returns: undefined }
       ensure_my_subscriber: { Args: never; Returns: undefined }
