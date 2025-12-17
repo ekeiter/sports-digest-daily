@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import sportsdigLogo from "@/assets/sportsdig-logo.jpg";
+
+// Preload images in the background
+const preloadImages = (urls: string[]) => {
+  urls.forEach((url) => {
+    if (url) {
+      const img = new Image();
+      img.src = url;
+    }
+  });
+};
 
 type FeedRow = {
   article_id: number;
@@ -30,6 +40,23 @@ export default function Feed() {
   useEffect(() => {
     checkUser();
   }, []);
+
+  // Preload images after articles load
+  useEffect(() => {
+    if (articles.length > 0) {
+      // Preload all article images in batches after initial render
+      const imagesToPreload = articles
+        .map(a => a.thumbnail_url)
+        .filter((url): url is string => url !== null);
+      
+      // Preload in batches of 10 with slight delay between batches
+      const batchSize = 10;
+      for (let i = 0; i < imagesToPreload.length; i += batchSize) {
+        const batch = imagesToPreload.slice(i, i + batchSize);
+        setTimeout(() => preloadImages(batch), (i / batchSize) * 100);
+      }
+    }
+  }, [articles]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
