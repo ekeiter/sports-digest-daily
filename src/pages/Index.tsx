@@ -51,7 +51,7 @@ const Index = () => {
       </div>;
   }
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    return <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             My Sports Digest
@@ -77,7 +77,7 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">

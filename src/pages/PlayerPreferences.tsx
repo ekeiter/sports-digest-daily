@@ -224,7 +224,7 @@ export default function PlayerPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">

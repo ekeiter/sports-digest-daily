@@ -145,8 +145,8 @@ export default function Feed() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b sticky top-0 bg-background z-10">
+    <div className="min-h-screen">
+      <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="container mx-auto px-3 py-2 max-w-3xl">
           <div className="flex flex-col gap-2">
             <h1 className="text-lg font-bold text-center">
