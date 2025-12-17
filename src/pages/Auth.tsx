@@ -188,7 +188,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       {showForgotPassword ? (
         <Card className="w-full max-w-md mx-4">
           <CardHeader>

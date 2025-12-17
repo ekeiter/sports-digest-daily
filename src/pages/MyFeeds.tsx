@@ -268,7 +268,7 @@ export default function MyFeeds() {
   const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <header className="border-b">
         <div className="container mx-auto px-4 py-3 text-center">
           <h1 className="text-xl font-bold">SportsDig Current Feeds</h1>

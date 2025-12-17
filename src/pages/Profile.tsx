@@ -65,11 +65,11 @@ export default function Profile() {
   };
   const needsConfirm = user && !user.email_confirmed_at;
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-background">
+    return <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
       </div>;
   }
-  return <div className="min-h-screen flex items-center justify-center bg-background p-4">
+  return <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-3xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>

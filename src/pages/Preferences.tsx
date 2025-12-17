@@ -327,8 +327,8 @@ export default function Preferences() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b sticky top-0 bg-background z-10">
+    <div className="min-h-screen">
+      <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">Sports Feed Preferences</h1>
