@@ -108,7 +108,7 @@ export default function MyFeeds() {
           .select("*")
           .in("id", leagueIds);
         
-        if (leagues) setSelectedLeagues(leagues);
+        if (leagues) setSelectedLeagues(leagues.sort((a, b) => (a.code || a.name).localeCompare(b.code || b.name)));
       }
 
       // Fetch selected teams
@@ -125,7 +125,7 @@ export default function MyFeeds() {
           .select("*, leagues(code)")
           .in("id", teamIds);
         
-        if (teams) setSelectedTeams(teams as Team[]);
+        if (teams) setSelectedTeams((teams as Team[]).sort((a, b) => a.display_name.localeCompare(b.display_name)));
       }
 
       // Fetch selected sports
@@ -142,7 +142,7 @@ export default function MyFeeds() {
           .select("*")
           .in("id", sportIds);
         
-        if (sports) setSelectedSports(sports);
+        if (sports) setSelectedSports(sports.sort((a, b) => a.display_name.localeCompare(b.display_name)));
       }
 
       // Fetch selected people
@@ -179,7 +179,7 @@ export default function MyFeeds() {
           `)
           .in("id", personIds);
         
-        if (people) setSelectedPeople(people as Person[]);
+        if (people) setSelectedPeople((people as Person[]).sort((a, b) => a.name.localeCompare(b.name)));
       }
     } catch (error) {
       console.error("Error loading feeds:", error);
