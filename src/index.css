@@ -108,6 +108,10 @@ All colors MUST be HSL.
   body {
     @apply text-foreground;
     overscroll-behavior-y: none;
-    background-color: hsl(210 100% 95%);
+    background-image: url('/images/background2.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 }
