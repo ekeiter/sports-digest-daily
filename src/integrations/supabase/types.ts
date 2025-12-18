@@ -898,7 +898,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url: string | null
           name: string
-          sport: string
+          sport_id: number
           updated_at: string
         }
         Insert: {
@@ -913,7 +913,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
           name: string
-          sport: string
+          sport_id: number
           updated_at?: string
         }
         Update: {
@@ -928,16 +928,16 @@ export type Database = {
           kind?: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
           name?: string
-          sport?: string
+          sport_id?: number
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "leagues_sport_fkey"
-            columns: ["sport"]
+            foreignKeyName: "leagues_sport_id_fkey"
+            columns: ["sport_id"]
             isOneToOne: false
             referencedRelation: "sports"
-            referencedColumns: ["sport"]
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1261,6 +1261,7 @@ export type Database = {
           display_label: string | null
           display_name: string
           display_options: Json | null
+          extract_level: string | null
           icon_emoji: string | null
           id: number
           logo_url: string | null
@@ -1273,6 +1274,7 @@ export type Database = {
           display_label?: string | null
           display_name: string
           display_options?: Json | null
+          extract_level?: string | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null
@@ -1285,6 +1287,7 @@ export type Database = {
           display_label?: string | null
           display_name?: string
           display_options?: Json | null
+          extract_level?: string | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null

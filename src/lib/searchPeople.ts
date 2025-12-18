@@ -43,14 +43,15 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     return [];
   }
 
-  // Use first word for initial DB query, then filter client-side for all words
-  const firstWordPattern = `%${words[0]}%`;
+  // Build pattern that matches all words in sequence for better DB-level filtering
+  // e.g., "paul sk" becomes "%paul%sk%" to prioritize names where words appear in order
+  const combinedPattern = `%${words.join('%')}%`;
 
   const { data: people, error: peopleError } = await supabase
     .from("people")
     .select("id, name, normalized_name, role, position, team_id, league_id, sport_id")
     .eq("is_active", true)
-    .ilike("normalized_name", firstWordPattern)
+    .ilike("normalized_name", combinedPattern)
     .order("name")
     .limit(100);
 
