@@ -81,7 +81,7 @@ const Index = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigLogo} alt="SportsDig" className="h-16 md:h-20" />
+            <img src={sportsDigLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
         </div>
       </header>
