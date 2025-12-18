@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
-import sportsDigLogo from "@/assets/sportsdig-logo.jpg";
+import sportsDigLogo from "@/assets/sportsdig-logo.png";
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
