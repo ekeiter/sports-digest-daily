@@ -332,7 +332,7 @@ export default function Preferences() {
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${dashboardBg})` }}
     >
-      <header className="bg-transparent sticky top-0 z-10">
+      <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold text-black">Sports Feed Preferences</h1>
