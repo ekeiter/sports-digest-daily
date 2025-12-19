@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2, Search } from "lucide-react";
+import dashboardBg from "@/assets/dashboard-bg.png";
 
 type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
@@ -327,7 +328,10 @@ export default function Preferences() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div 
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${dashboardBg})` }}
+    >
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">

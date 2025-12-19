@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
+import dashboardBg from "@/assets/dashboard-bg.png";
 export default function PlayerPreferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -224,7 +225,7 @@ export default function PlayerPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <div className="min-h-screen">
+  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
