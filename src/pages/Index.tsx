@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import sportsDigLogo from "@/assets/sportsdig-logo.png";
+import dashboardBg from "@/assets/dashboard-bg.png";
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -77,8 +78,8 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen">
-      <header className="border-b">
+  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
+      <header className="border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <img src={sportsDigLogo} alt="SportsDig" className="h-12 md:h-16" />
