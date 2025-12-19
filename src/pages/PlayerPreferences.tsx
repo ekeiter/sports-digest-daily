@@ -296,7 +296,7 @@ export default function PlayerPreferences() {
           {/* Followed People Section */}
           <div className="bg-transparent border-none shadow-none">
             <div className="py-1">
-              <p className="text-black font-bold text-sm">Your Favorite Players ({followedPeople.length})</p>
+              <p className="text-black font-bold text-sm">Your Player and Coach Selections ({followedPeople.length})</p>
             </div>
             <div className="px-0">
               {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-1">
