@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import dashboardBg from "@/assets/dashboard-bg.png";
 
 type League = Database['public']['Tables']['leagues']['Row'];
@@ -32,10 +32,35 @@ export default function Preferences() {
   const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     checkUser();
   }, []);
+
+  // Click outside to close search dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Prevent body scroll when dropdown is open
+  useEffect(() => {
+    if (showSearchDropdown && teamSearchTerm) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showSearchDropdown, teamSearchTerm]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -358,31 +383,48 @@ export default function Preferences() {
               </p>
             </div>
             <div className="pt-2">
-              <div className="mb-4 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search all teams..."
-                  value={teamSearchTerm}
-                  onChange={(e) => {
-                    setTeamSearchTerm(e.target.value);
-                    if (e.target.value && !allTeamsLoaded) {
-                      loadAllTeams();
-                    }
-                  }}
-                  className="pl-9 bg-white"
-                />
+              <div className="mb-4 relative" ref={searchRef}>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Search all teams..."
+                      value={teamSearchTerm}
+                      onChange={(e) => {
+                        setTeamSearchTerm(e.target.value);
+                        setShowSearchDropdown(true);
+                        if (e.target.value && !allTeamsLoaded) {
+                          loadAllTeams();
+                        }
+                      }}
+                      onFocus={() => teamSearchTerm && setShowSearchDropdown(true)}
+                      className="pr-8 bg-white"
+                    />
+                    {teamSearchTerm && (
+                      <button
+                        type="button"
+                        onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  <Button disabled={loadingAllTeams}>
+                    {loadingAllTeams ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  </Button>
+                </div>
               </div>
 
-              {teamSearchTerm && (
-                <div className="mb-4">
-                  <h3 className="font-semibold text-sm text-muted-foreground mb-2">Search Results</h3>
+              {showSearchDropdown && teamSearchTerm && (
+                <div className="absolute z-10 w-full mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                  <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
                   {loadingAllTeams ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-5 w-5 animate-spin" />
                     </div>
                   ) : (
-                    <div className="space-y-1 max-h-96 overflow-y-auto">
+                    <>
                       {getFilteredTeams().map(team => {
                         const isSelected = selectedTeams.includes(team.id);
                         const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
@@ -391,11 +433,13 @@ export default function Preferences() {
                         return (
                           <div 
                             key={team.id} 
-                            onClick={() => handleTeamToggle(team.id)}
-                            className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition-colors border select-none ${
-                              isSelected 
-                                ? 'bg-primary/15 border-primary' 
-                                : 'bg-card hover:bg-accent/5 border-border'
+                            onClick={() => {
+                              handleTeamToggle(team.id);
+                              setShowSearchDropdown(false);
+                              setTeamSearchTerm("");
+                            }}
+                            className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                              isSelected ? 'opacity-50' : ''
                             }`}
                           >
                             {team.logo_url && (
@@ -422,7 +466,7 @@ export default function Preferences() {
                       {getFilteredTeams().length === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               )}
