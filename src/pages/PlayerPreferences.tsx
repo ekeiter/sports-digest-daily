@@ -226,10 +226,10 @@ export default function PlayerPreferences() {
       </div>;
   }
   return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
-      <header className="border-b">
+      <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-center">Player & Coach Preferences</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-center text-black">Player & Coach Preferences</h1>
             <Button variant="default" onClick={() => navigate("/")}>
               Dashboard
             </Button>
@@ -241,18 +241,18 @@ export default function PlayerPreferences() {
         <div className="space-y-4">
 
           {/* Search Section */}
-          <Card>
-            <CardHeader className="py-1">
-            <CardDescription className="flex items-center gap-2 text-foreground font-bold">
+          <div className="bg-transparent border-none shadow-none">
+            <div className="py-1">
+              <p className="flex items-center gap-2 text-black font-bold text-sm">
                 <Search className="h-4 w-4" />
                 Search Players & Coaches
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="py-2">
+              </p>
+            </div>
+            <div className="py-2">
               <div className="relative" ref={autocompleteRef}>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Input placeholder="Enter name" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)} className="pr-8" />
+                    <Input placeholder="Enter name" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} onFocus={() => searchResults.length > 0 && setShowAutocomplete(true)} className="pr-8 bg-card" />
                     {searchTerm && (
                       <button
                         type="button"
@@ -290,15 +290,15 @@ export default function PlayerPreferences() {
                 })}
                   </div>}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Followed People Section */}
-          <Card>
-            <CardHeader className="py-1">
-              <CardDescription className="text-foreground font-bold">Your Favorite Players ({followedPeople.length})</CardDescription>
-            </CardHeader>
-            <CardContent className="px-3">
+          <div className="bg-transparent border-none shadow-none">
+            <div className="py-1">
+              <p className="text-black font-bold text-sm">Your Favorite Players ({followedPeople.length})</p>
+            </div>
+            <div className="px-0">
               {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-1">
                   {followedPeople.map(person => <div key={person.id} className="px-2 py-1 border rounded-lg bg-card flex items-center justify-between gap-2">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -321,8 +321,8 @@ export default function PlayerPreferences() {
                       </Button>
                     </div>)}
                 </div>}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>;
