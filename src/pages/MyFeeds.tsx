@@ -273,10 +273,10 @@ export default function MyFeeds() {
       className="min-h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${dashboardBg})` }}
     >
-      <header className="border-b">
+      <header className="border-b border-white/20 bg-black/20 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 text-center">
-          <h1 className="text-xl font-bold">SportsDig Current Feeds</h1>
-          <p className="text-sm text-muted-foreground">(Select item to delete)</p>
+          <h1 className="text-xl font-bold text-white">SportsDig Current Feeds</h1>
+          <p className="text-sm text-white/70">(Select item to delete)</p>
         </div>
       </header>
 
@@ -309,9 +309,9 @@ export default function MyFeeds() {
 
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
-          <Card>
+          <Card className="bg-black/30 backdrop-blur-sm border-white/20">
             <CardHeader className="py-2 space-y-1">
-              <CardTitle className="text-base text-center">Sports / Leagues / Teams</CardTitle>
+              <CardTitle className="text-base text-center text-white">Sports / Leagues / Teams</CardTitle>
               <div className="flex justify-center">
                 <Button size="sm" onClick={() => navigate("/preferences")}>
                   Manage
@@ -320,11 +320,11 @@ export default function MyFeeds() {
             </CardHeader>
             <CardContent className="p-2 pt-0">
               {!hasSportsLeaguesTeams ? (
-                <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
+                <p className="text-white/70 text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2">
-                    <span className="text-sm text-foreground font-medium">Focus</span>
+                    <span className="text-sm text-white font-medium">Focus</span>
                   </div>
                   {/* Sports */}
                   {selectedSports.map((sport) => {
@@ -335,14 +335,14 @@ export default function MyFeeds() {
                       <div
                         key={key}
                         className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
+                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-black/40 border-white/20 hover:bg-black/50'
                         }`}
                         onClick={() => toggleUnfollow('sport', sport.id)}
                       >
                         {sport.logo_url && (
                           <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium flex-1">{sport.display_name}</span>
+                        <span className="text-sm font-medium flex-1 text-white">{sport.display_name}</span>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -364,14 +364,14 @@ export default function MyFeeds() {
                       <div
                         key={key}
                         className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
+                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-black/40 border-white/20 hover:bg-black/50'
                         }`}
                         onClick={() => toggleUnfollow('league', league.id)}
                       >
                         {league.logo_url && (
                           <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
+                        <span className="text-sm font-medium flex-1 text-white">{league.code || league.name}</span>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -393,17 +393,17 @@ export default function MyFeeds() {
                       <div
                         key={key}
                         className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
+                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-black/40 border-white/20 hover:bg-black/50'
                         }`}
                         onClick={() => toggleUnfollow('team', team.id)}
                       >
                         {team.logo_url && (
                           <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
                         )}
-                        <span className="text-sm font-medium flex-1">
+                        <span className="text-sm font-medium flex-1 text-white">
                           {team.display_name}
                           {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
-                            <span className="text-muted-foreground"> ({team.leagues.code})</span>
+                            <span className="text-white/70"> ({team.leagues.code})</span>
                           )}
                         </span>
                         <Button
@@ -423,9 +423,9 @@ export default function MyFeeds() {
           </Card>
 
           {/* People Section */}
-          <Card>
+          <Card className="bg-black/30 backdrop-blur-sm border-white/20">
             <CardHeader className="py-2 space-y-1">
-              <CardTitle className="text-base text-center">Players & Coaches</CardTitle>
+              <CardTitle className="text-base text-center text-white">Players & Coaches</CardTitle>
               <div className="flex justify-center">
                 <Button size="sm" onClick={() => navigate("/player-preferences")}>
                   Manage
@@ -434,11 +434,11 @@ export default function MyFeeds() {
             </CardHeader>
             <CardContent className="p-2 pt-0">
               {selectedPeople.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No players or coaches selected</p>
+                <p className="text-white/70 text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2">
-                    <span className="text-sm text-foreground font-medium">Focus</span>
+                    <span className="text-sm text-white font-medium">Focus</span>
                   </div>
                   {selectedPeople.map((person) => {
                     const key = `person-${person.id}`;
@@ -451,7 +451,7 @@ export default function MyFeeds() {
                       <div
                         key={key}
                         className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'
+                          isMarked ? 'bg-destructive/10 border-destructive' : 'bg-black/40 border-white/20 hover:bg-black/50'
                         }`}
                         onClick={() => toggleUnfollow('person', person.id)}
                       >
@@ -466,9 +466,9 @@ export default function MyFeeds() {
                           ) : null;
                         })()}
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm font-semibold">{person.name}</span>
+                          <span className="text-sm font-semibold text-white">{person.name}</span>
                           {context.length > 0 && (
-                            <span className="text-sm text-muted-foreground ml-1">({context.join(" • ")})</span>
+                            <span className="text-sm text-white/70 ml-1">({context.join(" • ")})</span>
                           )}
                         </div>
                         <Button
