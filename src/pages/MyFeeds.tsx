@@ -14,6 +14,7 @@ type Team = Database['public']['Tables']['teams']['Row'] & {
 type Sport = Database['public']['Tables']['sports']['Row'];
 
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
+const COUNTRY_TEAM_LEAGUES = ['World Cup', 'WBC'];
 
 interface Person {
   id: number;
@@ -398,7 +399,7 @@ export default function MyFeeds() {
                         )}
                         <span className="text-sm font-medium flex-1">
                           {team.display_name}
-                          {team.leagues?.code && COLLEGE_LEAGUES.includes(team.leagues.code) && (
+                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
                             <span className="text-muted-foreground"> ({team.leagues.code})</span>
                           )}
                         </span>
