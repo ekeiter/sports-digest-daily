@@ -329,7 +329,7 @@ export default function Preferences() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${dashboardBg})` }}
     >
       <header className="bg-transparent sticky top-0 z-10">
@@ -350,9 +350,9 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-0 sm:px-4 py-2 max-w-3xl">
+      <main className="container mx-auto px-4 py-2 max-w-3xl">
           <div className="bg-transparent border-none shadow-none">
-            <div className="pb-2 pt-0">
+            <div className="pb-2 pt-0 px-1">
               <p className="text-black font-bold text-sm">
                 Select your sport and teams by clicking on them directly
               </p>
@@ -370,7 +370,7 @@ export default function Preferences() {
                       loadAllTeams();
                     }
                   }}
-                  className="pl-9"
+                  className="pl-9 bg-white"
                 />
               </div>
 
