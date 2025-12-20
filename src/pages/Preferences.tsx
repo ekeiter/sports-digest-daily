@@ -379,7 +379,7 @@ export default function Preferences() {
           <div className="bg-transparent border-none shadow-none">
             <div className="pb-2 pt-0 px-1">
               <p className="text-black font-bold text-sm">
-                Select your sport and teams by clicking on them directly
+                Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
               </p>
             </div>
             <div className="pt-2">
@@ -628,9 +628,6 @@ export default function Preferences() {
             </div>
           </div>
 
-          <div className="text-xs text-muted-foreground text-center py-2">
-            {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
-          </div>
       </main>
     </div>
   );
