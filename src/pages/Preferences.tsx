@@ -489,10 +489,10 @@ export default function Preferences() {
                           {showDivider && <hr className="border-t border-black my-5" />}
                           <div 
                             onClick={() => handleSportToggle(sport.id)}
-                            className={`flex items-center gap-1.5 p-2 rounded-lg border cursor-pointer transition-colors select-none ${
+                            className={`flex items-center gap-1.5 p-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
                               isSelected 
                                 ? 'bg-primary/15 border-primary text-foreground' 
-                                : 'bg-card hover:bg-accent/5 border-border'
+                                : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
                             }`}
                           >
                             {sport.logo_url && (
@@ -522,10 +522,10 @@ export default function Preferences() {
                         <div key={`league-${league.id}`}>
                           {showDivider && <hr className="border-t border-black my-5" />}
                           <div 
-                            className={`flex items-center gap-1.5 p-2 rounded-lg border transition-colors select-none ${
+                            className={`flex items-center gap-1.5 p-1.5 rounded-lg border transition-colors select-none ${
                               isSelected 
                                 ? 'bg-primary/15 border-primary text-foreground' 
-                                : 'bg-card hover:bg-accent/5 border-border'
+                                : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
                             }`}
                           >
                             <div 
@@ -595,10 +595,10 @@ export default function Preferences() {
                                   <div 
                                     key={team.id} 
                                     onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer transition-colors border select-none ${
+                                    className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
                                       isSelected 
                                         ? 'bg-primary/15 border-primary' 
-                                        : 'bg-card hover:bg-accent/5 border-border'
+                                        : 'bg-card hover:bg-accent/5 border-muted-foreground/40'
                                     }`}
                                   >
                                     {team.logo_url && (
