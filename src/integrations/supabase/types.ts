@@ -1261,7 +1261,7 @@ export type Database = {
           display_label: string | null
           display_name: string
           display_options: Json | null
-          extract_level: string | null
+          extract_level: Database["public"]["Enums"]["extract_level"] | null
           icon_emoji: string | null
           id: number
           logo_url: string | null
@@ -1274,7 +1274,7 @@ export type Database = {
           display_label?: string | null
           display_name: string
           display_options?: Json | null
-          extract_level?: string | null
+          extract_level?: Database["public"]["Enums"]["extract_level"] | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null
@@ -1287,7 +1287,7 @@ export type Database = {
           display_label?: string | null
           display_name?: string
           display_options?: Json | null
-          extract_level?: string | null
+          extract_level?: Database["public"]["Enums"]["extract_level"] | null
           icon_emoji?: string | null
           id?: number
           logo_url?: string | null
@@ -1690,6 +1690,7 @@ export type Database = {
       url_host: { Args: { u: string }; Returns: string }
     }
     Enums: {
+      extract_level: "full" | "league_only" | "sport_only"
       interest_kind: "team" | "topic" | "person" | "sport" | "league"
       media_type: "article" | "video"
       rule_kind: "html" | "rss" | "both"
@@ -1822,6 +1823,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      extract_level: ["full", "league_only", "sport_only"],
       interest_kind: ["team", "topic", "person", "sport", "league"],
       media_type: ["article", "video"],
       rule_kind: ["html", "rss", "both"],

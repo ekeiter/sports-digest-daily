@@ -34,6 +34,7 @@ export default function Preferences() {
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const savedScrollPosition = useRef<number>(0);
 
   useEffect(() => {
     checkUser();
@@ -305,13 +306,22 @@ export default function Preferences() {
 
   const toggleLeagueExpansion = async (leagueId: number) => {
     const isCurrentlyExpanded = expandedLeagues.includes(leagueId);
-    setExpandedLeagues(isCurrentlyExpanded ? [] : [leagueId]);
-
+    
     if (!isCurrentlyExpanded) {
+      // Save scroll position before expanding
+      savedScrollPosition.current = window.scrollY;
+      setExpandedLeagues([leagueId]);
       await loadTeamsForLeague(leagueId);
+      // Scroll to top when opening teams
+      window.scrollTo(0, 0);
     } else {
-      // Clear expanded league team IDs when collapsing
+      // Collapse and restore scroll position
+      setExpandedLeagues([]);
       setExpandedLeagueTeamIds([]);
+      // Restore scroll position after state update
+      requestAnimationFrame(() => {
+        window.scrollTo(0, savedScrollPosition.current);
+      });
     }
   };
 
@@ -366,7 +376,13 @@ export default function Preferences() {
                 Dashboard
               </Button>
               {expandedLeagues.length > 0 && (
-                <Button className="w-auto" onClick={() => setExpandedLeagues([])}>
+                <Button className="w-auto" onClick={() => {
+                  setExpandedLeagues([]);
+                  setExpandedLeagueTeamIds([]);
+                  requestAnimationFrame(() => {
+                    window.scrollTo(0, savedScrollPosition.current);
+                  });
+                }}>
                   Close Teams
                 </Button>
               )}
