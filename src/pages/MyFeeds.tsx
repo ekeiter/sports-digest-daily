@@ -294,7 +294,7 @@ export default function MyFeeds() {
                 const key = `sport-${sport.id}`;
                 const isMarked = toUnfollow.has(key);
                 const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('sport', sport.id)}>
+                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('sport', sport.id)}>
                         {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">{sport.display_name}</span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'sport', sport.id)}>
@@ -308,7 +308,7 @@ export default function MyFeeds() {
                 const key = `league-${league.id}`;
                 const isMarked = toUnfollow.has(key);
                 const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('league', league.id)}>
+                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('league', league.id)}>
                         {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'league', league.id)}>
@@ -322,7 +322,7 @@ export default function MyFeeds() {
                 const key = `team-${team.id}`;
                 const isMarked = toUnfollow.has(key);
                 const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('team', team.id)}>
+                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('team', team.id)}>
                         {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">
                           {team.display_name}
@@ -359,7 +359,7 @@ export default function MyFeeds() {
                 const context = [];
                 if (person.teams?.display_name) context.push(person.teams.display_name);
                 if (person.leagues?.code) context.push(person.leagues.code);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive/10 border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('person', person.id)}>
+                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('person', person.id)}>
                         {(() => {
                     const logo = getPersonLogo(person);
                     return logo ? <img src={logo.url} alt={logo.alt} className="h-5 w-5 object-contain flex-shrink-0" /> : null;
