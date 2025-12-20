@@ -417,7 +417,7 @@ export default function Preferences() {
               </div>
 
               {showSearchDropdown && teamSearchTerm && (
-                <div className="absolute z-10 w-full mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
                   <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
                   {loadingAllTeams ? (
                     <div className="flex items-center justify-center py-4">
