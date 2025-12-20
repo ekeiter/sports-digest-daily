@@ -508,7 +508,7 @@ export default function Preferences() {
                             className={`flex items-center gap-1.5 p-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-600 text-white' 
-                                : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
+                                : 'bg-card border-muted-foreground/30'
                             }`}
                           >
                             {sport.logo_url && (
@@ -541,7 +541,7 @@ export default function Preferences() {
                             className={`flex items-center gap-1.5 p-1.5 rounded-lg border transition-colors select-none ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-600 text-white' 
-                                : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
+                                : 'bg-card border-muted-foreground/30'
                             }`}
                           >
                             <div 
@@ -614,7 +614,7 @@ export default function Preferences() {
                                     className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
                                       isSelected 
                                         ? 'bg-blue-500 border-blue-600 text-white' 
-                                        : 'bg-card hover:bg-accent/5 border-muted-foreground/40'
+                                        : 'bg-card border-muted-foreground/40'
                                     }`}
                                   >
                                     {team.logo_url && (
