@@ -507,7 +507,7 @@ export default function Preferences() {
                             onClick={() => handleSportToggle(sport.id)}
                             className={`flex items-center gap-1.5 p-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
                               isSelected 
-                                ? 'bg-primary/15 border-primary text-foreground' 
+                                ? 'bg-blue-500 border-blue-600 text-white' 
                                 : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
                             }`}
                           >
@@ -540,7 +540,7 @@ export default function Preferences() {
                           <div 
                             className={`flex items-center gap-1.5 p-1.5 rounded-lg border transition-colors select-none ${
                               isSelected 
-                                ? 'bg-primary/15 border-primary text-foreground' 
+                                ? 'bg-blue-500 border-blue-600 text-white' 
                                 : 'bg-card hover:bg-accent/5 border-muted-foreground/30'
                             }`}
                           >
@@ -613,7 +613,7 @@ export default function Preferences() {
                                     onClick={() => handleTeamToggle(team.id)}
                                     className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
                                       isSelected 
-                                        ? 'bg-primary/15 border-primary' 
+                                        ? 'bg-blue-500 border-blue-600 text-white' 
                                         : 'bg-card hover:bg-accent/5 border-muted-foreground/40'
                                     }`}
                                   >
