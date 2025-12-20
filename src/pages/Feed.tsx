@@ -183,6 +183,9 @@ export default function Feed() {
               <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
+              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/my-feeds")}>
+                Selections
+              </Button>
               <Button size="sm" className="h-7 px-3" onClick={handleRefresh} disabled={refreshing}>
                 {refreshing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
