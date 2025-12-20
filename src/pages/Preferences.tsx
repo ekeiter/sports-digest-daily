@@ -572,7 +572,7 @@ export default function Preferences() {
                                     toggleLeagueExpansion(league.id);
                                   });
                                 }} 
-                                className="shrink-0 transition-colors w-20 justify-center"
+                                className="shrink-0 transition-colors w-20 justify-center text-black"
                               >
                                 Teams
                                 {(() => {
