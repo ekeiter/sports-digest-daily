@@ -374,8 +374,11 @@ export default function Preferences() {
               <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- Sports/Teams Selector</span>
             </h1>
             <div className="flex gap-2">
-              <Button className="w-auto" onClick={() => navigate("/")}>
+              <Button className="min-w-[120px]" onClick={() => navigate("/")}>
                 Dashboard
+              </Button>
+              <Button className="min-w-[120px]" onClick={() => navigate("/my-feeds")}>
+                My Selections
               </Button>
               {expandedLeagues.length > 0 && (
                 <Button className="w-auto" onClick={() => {
