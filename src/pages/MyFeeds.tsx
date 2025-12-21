@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 import dashboardBg from "@/assets/dashboard-bg.png";
+import sportsDigLogo from "@/assets/sportsdig-logo.png";
 type League = Database['public']['Tables']['leagues']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'] & {
   leagues?: {
@@ -251,7 +252,10 @@ export default function MyFeeds() {
   }}>
       <header className="border-b">
         <div className="container mx-auto px-4 py-3 text-center">
-          <h1 className="text-xl font-bold">SportsDig Current Feeds</h1>
+          <h1 className="text-xl font-bold flex items-center justify-center gap-2">
+            <img src={sportsDigLogo} alt="SportsDig" className="h-8" />
+            <span>- Current Feed Selections</span>
+          </h1>
           <p className="text-sm text-primary">(Select items to delete, stars to focus)</p>
         </div>
       </header>
