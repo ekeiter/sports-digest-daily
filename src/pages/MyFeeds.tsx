@@ -252,9 +252,8 @@ export default function MyFeeds() {
   }}>
       <header className="border-b">
         <div className="container mx-auto px-4 py-3 text-center">
-          <h1 className="text-xl font-bold flex items-center justify-center gap-2">
-            <span className="font-racing text-2xl">SportsDig</span>
-            <span>- Current Feed Selections</span>
+          <h1 className="text-xl font-bold">
+            <span className="font-racing text-2xl">SportsDig</span> - My Feed Selections
           </h1>
           <p className="text-sm text-primary">(Select items to delete, stars to focus)</p>
         </div>
