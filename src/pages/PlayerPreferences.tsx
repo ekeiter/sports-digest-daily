@@ -229,7 +229,9 @@ export default function PlayerPreferences() {
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-center text-black">Player & Coach Preferences</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-center text-black">
+              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- Player/Coach Selector</span>
+            </h1>
             <Button variant="default" onClick={() => navigate("/")}>
               Dashboard
             </Button>
