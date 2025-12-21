@@ -10,6 +10,9 @@ export default {
 	],
 	prefix: "",
 	theme: {
+		fontFamily: {
+			'racing': ['"Racing Sans One"', 'cursive'],
+		},
 		container: {
 			center: true,
 			padding: '2rem',
