@@ -177,7 +177,7 @@ export default function Feed() {
         <div className="container mx-auto px-3 py-2 max-w-3xl">
           <div className="flex flex-col gap-2">
             <h1 className="text-lg font-bold text-center">
-              SportsDig Feed{isFocusMode ? " - Focused" : ""}
+              SportsDig Feed{isFocusMode ? <span className="text-red-500"> - Focused</span> : ""}
             </h1>
             <div className="flex gap-1.5 justify-center">
               <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
