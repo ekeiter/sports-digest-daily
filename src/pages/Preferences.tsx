@@ -370,7 +370,9 @@ export default function Preferences() {
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-black">Sports Feed Preferences</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-black">
+              <span className="font-racing">SportsDig</span> - Sports/Teams Selector
+            </h1>
             <div className="flex gap-2">
               <Button className="w-auto" onClick={() => navigate("/")}>
                 Dashboard
