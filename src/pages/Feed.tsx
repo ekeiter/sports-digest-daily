@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import sportsdigLogo from "@/assets/sportsdig-logo.jpg";
+import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -228,14 +228,18 @@ export default function Feed() {
                     rel="noopener noreferrer"
                     className="block hover:opacity-80 transition-opacity"
                   >
-                    <div className="flex flex-col md:flex-row">
+                      <div className="flex flex-col md:flex-row">
                       <div className="w-full md:w-64 md:flex-shrink-0">
-                        <img 
-                          src={article.thumbnail_url || sportsdigLogo} 
-                          alt=""
-                          className="w-full aspect-video object-cover"
-                          loading="lazy"
-                        />
+                        {article.thumbnail_url ? (
+                          <img 
+                            src={article.thumbnail_url} 
+                            alt=""
+                            className="w-full aspect-video object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <ArticlePlaceholder />
+                        )}
                       </div>
                       
                       <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
