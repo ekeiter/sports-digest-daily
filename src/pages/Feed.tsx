@@ -141,11 +141,16 @@ export default function Feed() {
     setRefreshing(false);
   };
 
-  const formatTimeAgo = (dateString: string) => {
+  const formatTimeAgo = (dateString: string, articleId?: number) => {
     try {
       const publishedDate = new Date(dateString);
       const now = new Date();
       const minutesAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+      
+      // Debug logging
+      if (articleId && (articleId === 515608 || articleId === 516772)) {
+        console.log(`Article ${articleId}: published_effective="${dateString}", parsed=${publishedDate.toISOString()}, minutesAgo=${minutesAgo}`);
+      }
       
       if (minutesAgo < 120) {
         return `${minutesAgo}m`;
@@ -237,7 +242,7 @@ export default function Feed() {
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
-                          <span>{formatTimeAgo(article.published_effective)}</span>
+                          <span>{formatTimeAgo(article.published_effective, article.article_id)}</span>
                           <span>•</span>
                           <span className="text-muted-foreground/60">{article.article_id}</span>
                         </div>
