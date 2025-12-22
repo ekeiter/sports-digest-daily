@@ -236,6 +236,7 @@ export default function Feed() {
                             alt=""
                             className="w-full aspect-video object-cover"
                             loading="lazy"
+                            referrerPolicy="no-referrer"
                           />
                         ) : (
                           <ArticlePlaceholder />
