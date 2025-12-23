@@ -16,7 +16,7 @@ type Team = Database['public']['Tables']['teams']['Row'] & {
 };
 type Sport = Database['public']['Tables']['sports']['Row'];
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
-const COUNTRY_TEAM_LEAGUES = ['World Cup', 'WBC'];
+const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
 const LEAGUE_CODE_DISPLAY: Record<string, string> = { 'World Baseball Classic': 'WBC' };
 interface Person {
   id: number;
