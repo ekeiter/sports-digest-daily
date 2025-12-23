@@ -13,9 +13,6 @@ type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 
-const COUNTRY_TEAM_LEAGUE_IDS = [60, 149]; // World Cup, WBC
-const COUNTRY_TEAM_LEAGUE_LABELS: Record<number, string> = { 60: 'World Cup', 149: 'WBC' };
-
 type DisplayItem = 
   | { type: 'league'; data: League }
   | { type: 'sport'; data: Sport };
@@ -637,9 +634,6 @@ export default function Preferences() {
                                     )}
                                     <span className="text-sm font-medium truncate flex-1 min-w-0">
                                       {team.display_name}
-                                      {COUNTRY_TEAM_LEAGUE_IDS.includes(leagueId) && (
-                                        <span className={isSelected ? 'text-white/70' : 'text-muted-foreground'}> ({COUNTRY_TEAM_LEAGUE_LABELS[leagueId]})</span>
-                                      )}
                                     </span>
                                   </div>
                                 );
