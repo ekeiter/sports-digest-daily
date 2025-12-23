@@ -17,6 +17,7 @@ type Team = Database['public']['Tables']['teams']['Row'] & {
 type Sport = Database['public']['Tables']['sports']['Row'];
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
 const COUNTRY_TEAM_LEAGUES = ['World Cup', 'WBC'];
+const LEAGUE_CODE_DISPLAY: Record<string, string> = { 'World Baseball Classic': 'WBC' };
 interface Person {
   id: number;
   name: string;
@@ -329,7 +330,7 @@ export default function MyFeeds() {
                         {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">
                           {team.display_name}
-                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && <span className="text-muted-foreground"> ({team.leagues.code})</span>}
+                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>}
                         </span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'team', team.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
