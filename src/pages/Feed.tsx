@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
+import FeedSkeleton from "@/components/FeedSkeleton";
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -169,11 +170,7 @@ export default function Feed() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <FeedSkeleton />;
   }
 
   return (

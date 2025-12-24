@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 import dashboardBg from "@/assets/dashboard-bg.png";
+import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 
 type League = Database['public']['Tables']['leagues']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'] & {
@@ -243,9 +244,7 @@ export default function MyFeeds() {
     }
   };
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>;
+    return <MyFeedsSkeleton />;
   }
   const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
   return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{
