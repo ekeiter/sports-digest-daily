@@ -1,45 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 import dashboardBg from "@/assets/dashboard-bg.png";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
+import { useUserPreferences, useInvalidateUserPreferences, Person } from "@/hooks/useUserPreferences";
 
-type League = Database['public']['Tables']['leagues']['Row'];
-type Team = Database['public']['Tables']['teams']['Row'] & {
-  leagues?: {
-    code: string;
-  } | null;
-};
-type Sport = Database['public']['Tables']['sports']['Row'];
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
 const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
 const LEAGUE_CODE_DISPLAY: Record<string, string> = { 'World Baseball Classic': 'WBC' };
-interface Person {
-  id: number;
-  name: string;
-  role: string;
-  position?: string;
-  teams?: {
-    display_name: string;
-    nickname: string;
-    logo_url: string | null;
-  } | null;
-  leagues?: {
-    code: string;
-    name: string;
-    logo_url: string | null;
-  } | null;
-  sports?: {
-    sport: string;
-    display_name: string;
-    logo_url: string | null;
-  } | null;
-}
+
 const getPersonLogo = (person: Person) => {
   if (person.teams?.logo_url) {
     return {
@@ -61,121 +34,40 @@ const getPersonLogo = (person: Person) => {
   }
   return null;
 };
+
 export default function MyFeeds() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [selectedLeagues, setSelectedLeagues] = useState<League[]>([]);
-  const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
-  const [selectedSports, setSelectedSports] = useState<Sport[]>([]);
-  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const [toUnfollow, setToUnfollow] = useState<Set<string>>(new Set());
-  const [focusedItems, setFocusedItems] = useState<Set<string>>(new Set());
+  const [localFocusedItems, setLocalFocusedItems] = useState<Set<string>>(new Set());
+  
+  // Local state for optimistic updates after deletion
+  const [deletedItems, setDeletedItems] = useState<Set<string>>(new Set());
+
+  const { data: preferences, isLoading, error } = useUserPreferences(userId);
+  const invalidatePreferences = useInvalidateUserPreferences();
+
+  // Sync focused items from query data
   useEffect(() => {
-    checkUserAndLoadFeeds();
+    if (preferences?.focusedItems) {
+      setLocalFocusedItems(new Set(preferences.focusedItems));
+    }
+  }, [preferences?.focusedItems]);
+
+  useEffect(() => {
+    checkUser();
   }, []);
-  const checkUserAndLoadFeeds = async () => {
-    const {
-      data: {
-        user
-      }
-    } = await supabase.auth.getUser();
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate("/auth");
       return;
     }
-    await loadFeeds(user.id);
+    setUserId(user.id);
   };
-  const loadFeeds = async (userId: string) => {
-    setLoading(true);
-    try {
-      // Fetch all interests with focus status
-      const {
-        data: allInterests
-      } = await supabase.from("subscriber_interests").select("kind, subject_id, is_focused").eq("subscriber_id", userId);
-      if (allInterests) {
-        const focused = new Set<string>();
-        allInterests.forEach(interest => {
-          if (interest.is_focused) {
-            focused.add(`${interest.kind}-${interest.subject_id}`);
-          }
-        });
-        setFocusedItems(focused);
-      }
 
-      // Fetch selected leagues
-      const {
-        data: leagueInterests
-      } = await supabase.from("subscriber_interests").select("subject_id").eq("subscriber_id", userId).eq("kind", "league");
-      if (leagueInterests && leagueInterests.length > 0) {
-        const leagueIds = leagueInterests.map(l => l.subject_id);
-        const {
-          data: leagues
-        } = await supabase.from("leagues").select("*").in("id", leagueIds);
-        if (leagues) setSelectedLeagues(leagues.sort((a, b) => (a.code || a.name).localeCompare(b.code || b.name)));
-      }
-
-      // Fetch selected teams
-      const {
-        data: teamInterests
-      } = await supabase.from("subscriber_interests").select("subject_id").eq("subscriber_id", userId).eq("kind", "team");
-      if (teamInterests && teamInterests.length > 0) {
-        const teamIds = teamInterests.map(t => t.subject_id);
-        const {
-          data: teams
-        } = await supabase.from("teams").select("*, leagues(code)").in("id", teamIds);
-        if (teams) setSelectedTeams((teams as Team[]).sort((a, b) => a.display_name.localeCompare(b.display_name)));
-      }
-
-      // Fetch selected sports
-      const {
-        data: sportInterests
-      } = await supabase.from("subscriber_interests").select("subject_id").eq("subscriber_id", userId).eq("kind", "sport");
-      if (sportInterests && sportInterests.length > 0) {
-        const sportIds = sportInterests.map(s => s.subject_id);
-        const {
-          data: sports
-        } = await supabase.from("sports").select("*").in("id", sportIds);
-        if (sports) setSelectedSports(sports.sort((a, b) => a.display_name.localeCompare(b.display_name)));
-      }
-
-      // Fetch selected people
-      const {
-        data: personInterests
-      } = await supabase.from("subscriber_interests").select("subject_id").eq("subscriber_id", userId).eq("kind", "person");
-      if (personInterests && personInterests.length > 0) {
-        const personIds = personInterests.map(p => p.subject_id);
-        const {
-          data: people
-        } = await supabase.from("people").select(`
-            id,
-            name,
-            role,
-            position,
-            teams (
-              display_name,
-              nickname,
-              logo_url
-            ),
-            leagues (
-              code,
-              name,
-              logo_url
-            ),
-            sports (
-              sport,
-              display_name,
-              logo_url
-            )
-          `).in("id", personIds);
-        if (people) setSelectedPeople((people as Person[]).sort((a, b) => a.name.localeCompare(b.name)));
-      }
-    } catch (error) {
-      console.error("Error loading feeds:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const toggleUnfollow = (kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
     const key = `${kind}-${id}`;
     const newSet = new Set(toUnfollow);
@@ -186,38 +78,36 @@ export default function MyFeeds() {
     }
     setToUnfollow(newSet);
   };
+
   const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
     e.stopPropagation();
     try {
-      const {
-        data: isFocused
-      } = await supabase.rpc('toggle_interest_focus', {
+      const { data: isFocused } = await supabase.rpc('toggle_interest_focus', {
         p_kind: kind,
         p_subject_id: id
       });
+      
       const key = `${kind}-${id}`;
-      const newFocused = new Set(focusedItems);
+      const newFocused = new Set(localFocusedItems);
       if (isFocused) {
         newFocused.add(key);
       } else {
         newFocused.delete(key);
       }
-      setFocusedItems(newFocused);
+      setLocalFocusedItems(newFocused);
       toast.success(isFocused ? "Added to focus" : "Removed from focus");
     } catch (error) {
       console.error("Error toggling focus:", error);
       toast.error("Failed to update focus");
     }
   };
+
   const handleDeleteSelections = async () => {
+    if (!userId) return;
     setSaving(true);
+    
     try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
-      if (!user) return;
+      // Delete all selected items
       for (const key of toUnfollow) {
         const [kind, idStr] = key.split('-');
         const subjectId = Number(idStr);
@@ -227,14 +117,13 @@ export default function MyFeeds() {
         });
       }
 
-      // Remove deleted items from state
-      setSelectedSports(prev => prev.filter(s => !toUnfollow.has(`sport-${s.id}`)));
-      setSelectedLeagues(prev => prev.filter(l => !toUnfollow.has(`league-${l.id}`)));
-      setSelectedTeams(prev => prev.filter(t => !toUnfollow.has(`team-${t.id}`)));
-      setSelectedPeople(prev => prev.filter(p => !toUnfollow.has(`person-${p.id}`)));
-
-      // Clear the unfollow set and hide button
+      // Track deleted items for optimistic UI update
+      setDeletedItems(prev => new Set([...prev, ...toUnfollow]));
       setToUnfollow(new Set());
+      
+      // Invalidate cache to refetch on next visit
+      invalidatePreferences(userId);
+      
       toast.success("Selections deleted");
     } catch (error) {
       console.error("Error deleting selections:", error);
@@ -243,13 +132,32 @@ export default function MyFeeds() {
       setSaving(false);
     }
   };
-  if (loading) {
+
+  if (isLoading || !userId) {
     return <MyFeedsSkeleton />;
   }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-destructive">Failed to load your preferences</p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter out deleted items for display
+  const selectedSports = (preferences?.sports || []).filter(s => !deletedItems.has(`sport-${s.id}`));
+  const selectedLeagues = (preferences?.leagues || []).filter(l => !deletedItems.has(`league-${l.id}`));
+  const selectedTeams = (preferences?.teams || []).filter(t => !deletedItems.has(`team-${t.id}`));
+  const selectedPeople = (preferences?.people || []).filter(p => !deletedItems.has(`person-${p.id}`));
+
   const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
-  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{
-    backgroundImage: `url(${dashboardBg})`
-  }}>
+
+  return (
+    <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
       <header className="border-b">
         <div className="container mx-auto px-4 py-3 text-center">
           <h1 className="text-xl font-bold">
@@ -268,12 +176,18 @@ export default function MyFeeds() {
           <Button size="sm" onClick={() => navigate("/feed")}>
             Sports Feed
           </Button>
-          {toUnfollow.size > 0 && <Button size="sm" onClick={handleDeleteSelections} disabled={saving}>
-              {saving ? <>
+          {toUnfollow.size > 0 && (
+            <Button size="sm" onClick={handleDeleteSelections} disabled={saving}>
+              {saving ? (
+                <>
                   <Loader2 className="h-4 w-4 animate-spin mr-1" />
                   Deleting...
-                </> : "Delete Selections"}
-            </Button>}
+                </>
+              ) : (
+                "Delete Selections"
+              )}
+            </Button>
+          )}
         </div>
 
         <div className="space-y-4">
@@ -288,55 +202,85 @@ export default function MyFeeds() {
               </div>
             </CardHeader>
             <CardContent className="p-2 pt-0">
-              {!hasSportsLeaguesTeams ? <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p> : <div className="flex flex-col gap-2">
+              {!hasSportsLeaguesTeams ? (
+                <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
+              ) : (
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2">
                     <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {/* Sports */}
                   {selectedSports.map(sport => {
-                const key = `sport-${sport.id}`;
-                const isMarked = toUnfollow.has(key);
-                const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('sport', sport.id)}>
+                    const key = `sport-${sport.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const isFocused = localFocusedItems.has(key);
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
+                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
+                        }`}
+                        onClick={() => toggleUnfollow('sport', sport.id)}
+                      >
                         {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">{sport.display_name}</span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'sport', sport.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
-                      </div>;
-              })}
+                      </div>
+                    );
+                  })}
                   
                   {/* Leagues */}
                   {selectedLeagues.map(league => {
-                const key = `league-${league.id}`;
-                const isMarked = toUnfollow.has(key);
-                const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('league', league.id)}>
+                    const key = `league-${league.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const isFocused = localFocusedItems.has(key);
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
+                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
+                        }`}
+                        onClick={() => toggleUnfollow('league', league.id)}
+                      >
                         {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'league', league.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
-                      </div>;
-              })}
+                      </div>
+                    );
+                  })}
                   
                   {/* Teams */}
                   {selectedTeams.map(team => {
-                const key = `team-${team.id}`;
-                const isMarked = toUnfollow.has(key);
-                const isFocused = focusedItems.has(key);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('team', team.id)}>
+                    const key = `team-${team.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const isFocused = localFocusedItems.has(key);
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
+                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
+                        }`}
+                        onClick={() => toggleUnfollow('team', team.id)}
+                      >
                         {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">
                           {team.display_name}
-                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>}
+                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
+                            <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>
+                          )}
                         </span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'team', team.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
-                      </div>;
-              })}
-                </div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -351,22 +295,32 @@ export default function MyFeeds() {
               </div>
             </CardHeader>
             <CardContent className="p-2 pt-0">
-              {selectedPeople.length === 0 ? <p className="text-muted-foreground text-sm">No players or coaches selected</p> : <div className="flex flex-col gap-2">
+              {selectedPeople.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No players or coaches selected</p>
+              ) : (
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-end px-2">
                     <span className="text-sm text-foreground font-medium">Focus</span>
                   </div>
                   {selectedPeople.map(person => {
-                const key = `person-${person.id}`;
-                const isMarked = toUnfollow.has(key);
-                const isFocused = focusedItems.has(key);
-                const context = [];
-                if (person.teams?.display_name) context.push(person.teams.display_name);
-                if (person.leagues?.code) context.push(person.leagues.code);
-                return <div key={key} className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'}`} onClick={() => toggleUnfollow('person', person.id)}>
+                    const key = `person-${person.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const isFocused = localFocusedItems.has(key);
+                    const context = [];
+                    if (person.teams?.display_name) context.push(person.teams.display_name);
+                    if (person.leagues?.code) context.push(person.leagues.code);
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
+                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
+                        }`}
+                        onClick={() => toggleUnfollow('person', person.id)}
+                      >
                         {(() => {
-                    const logo = getPersonLogo(person);
-                    return logo ? <img src={logo.url} alt={logo.alt} className="h-5 w-5 object-contain flex-shrink-0" /> : null;
-                  })()}
+                          const logo = getPersonLogo(person);
+                          return logo ? <img src={logo.url} alt={logo.alt} className="h-5 w-5 object-contain flex-shrink-0" /> : null;
+                        })()}
                         <div className="flex-1 min-w-0">
                           <span className="text-sm font-semibold">{person.name}</span>
                           {context.length > 0 && <span className="text-sm text-muted-foreground ml-1">({context.join(" • ")})</span>}
@@ -374,12 +328,15 @@ export default function MyFeeds() {
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0" onClick={e => toggleFocus(e, 'person', person.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
-                      </div>;
-              })}
-                </div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
