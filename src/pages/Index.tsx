@@ -5,11 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import sportsDigLogo from "@/assets/sportsdig-logo.png";
 import dashboardBg from "@/assets/dashboard-bg.png";
+import { usePrefetchUserPreferences } from "@/hooks/useUserPreferences";
+
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const prefetchPreferences = usePrefetchUserPreferences();
+
   useEffect(() => {
     // Set up auth state listener
     const {
@@ -20,6 +24,11 @@ const Index = () => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Prefetch user preferences when user logs in
+      if (session?.user) {
+        prefetchPreferences(session.user.id);
+      }
     });
 
     // Check for existing session
@@ -31,6 +40,11 @@ const Index = () => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Prefetch user preferences for existing session
+      if (session?.user) {
+        prefetchPreferences(session.user.id);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
