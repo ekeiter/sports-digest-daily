@@ -167,3 +167,12 @@ export function useInvalidateUserPreferences() {
     queryClient.invalidateQueries({ queryKey: ['userPreferences', userId] });
   };
 }
+
+// Fire-and-forget prefetch for the article feed
+export function prefetchArticleFeed(userId: string) {
+  // Don't await - this warms the DB cache in the background
+  supabase.rpc('get_subscriber_feed' as any, { 
+    p_subscriber_id: userId, 
+    p_limit: 50 
+  });
+}
