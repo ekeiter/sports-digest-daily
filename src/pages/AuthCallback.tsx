@@ -13,7 +13,6 @@ export default function AuthCallback() {
   const { toast } = useToast();
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -61,15 +60,6 @@ export default function AuthCallback() {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (newPassword !== confirmPassword) {
-      toast({
-        title: "Passwords Don't Match",
-        description: "Please make sure both passwords are identical.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     if (newPassword.length < 6) {
       toast({
@@ -145,17 +135,6 @@ export default function AuthCallback() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Resetting..." : "Reset Password"}
