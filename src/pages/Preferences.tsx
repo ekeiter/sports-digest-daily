@@ -192,16 +192,34 @@ export default function Preferences() {
     
     setLoadingAllTeams(true);
     try {
-      // Use range to fetch all rows (Supabase default limit is 1000)
-      const { data: teamsData, error: teamsError } = await supabase
-        .from("teams")
-        .select("*")
-        .order("display_name", { ascending: true })
-        .range(0, 5000);
-
-      if (teamsError) throw teamsError;
+      // Supabase has a 1000 row limit per request, so we need to paginate
+      const pageSize = 1000;
+      let allTeamsData: Team[] = [];
+      let page = 0;
+      let hasMore = true;
       
-      setTeams(teamsData || []);
+      while (hasMore) {
+        const from = page * pageSize;
+        const to = from + pageSize - 1;
+        
+        const { data: teamsData, error: teamsError } = await supabase
+          .from("teams")
+          .select("*")
+          .order("display_name", { ascending: true })
+          .range(from, to);
+
+        if (teamsError) throw teamsError;
+        
+        if (teamsData && teamsData.length > 0) {
+          allTeamsData = [...allTeamsData, ...teamsData];
+          hasMore = teamsData.length === pageSize;
+          page++;
+        } else {
+          hasMore = false;
+        }
+      }
+      
+      setTeams(allTeamsData);
       setAllTeamsLoaded(true);
     } catch (error) {
       console.error("Error loading all teams:", error);
