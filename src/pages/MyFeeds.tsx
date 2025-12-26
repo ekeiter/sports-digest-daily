@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import dashboardBg from "@/assets/dashboard-bg.png";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 import { useUserPreferences, useInvalidateUserPreferences, Person } from "@/hooks/useUserPreferences";
+import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
 const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
@@ -47,6 +48,7 @@ export default function MyFeeds() {
 
   const { data: preferences, isLoading, error } = useUserPreferences(userId);
   const invalidatePreferences = useInvalidateUserPreferences();
+  const invalidateFeed = useInvalidateArticleFeed();
 
   // Sync focused items from query data
   useEffect(() => {
@@ -95,6 +97,13 @@ export default function MyFeeds() {
         newFocused.delete(key);
       }
       setLocalFocusedItems(newFocused);
+      
+      // Invalidate caches so feed reflects the new focus state
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+      }
+      
       toast.success(isFocused ? "Added to focus" : "Removed from focus");
     } catch (error) {
       console.error("Error toggling focus:", error);
