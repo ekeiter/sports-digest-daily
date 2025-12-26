@@ -141,9 +141,11 @@ export default function Preferences() {
       setSelectedTeams(teamIds);
 
       // Load all team_league_map data to enable accurate counting
+      // Use range to fetch all rows (Supabase default limit is 1000)
       const { data: teamLeagueMappings } = await supabase
         .from("team_league_map")
-        .select("league_id, team_id");
+        .select("league_id, team_id")
+        .range(0, 5000);
       
       if (teamLeagueMappings) {
         const mapping: Record<number, number[]> = {};
