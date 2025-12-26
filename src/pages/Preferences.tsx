@@ -141,18 +141,28 @@ export default function Preferences() {
       setSelectedTeams(teamIds);
 
       // Load all team_league_map data to enable accurate counting
-      // Use range to fetch all rows (Supabase default limit is 1000)
-      const { data: teamLeagueMappings } = await supabase
-        .from("team_league_map")
-        .select("league_id, team_id")
-        .range(0, 5000);
-      
-      if (teamLeagueMappings) {
+      // NOTE: Supabase has a default limit of 1000 rows per request.
+      // We paginate to ensure we load *all* mappings, otherwise some leagues will show 0 teams.
+      const allMappings: Array<{ league_id: number; team_id: number }> = [];
+      const pageSize = 1000;
+      for (let from = 0; ; from += pageSize) {
+        const { data: page, error: pageError } = await supabase
+          .from("team_league_map")
+          .select("league_id, team_id")
+          .order("id", { ascending: true })
+          .range(from, from + pageSize - 1);
+
+        if (pageError) throw pageError;
+        if (!page || page.length === 0) break;
+
+        allMappings.push(...page);
+        if (page.length < pageSize) break;
+      }
+
+      if (allMappings.length > 0) {
         const mapping: Record<number, number[]> = {};
-        teamLeagueMappings.forEach(m => {
-          if (!mapping[m.league_id]) {
-            mapping[m.league_id] = [];
-          }
+        allMappings.forEach((m) => {
+          if (!mapping[m.league_id]) mapping[m.league_id] = [];
           mapping[m.league_id].push(m.team_id);
         });
         setLeagueTeamMap(mapping);
@@ -378,20 +388,17 @@ export default function Preferences() {
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
-    // Use the leagueTeamMap to count selected teams for this league
     const teamIdsForLeague = leagueTeamMap[leagueId] || [];
-    const count = teamIdsForLeague.filter(teamId => selectedTeams.includes(teamId)).length;
-    
+    const count = teamIdsForLeague.filter((teamId) => selectedTeams.includes(teamId)).length;
+
     // Debug logging to diagnose count issue
     console.log(`[DEBUG] getSelectedTeamCountForLeague(${leagueId}):`, {
-      teamIdsForLeague: teamIdsForLeague.slice(0, 5),
       totalTeamsInLeague: teamIdsForLeague.length,
       selectedTeams,
       count,
-      typeOfFirstTeamId: teamIdsForLeague[0] !== undefined ? typeof teamIdsForLeague[0] : 'n/a',
-      typeOfFirstSelectedTeam: selectedTeams[0] !== undefined ? typeof selectedTeams[0] : 'n/a'
+      selectedInLeague: selectedTeams.filter((id) => teamIdsForLeague.includes(id)),
     });
-    
+
     return count;
   };
 
