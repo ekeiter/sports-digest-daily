@@ -8,9 +8,13 @@ import { Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 import dashboardBg from "@/assets/dashboard-bg.png";
+import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+
 export default function PlayerPreferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<PersonSearchResult[]>([]);
@@ -18,6 +22,10 @@ export default function PlayerPreferences() {
   const [followedIds, setFollowedIds] = useState<Set<number>>(new Set());
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const autocompleteRef = useRef<HTMLDivElement>(null);
+  
+  const invalidatePreferences = useInvalidateUserPreferences();
+  const invalidateFeed = useInvalidateArticleFeed();
+  
   useEffect(() => {
     checkUserAndLoadData();
   }, []);
@@ -67,6 +75,7 @@ export default function PlayerPreferences() {
       navigate("/auth");
       return;
     }
+    setUserId(user.id);
     await Promise.all([loadFollowedPeople(user.id), supabase.rpc('ensure_my_subscriber')]);
     setLoading(false);
   };
@@ -169,6 +178,12 @@ export default function PlayerPreferences() {
     setSearchResults(prev => prev.filter(p => p.id !== person.id));
     setShowAutocomplete(false);
     setSearchTerm("");
+    
+    // Invalidate caches so other pages reflect the change
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
   };
   const handleUnfollow = async (personId: number) => {
     const {
@@ -191,6 +206,12 @@ export default function PlayerPreferences() {
       return newSet;
     });
     setFollowedPeople(prev => prev.filter(p => p.id !== personId));
+    
+    // Invalidate caches so other pages reflect the change
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
   };
   const getContextDisplay = (person: PersonSearchResult) => {
     const parts = [];
