@@ -44,7 +44,7 @@ export default function AuthCallback() {
           });
         }
         
-        navigate("/");
+        navigate("/splash");
       } catch (error: any) {
         console.error("Callback error:", error);
         toast({
@@ -93,7 +93,7 @@ export default function AuthCallback() {
         description: "Your password has been successfully reset.",
       });
       
-      navigate("/");
+      navigate("/splash");
     } catch (error: any) {
       console.error("Password reset error:", error);
       toast({
