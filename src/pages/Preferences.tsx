@@ -389,17 +389,7 @@ export default function Preferences() {
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
     const teamIdsForLeague = leagueTeamMap[leagueId] || [];
-    const count = teamIdsForLeague.filter((teamId) => selectedTeams.includes(teamId)).length;
-
-    // Debug logging to diagnose count issue
-    console.log(`[DEBUG] getSelectedTeamCountForLeague(${leagueId}):`, {
-      totalTeamsInLeague: teamIdsForLeague.length,
-      selectedTeams,
-      count,
-      selectedInLeague: selectedTeams.filter((id) => teamIdsForLeague.includes(id)),
-    });
-
-    return count;
+    return teamIdsForLeague.filter((teamId) => selectedTeams.includes(teamId)).length;
   };
 
   if (loading) {
