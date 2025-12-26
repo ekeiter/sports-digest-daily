@@ -182,10 +182,12 @@ export default function Preferences() {
     
     setLoadingAllTeams(true);
     try {
+      // Use range to fetch all rows (Supabase default limit is 1000)
       const { data: teamsData, error: teamsError } = await supabase
         .from("teams")
         .select("*")
-        .order("display_name", { ascending: true });
+        .order("display_name", { ascending: true })
+        .range(0, 5000);
 
       if (teamsError) throw teamsError;
       
@@ -378,7 +380,19 @@ export default function Preferences() {
   const getSelectedTeamCountForLeague = (leagueId: number) => {
     // Use the leagueTeamMap to count selected teams for this league
     const teamIdsForLeague = leagueTeamMap[leagueId] || [];
-    return teamIdsForLeague.filter(teamId => selectedTeams.includes(teamId)).length;
+    const count = teamIdsForLeague.filter(teamId => selectedTeams.includes(teamId)).length;
+    
+    // Debug logging to diagnose count issue
+    console.log(`[DEBUG] getSelectedTeamCountForLeague(${leagueId}):`, {
+      teamIdsForLeague: teamIdsForLeague.slice(0, 5),
+      totalTeamsInLeague: teamIdsForLeague.length,
+      selectedTeams,
+      count,
+      typeOfFirstTeamId: teamIdsForLeague[0] !== undefined ? typeof teamIdsForLeague[0] : 'n/a',
+      typeOfFirstSelectedTeam: selectedTeams[0] !== undefined ? typeof selectedTeams[0] : 'n/a'
+    });
+    
+    return count;
   };
 
   if (loading) {
