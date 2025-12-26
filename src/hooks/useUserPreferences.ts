@@ -143,6 +143,9 @@ export function useUserPreferences(userId: string | null) {
     queryKey: ['userPreferences', userId],
     queryFn: () => fetchUserPreferences(userId!),
     enabled: !!userId,
+    // Ensure MyFeeds reflects changes when navigating back without a full refresh
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
   });
