@@ -45,7 +45,7 @@ export default function Auth() {
         setUser(session?.user ?? null);
         
         if (session && event === 'SIGNED_IN') {
-          navigate('/');
+          navigate('/splash');
         }
       }
     );
@@ -55,7 +55,7 @@ export default function Auth() {
       setUser(session?.user ?? null);
       
       if (session) {
-        navigate('/');
+        navigate('/splash');
       }
     });
 
@@ -137,7 +137,7 @@ export default function Auth() {
         description: "Your email has been successfully verified.",
       });
       
-      navigate("/");
+      navigate("/splash");
     } catch (error: any) {
       console.error("OTP verification error:", error);
       toast({

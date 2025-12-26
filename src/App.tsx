@@ -12,6 +12,7 @@ import Feed from "./pages/Feed";
 import MyFeeds from "./pages/MyFeeds";
 import PlayerPreferences from "./pages/PlayerPreferences";
 import WhySportsDig from "./pages/WhySportsDig";
+import Splash from "./pages/Splash";
 import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
@@ -29,6 +30,7 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/my-feeds" element={<MyFeeds />} />
           <Route path="/player-preferences" element={<PlayerPreferences />} />
           <Route path="/why-sportsdig" element={<WhySportsDig />} />
+          <Route path="/splash" element={<Splash />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
