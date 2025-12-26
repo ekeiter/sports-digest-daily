@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2, Search, X } from "lucide-react";
 import dashboardBg from "@/assets/dashboard-bg.png";
+import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
 type League = Database['public']['Tables']['leagues']['Row'];
 type Sport = Database['public']['Tables']['sports']['Row'];
@@ -20,6 +22,7 @@ type DisplayItem =
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [displayItems, setDisplayItems] = useState<DisplayItem[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
@@ -35,6 +38,9 @@ export default function Preferences() {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const savedScrollPosition = useRef<number>(0);
+  
+  const invalidatePreferences = useInvalidateUserPreferences();
+  const invalidateFeed = useInvalidateArticleFeed();
 
   useEffect(() => {
     checkUser();
@@ -69,6 +75,7 @@ export default function Preferences() {
       navigate("/auth");
       return;
     }
+    setUserId(user.id);
 
     try {
       await supabase.rpc('ensure_my_subscriber');
@@ -247,6 +254,12 @@ export default function Preferences() {
         setSelectedSports(prev => prev.filter(id => id !== sportId));
         toast(`Unfollowed ${label}`);
       }
+      
+      // Invalidate caches so other pages reflect the change
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+      }
     } catch (error) {
       console.error("Error toggling sport:", error);
       toast.error("Could not update your preferences. Please try again.");
@@ -273,6 +286,12 @@ export default function Preferences() {
         setSelectedLeagues(prev => prev.filter(id => id !== leagueId));
         toast(`Unfollowed ${label}`);
       }
+      
+      // Invalidate caches so other pages reflect the change
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+      }
     } catch (error) {
       console.error("Error toggling league:", error);
       toast.error("Could not update your preferences. Please try again.");
@@ -297,6 +316,12 @@ export default function Preferences() {
       } else {
         setSelectedTeams(prev => prev.filter(id => id !== teamId));
         toast(`Unfollowed ${label}`);
+      }
+      
+      // Invalidate caches so other pages reflect the change
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
       }
     } catch (error) {
       console.error("Error toggling team:", error);
