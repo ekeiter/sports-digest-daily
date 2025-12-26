@@ -487,7 +487,16 @@ export default function Preferences() {
                       {getFilteredTeams().map(team => {
                         const isSelected = selectedTeams.includes(team.id);
                         const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
+                        const leagueCode = league?.type === 'league' ? league.data.code : '';
                         const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
+                        
+                        // Show league suffix for college teams and international teams (World Cup id=60, WBC id=149)
+                        const collegeLeagues = ['NCAAF', 'NCAAM', 'NCAAW'];
+                        const internationalLeagueIds = [60, 149];
+                        const showLeagueSuffix = collegeLeagues.includes(leagueCode) || internationalLeagueIds.includes(team.league_id);
+                        const displayName = showLeagueSuffix && leagueCode 
+                          ? `${team.display_name} (${leagueCode})`
+                          : team.display_name;
                         
                         return (
                           <div 
@@ -513,11 +522,13 @@ export default function Preferences() {
                             )}
                             <div className="flex flex-col flex-1 min-w-0">
                               <span className="text-sm font-medium truncate">
-                                {team.display_name}
+                                {displayName}
                               </span>
-                              <span className="text-xs text-muted-foreground truncate">
-                                {leagueName}
-                              </span>
+                              {!showLeagueSuffix && leagueName && (
+                                <span className="text-xs text-muted-foreground truncate">
+                                  {leagueName}
+                                </span>
+                              )}
                             </div>
                           </div>
                         );
