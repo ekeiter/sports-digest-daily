@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { Eye, EyeOff } from "lucide-react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+
 
 interface AuthFormData {
   email: string;
@@ -23,7 +23,7 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [otpCode, setOtpCode] = useState("");
+  
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [confirmationEmail, setConfirmationEmail] = useState("");
@@ -110,45 +110,6 @@ export default function Auth() {
     }
   };
 
-  const handleVerifyOTP = async () => {
-    if (otpCode.length !== 6) {
-      toast({
-        title: "Invalid Code",
-        description: "Please enter a 6-digit code.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email: confirmationEmail,
-        token: otpCode,
-        type: 'email'
-      });
-
-      if (error) throw error;
-
-      await supabase.rpc("ensure_my_subscriber");
-      
-      toast({
-        title: "Email Confirmed",
-        description: "Your email has been successfully verified.",
-      });
-      
-      navigate("/splash");
-    } catch (error: any) {
-      console.error("OTP verification error:", error);
-      toast({
-        title: "Verification Failed",
-        description: error.message || "Invalid or expired code.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,42 +190,15 @@ export default function Auth() {
           <CardHeader>
             <CardTitle>Check Your Email</CardTitle>
             <CardDescription>
-              We've sent you a confirmation email with a 6-digit code. Enter it below to verify your account.
+              We've sent you a confirmation email. Click the link in the email to verify your account, then come back here to sign in.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="otp">Verification Code</Label>
-              <div className="flex justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={otpCode}
-                  onChange={(value) => setOtpCode(value)}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-            </div>
             <Button
-              onClick={handleVerifyOTP}
-              className="w-full"
-              disabled={loading || otpCode.length !== 6}
-            >
-              {loading ? "Verifying..." : "Verify Email"}
-            </Button>
-            <Button
-              variant="ghost"
+              variant="default"
               onClick={() => {
                 setShowConfirmation(false);
                 setIsSignUp(false);
-                setOtpCode("");
               }}
               className="w-full"
             >
