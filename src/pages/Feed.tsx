@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import FeedSkeleton from "@/components/FeedSkeleton";
+import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -18,25 +18,20 @@ const preloadImages = (urls: string[]) => {
   });
 };
 
-type FeedRow = {
-  article_id: number;
-  title: string;
-  url: string;
-  thumbnail_url: string | null;
-  domain: string | null;
-  published_effective: string;
-  published_at: string | null;
-  updated_at: string | null;
-};
-
 export default function Feed() {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [articles, setArticles] = useState<FeedRow[]>([]);
+  const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
   const [isFocusMode, setIsFocusMode] = useState(false);
+
+  const { data: initialArticles, isLoading, refetch } = useArticleFeed(user?.id);
+  const invalidateFeed = useInvalidateArticleFeed();
+
+  // Combined articles: initial from React Query + any loaded via "Load More"
+  const articles = [...(initialArticles || []), ...extraArticles];
 
   useEffect(() => {
     checkUser();
@@ -45,12 +40,10 @@ export default function Feed() {
   // Preload images after articles load
   useEffect(() => {
     if (articles.length > 0) {
-      // Preload all article images in batches after initial render
       const imagesToPreload = articles
         .map(a => a.thumbnail_url)
         .filter((url): url is string => url !== null);
       
-      // Preload in batches of 10 with slight delay between batches
       const batchSize = 10;
       for (let i = 0; i < imagesToPreload.length; i += batchSize) {
         const batch = imagesToPreload.slice(i, i + batchSize);
@@ -66,6 +59,7 @@ export default function Feed() {
       return;
     }
     setUser(user);
+    setCheckingAuth(false);
     
     // Ensure subscriber record exists
     try {
@@ -76,8 +70,6 @@ export default function Feed() {
     
     // Check if focus mode is active
     await checkFocusMode(user.id);
-    
-    await fetchFeed();
   };
 
   const checkFocusMode = async (userId: string) => {
@@ -95,63 +87,53 @@ export default function Feed() {
     }
   };
 
-  const fetchFeed = async (cursor?: { time: string; id: number } | null) => {
-    try {
-      if (cursor) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
+  const fetchMoreArticles = async (cursor: { time: string; id: number }) => {
+    const args: any = { 
+      p_subscriber_id: user.id, 
+      p_limit: 100,
+      p_cursor_time: cursor.time,
+      p_cursor_id: cursor.id 
+    };
 
-      const uid = user?.id || (await supabase.auth.getUser()).data.user!.id;
+    const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
+    if (error) throw error;
 
-      const args: any = { p_subscriber_id: uid, p_limit: 100 };
-      if (cursor) {
-        args.p_cursor_time = cursor.time;
-        args.p_cursor_id = cursor.id;
-      }
-
-      const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
-      if (error) throw error;
-
-      const feedData = (data ?? []) as FeedRow[];
-      
-      if (cursor) {
-        setArticles(prev => [...prev, ...feedData]);
-      } else {
-        setArticles(feedData);
-      }
-    } catch (error) {
-      console.error("Error fetching feed:", error);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
+    return (data ?? []) as FeedRow[];
   };
 
   const loadMore = async () => {
     if (articles.length === 0) return;
     const last = articles[articles.length - 1];
-    await fetchFeed({ time: last.published_effective, id: last.article_id });
+    
+    setLoadingMore(true);
+    try {
+      const moreArticles = await fetchMoreArticles({ 
+        time: last.published_effective, 
+        id: last.article_id 
+      });
+      setExtraArticles(prev => [...prev, ...moreArticles]);
+    } catch (error) {
+      console.error("Error loading more:", error);
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    setArticles([]);
-    await fetchFeed();
+    setExtraArticles([]);
+    if (user) {
+      invalidateFeed(user.id);
+    }
+    await refetch();
     setRefreshing(false);
   };
 
-  const formatTimeAgo = (dateString: string, articleId?: number) => {
+  const formatTimeAgo = (dateString: string) => {
     try {
       const publishedDate = new Date(dateString);
       const now = new Date();
       const minutesAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
-      
-      // Debug logging
-      if (articleId && (articleId === 515608 || articleId === 516772)) {
-        console.log(`Article ${articleId}: published_effective="${dateString}", parsed=${publishedDate.toISOString()}, minutesAgo=${minutesAgo}`);
-      }
       
       if (minutesAgo < 120) {
         return `${minutesAgo}m`;
@@ -169,7 +151,7 @@ export default function Feed() {
     }
   };
 
-  if (loading) {
+  if (checkingAuth || isLoading) {
     return <FeedSkeleton />;
   }
 
@@ -244,7 +226,7 @@ export default function Feed() {
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.domain || 'Unknown source'}</span>
                           <span>•</span>
-                          <span>{formatTimeAgo(article.published_effective, article.article_id)}</span>
+                          <span>{formatTimeAgo(article.published_effective)}</span>
                           <span>•</span>
                           <span className="text-muted-foreground/60">{article.article_id}</span>
                         </div>

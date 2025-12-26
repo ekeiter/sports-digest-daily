@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import sportsDigLogo from "@/assets/sportsdig-logo.png";
 import dashboardBg from "@/assets/dashboard-bg.png";
-import { usePrefetchUserPreferences } from "@/hooks/useUserPreferences";
+import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
+import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -13,6 +14,14 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const prefetchPreferences = usePrefetchUserPreferences();
+  const prefetchFeed = usePrefetchArticleFeed();
+
+  // Prefetch both preferences and feed (fire-and-forget)
+  const warmCaches = useCallback((userId: string) => {
+    prefetchPreferences(userId);
+    prefetchFeed(userId);
+    prefetchArticleFeed(userId); // Also warm DB cache directly
+  }, [prefetchPreferences, prefetchFeed]);
 
   useEffect(() => {
     // Set up auth state listener
@@ -25,9 +34,9 @@ const Index = () => {
       setUser(session?.user ?? null);
       setLoading(false);
       
-      // Prefetch user preferences when user logs in
+      // Prefetch on login
       if (session?.user) {
-        prefetchPreferences(session.user.id);
+        warmCaches(session.user.id);
       }
     });
 
@@ -41,13 +50,27 @@ const Index = () => {
       setUser(session?.user ?? null);
       setLoading(false);
       
-      // Prefetch user preferences for existing session
+      // Prefetch for existing session
       if (session?.user) {
-        prefetchPreferences(session.user.id);
+        warmCaches(session.user.id);
       }
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [warmCaches]);
+
+  // Prefetch when tab becomes visible again (user returns to app)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && user) {
+        prefetchArticleFeed(user.id); // Warm DB cache
+        prefetchFeed(user.id); // Warm React Query cache
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user, prefetchFeed]);
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut({
