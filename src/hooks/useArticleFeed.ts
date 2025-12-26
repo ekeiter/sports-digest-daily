@@ -33,6 +33,8 @@ export function useArticleFeed(userId: string | null) {
     queryKey: ['articleFeed', userId],
     queryFn: () => fetchFeedPage(userId!),
     enabled: !!userId,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
     staleTime: 2 * 60 * 1000, // Consider fresh for 2 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
