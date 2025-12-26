@@ -473,73 +473,73 @@ export default function Preferences() {
                     {loadingAllTeams ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                   </Button>
                 </div>
-              </div>
 
-              {showSearchDropdown && teamSearchTerm && (
-                <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
-                  <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
-                  {loadingAllTeams ? (
-                    <div className="flex items-center justify-center py-4">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    </div>
-                  ) : (
-                    <>
-                      {getFilteredTeams().map(team => {
-                        const isSelected = selectedTeams.includes(team.id);
-                        const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
-                        const leagueCode = league?.type === 'league' ? league.data.code : '';
-                        const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
-                        
-                        // Show league suffix for college teams and international teams (World Cup id=60, WBC id=149)
-                        const collegeLeagues = ['NCAAF', 'NCAAM', 'NCAAW'];
-                        const internationalLeagueIds = [60, 149];
-                        const showLeagueSuffix = collegeLeagues.includes(leagueCode) || internationalLeagueIds.includes(team.league_id);
-                        const displayName = showLeagueSuffix && leagueCode 
-                          ? `${team.display_name} (${leagueCode})`
-                          : team.display_name;
-                        
-                        return (
-                          <div 
-                            key={team.id} 
-                            onClick={() => {
-                              handleTeamToggle(team.id);
-                              setShowSearchDropdown(false);
-                              setTeamSearchTerm("");
-                            }}
-                            className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                              isSelected ? 'opacity-50' : ''
-                            }`}
-                          >
-                            {team.logo_url && (
-                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                <img 
-                                  src={team.logo_url} 
-                                  alt={team.display_name} 
-                                  className="h-7 w-7 object-contain" 
-                                  onError={(e) => e.currentTarget.style.display = 'none'}
-                                />
-                              </div>
-                            )}
-                            <div className="flex flex-col flex-1 min-w-0">
-                              <span className="text-sm font-medium truncate">
-                                {displayName}
-                              </span>
-                              {!showLeagueSuffix && leagueName && (
-                                <span className="text-xs text-muted-foreground truncate">
-                                  {leagueName}
-                                </span>
+                {showSearchDropdown && teamSearchTerm && (
+                  <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                    <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
+                    {loadingAllTeams ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      </div>
+                    ) : (
+                      <>
+                        {getFilteredTeams().map(team => {
+                          const isSelected = selectedTeams.includes(team.id);
+                          const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
+                          const leagueCode = league?.type === 'league' ? league.data.code : '';
+                          const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
+                          
+                          // Show league suffix for college teams and international teams (World Cup id=60, WBC id=149)
+                          const collegeLeagues = ['NCAAF', 'NCAAM', 'NCAAW'];
+                          const internationalLeagueIds = [60, 149];
+                          const showLeagueSuffix = collegeLeagues.includes(leagueCode) || internationalLeagueIds.includes(team.league_id);
+                          const displayName = showLeagueSuffix && leagueCode 
+                            ? `${team.display_name} (${leagueCode})`
+                            : team.display_name;
+                          
+                          return (
+                            <div 
+                              key={team.id} 
+                              onClick={() => {
+                                handleTeamToggle(team.id);
+                                setShowSearchDropdown(false);
+                                setTeamSearchTerm("");
+                              }}
+                              className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                isSelected ? 'opacity-50' : ''
+                              }`}
+                            >
+                              {team.logo_url && (
+                                <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                  <img 
+                                    src={team.logo_url} 
+                                    alt={team.display_name} 
+                                    className="h-7 w-7 object-contain" 
+                                    onError={(e) => e.currentTarget.style.display = 'none'}
+                                  />
+                                </div>
                               )}
+                              <div className="flex flex-col flex-1 min-w-0">
+                                <span className="text-sm font-medium truncate">
+                                  {displayName}
+                                </span>
+                                {!showLeagueSuffix && leagueName && (
+                                  <span className="text-xs text-muted-foreground truncate">
+                                    {leagueName}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                      {getFilteredTeams().length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
+                          );
+                        })}
+                        {getFilteredTeams().length === 0 && (
+                          <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="flex">
                 {/* Left panel - Sports/Leagues */}
