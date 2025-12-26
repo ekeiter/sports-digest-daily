@@ -7,7 +7,6 @@ import sportsDigLogo from "@/assets/sportsdig-logo.png";
 import dashboardBg from "@/assets/dashboard-bg.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
-
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -22,7 +21,6 @@ const Index = () => {
     prefetchFeed(userId);
     prefetchArticleFeed(userId); // Also warm DB cache directly
   }, [prefetchPreferences, prefetchFeed]);
-
   useEffect(() => {
     // Set up auth state listener
     const {
@@ -33,7 +31,7 @@ const Index = () => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
+
       // Prefetch on login
       if (session?.user) {
         warmCaches(session.user.id);
@@ -49,7 +47,7 @@ const Index = () => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
+
       // Prefetch for existing session
       if (session?.user) {
         warmCaches(session.user.id);
@@ -66,11 +64,9 @@ const Index = () => {
         prefetchFeed(user.id); // Warm React Query cache
       }
     };
-    
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [user, prefetchFeed]);
-
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut({
@@ -115,7 +111,9 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
+  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{
+    backgroundImage: `url(${dashboardBg})`
+  }}>
       <header className="border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
@@ -127,10 +125,7 @@ const Index = () => {
       <main className="container mx-auto px-4 py-4 text-gray-950 max-w-3xl">
         <div className="text-center space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
-          <p className="text-base md:text-lg text-slate-950">
-            Welcome to SportsDig!
-Set up your preferences to start receiving personalized sports news.
-          </p>
+          <p className="text-base md:text-lg text-slate-950">Welcome to SportsDig! Set up your selection preferences to receive personalized sports news.</p>
           
           <div className="mt-8 flex flex-col gap-4 max-w-md mx-auto w-full">
             <Button className="w-full" size="lg" onClick={() => navigate("/feed")}>
