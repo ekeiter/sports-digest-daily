@@ -19,14 +19,11 @@ interface AuthFormData {
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [confirmationEmail, setConfirmationEmail] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -66,18 +63,36 @@ export default function Auth() {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
-          }
         });
 
         if (error) throw error;
 
-        setConfirmationEmail(data.email);
-        setShowConfirmation(true);
+        // If session exists, user is signed in immediately (email confirm disabled)
+        if (signUpData.session) {
+          await supabase.rpc("ensure_my_subscriber");
+          toast({
+            title: "Account Created",
+            description: "Welcome! Your account has been created.",
+          });
+          navigate('/splash');
+        } else {
+          // Fallback: auto sign-in after signup
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password,
+          });
+          
+          if (signInError) throw signInError;
+          
+          await supabase.rpc("ensure_my_subscriber");
+          toast({
+            title: "Account Created",
+            description: "Welcome! Your account has been created.",
+          });
+        }
         reset();
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -87,12 +102,7 @@ export default function Auth() {
 
         if (error) throw error;
 
-        const { data: { user } } = await supabase.auth.getUser();
-        const needsConfirm = !user?.email_confirmed_at;
-        
-        if (!needsConfirm) {
-          await supabase.rpc("ensure_my_subscriber");
-        }
+        await supabase.rpc("ensure_my_subscriber");
 
         toast({
           title: "Success",
@@ -183,27 +193,6 @@ export default function Auth() {
                 Back to Sign In
               </Button>
             </form>
-          </CardContent>
-        </Card>
-      ) : showConfirmation ? (
-        <Card className="w-full max-w-md mx-4">
-          <CardHeader>
-            <CardTitle>Check Your Email</CardTitle>
-            <CardDescription>
-              We've sent you a confirmation email. Click the link in the email to verify your account, then come back here to sign in.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              variant="default"
-              onClick={() => {
-                setShowConfirmation(false);
-                setIsSignUp(false);
-              }}
-              className="w-full"
-            >
-              Back to Sign In
-            </Button>
           </CardContent>
         </Card>
       ) : (
