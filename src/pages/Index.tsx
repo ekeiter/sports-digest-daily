@@ -78,15 +78,15 @@ const Index = () => {
     }
   };
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center bg-[#1a3a2a]">
         <div className="text-center">
-          <p className="text-lg">Loading...</p>
+          <p className="text-lg text-white">Loading...</p>
         </div>
       </div>;
   }
   if (!user) {
     return <div 
-      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat"
+      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat bg-[#1a3a2a]"
       style={{ backgroundImage: `url(${dashboardBg})` }}
     >
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
@@ -110,7 +110,7 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{
+  return <div className="min-h-screen bg-cover bg-center bg-no-repeat bg-[#1a3a2a]" style={{
     backgroundImage: `url(${dashboardBg})`
   }}>
       <header className="border-b border-white/20">
