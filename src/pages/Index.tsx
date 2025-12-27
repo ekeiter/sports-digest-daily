@@ -85,14 +85,16 @@ const Index = () => {
       </div>;
   }
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center px-4">
+    return <div 
+      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${dashboardBg})` }}
+    >
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            My Sports Digest
+          <h1 className="font-racing text-5xl md:text-7xl text-gray-950">
+            SportsDig
           </h1>
-          <p className="text-base md:text-xl text-muted-foreground">
-            Get personalized daily emails with sports articles from your favorite teams, players, and sports. 
-            Stay updated with AI-generated summaries of the latest news.
+          <p className="text-base md:text-xl text-gray-800">
+            Create your personalized sports news feed from your favorite sports, leagues, teams, and players/coaches.
           </p>
           
           <div className="pt-6 space-y-4">
@@ -104,9 +106,6 @@ const Index = () => {
                 Register
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Free for one topic • Monthly subscription for multiple teams
-            </p>
           </div>
         </div>
       </div>;
