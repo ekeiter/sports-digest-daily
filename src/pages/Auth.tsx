@@ -150,7 +150,8 @@ export default function Auth() {
     >
       {showConfirmation ? (
         <Card className="w-full max-w-md mx-4">
-          <CardHeader>
+          <CardHeader className="text-center">
+            <div className="font-racing text-4xl text-primary mb-2">SportsDig</div>
             <CardTitle>Check Your Email</CardTitle>
             <CardDescription>
               We've sent you a confirmation link. Click the link in the email to verify your account, then come back here to sign in.
