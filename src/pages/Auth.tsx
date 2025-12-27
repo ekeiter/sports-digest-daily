@@ -208,7 +208,7 @@ export default function Auth() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
               {isSignUp ? "Create an account" : (
-                <>Sign in to <span className="font-racing">SportsDig</span></>
+                <>Sign in to <span className="font-racing text-3xl">SportsDig</span></>
               )}
             </CardTitle>
             <CardDescription className="text-center">
