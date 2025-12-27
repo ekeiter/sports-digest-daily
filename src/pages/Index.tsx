@@ -102,7 +102,7 @@ const Index = () => {
               <Button className="w-full md:w-48" size="lg" onClick={() => navigate('/auth')}>
                 Sign In
               </Button>
-              <Button className="w-full md:w-48" size="lg" variant="outline" onClick={() => navigate('/auth')}>
+              <Button className="w-full md:w-48" size="lg" variant="outline" onClick={() => navigate('/auth?mode=signup')}>
                 Register
               </Button>
             </div>
