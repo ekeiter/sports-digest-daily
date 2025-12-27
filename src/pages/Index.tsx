@@ -99,10 +99,10 @@ const Index = () => {
           
           <div className="pt-6 space-y-4">
             <div className="flex flex-col md:flex-row gap-4 justify-center w-full">
-              <Button className="w-full md:w-auto" size="lg" onClick={() => navigate('/auth')}>
+              <Button className="w-full md:w-48" size="lg" onClick={() => navigate('/auth')}>
                 Sign In
               </Button>
-              <Button className="w-full md:w-auto" size="lg" variant="outline" onClick={() => navigate('/auth')}>
+              <Button className="w-full md:w-48" size="lg" variant="outline" onClick={() => navigate('/auth')}>
                 Register
               </Button>
             </div>
