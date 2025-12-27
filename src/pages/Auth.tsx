@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { Eye, EyeOff } from "lucide-react";
-
+import dashboardBg from '@/assets/dashboard-bg.png';
 
 interface AuthFormData {
   email: string;
@@ -143,7 +143,10 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-[#1a3a2a] bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${dashboardBg})` }}
+    >
       {showConfirmation ? (
         <Card className="w-full max-w-md mx-4">
           <CardHeader>
@@ -204,7 +207,9 @@ export default function Auth() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              {isSignUp ? "Create an account" : "Sign in to Sports Digest"}
+              {isSignUp ? "Create an account" : (
+                <>Sign in to <span className="font-racing">SportsDig</span></>
+              )}
             </CardTitle>
             <CardDescription className="text-center">
               {isSignUp 
@@ -216,7 +221,7 @@ export default function Auth() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-base">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -235,7 +240,7 @@ export default function Auth() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-base">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -296,7 +301,7 @@ export default function Auth() {
                   setIsSignUp(!isSignUp);
                   reset();
                 }}
-                className="text-sm"
+                className="text-base"
               >
                 {isSignUp 
                   ? "Already have an account? Sign in"
