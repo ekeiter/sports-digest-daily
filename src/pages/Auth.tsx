@@ -59,40 +59,24 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const onSubmit = async (data: AuthFormData) => {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { data: signUpData, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`
+          }
         });
 
         if (error) throw error;
 
-        // If session exists, user is signed in immediately (email confirm disabled)
-        if (signUpData.session) {
-          await supabase.rpc("ensure_my_subscriber");
-          toast({
-            title: "Account Created",
-            description: "Welcome! Your account has been created.",
-          });
-          navigate('/splash');
-        } else {
-          // Fallback: auto sign-in after signup
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password,
-          });
-          
-          if (signInError) throw signInError;
-          
-          await supabase.rpc("ensure_my_subscriber");
-          toast({
-            title: "Account Created",
-            description: "Welcome! Your account has been created.",
-          });
-        }
+        // Show confirmation message - user needs to check email
+        setShowConfirmation(true);
         reset();
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -160,7 +144,28 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      {showForgotPassword ? (
+      {showConfirmation ? (
+        <Card className="w-full max-w-md mx-4">
+          <CardHeader>
+            <CardTitle>Check Your Email</CardTitle>
+            <CardDescription>
+              We've sent you a confirmation link. Click the link in the email to verify your account, then come back here to sign in.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              variant="default"
+              onClick={() => {
+                setShowConfirmation(false);
+                setIsSignUp(false);
+              }}
+              className="w-full"
+            >
+              Back to Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      ) : showForgotPassword ? (
         <Card className="w-full max-w-md mx-4">
           <CardHeader>
             <CardTitle>Reset Password</CardTitle>
