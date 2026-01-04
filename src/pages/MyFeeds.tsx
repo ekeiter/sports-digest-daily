@@ -30,7 +30,7 @@ const getPersonLogo = (person: Person) => {
   if (person.sports?.logo_url) {
     return {
       url: person.sports.logo_url,
-      alt: person.sports.display_name || 'Sport'
+      alt: person.sports.sport || 'Sport'
     };
   }
   return null;
@@ -83,15 +83,22 @@ export default function MyFeeds() {
 
   const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
     e.stopPropagation();
+    const key = `${kind}-${id}`;
+    const isCurrentlyFocused = localFocusedItems.has(key);
+    
     try {
-      const { data: isFocused } = await supabase.rpc('toggle_interest_focus', {
-        p_kind: kind,
-        p_subject_id: id
-      });
+      // Update the is_focused column based on the kind
+      const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id';
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .update({ is_focused: !isCurrentlyFocused })
+        .eq("subscriber_id", userId)
+        .eq(columnName, id);
       
-      const key = `${kind}-${id}`;
+      if (error) throw error;
+      
       const newFocused = new Set(localFocusedItems);
-      if (isFocused) {
+      if (!isCurrentlyFocused) {
         newFocused.add(key);
       } else {
         newFocused.delete(key);
@@ -104,7 +111,7 @@ export default function MyFeeds() {
         invalidateFeed(userId);
       }
       
-      toast.success(isFocused ? "Added to focus" : "Removed from focus");
+      toast.success(!isCurrentlyFocused ? "Added to focus" : "Removed from focus");
     } catch (error) {
       console.error("Error toggling focus:", error);
       toast.error("Failed to update focus");
@@ -116,14 +123,17 @@ export default function MyFeeds() {
     setSaving(true);
     
     try {
-      // Delete all selected items
+      // Delete all selected items using direct delete with explicit FK columns
       for (const key of toUnfollow) {
         const [kind, idStr] = key.split('-');
         const subjectId = Number(idStr);
-        await supabase.rpc('toggle_subscriber_interest', {
-          p_kind: kind as 'sport' | 'league' | 'team' | 'person',
-          p_subject_id: subjectId
-        });
+        const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id';
+        
+        await supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq(columnName, subjectId);
       }
 
       // Track deleted items for optimistic UI update
@@ -232,7 +242,7 @@ export default function MyFeeds() {
                         onClick={() => toggleUnfollow('sport', sport.id)}
                       >
                         {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">{sport.display_name}</span>
+                        <span className="text-sm font-medium flex-1">{sport.display_label || sport.sport}</span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'sport', sport.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
