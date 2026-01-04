@@ -229,20 +229,40 @@ export default function Preferences() {
     }
   };
 
-  const loadTeamsForLeague = async (leagueId: number) => {
+  const loadTeamsForLeague = async (leagueId: number, teamType?: string | null) => {
     setLoadingTeams(prev => new Set(prev).add(leagueId));
 
     try {
-      // Use league_teams junction table to get teams for this league
-      const { data: mappings, error: teamsError } = await supabase
-        .from("league_teams")
-        .select("teams(*)")
-        .eq("league_id", leagueId);
+      let teamsData: any[] = [];
 
-      if (teamsError) throw teamsError;
-      
-      // Extract teams from the junction table results
-      const teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
+      if (teamType === 'country') {
+        // Use league_countries junction table for country-based leagues
+        const { data: mappings, error: countriesError } = await supabase
+          .from("league_countries")
+          .select("countries(*)")
+          .eq("league_id", leagueId);
+
+        if (countriesError) throw countriesError;
+        
+        // Map countries to team-like structure for display
+        teamsData = (mappings?.map(m => m.countries).filter(Boolean) || []).map(c => ({
+          id: c.id,
+          display_name: c.name,
+          nickname: c.code,
+          logo_url: c.logo_url,
+          isCountry: true, // Flag to differentiate in toggle handler
+        }));
+      } else {
+        // Use league_teams junction table for regular teams
+        const { data: mappings, error: teamsError } = await supabase
+          .from("league_teams")
+          .select("teams(*)")
+          .eq("league_id", leagueId);
+
+        if (teamsError) throw teamsError;
+        teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
+      }
+
       const teamIds = teamsData.map(t => t.id);
       
       // Store team IDs for this league
@@ -385,14 +405,14 @@ export default function Preferences() {
     }
   };
 
-  const toggleLeagueExpansion = async (leagueId: number) => {
+  const toggleLeagueExpansion = async (leagueId: number, teamType?: string | null) => {
     const isCurrentlyExpanded = expandedLeagues.includes(leagueId);
     
     if (!isCurrentlyExpanded) {
       // Save scroll position before expanding
       savedScrollPosition.current = window.scrollY;
       setExpandedLeagues([leagueId]);
-      await loadTeamsForLeague(leagueId);
+      await loadTeamsForLeague(leagueId, teamType);
       // Scroll to top when opening teams
       window.scrollTo(0, 0);
     } else {
@@ -670,10 +690,10 @@ export default function Preferences() {
                                 size="sm" 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  loadTeamsForLeague(league.id).then(() => {
-                                    toggleLeagueExpansion(league.id);
+                                  loadTeamsForLeague(league.id, league.team_type).then(() => {
+                                    toggleLeagueExpansion(league.id, league.team_type);
                                   });
-                                }} 
+                                }}
                                 className="shrink-0 transition-colors w-20 justify-center text-black"
                               >
                                 Teams
