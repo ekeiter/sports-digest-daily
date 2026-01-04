@@ -80,16 +80,24 @@ export default function PlayerPreferences() {
     setLoading(false);
   };
   const loadFollowedPeople = async (userId: string) => {
+    // Query subscriber_interests using explicit person_id column
     const {
       data: interests
-    } = await supabase.from("subscriber_interests").select("subject_id").eq("subscriber_id", userId).eq("kind", "person");
+    } = await supabase
+      .from("subscriber_interests")
+      .select("person_id")
+      .eq("subscriber_id", userId)
+      .not("person_id", "is", null);
+      
     if (!interests || interests.length === 0) {
       setFollowedPeople([]);
       setFollowedIds(new Set());
       return;
     }
-    const personIds = interests.map(i => i.subject_id);
+    
+    const personIds = interests.map(i => i.person_id as number);
     setFollowedIds(new Set(personIds));
+    
     const {
       data: people
     } = await supabase.from("people").select(`
@@ -115,11 +123,11 @@ export default function PlayerPreferences() {
         sports (
           id,
           sport,
-          display_name,
+          display_label,
           logo_url
         )
       `).in("id", personIds).eq("is_active", true);
-    if (people) setFollowedPeople(people as PersonSearchResult[]);
+    if (people) setFollowedPeople(people as unknown as PersonSearchResult[]);
   };
   const performSearch = async (isAutocomplete: boolean = false) => {
     const term = searchTerm.trim();
@@ -163,8 +171,7 @@ export default function PlayerPreferences() {
       error
     } = await supabase.from("subscriber_interests").insert({
       subscriber_id: user.id,
-      kind: "person",
-      subject_id: person.id,
+      person_id: person.id,
       notification_enabled: true,
       priority: 1
     });
@@ -194,7 +201,9 @@ export default function PlayerPreferences() {
     if (!user) return;
     const {
       error
-    } = await supabase.from("subscriber_interests").delete().eq("subscriber_id", user.id).eq("kind", "person").eq("subject_id", personId);
+    } = await supabase.from("subscriber_interests").delete()
+      .eq("subscriber_id", user.id)
+      .eq("person_id", personId);
     if (error) {
       toast.error("Failed to unfollow");
       return;
@@ -236,7 +245,7 @@ export default function PlayerPreferences() {
     if (person.sports?.logo_url) {
       return {
         url: person.sports.logo_url,
-        alt: person.sports.display_name || 'Sport'
+        alt: person.sports.display_label || person.sports.sport || 'Sport'
       };
     }
     return null;

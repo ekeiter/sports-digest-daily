@@ -41,17 +41,17 @@ export interface UserPreferences {
 }
 
 async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
-  // Single query to get all interests with focus status
+  // Single query to get all interests with focus status using explicit FK columns
   const { data: allInterests, error: interestsError } = await supabase
     .from("subscriber_interests")
-    .select("kind, subject_id, is_focused")
+    .select("sport_id, league_id, team_id, person_id, is_focused")
     .eq("subscriber_id", userId);
 
   if (interestsError) {
     throw interestsError;
   }
 
-  // Build focused items set and group by kind
+  // Build focused items set and group by type
   const focused = new Set<string>();
   const sportIds: number[] = [];
   const leagueIds: number[] = [];
@@ -59,23 +59,21 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const personIds: number[] = [];
 
   (allInterests || []).forEach(interest => {
-    if (interest.is_focused) {
-      focused.add(`${interest.kind}-${interest.subject_id}`);
+    if (interest.sport_id !== null) {
+      sportIds.push(interest.sport_id);
+      if (interest.is_focused) focused.add(`sport-${interest.sport_id}`);
     }
-    
-    switch (interest.kind) {
-      case 'sport':
-        sportIds.push(interest.subject_id);
-        break;
-      case 'league':
-        leagueIds.push(interest.subject_id);
-        break;
-      case 'team':
-        teamIds.push(interest.subject_id);
-        break;
-      case 'person':
-        personIds.push(interest.subject_id);
-        break;
+    if (interest.league_id !== null) {
+      leagueIds.push(interest.league_id);
+      if (interest.is_focused) focused.add(`league-${interest.league_id}`);
+    }
+    if (interest.team_id !== null) {
+      teamIds.push(interest.team_id);
+      if (interest.is_focused) focused.add(`team-${interest.team_id}`);
+    }
+    if (interest.person_id !== null) {
+      personIds.push(interest.person_id);
+      if (interest.is_focused) focused.add(`person-${interest.person_id}`);
     }
   });
 

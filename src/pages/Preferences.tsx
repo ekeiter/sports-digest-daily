@@ -124,17 +124,17 @@ export default function Preferences() {
 
       setDisplayItems(combined);
 
-      // Load user's current interests
+      // Load user's current interests using new explicit FK columns
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
-        .select("kind, subject_id")
+        .select("sport_id, league_id, team_id")
         .eq("subscriber_id", user.id);
 
       if (interestsError) throw interestsError;
 
-      const sportIds = interests?.filter(i => i.kind === 'sport').map(i => i.subject_id) || [];
-      const leagueIds = interests?.filter(i => i.kind === 'league').map(i => i.subject_id) || [];
-      const teamIds = interests?.filter(i => i.kind === 'team').map(i => i.subject_id) || [];
+      const sportIds = interests?.filter(i => i.sport_id !== null).map(i => i.sport_id as number) || [];
+      const leagueIds = interests?.filter(i => i.league_id !== null).map(i => i.league_id as number) || [];
+      const teamIds = interests?.filter(i => i.team_id !== null).map(i => i.team_id as number) || [];
 
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
@@ -269,22 +269,30 @@ export default function Preferences() {
   const handleSportToggle = async (sportId: number) => {
     const item = displayItems.find(i => i.type === 'sport' && i.data.id === sportId);
     const sport = item?.type === 'sport' ? item.data : null;
-    const label = sport?.display_label || sport?.display_name || 'sport';
+    const label = sport?.display_label || sport?.sport || 'sport';
+    const isCurrentlySelected = selectedSports.includes(sportId);
 
     try {
-      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
-        p_kind: 'sport',
-        p_subject_id: sportId
-      });
+      if (isCurrentlySelected) {
+        // Delete the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq("sport_id", sportId);
 
-      if (error) throw error;
-
-      if (isNowFollowed) {
-        setSelectedSports(prev => [...prev, sportId]);
-        toast.success(`Followed ${label}`);
-      } else {
+        if (error) throw error;
         setSelectedSports(prev => prev.filter(id => id !== sportId));
         toast(`Unfollowed ${label}`);
+      } else {
+        // Insert the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .insert({ subscriber_id: userId, sport_id: sportId });
+
+        if (error) throw error;
+        setSelectedSports(prev => [...prev, sportId]);
+        toast.success(`Followed ${label}`);
       }
       
       // Invalidate caches so other pages reflect the change
@@ -302,21 +310,29 @@ export default function Preferences() {
     const item = displayItems.find(i => i.type === 'league' && i.data.id === leagueId);
     const league = item?.type === 'league' ? item.data : null;
     const label = league?.display_label || league?.code || league?.name || 'league';
+    const isCurrentlySelected = selectedLeagues.includes(leagueId);
 
     try {
-      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
-        p_kind: 'league',
-        p_subject_id: leagueId
-      });
+      if (isCurrentlySelected) {
+        // Delete the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq("league_id", leagueId);
 
-      if (error) throw error;
-
-      if (isNowFollowed) {
-        setSelectedLeagues(prev => [...prev, leagueId]);
-        toast.success(`Followed ${label}`);
-      } else {
+        if (error) throw error;
         setSelectedLeagues(prev => prev.filter(id => id !== leagueId));
         toast(`Unfollowed ${label}`);
+      } else {
+        // Insert the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .insert({ subscriber_id: userId, league_id: leagueId });
+
+        if (error) throw error;
+        setSelectedLeagues(prev => [...prev, leagueId]);
+        toast.success(`Followed ${label}`);
       }
       
       // Invalidate caches so other pages reflect the change
@@ -333,21 +349,29 @@ export default function Preferences() {
   const handleTeamToggle = async (teamId: number) => {
     const team = teams.find(t => t.id === teamId);
     const label = team?.display_name || 'team';
+    const isCurrentlySelected = selectedTeams.includes(teamId);
 
     try {
-      const { data: isNowFollowed, error } = await supabase.rpc('toggle_subscriber_interest', {
-        p_kind: 'team',
-        p_subject_id: teamId
-      });
+      if (isCurrentlySelected) {
+        // Delete the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq("team_id", teamId);
 
-      if (error) throw error;
-
-      if (isNowFollowed) {
-        setSelectedTeams(prev => [...prev, teamId]);
-        toast.success(`Followed ${label}`);
-      } else {
+        if (error) throw error;
         setSelectedTeams(prev => prev.filter(id => id !== teamId));
         toast(`Unfollowed ${label}`);
+      } else {
+        // Insert the interest
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .insert({ subscriber_id: userId, team_id: teamId });
+
+        if (error) throw error;
+        setSelectedTeams(prev => [...prev, teamId]);
+        toast.success(`Followed ${label}`);
       }
       
       // Invalidate caches so other pages reflect the change
@@ -503,14 +527,20 @@ export default function Preferences() {
                       <>
                         {getFilteredTeams().map(team => {
                           const isSelected = selectedTeams.includes(team.id);
-                          const league = displayItems.find(i => i.type === 'league' && i.data.id === team.league_id);
+                          // Find the league for this team using the leagueTeamMap
+                          const teamLeagueId = Object.entries(leagueTeamMap).find(([_, teamIds]) => 
+                            teamIds.includes(team.id)
+                          )?.[0];
+                          const league = teamLeagueId 
+                            ? displayItems.find(i => i.type === 'league' && i.data.id === Number(teamLeagueId))
+                            : undefined;
                           const leagueCode = league?.type === 'league' ? league.data.code : '';
                           const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
                           
                           // Show league suffix for college teams and international teams (World Cup id=60, WBC id=149)
                           const collegeLeagues = ['NCAAF', 'NCAAM', 'NCAAW'];
                           const internationalLeagueIds = [60, 149];
-                          const showLeagueSuffix = collegeLeagues.includes(leagueCode) || internationalLeagueIds.includes(team.league_id);
+                          const showLeagueSuffix = collegeLeagues.includes(leagueCode) || (teamLeagueId && internationalLeagueIds.includes(Number(teamLeagueId)));
                           const displayName = showLeagueSuffix && leagueCode 
                             ? `${team.display_name} (${leagueCode})`
                             : team.display_name;
@@ -569,7 +599,7 @@ export default function Preferences() {
 
                     if (item.type === 'sport') {
                       const sport = item.data;
-                      const displayName = sport.display_label || sport.display_name;
+                      const displayName = sport.display_label || sport.sport;
                       const isSelected = selectedSports.includes(sport.id);
                       
                       return (

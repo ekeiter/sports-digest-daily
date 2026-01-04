@@ -24,7 +24,7 @@ export interface PersonSearchResult {
   sports?: {
     id: number;
     sport: string;
-    display_name: string;
+    display_label: string | null;
     logo_url: string | null;
   } | null;
 }
@@ -94,7 +94,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
     sportIds.length > 0
       ? supabase
           .from("sports")
-          .select("id, sport, display_name, logo_url")
+          .select("id, sport, display_label, logo_url")
           .in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
