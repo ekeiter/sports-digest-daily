@@ -627,7 +627,7 @@ export default function Preferences() {
                           {showDivider && <hr className="border-t border-black my-5" />}
                           <div 
                             onClick={() => handleSportToggle(sport.id)}
-                            className={`flex items-center gap-1.5 p-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
+                            className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-600 text-white' 
                                 : 'bg-card border-muted-foreground/30'
@@ -660,7 +660,7 @@ export default function Preferences() {
                         <div key={`league-${league.id}`}>
                           {showDivider && <hr className="border-t border-black my-5" />}
                           <div 
-                            className={`flex items-center gap-1.5 p-1.5 rounded-lg border transition-colors select-none ${
+                            className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-600 text-white' 
                                 : 'bg-card border-muted-foreground/30'
@@ -694,7 +694,7 @@ export default function Preferences() {
                                     toggleLeagueExpansion(league.id, league.team_type);
                                   });
                                 }}
-                                className="shrink-0 transition-colors w-20 justify-center text-black"
+                                className="shrink-0 transition-colors w-20 justify-center text-black h-7"
                               >
                                 Teams
                                 {(() => {
