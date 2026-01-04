@@ -14,24 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _team_updates: {
-        Row: {
-          api_id: string | null
-          display_name: string
-          logo_url: string | null
-        }
-        Insert: {
-          api_id?: string | null
-          display_name: string
-          logo_url?: string | null
-        }
-        Update: {
-          api_id?: string | null
-          display_name?: string
-          logo_url?: string | null
-        }
-        Relationships: []
-      }
       ai_processor_runs: {
         Row: {
           ai_calls: number | null
@@ -91,6 +73,42 @@ export type Database = {
           worker_id?: string
         }
         Relationships: []
+      }
+      article_country_map: {
+        Row: {
+          article_id: number
+          country_id: number
+          created_at: string | null
+          extraction_method: string | null
+        }
+        Insert: {
+          article_id: number
+          country_id: number
+          created_at?: string | null
+          extraction_method?: string | null
+        }
+        Update: {
+          article_id?: number
+          country_id?: number
+          created_at?: string | null
+          extraction_method?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_country_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_country_map_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       article_league_map: {
         Row: {
@@ -196,6 +214,42 @@ export type Database = {
             columns: ["person_id"]
             isOneToOne: false
             referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_school_map: {
+        Row: {
+          article_id: number
+          created_at: string | null
+          extraction_method: string | null
+          school_id: number
+        }
+        Insert: {
+          article_id: number
+          created_at?: string | null
+          extraction_method?: string | null
+          school_id: number
+        }
+        Update: {
+          article_id?: number
+          created_at?: string | null
+          extraction_method?: string | null
+          school_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_school_map_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_school_map_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
             referencedColumns: ["id"]
           },
         ]
@@ -352,12 +406,14 @@ export type Database = {
       }
       articles: {
         Row: {
+          ai_countries: string[] | null
           ai_extraction_cost: number | null
           ai_extraction_ms: number | null
           ai_leagues: string[] | null
           ai_model: string | null
           ai_people: string[] | null
           ai_processed: boolean | null
+          ai_schools: string[] | null
           ai_sports: string[] | null
           ai_teams: string[] | null
           author: string | null
@@ -375,6 +431,7 @@ export type Database = {
           id: number
           ingest_run_id: string | null
           is_duplicate: boolean | null
+          is_olympics: boolean | null
           language: string | null
           lead_image_url: string | null
           leagues: string[] | null
@@ -406,12 +463,14 @@ export type Database = {
           word_count: number | null
         }
         Insert: {
+          ai_countries?: string[] | null
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
           ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
           ai_processed?: boolean | null
+          ai_schools?: string[] | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
@@ -429,6 +488,7 @@ export type Database = {
           id?: number
           ingest_run_id?: string | null
           is_duplicate?: boolean | null
+          is_olympics?: boolean | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
@@ -460,12 +520,14 @@ export type Database = {
           word_count?: number | null
         }
         Update: {
+          ai_countries?: string[] | null
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
           ai_leagues?: string[] | null
           ai_model?: string | null
           ai_people?: string[] | null
           ai_processed?: boolean | null
+          ai_schools?: string[] | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
           author?: string | null
@@ -483,6 +545,7 @@ export type Database = {
           id?: number
           ingest_run_id?: string | null
           is_duplicate?: boolean | null
+          is_olympics?: boolean | null
           language?: string | null
           lead_image_url?: string | null
           leagues?: string[] | null
@@ -529,6 +592,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      countries: {
+        Row: {
+          app_order_id: number | null
+          code: string
+          created_at: string | null
+          id: number
+          is_summer_olympics: boolean | null
+          is_winter_olympics: boolean | null
+          iso2: string | null
+          logo_url: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          app_order_id?: number | null
+          code: string
+          created_at?: string | null
+          id?: number
+          is_summer_olympics?: boolean | null
+          is_winter_olympics?: boolean | null
+          iso2?: string | null
+          logo_url?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          app_order_id?: number | null
+          code?: string
+          created_at?: string | null
+          id?: number
+          is_summer_olympics?: boolean | null
+          is_winter_olympics?: boolean | null
+          iso2?: string | null
+          logo_url?: string | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       endpoint_checks: {
         Row: {
@@ -706,7 +808,7 @@ export type Database = {
             foreignKeyName: "fk_endpoints_league"
             columns: ["league"]
             isOneToOne: false
-            referencedRelation: "leagues"
+            referencedRelation: "leagues_old"
             referencedColumns: ["code"]
           },
         ]
@@ -885,7 +987,177 @@ export type Database = {
         }
         Relationships: []
       }
+      league_countries: {
+        Row: {
+          country_id: number
+          created_at: string | null
+          is_active: boolean | null
+          league_id: number
+        }
+        Insert: {
+          country_id: number
+          created_at?: string | null
+          is_active?: boolean | null
+          league_id: number
+        }
+        Update: {
+          country_id?: number
+          created_at?: string | null
+          is_active?: boolean | null
+          league_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_countries_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_countries_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      league_schools: {
+        Row: {
+          created_at: string | null
+          espn_id: string | null
+          is_active: boolean | null
+          league_id: number
+          school_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          espn_id?: string | null
+          is_active?: boolean | null
+          league_id: number
+          school_id: number
+        }
+        Update: {
+          created_at?: string | null
+          espn_id?: string | null
+          is_active?: boolean | null
+          league_id?: number
+          school_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_schools_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_schools_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      league_teams: {
+        Row: {
+          created_at: string | null
+          is_primary: boolean | null
+          league_id: number
+          team_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          is_primary?: boolean | null
+          league_id: number
+          team_id: number
+        }
+        Update: {
+          created_at?: string | null
+          is_primary?: boolean | null
+          league_id?: number
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_teams_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_teams_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leagues: {
+        Row: {
+          aliases: string[] | null
+          app_order_id: number | null
+          code: string
+          created_at: string | null
+          display_label: string | null
+          display_options: Json | null
+          id: number
+          kind: Database["public"]["Enums"]["topic_kind"]
+          logo_url: string | null
+          name: string
+          sport_id: number
+          team_type: Database["public"]["Enums"]["team_type_enum"] | null
+          teams_from: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          aliases?: string[] | null
+          app_order_id?: number | null
+          code: string
+          created_at?: string | null
+          display_label?: string | null
+          display_options?: Json | null
+          id?: number
+          kind?: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
+          name: string
+          sport_id: number
+          team_type?: Database["public"]["Enums"]["team_type_enum"] | null
+          teams_from?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          aliases?: string[] | null
+          app_order_id?: number | null
+          code?: string
+          created_at?: string | null
+          display_label?: string | null
+          display_options?: Json | null
+          id?: number
+          kind?: Database["public"]["Enums"]["topic_kind"]
+          logo_url?: string | null
+          name?: string
+          sport_id?: number
+          team_type?: Database["public"]["Enums"]["team_type_enum"] | null
+          teams_from?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leagues_new_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leagues_old: {
         Row: {
           aliases: string[]
           app_order_id: number | null
@@ -936,7 +1208,7 @@ export type Database = {
             foreignKeyName: "leagues_sport_id_fkey"
             columns: ["sport_id"]
             isOneToOne: false
-            referencedRelation: "sports"
+            referencedRelation: "sports_old"
             referencedColumns: ["id"]
           },
         ]
@@ -982,6 +1254,35 @@ export type Database = {
           state?: string | null
         }
         Relationships: []
+      }
+      olympic_sports: {
+        Row: {
+          app_order_id: number | null
+          is_summer: boolean | null
+          is_winter: boolean | null
+          sport_id: number
+        }
+        Insert: {
+          app_order_id?: number | null
+          is_summer?: boolean | null
+          is_winter?: boolean | null
+          sport_id: number
+        }
+        Update: {
+          app_order_id?: number | null
+          is_summer?: boolean | null
+          is_winter?: boolean | null
+          sport_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "olympic_sports_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: true
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       people: {
         Row: {
@@ -1040,14 +1341,14 @@ export type Database = {
             foreignKeyName: "people_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
-            referencedRelation: "leagues"
+            referencedRelation: "leagues_old"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "people_sport_id_fkey"
             columns: ["sport_id"]
             isOneToOne: false
-            referencedRelation: "sports"
+            referencedRelation: "sports_old"
             referencedColumns: ["id"]
           },
           {
@@ -1178,17 +1479,68 @@ export type Database = {
             foreignKeyName: "roster_api_sources_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
-            referencedRelation: "leagues"
+            referencedRelation: "leagues_old"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "roster_api_sources_sport_id_fkey"
             columns: ["sport_id"]
             isOneToOne: false
-            referencedRelation: "sports"
+            referencedRelation: "sports_old"
             referencedColumns: ["id"]
           },
         ]
+      }
+      schools: {
+        Row: {
+          aliases: string[] | null
+          api_source: string | null
+          app_order_id: number | null
+          city: string | null
+          created_at: string | null
+          espn_id: string | null
+          id: number
+          logo_url: string | null
+          mens_mascot: string | null
+          name: string
+          short_name: string
+          state: string | null
+          updated_at: string | null
+          womens_mascot: string | null
+        }
+        Insert: {
+          aliases?: string[] | null
+          api_source?: string | null
+          app_order_id?: number | null
+          city?: string | null
+          created_at?: string | null
+          espn_id?: string | null
+          id?: number
+          logo_url?: string | null
+          mens_mascot?: string | null
+          name: string
+          short_name: string
+          state?: string | null
+          updated_at?: string | null
+          womens_mascot?: string | null
+        }
+        Update: {
+          aliases?: string[] | null
+          api_source?: string | null
+          app_order_id?: number | null
+          city?: string | null
+          created_at?: string | null
+          espn_id?: string | null
+          id?: number
+          logo_url?: string | null
+          mens_mascot?: string | null
+          name?: string
+          short_name?: string
+          state?: string | null
+          updated_at?: string | null
+          womens_mascot?: string | null
+        }
+        Relationships: []
       }
       site_domains: {
         Row: {
@@ -1257,6 +1609,53 @@ export type Database = {
         Row: {
           app_order_id: number | null
           created_at: string | null
+          display_label: string | null
+          display_options: Json | null
+          extract_level: Database["public"]["Enums"]["extract_level"] | null
+          id: number
+          logo_url: string | null
+          parent_id: number | null
+          sport: string
+          updated_at: string | null
+        }
+        Insert: {
+          app_order_id?: number | null
+          created_at?: string | null
+          display_label?: string | null
+          display_options?: Json | null
+          extract_level?: Database["public"]["Enums"]["extract_level"] | null
+          id?: number
+          logo_url?: string | null
+          parent_id?: number | null
+          sport: string
+          updated_at?: string | null
+        }
+        Update: {
+          app_order_id?: number | null
+          created_at?: string | null
+          display_label?: string | null
+          display_options?: Json | null
+          extract_level?: Database["public"]["Enums"]["extract_level"] | null
+          id?: number
+          logo_url?: string | null
+          parent_id?: number | null
+          sport?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sports_new_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sports_old: {
+        Row: {
+          app_order_id: number | null
+          created_at: string | null
           description: string | null
           display_label: string | null
           display_name: string
@@ -1298,37 +1697,97 @@ export type Database = {
       subscriber_interests: {
         Row: {
           added_at: string | null
-          is_focused: boolean
-          kind: Database["public"]["Enums"]["interest_kind"]
+          country_id: number | null
+          id: number
+          is_focused: boolean | null
+          is_olympics: boolean | null
+          league_id: number | null
           notification_enabled: boolean | null
+          person_id: number | null
           priority: number | null
-          subject_id: number
+          school_id: number | null
+          sport_id: number | null
           subscriber_id: string
+          team_id: number | null
         }
         Insert: {
           added_at?: string | null
-          is_focused?: boolean
-          kind: Database["public"]["Enums"]["interest_kind"]
+          country_id?: number | null
+          id?: number
+          is_focused?: boolean | null
+          is_olympics?: boolean | null
+          league_id?: number | null
           notification_enabled?: boolean | null
+          person_id?: number | null
           priority?: number | null
-          subject_id: number
+          school_id?: number | null
+          sport_id?: number | null
           subscriber_id: string
+          team_id?: number | null
         }
         Update: {
           added_at?: string | null
-          is_focused?: boolean
-          kind?: Database["public"]["Enums"]["interest_kind"]
+          country_id?: number | null
+          id?: number
+          is_focused?: boolean | null
+          is_olympics?: boolean | null
+          league_id?: number | null
           notification_enabled?: boolean | null
+          person_id?: number | null
           priority?: number | null
-          subject_id?: number
+          school_id?: number | null
+          sport_id?: number | null
           subscriber_id?: string
+          team_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "subscriber_interests_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscriber_interests_subscriber_id_fkey"
             columns: ["subscriber_id"]
             isOneToOne: false
             referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1399,7 +1858,7 @@ export type Database = {
             foreignKeyName: "team_league_map_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
-            referencedRelation: "leagues"
+            referencedRelation: "leagues_old"
             referencedColumns: ["id"]
           },
           {
@@ -1418,13 +1877,12 @@ export type Database = {
           aliases: string[]
           api_id: string | null
           api_source: string | null
-          city_state_name: string
+          city_state_name: string | null
           country_code: string | null
           created_at: string
           display_name: string
           id: number
           lat: number | null
-          league_id: number
           logo_url: string | null
           lon: number | null
           metro_area_id: number | null
@@ -1440,13 +1898,12 @@ export type Database = {
           aliases?: string[]
           api_id?: string | null
           api_source?: string | null
-          city_state_name: string
+          city_state_name?: string | null
           country_code?: string | null
           created_at?: string
           display_name: string
           id?: number
           lat?: number | null
-          league_id: number
           logo_url?: string | null
           lon?: number | null
           metro_area_id?: number | null
@@ -1462,13 +1919,12 @@ export type Database = {
           aliases?: string[]
           api_id?: string | null
           api_source?: string | null
-          city_state_name?: string
+          city_state_name?: string | null
           country_code?: string | null
           created_at?: string
           display_name?: string
           id?: number
           lat?: number | null
-          league_id?: number
           logo_url?: string | null
           lon?: number | null
           metro_area_id?: number | null
@@ -1480,13 +1936,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "teams_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "teams_metro_area_id_fkey"
             columns: ["metro_area_id"]
             isOneToOne: false
@@ -1497,25 +1946,7 @@ export type Database = {
       }
     }
     Views: {
-      subscriber_interests_detail: {
-        Row: {
-          added_at: string | null
-          email: string | null
-          kind: string | null
-          subject_id: number | null
-          subject_name: string | null
-          subscriber_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       basic_user_feed: {
@@ -1535,12 +1966,14 @@ export type Database = {
       claim_articles_for_processing: {
         Args: { p_batch_size?: number; p_worker_id?: string }
         Returns: {
+          ai_countries: string[] | null
           ai_extraction_cost: number | null
           ai_extraction_ms: number | null
           ai_leagues: string[] | null
           ai_model: string | null
           ai_people: string[] | null
           ai_processed: boolean | null
+          ai_schools: string[] | null
           ai_sports: string[] | null
           ai_teams: string[] | null
           author: string | null
@@ -1558,6 +1991,7 @@ export type Database = {
           id: number
           ingest_run_id: string | null
           is_duplicate: boolean | null
+          is_olympics: boolean | null
           language: string | null
           lead_image_url: string | null
           leagues: string[] | null
@@ -1661,20 +2095,6 @@ export type Database = {
           team_id: number
         }[]
       }
-      toggle_interest_focus: {
-        Args: {
-          p_kind: Database["public"]["Enums"]["interest_kind"]
-          p_subject_id: number
-        }
-        Returns: boolean
-      }
-      toggle_subscriber_interest: {
-        Args: {
-          p_kind: Database["public"]["Enums"]["interest_kind"]
-          p_subject_id: number
-        }
-        Returns: boolean
-      }
       unaccent: { Args: { "": string }; Returns: string }
       upsert_discovered_person: {
         Args: {
@@ -1691,9 +2111,10 @@ export type Database = {
     }
     Enums: {
       extract_level: "full" | "league_only" | "sport_only"
-      interest_kind: "team" | "topic" | "person" | "sport" | "league"
+      extract_level_league: "league" | "teams"
       media_type: "article" | "video"
       rule_kind: "html" | "rss" | "both"
+      team_type_enum: "team" | "school" | "country"
       topic_kind: "league" | "topic"
       validation_mode: "none" | "by_meta" | "by_words"
     }
@@ -1824,9 +2245,10 @@ export const Constants = {
   public: {
     Enums: {
       extract_level: ["full", "league_only", "sport_only"],
-      interest_kind: ["team", "topic", "person", "sport", "league"],
+      extract_level_league: ["league", "teams"],
       media_type: ["article", "video"],
       rule_kind: ["html", "rss", "both"],
+      team_type_enum: ["team", "school", "country"],
       topic_kind: ["league", "topic"],
       validation_mode: ["none", "by_meta", "by_words"],
     },
