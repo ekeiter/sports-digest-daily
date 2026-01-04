@@ -233,9 +233,9 @@ export default function Preferences() {
     setLoadingTeams(prev => new Set(prev).add(leagueId));
 
     try {
-      // Use team_league_map junction table to get teams for this league
+      // Use league_teams junction table to get teams for this league
       const { data: mappings, error: teamsError } = await supabase
-        .from("team_league_map")
+        .from("league_teams")
         .select("teams(*)")
         .eq("league_id", leagueId);
 
