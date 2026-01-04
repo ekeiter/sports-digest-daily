@@ -252,6 +252,23 @@ export default function Preferences() {
           logo_url: c.logo_url,
           isCountry: true, // Flag to differentiate in toggle handler
         }));
+      } else if (teamType === 'school') {
+        // Use league_schools junction table for school-based leagues
+        const { data: mappings, error: schoolsError } = await supabase
+          .from("league_schools")
+          .select("schools(*)")
+          .eq("league_id", leagueId);
+
+        if (schoolsError) throw schoolsError;
+        
+        // Map schools to team-like structure for display
+        teamsData = (mappings?.map(m => m.schools).filter(Boolean) || []).map(s => ({
+          id: s.id,
+          display_name: s.name,
+          nickname: s.short_name,
+          logo_url: s.logo_url,
+          isSchool: true, // Flag to differentiate in toggle handler
+        }));
       } else {
         // Use league_teams junction table for regular teams
         const { data: mappings, error: teamsError } = await supabase
