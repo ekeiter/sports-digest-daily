@@ -672,7 +672,7 @@ export default function Preferences() {
                         }`}
                       >
                         <div 
-                          onClick={() => isAccordionParent ? toggleAccordion(item.id) : handleItemClick(item)}
+                          onClick={() => handleItemClick(item)}
                           className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                         >
                           {item.logo_url && (
@@ -691,12 +691,22 @@ export default function Preferences() {
                           {isSubmenu && (
                             <ChevronRight className="h-5 w-5 text-muted-foreground" />
                           )}
-                          {isAccordionParent && (
-                            isAccordionExpanded 
-                              ? <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                              : <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                          )}
                         </div>
+                        
+                        {/* Menu button for accordion parents */}
+                        {isAccordionParent && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleAccordion(item.id);
+                            }}
+                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                          >
+                            {isAccordionExpanded ? 'Close' : 'Menu'}
+                          </Button>
+                        )}
                         
                         {/* Teams button for leagues */}
                         {isLeague && item.entity_id && (
