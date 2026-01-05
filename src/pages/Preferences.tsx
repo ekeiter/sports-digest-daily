@@ -26,6 +26,7 @@ export default function Preferences() {
   // Teams (for expanded leagues)
   const [teams, setTeams] = useState<Team[]>([]);
   const [expandedLeagueId, setExpandedLeagueId] = useState<number | null>(null);
+  const [expandedLeagueTeamIds, setExpandedLeagueTeamIds] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState(false);
   
   // User selections
@@ -253,6 +254,9 @@ export default function Preferences() {
         teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
       }
 
+      const teamIds = teamsData.map(t => Number(t.id));
+      setExpandedLeagueTeamIds(teamIds);
+      
       setTeams(prev => {
         const existingIds = new Set(prev.map(t => t.id));
         const newTeams = teamsData.filter(t => t && !existingIds.has(t.id));
@@ -424,9 +428,8 @@ export default function Preferences() {
 
   const getExpandedLeagueTeams = () => {
     if (!expandedLeagueId) return [];
-    const teamIdsForLeague = leagueTeamMap[expandedLeagueId] || [];
     return teams
-      .filter(t => teamIdsForLeague.includes(Number(t.id)))
+      .filter(t => expandedLeagueTeamIds.includes(Number(t.id)))
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
 
