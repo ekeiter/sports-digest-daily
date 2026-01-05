@@ -1407,6 +1407,56 @@ export type Database = {
           },
         ]
       }
+      preference_menu_items: {
+        Row: {
+          app_order: number | null
+          created_at: string | null
+          entity_id: number | null
+          entity_type: string | null
+          id: number
+          is_submenu: boolean | null
+          is_visible: boolean | null
+          label: string
+          logo_url: string | null
+          parent_id: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          app_order?: number | null
+          created_at?: string | null
+          entity_id?: number | null
+          entity_type?: string | null
+          id?: number
+          is_submenu?: boolean | null
+          is_visible?: boolean | null
+          label: string
+          logo_url?: string | null
+          parent_id?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          app_order?: number | null
+          created_at?: string | null
+          entity_id?: number | null
+          entity_type?: string | null
+          id?: number
+          is_submenu?: boolean | null
+          is_visible?: boolean | null
+          label?: string
+          logo_url?: string | null
+          parent_id?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preference_menu_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "preference_menu_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       roster_api_sources: {
         Row: {
           api_provider: string
