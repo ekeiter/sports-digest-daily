@@ -5,7 +5,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search, X, ChevronRight, ArrowLeft } from "lucide-react";
+import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
 import dashboardBg from "@/assets/dashboard-bg.png";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
@@ -28,6 +28,9 @@ export default function Preferences() {
   const [expandedLeagueId, setExpandedLeagueId] = useState<number | null>(null);
   const [expandedLeagueTeamIds, setExpandedLeagueTeamIds] = useState<number[]>([]);
   const [loadingTeams, setLoadingTeams] = useState(false);
+  
+  // Accordion expansion for inline parent items
+  const [expandedAccordionIds, setExpandedAccordionIds] = useState<number[]>([]);
   
   // User selections
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
@@ -447,6 +450,20 @@ export default function Preferences() {
     return menuItems.some(m => m.parent_id === item.id);
   };
 
+  const getChildItems = (parentId: number) => {
+    return menuItems
+      .filter(item => item.parent_id === parentId)
+      .sort((a, b) => (a.app_order ?? 0) - (b.app_order ?? 0));
+  };
+
+  const toggleAccordion = (itemId: number) => {
+    setExpandedAccordionIds(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -631,6 +648,8 @@ export default function Preferences() {
                   const isLeague = item.entity_type === 'league';
                   const isSubmenu = item.is_submenu && hasChildren(item);
                   const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item);
+                  const isAccordionParent = !item.is_submenu && hasChildren(item);
+                  const isAccordionExpanded = expandedAccordionIds.includes(item.id);
 
                   // Non-clickable heading - render as plain text
                   if (isHeading) {
@@ -653,7 +672,7 @@ export default function Preferences() {
                         }`}
                       >
                         <div 
-                          onClick={() => handleItemClick(item)}
+                          onClick={() => isAccordionParent ? toggleAccordion(item.id) : handleItemClick(item)}
                           className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                         >
                           {item.logo_url && (
@@ -671,6 +690,11 @@ export default function Preferences() {
                           </span>
                           {isSubmenu && (
                             <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                          )}
+                          {isAccordionParent && (
+                            isAccordionExpanded 
+                              ? <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                              : <ChevronRight className="h-5 w-5 text-muted-foreground" />
                           )}
                         </div>
                         
@@ -693,6 +717,65 @@ export default function Preferences() {
                           </Button>
                         )}
                       </div>
+                      
+                      {/* Accordion children */}
+                      {isAccordionParent && isAccordionExpanded && (
+                        <div className="ml-4 mt-1 space-y-1 border-l-2 border-muted-foreground/20 pl-2">
+                          {getChildItems(item.id).map((child) => {
+                            const childIsSelected = isItemSelected(child);
+                            const childIsLeague = child.entity_type === 'league';
+                            
+                            return (
+                              <div 
+                                key={child.id}
+                                className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none cursor-pointer ${
+                                  childIsSelected 
+                                    ? 'bg-blue-500 border-blue-600 text-white' 
+                                    : 'bg-card border-muted-foreground/30'
+                                }`}
+                              >
+                                <div 
+                                  onClick={() => handleItemClick(child)}
+                                  className="flex items-center gap-1.5 flex-1 min-w-0"
+                                >
+                                  {child.logo_url && (
+                                    <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                      <img 
+                                        src={child.logo_url} 
+                                        alt={child.label} 
+                                        className="h-7 w-7 object-contain" 
+                                        onError={(e) => e.currentTarget.style.display = 'none'}
+                                      />
+                                    </div>
+                                  )}
+                                  <span className="font-medium flex-1 min-w-0">
+                                    {child.label}
+                                  </span>
+                                </div>
+                                
+                                {/* Teams button for child leagues */}
+                                {childIsLeague && child.entity_id && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      loadTeamsForLeague(child.entity_id!);
+                                    }}
+                                    className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                                  >
+                                    Teams
+                                    {(() => {
+                                      const count = getSelectedTeamCountForLeague(child.entity_id!);
+                                      return count > 0 ? ` (${count})` : '';
+                                    })()}
+                                  </Button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
