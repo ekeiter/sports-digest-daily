@@ -12,6 +12,7 @@ import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
+type School = Database['public']['Tables']['schools']['Row'];
 
 export default function Preferences() {
   const navigate = useNavigate();
@@ -35,6 +36,12 @@ export default function Preferences() {
   // User selections
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
+  const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
+  
+  // Schools view
+  const [schools, setSchools] = useState<School[]>([]);
+  const [showSchoolsView, setShowSchoolsView] = useState(false);
+  const [loadingSchools, setLoadingSchools] = useState(false);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   
   // Team search
@@ -112,7 +119,7 @@ export default function Preferences() {
       // Load user's current interests
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
-        .select("sport_id, league_id, team_id")
+        .select("sport_id, league_id, team_id, school_id")
         .eq("subscriber_id", user.id);
 
       if (interestsError) throw interestsError;
@@ -120,9 +127,11 @@ export default function Preferences() {
       const sportIds = interests?.filter(i => i.sport_id !== null).map(i => i.sport_id as number) || [];
       const leagueIds = interests?.filter(i => i.league_id !== null).map(i => i.league_id as number) || [];
       const teamIds = interests?.filter(i => i.team_id !== null).map(i => i.team_id as number) || [];
+      const schoolIds = interests?.filter(i => i.school_id !== null).map(i => i.school_id as number) || [];
 
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
+      setSelectedSchools(schoolIds);
       setSelectedTeams(teamIds);
 
       // Load team_league_map for counting
@@ -289,6 +298,59 @@ export default function Preferences() {
     }
   };
 
+  const loadAllSchools = async () => {
+    setLoadingSchools(true);
+    try {
+      const { data: schoolsData, error } = await supabase
+        .from("schools")
+        .select("*")
+        .order("name", { ascending: true });
+      
+      if (error) throw error;
+      setSchools(schoolsData || []);
+      setShowSchoolsView(true);
+    } catch (error) {
+      console.error("Error loading schools:", error);
+      toast.error("Failed to load schools");
+    } finally {
+      setLoadingSchools(false);
+    }
+  };
+
+  const handleSchoolToggle = async (schoolId: number) => {
+    const school = schools.find(s => s.id === schoolId);
+    const label = school?.name || 'school';
+    const isCurrentlySelected = selectedSchools.includes(schoolId);
+
+    try {
+      if (isCurrentlySelected) {
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq("school_id", schoolId);
+        if (error) throw error;
+        setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+        toast(`Unfollowed ${label}`);
+      } else {
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .insert({ subscriber_id: userId, school_id: schoolId });
+        if (error) throw error;
+        setSelectedSchools(prev => [...prev, schoolId]);
+        toast.success(`Followed ${label}`);
+      }
+      
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+      }
+    } catch (error) {
+      console.error("Error toggling school:", error);
+      toast.error("Could not update your preferences. Please try again.");
+    }
+  };
+
   const handleItemClick = async (item: MenuItem) => {
     // If it's a leaf node with an entity, toggle selection
     if (item.entity_type && item.entity_id) {
@@ -299,12 +361,19 @@ export default function Preferences() {
       }
       return;
     }
+    
+    // If entity_type is 'schools' (no entity_id), it's a schools browser
+    if (item.entity_type === 'schools') {
+      loadAllSchools();
+      return;
+    }
 
     // If it's a submenu, navigate into it
     if (item.is_submenu) {
       setMenuStack(prev => [...prev, { id: currentParentId, label: item.label }]);
       setCurrentParentId(item.id);
       setExpandedLeagueId(null);
+      setShowSchoolsView(false);
       return;
     }
 
@@ -314,6 +383,11 @@ export default function Preferences() {
   const handleBack = () => {
     if (expandedLeagueId !== null) {
       setExpandedLeagueId(null);
+      return;
+    }
+    
+    if (showSchoolsView) {
+      setShowSchoolsView(false);
       return;
     }
     
@@ -508,7 +582,7 @@ export default function Preferences() {
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/my-feeds")}>
                 My Selections
               </Button>
-              {(menuStack.length > 0 || expandedLeagueId !== null) && (
+              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
                 <Button className="text-sm px-3 md:px-4" onClick={handleBack}>
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Back
@@ -523,7 +597,7 @@ export default function Preferences() {
         <div className="bg-transparent border-none shadow-none">
           <div className="pb-2 pt-0 px-1">
             <p className="text-black font-bold text-sm">
-              Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
+              Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams, {selectedSchools.length} schools selected • Changes save automatically
             </p>
           </div>
           
@@ -609,8 +683,49 @@ export default function Preferences() {
               )}
             </div>
 
-            {/* Teams view when league is expanded */}
-            {expandedLeagueId !== null ? (
+            {/* Schools view */}
+            {showSchoolsView ? (
+              <div className="space-y-3">
+                <h2 className="text-2xl font-bold text-center">Schools</h2>
+                {loadingSchools ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {schools.map(school => {
+                      const isSelected = selectedSchools.includes(school.id);
+                      return (
+                        <div 
+                          key={school.id} 
+                          onClick={() => handleSchoolToggle(school.id)}
+                          className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
+                            isSelected 
+                              ? 'bg-blue-500 border-blue-600 text-white' 
+                              : 'bg-card border-muted-foreground/40'
+                          }`}
+                        >
+                          {school.logo_url && (
+                            <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                              <img 
+                                src={school.logo_url} 
+                                alt={school.name} 
+                                className="h-7 w-7 object-contain" 
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
+                            </div>
+                          )}
+                          <span className="text-sm font-medium truncate flex-1 min-w-0">
+                            {school.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : expandedLeagueId !== null ? (
+              /* Teams view when league is expanded */
               <div className="space-y-3">
                 <h2 className="text-2xl font-bold text-center">{expandedLeague?.label} Teams</h2>
                 {loadingTeams ? (
@@ -660,6 +775,7 @@ export default function Preferences() {
                 {currentItems.map((item) => {
                   const isSelected = isItemSelected(item);
                   const isLeague = item.entity_type === 'league';
+                  const isSchools = item.entity_type === 'schools';
                   const isSubmenu = item.is_submenu && hasChildren(item);
                   const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item);
                   const isAccordionParent = !item.is_submenu && hasChildren(item);
@@ -738,6 +854,22 @@ export default function Preferences() {
                               const count = getSelectedTeamCountForLeague(item.entity_id!);
                               return count > 0 ? ` (${count})` : '';
                             })()}
+                          </Button>
+                        )}
+                        
+                        {/* Schools button for schools entity type */}
+                        {isSchools && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              loadAllSchools();
+                            }}
+                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                          >
+                            Schools
+                            {selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
                           </Button>
                         )}
                       </div>
