@@ -9,6 +9,7 @@ type Team = Database['public']['Tables']['teams']['Row'] & {
   } | null;
 };
 type Sport = Database['public']['Tables']['sports']['Row'];
+type School = Database['public']['Tables']['schools']['Row'];
 
 export interface Person {
   id: number;
@@ -37,6 +38,7 @@ export interface UserPreferences {
   leagues: League[];
   teams: Team[];
   people: Person[];
+  schools: School[];
   focusedItems: Set<string>;
 }
 
@@ -44,7 +46,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   // Single query to get all interests with focus status using explicit FK columns
   const { data: allInterests, error: interestsError } = await supabase
     .from("subscriber_interests")
-    .select("sport_id, league_id, team_id, person_id, is_focused")
+    .select("sport_id, league_id, team_id, person_id, school_id, is_focused")
     .eq("subscriber_id", userId);
 
   if (interestsError) {
@@ -57,6 +59,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const leagueIds: number[] = [];
   const teamIds: number[] = [];
   const personIds: number[] = [];
+  const schoolIds: number[] = [];
 
   (allInterests || []).forEach(interest => {
     if (interest.sport_id !== null) {
@@ -75,10 +78,14 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
       personIds.push(interest.person_id);
       if (interest.is_focused) focused.add(`person-${interest.person_id}`);
     }
+    if (interest.school_id !== null) {
+      schoolIds.push(interest.school_id);
+      if (interest.is_focused) focused.add(`school-${interest.school_id}`);
+    }
   });
 
   // Fetch all details in parallel
-  const [sportsResult, leaguesResult, teamsResult, peopleResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -111,11 +118,14 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
           )
         `).in("id", personIds)
       : Promise.resolve({ data: [], error: null }),
+    schoolIds.length > 0
+      ? supabase.from("schools").select("*").in("id", schoolIds)
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   // Sort results alphabetically
   const sports = (sportsResult.data || []).sort((a, b) => 
-    a.display_name.localeCompare(b.display_name)
+    (a.display_label || a.sport).localeCompare(b.display_label || b.sport)
   );
   const leagues = (leaguesResult.data || []).sort((a, b) => 
     (a.code || a.name).localeCompare(b.code || b.name)
@@ -126,12 +136,16 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const people = ((peopleResult.data || []) as Person[]).sort((a, b) => 
     a.name.localeCompare(b.name)
   );
+  const schools = ((schoolsResult.data || []) as School[]).sort((a, b) => 
+    a.name.localeCompare(b.name)
+  );
 
   return {
     sports,
     leagues,
     teams,
     people,
+    schools,
     focusedItems: focused,
   };
 }
