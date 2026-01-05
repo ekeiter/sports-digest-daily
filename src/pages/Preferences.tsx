@@ -43,6 +43,7 @@ export default function Preferences() {
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
+  const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
   
   const invalidatePreferences = useInvalidateUserPreferences();
@@ -147,6 +148,19 @@ export default function Preferences() {
           mapping[m.league_id].push(m.team_id);
         });
         setLeagueTeamMap(mapping);
+      }
+
+      // Load league kinds to determine if Teams button should show
+      const { data: leaguesData } = await supabase
+        .from("leagues")
+        .select("id, kind");
+      
+      if (leaguesData) {
+        const kindsMap: Record<number, string> = {};
+        leaguesData.forEach(l => {
+          kindsMap[l.id] = l.kind;
+        });
+        setLeagueKinds(kindsMap);
       }
 
       // Load selected teams for display
@@ -708,8 +722,8 @@ export default function Preferences() {
                           </Button>
                         )}
                         
-                        {/* Teams button for leagues */}
-                        {isLeague && item.entity_id && (
+                        {/* Teams button for leagues (only if kind is 'league', not 'topic') */}
+                        {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
                           <Button 
                             variant="outline" 
                             size="sm" 
@@ -763,8 +777,8 @@ export default function Preferences() {
                                   </span>
                                 </div>
                                 
-                                {/* Teams button for child leagues */}
-                                {childIsLeague && child.entity_id && (
+                                {/* Teams button for child leagues (only if kind is 'league', not 'topic') */}
+                                {childIsLeague && child.entity_id && leagueKinds[child.entity_id] === 'league' && (
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
