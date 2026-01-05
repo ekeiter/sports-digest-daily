@@ -630,6 +630,18 @@ export default function Preferences() {
                   const isSelected = isItemSelected(item);
                   const isLeague = item.entity_type === 'league';
                   const isSubmenu = item.is_submenu && hasChildren(item);
+                  const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item);
+
+                  // Non-clickable heading - render as plain text
+                  if (isHeading) {
+                    return (
+                      <div key={item.id} className="pt-3 pb-1">
+                        <h3 className="text-lg font-bold text-black select-none">
+                          {item.label}
+                        </h3>
+                      </div>
+                    );
+                  }
 
                   return (
                     <div key={item.id}>
