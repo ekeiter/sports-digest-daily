@@ -3,41 +3,43 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, X, ChevronRight, ArrowLeft } from "lucide-react";
 import dashboardBg from "@/assets/dashboard-bg.png";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
-type League = Database['public']['Tables']['leagues']['Row'];
-type Sport = Database['public']['Tables']['sports']['Row'];
+type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
-
-type DisplayItem = 
-  | { type: 'league'; data: League }
-  | { type: 'sport'; data: Sport };
 
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [displayItems, setDisplayItems] = useState<DisplayItem[]>([]);
+  
+  // Menu structure
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [currentParentId, setCurrentParentId] = useState<number | null>(null);
+  const [menuStack, setMenuStack] = useState<{ id: number | null; label: string }[]>([]);
+  
+  // Teams (for expanded leagues)
   const [teams, setTeams] = useState<Team[]>([]);
+  const [expandedLeagueId, setExpandedLeagueId] = useState<number | null>(null);
+  const [loadingTeams, setLoadingTeams] = useState(false);
+  
+  // User selections
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
-  const [expandedLeagues, setExpandedLeagues] = useState<number[]>([]);
-  const [expandedLeagueTeamIds, setExpandedLeagueTeamIds] = useState<number[]>([]);
-  const [loadingTeams, setLoadingTeams] = useState<Set<number>>(new Set());
+  
+  // Team search
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
   const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
-  const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
   const searchRef = useRef<HTMLDivElement>(null);
-  const savedScrollPosition = useRef<number>(0);
   
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
@@ -92,39 +94,17 @@ export default function Preferences() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Load sports with app_order_id NOT NULL
-      const { data: sportsData, error: sportsError } = await supabase
-        .from("sports")
+      // Load all menu items
+      const { data: menuData, error: menuError } = await supabase
+        .from("preference_menu_items")
         .select("*")
-        .not("app_order_id", "is", null)
-        .order("app_order_id", { ascending: true });
+        .eq("is_visible", true)
+        .order("app_order", { ascending: true });
 
-      if (sportsError) throw sportsError;
+      if (menuError) throw menuError;
+      setMenuItems(menuData || []);
 
-      // Load leagues with app_order_id NOT NULL
-      const { data: leaguesData, error: leaguesError } = await supabase
-        .from("leagues")
-        .select("*")
-        .not("app_order_id", "is", null)
-        .order("app_order_id", { ascending: true });
-
-      if (leaguesError) throw leaguesError;
-
-      // Merge sports and leagues into unified display list, sorted by app_order_id
-      const combined: DisplayItem[] = [
-        ...(sportsData || []).map(s => ({ type: 'sport' as const, data: s })),
-        ...(leaguesData || []).map(l => ({ type: 'league' as const, data: l }))
-      ];
-
-      combined.sort((a, b) => {
-        const orderA = a.type === 'sport' ? a.data.app_order_id : a.data.app_order_id;
-        const orderB = b.type === 'sport' ? b.data.app_order_id : b.data.app_order_id;
-        return (orderA || 0) - (orderB || 0);
-      });
-
-      setDisplayItems(combined);
-
-      // Load user's current interests using new explicit FK columns
+      // Load user's current interests
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
         .select("sport_id, league_id, team_id")
@@ -140,9 +120,7 @@ export default function Preferences() {
       setSelectedLeagues(leagueIds);
       setSelectedTeams(teamIds);
 
-      // Load all team_league_map data to enable accurate counting
-      // NOTE: Supabase has a default limit of 1000 rows per request.
-      // We paginate to ensure we load *all* mappings, otherwise some leagues will show 0 teams.
+      // Load team_league_map for counting
       const allMappings: Array<{ league_id: number; team_id: number }> = [];
       const pageSize = 1000;
       for (let from = 0; ; from += pageSize) {
@@ -154,7 +132,6 @@ export default function Preferences() {
 
         if (pageError) throw pageError;
         if (!page || page.length === 0) break;
-
         allMappings.push(...page);
         if (page.length < pageSize) break;
       }
@@ -168,7 +145,7 @@ export default function Preferences() {
         setLeagueTeamMap(mapping);
       }
 
-      // Load teams that are selected so we can show counts
+      // Load selected teams for display
       if (teamIds.length > 0) {
         const { data: selectedTeamsData } = await supabase
           .from("teams")
@@ -192,7 +169,6 @@ export default function Preferences() {
     
     setLoadingAllTeams(true);
     try {
-      // Supabase has a 1000 row limit per request, so we need to paginate
       const pageSize = 1000;
       let allTeamsData: Team[] = [];
       let page = 0;
@@ -229,110 +205,126 @@ export default function Preferences() {
     }
   };
 
-  const loadTeamsForLeague = async (leagueId: number, teamType?: string | null) => {
-    setLoadingTeams(prev => new Set(prev).add(leagueId));
-
+  const loadTeamsForLeague = async (leagueId: number) => {
+    setLoadingTeams(true);
     try {
+      // Get league info to determine team_type
+      const { data: leagueData } = await supabase
+        .from("leagues")
+        .select("team_type")
+        .eq("id", leagueId)
+        .single();
+
+      const teamType = leagueData?.team_type;
       let teamsData: any[] = [];
 
       if (teamType === 'country') {
-        // Use league_countries junction table for country-based leagues
-        const { data: mappings, error: countriesError } = await supabase
+        const { data: mappings, error } = await supabase
           .from("league_countries")
           .select("countries(*)")
           .eq("league_id", leagueId);
-
-        if (countriesError) throw countriesError;
-        
-        // Map countries to team-like structure for display
+        if (error) throw error;
         teamsData = (mappings?.map(m => m.countries).filter(Boolean) || []).map(c => ({
           id: c.id,
           display_name: c.name,
           nickname: c.code,
           logo_url: c.logo_url,
-          isCountry: true, // Flag to differentiate in toggle handler
+          city_state_name: '',
         }));
       } else if (teamType === 'school') {
-        // Use league_schools junction table for school-based leagues
-        const { data: mappings, error: schoolsError } = await supabase
+        const { data: mappings, error } = await supabase
           .from("league_schools")
           .select("schools(*)")
           .eq("league_id", leagueId);
-
-        if (schoolsError) throw schoolsError;
-        
-        // Map schools to team-like structure for display
+        if (error) throw error;
         teamsData = (mappings?.map(m => m.schools).filter(Boolean) || []).map(s => ({
           id: s.id,
           display_name: s.name,
           nickname: s.short_name,
           logo_url: s.logo_url,
-          isSchool: true, // Flag to differentiate in toggle handler
+          city_state_name: '',
         }));
       } else {
-        // Use league_teams junction table for regular teams
-        const { data: mappings, error: teamsError } = await supabase
+        const { data: mappings, error } = await supabase
           .from("league_teams")
           .select("teams(*)")
           .eq("league_id", leagueId);
-
-        if (teamsError) throw teamsError;
+        if (error) throw error;
         teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
       }
 
-      const teamIds = teamsData.map(t => t.id);
-      
-      // Store team IDs for this league
-      setExpandedLeagueTeamIds(teamIds);
-      
-      // Merge teams, avoiding duplicates by filtering out existing IDs
       setTeams(prev => {
         const existingIds = new Set(prev.map(t => t.id));
         const newTeams = teamsData.filter(t => t && !existingIds.has(t.id));
         return [...prev, ...newTeams].sort((a, b) => a.display_name.localeCompare(b.display_name));
       });
+      
+      setExpandedLeagueId(leagueId);
     } catch (error) {
-      console.error(`Error loading teams for league ${leagueId}:`, error);
+      console.error("Error loading teams:", error);
       toast.error("Failed to load teams");
     } finally {
-      setLoadingTeams(prev => {
-        const next = new Set(prev);
-        next.delete(leagueId);
-        return next;
-      });
+      setLoadingTeams(false);
     }
   };
 
-  const handleSportToggle = async (sportId: number) => {
-    const item = displayItems.find(i => i.type === 'sport' && i.data.id === sportId);
-    const sport = item?.type === 'sport' ? item.data : null;
-    const label = sport?.display_label || sport?.sport || 'sport';
+  const handleItemClick = async (item: MenuItem) => {
+    // If it's a leaf node with an entity, toggle selection
+    if (item.entity_type && item.entity_id) {
+      if (item.entity_type === 'sport') {
+        await handleSportToggle(item.entity_id, item.label);
+      } else if (item.entity_type === 'league') {
+        await handleLeagueToggle(item.entity_id, item.label);
+      }
+      return;
+    }
+
+    // If it's a submenu, navigate into it
+    if (item.is_submenu) {
+      setMenuStack(prev => [...prev, { id: currentParentId, label: item.label }]);
+      setCurrentParentId(item.id);
+      setExpandedLeagueId(null);
+      return;
+    }
+
+    // Otherwise it might have inline children - this case is handled differently
+  };
+
+  const handleBack = () => {
+    if (expandedLeagueId !== null) {
+      setExpandedLeagueId(null);
+      return;
+    }
+    
+    if (menuStack.length > 0) {
+      const prev = menuStack[menuStack.length - 1];
+      setMenuStack(s => s.slice(0, -1));
+      setCurrentParentId(prev.id);
+    }
+  };
+
+  const handleSportToggle = async (sportId: number, label: string) => {
     const isCurrentlySelected = selectedSports.includes(sportId);
 
     try {
       if (isCurrentlySelected) {
-        // Delete the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .delete()
           .eq("subscriber_id", userId)
           .eq("sport_id", sportId);
-
         if (error) throw error;
         setSelectedSports(prev => prev.filter(id => id !== sportId));
         toast(`Unfollowed ${label}`);
       } else {
-        // Insert the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .insert({ subscriber_id: userId, sport_id: sportId });
-
         if (error) throw error;
         setSelectedSports(prev => [...prev, sportId]);
         toast.success(`Followed ${label}`);
       }
       
-      // Invalidate caches so other pages reflect the change
       if (userId) {
         invalidatePreferences(userId);
         invalidateFeed(userId);
@@ -343,36 +335,28 @@ export default function Preferences() {
     }
   };
 
-  const handleLeagueToggle = async (leagueId: number) => {
-    const item = displayItems.find(i => i.type === 'league' && i.data.id === leagueId);
-    const league = item?.type === 'league' ? item.data : null;
-    const label = league?.display_label || league?.code || league?.name || 'league';
+  const handleLeagueToggle = async (leagueId: number, label: string) => {
     const isCurrentlySelected = selectedLeagues.includes(leagueId);
 
     try {
       if (isCurrentlySelected) {
-        // Delete the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .delete()
           .eq("subscriber_id", userId)
           .eq("league_id", leagueId);
-
         if (error) throw error;
         setSelectedLeagues(prev => prev.filter(id => id !== leagueId));
         toast(`Unfollowed ${label}`);
       } else {
-        // Insert the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .insert({ subscriber_id: userId, league_id: leagueId });
-
         if (error) throw error;
         setSelectedLeagues(prev => [...prev, leagueId]);
         toast.success(`Followed ${label}`);
       }
       
-      // Invalidate caches so other pages reflect the change
       if (userId) {
         invalidatePreferences(userId);
         invalidateFeed(userId);
@@ -390,28 +374,23 @@ export default function Preferences() {
 
     try {
       if (isCurrentlySelected) {
-        // Delete the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .delete()
           .eq("subscriber_id", userId)
           .eq("team_id", teamId);
-
         if (error) throw error;
         setSelectedTeams(prev => prev.filter(id => id !== teamId));
         toast(`Unfollowed ${label}`);
       } else {
-        // Insert the interest
         const { error } = await supabase
           .from("subscriber_interests")
           .insert({ subscriber_id: userId, team_id: teamId });
-
         if (error) throw error;
         setSelectedTeams(prev => [...prev, teamId]);
         toast.success(`Followed ${label}`);
       }
       
-      // Invalidate caches so other pages reflect the change
       if (userId) {
         invalidatePreferences(userId);
         invalidateFeed(userId);
@@ -422,53 +401,47 @@ export default function Preferences() {
     }
   };
 
-  const toggleLeagueExpansion = async (leagueId: number, teamType?: string | null) => {
-    const isCurrentlyExpanded = expandedLeagues.includes(leagueId);
-    
-    if (!isCurrentlyExpanded) {
-      // Save scroll position before expanding
-      savedScrollPosition.current = window.scrollY;
-      setExpandedLeagues([leagueId]);
-      await loadTeamsForLeague(leagueId, teamType);
-      // Scroll to top when opening teams
-      window.scrollTo(0, 0);
-    } else {
-      // Collapse and restore scroll position
-      setExpandedLeagues([]);
-      setExpandedLeagueTeamIds([]);
-      // Restore scroll position after state update
-      requestAnimationFrame(() => {
-        window.scrollTo(0, savedScrollPosition.current);
-      });
-    }
-  };
-
-  const getFilteredTeams = () => {
-    if (!teamSearchTerm) return [];
-    
-    const searchLower = teamSearchTerm.toLowerCase();
-    return teams
-      .filter(team => 
-        team.display_name.toLowerCase().includes(searchLower) ||
-        team.nickname?.toLowerCase().includes(searchLower) ||
-        team.city_state_name.toLowerCase().includes(searchLower)
-      )
-      .sort((a, b) => a.display_name.localeCompare(b.display_name));
-  };
-
-  const getTeamsForLeague = (leagueId: number) => {
-    // Use expandedLeagueTeamIds if this is the currently expanded league
-    if (expandedLeagues.includes(leagueId)) {
-      return teams
-        .filter(team => expandedLeagueTeamIds.includes(team.id))
-        .sort((a, b) => a.display_name.localeCompare(b.display_name));
-    }
-    return [];
+  const getCurrentMenuItems = () => {
+    return menuItems.filter(item => item.parent_id === currentParentId);
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
     const teamIdsForLeague = leagueTeamMap[leagueId] || [];
     return teamIdsForLeague.filter((teamId) => selectedTeams.includes(teamId)).length;
+  };
+
+  const getFilteredTeams = () => {
+    if (!teamSearchTerm) return [];
+    const searchLower = teamSearchTerm.toLowerCase();
+    return teams
+      .filter(team => 
+        team.display_name.toLowerCase().includes(searchLower) ||
+        team.nickname?.toLowerCase().includes(searchLower) ||
+        team.city_state_name?.toLowerCase().includes(searchLower)
+      )
+      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+  };
+
+  const getExpandedLeagueTeams = () => {
+    if (!expandedLeagueId) return [];
+    const teamIdsForLeague = leagueTeamMap[expandedLeagueId] || [];
+    return teams
+      .filter(t => teamIdsForLeague.includes(Number(t.id)))
+      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+  };
+
+  const isItemSelected = (item: MenuItem) => {
+    if (item.entity_type === 'sport' && item.entity_id) {
+      return selectedSports.includes(item.entity_id);
+    }
+    if (item.entity_type === 'league' && item.entity_id) {
+      return selectedLeagues.includes(item.entity_id);
+    }
+    return false;
+  };
+
+  const hasChildren = (item: MenuItem) => {
+    return menuItems.some(m => m.parent_id === item.id);
   };
 
   if (loading) {
@@ -478,6 +451,10 @@ export default function Preferences() {
       </div>
     );
   }
+
+  const currentItems = getCurrentMenuItems();
+  const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
+  const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
 
   return (
     <div 
@@ -497,15 +474,10 @@ export default function Preferences() {
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/my-feeds")}>
                 My Selections
               </Button>
-              {expandedLeagues.length > 0 && (
-                <Button className="text-sm px-3 md:px-4" onClick={() => {
-                  setExpandedLeagues([]);
-                  setExpandedLeagueTeamIds([]);
-                  requestAnimationFrame(() => {
-                    window.scrollTo(0, savedScrollPosition.current);
-                  });
-                }}>
-                  Close Teams
+              {(menuStack.length > 0 || expandedLeagueId !== null) && (
+                <Button className="text-sm px-3 md:px-4" onClick={handleBack}>
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  Back
                 </Button>
               )}
             </div>
@@ -514,275 +486,209 @@ export default function Preferences() {
       </header>
 
       <main className="container mx-auto px-4 py-2 max-w-3xl">
-          <div className="bg-transparent border-none shadow-none">
-            <div className="pb-2 pt-0 px-1">
-              <p className="text-black font-bold text-sm">
-                Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
-              </p>
-            </div>
-            <div className="pt-2">
-              <div className="mb-4 relative" ref={searchRef}>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Input
-                      type="text"
-                      placeholder="Search all teams..."
-                      value={teamSearchTerm}
-                      onChange={(e) => {
-                        setTeamSearchTerm(e.target.value);
-                        setShowSearchDropdown(true);
-                        if (e.target.value && !allTeamsLoaded) {
-                          loadAllTeams();
-                        }
-                      }}
-                      onFocus={() => teamSearchTerm && setShowSearchDropdown(true)}
-                      className="pr-8 bg-white"
-                    />
-                    {teamSearchTerm && (
-                      <button
-                        type="button"
-                        onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                  <Button disabled={loadingAllTeams}>
-                    {loadingAllTeams ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                  </Button>
+        <div className="bg-transparent border-none shadow-none">
+          <div className="pb-2 pt-0 px-1">
+            <p className="text-black font-bold text-sm">
+              Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams selected • Changes save automatically
+            </p>
+          </div>
+          
+          <div className="pt-2">
+            {/* Team Search */}
+            <div className="mb-4 relative" ref={searchRef}>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Search all teams..."
+                    value={teamSearchTerm}
+                    onChange={(e) => {
+                      setTeamSearchTerm(e.target.value);
+                      setShowSearchDropdown(true);
+                      if (e.target.value && !allTeamsLoaded) {
+                        loadAllTeams();
+                      }
+                    }}
+                    onFocus={() => teamSearchTerm && setShowSearchDropdown(true)}
+                    className="pr-8 bg-white"
+                  />
+                  {teamSearchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
-
-                {showSearchDropdown && teamSearchTerm && (
-                  <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
-                    <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
-                    {loadingAllTeams ? (
-                      <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      </div>
-                    ) : (
-                      <>
-                        {getFilteredTeams().map(team => {
-                          const isSelected = selectedTeams.includes(team.id);
-                          // Find the league for this team using the leagueTeamMap
-                          const teamLeagueId = Object.entries(leagueTeamMap).find(([_, teamIds]) => 
-                            teamIds.includes(team.id)
-                          )?.[0];
-                          const league = teamLeagueId 
-                            ? displayItems.find(i => i.type === 'league' && i.data.id === Number(teamLeagueId))
-                            : undefined;
-                          const leagueCode = league?.type === 'league' ? league.data.code : '';
-                          const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
-                          
-                          // Show league suffix for college teams and international teams (World Cup id=60, WBC id=149)
-                          const collegeLeagues = ['NCAAF', 'NCAAM', 'NCAAW'];
-                          const internationalLeagueIds = [60, 149];
-                          const showLeagueSuffix = collegeLeagues.includes(leagueCode) || (teamLeagueId && internationalLeagueIds.includes(Number(teamLeagueId)));
-                          const displayName = showLeagueSuffix && leagueCode 
-                            ? `${team.display_name} (${leagueCode})`
-                            : team.display_name;
-                          
-                          return (
-                            <div 
-                              key={team.id} 
-                              onClick={() => {
-                                handleTeamToggle(team.id);
-                                setShowSearchDropdown(false);
-                                setTeamSearchTerm("");
-                              }}
-                              className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                isSelected ? 'opacity-50' : ''
-                              }`}
-                            >
-                              {team.logo_url && (
-                                <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                  <img 
-                                    src={team.logo_url} 
-                                    alt={team.display_name} 
-                                    className="h-7 w-7 object-contain" 
-                                    onError={(e) => e.currentTarget.style.display = 'none'}
-                                  />
-                                </div>
-                              )}
-                              <div className="flex flex-col flex-1 min-w-0">
-                                <span className="text-sm font-medium truncate">
-                                  {displayName}
-                                </span>
-                                {!showLeagueSuffix && leagueName && (
-                                  <span className="text-xs text-muted-foreground truncate">
-                                    {leagueName}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                        {getFilteredTeams().length === 0 && (
-                          <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
+                <Button disabled={loadingAllTeams}>
+                  {loadingAllTeams ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </Button>
               </div>
 
-              <div className="flex">
-                {/* Left panel - Sports/Leagues */}
-                <div className={`space-y-2 ${expandedLeagues.length > 0 ? 'hidden' : 'w-full'}`}>
-                  {displayItems.map((item) => {
-                    // Check for divider_above in display_options
-                    const displayOptions = item.data.display_options as { divider_above?: boolean } | null;
-                    const showDivider = displayOptions?.divider_above === true;
-
-                    if (item.type === 'sport') {
-                      const sport = item.data;
-                      const displayName = sport.display_label || sport.sport;
-                      const isSelected = selectedSports.includes(sport.id);
-                      
-                      return (
-                        <div key={`sport-${sport.id}`}>
-                          {showDivider && <hr className="border-t border-black my-5" />}
+              {showSearchDropdown && teamSearchTerm && (
+                <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+                  <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
+                  {loadingAllTeams ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    </div>
+                  ) : (
+                    <>
+                      {getFilteredTeams().map(team => {
+                        const isSelected = selectedTeams.includes(Number(team.id));
+                        return (
                           <div 
-                            onClick={() => handleSportToggle(sport.id)}
-                            className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border cursor-pointer transition-colors select-none ${
-                              isSelected 
-                                ? 'bg-blue-500 border-blue-600 text-white' 
-                                : 'bg-card border-muted-foreground/30'
+                            key={team.id} 
+                            onClick={() => {
+                              handleTeamToggle(Number(team.id));
+                              setShowSearchDropdown(false);
+                              setTeamSearchTerm("");
+                            }}
+                            className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                              isSelected ? 'opacity-50' : ''
                             }`}
                           >
-                            {sport.logo_url && (
-                              <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                            {team.logo_url && (
+                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                 <img 
-                                  src={sport.logo_url} 
-                                  alt={displayName} 
+                                  src={team.logo_url} 
+                                  alt={team.display_name} 
                                   className="h-7 w-7 object-contain" 
                                   onError={(e) => e.currentTarget.style.display = 'none'}
                                 />
                               </div>
                             )}
-                            <span className="font-medium flex-1 min-w-0">
-                              {displayName}
+                            <span className="text-sm font-medium truncate flex-1 min-w-0">
+                              {team.display_name}
                             </span>
                           </div>
-                        </div>
-                      );
-                    } else {
-                      const league = item.data;
-                      const hasTeams = league.kind === 'league';
-                      const isExpanded = expandedLeagues.includes(league.id);
-                      const displayName = league.display_label || league.name;
-                      const isSelected = selectedLeagues.includes(league.id);
-
-                      return (
-                        <div key={`league-${league.id}`}>
-                          {showDivider && <hr className="border-t border-black my-5" />}
-                          <div 
-                            className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
-                              isSelected 
-                                ? 'bg-blue-500 border-blue-600 text-white' 
-                                : 'bg-card border-muted-foreground/30'
-                            }`}
-                          >
-                            <div 
-                              onClick={() => handleLeagueToggle(league.id)}
-                              className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
-                            >
-                              {league.logo_url && (
-                                <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                                  <img 
-                                    src={league.logo_url} 
-                                    alt={displayName} 
-                                    className="h-7 w-7 object-contain" 
-                                    onError={(e) => e.currentTarget.style.display = 'none'}
-                                  />
-                                </div>
-                              )}
-                              <span className="font-medium flex-1 min-w-0">
-                                {displayName}
-                              </span>
-                            </div>
-                            {hasTeams && expandedLeagues.length === 0 && (
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  loadTeamsForLeague(league.id, league.team_type).then(() => {
-                                    toggleLeagueExpansion(league.id, league.team_type);
-                                  });
-                                }}
-                                className="shrink-0 transition-colors w-20 justify-center text-black h-7"
-                              >
-                                Teams
-                                {(() => {
-                                  const count = getSelectedTeamCountForLeague(league.id);
-                                  return count > 0 ? ` (${count})` : '';
-                                })()}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }
-                  })}
+                        );
+                      })}
+                      {getFilteredTeams().length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
+                      )}
+                    </>
+                  )}
                 </div>
+              )}
+            </div>
 
-                {/* Right panel - Teams */}
-                {expandedLeagues.length > 0 && (
-                  <div className="w-full">
-                    {expandedLeagues.map(leagueId => {
-                      const leagueTeams = getTeamsForLeague(leagueId);
-                      const league = displayItems.find(i => i.type === 'league' && i.data.id === leagueId);
-                      const leagueName = league?.type === 'league' ? (league.data.display_label || league.data.name) : '';
-                      
+            {/* Teams view when league is expanded */}
+            {expandedLeagueId !== null ? (
+              <div className="space-y-3">
+                <h2 className="text-2xl font-bold text-center">{expandedLeague?.label} Teams</h2>
+                {loadingTeams ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {getExpandedLeagueTeams().map(team => {
+                      const isSelected = selectedTeams.includes(Number(team.id));
                       return (
-                        <div key={leagueId} className="space-y-3">
-                          <h2 className="text-2xl font-bold text-center">{leagueName} Teams</h2>
-                          {loadingTeams.has(leagueId) ? (
-                            <div className="flex items-center justify-center py-4">
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                              {leagueTeams.map(team => {
-                                const isSelected = selectedTeams.includes(team.id);
-                                return (
-                                  <div 
-                                    key={team.id} 
-                                    onClick={() => handleTeamToggle(team.id)}
-                                    className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
-                                      isSelected 
-                                        ? 'bg-blue-500 border-blue-600 text-white' 
-                                        : 'bg-card border-muted-foreground/40'
-                                    }`}
-                                  >
-                                    {team.logo_url && (
-                                      <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                        <img 
-                                          src={team.logo_url} 
-                                          alt={team.display_name} 
-                                          className="h-7 w-7 object-contain" 
-                                          onError={(e) => e.currentTarget.style.display = 'none'}
-                                        />
-                                      </div>
-                                    )}
-                                    <span className="text-sm font-medium truncate flex-1 min-w-0">
-                                      {team.display_name}
-                                    </span>
-                                  </div>
-                                );
-                              })}
+                        <div 
+                          key={team.id} 
+                          onClick={() => handleTeamToggle(Number(team.id))}
+                          className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
+                            isSelected 
+                              ? 'bg-blue-500 border-blue-600 text-white' 
+                              : 'bg-card border-muted-foreground/40'
+                          }`}
+                        >
+                          {team.logo_url && (
+                            <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                              <img 
+                                src={team.logo_url} 
+                                alt={team.display_name} 
+                                className="h-7 w-7 object-contain" 
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
                             </div>
                           )}
+                          <span className="text-sm font-medium truncate flex-1 min-w-0">
+                            {team.display_name}
+                          </span>
                         </div>
                       );
                     })}
                   </div>
                 )}
               </div>
-            </div>
-          </div>
+            ) : (
+              /* Menu items view */
+              <div className="space-y-2">
+                {currentLabel && (
+                  <h2 className="text-xl font-bold text-center mb-4">{currentLabel}</h2>
+                )}
+                
+                {currentItems.map((item) => {
+                  const isSelected = isItemSelected(item);
+                  const isLeague = item.entity_type === 'league';
+                  const isSubmenu = item.is_submenu && hasChildren(item);
 
+                  return (
+                    <div key={item.id}>
+                      <div 
+                        className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
+                          isSelected 
+                            ? 'bg-blue-500 border-blue-600 text-white' 
+                            : 'bg-card border-muted-foreground/30'
+                        }`}
+                      >
+                        <div 
+                          onClick={() => handleItemClick(item)}
+                          className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                        >
+                          {item.logo_url && (
+                            <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                              <img 
+                                src={item.logo_url} 
+                                alt={item.label} 
+                                className="h-7 w-7 object-contain" 
+                                onError={(e) => e.currentTarget.style.display = 'none'}
+                              />
+                            </div>
+                          )}
+                          <span className="font-medium flex-1 min-w-0">
+                            {item.label}
+                          </span>
+                          {isSubmenu && (
+                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        
+                        {/* Teams button for leagues */}
+                        {isLeague && item.entity_id && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              loadTeamsForLeague(item.entity_id!);
+                            }}
+                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                          >
+                            Teams
+                            {(() => {
+                              const count = getSelectedTeamCountForLeague(item.entity_id!);
+                              return count > 0 ? ` (${count})` : '';
+                            })()}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                {currentItems.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">No items to display</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
