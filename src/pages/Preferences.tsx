@@ -748,52 +748,130 @@ export default function Preferences() {
                           {getChildItems(item.id).map((child) => {
                             const childIsSelected = isItemSelected(child);
                             const childIsLeague = child.entity_type === 'league';
+                            const childHasChildren = hasChildren(child);
+                            const childIsAccordionExpanded = expandedAccordionIds.includes(child.id);
+                            
+                            // Check if child is a heading with children (no entity_type but has children)
+                            const childIsHeadingWithMenu = !child.entity_type && childHasChildren;
                             
                             return (
-                              <div 
-                                key={child.id}
-                                className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none cursor-pointer ${
-                                  childIsSelected 
-                                    ? 'bg-blue-500 border-blue-600 text-white' 
-                                    : 'bg-card border-muted-foreground/30'
-                                }`}
-                              >
+                              <div key={child.id}>
                                 <div 
-                                  onClick={() => handleItemClick(child)}
-                                  className="flex items-center gap-1.5 flex-1 min-w-0"
+                                  className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
+                                    childIsHeadingWithMenu ? '' : 'cursor-pointer'
+                                  } ${
+                                    childIsSelected 
+                                      ? 'bg-blue-500 border-blue-600 text-white' 
+                                      : 'bg-card border-muted-foreground/30'
+                                  }`}
                                 >
-                                  {child.logo_url && (
-                                    <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                                      <img 
-                                        src={child.logo_url} 
-                                        alt={child.label} 
-                                        className="h-7 w-7 object-contain" 
-                                        onError={(e) => e.currentTarget.style.display = 'none'}
-                                      />
-                                    </div>
+                                  <div 
+                                    onClick={() => !childIsHeadingWithMenu && handleItemClick(child)}
+                                    className={`flex items-center gap-1.5 flex-1 min-w-0 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}
+                                  >
+                                    {child.logo_url && (
+                                      <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                        <img 
+                                          src={child.logo_url} 
+                                          alt={child.label} 
+                                          className="h-7 w-7 object-contain" 
+                                          onError={(e) => e.currentTarget.style.display = 'none'}
+                                        />
+                                      </div>
+                                    )}
+                                    <span className={`font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
+                                      {child.label}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Menu button for nested accordion parents */}
+                                  {childHasChildren && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleAccordion(child.id);
+                                      }}
+                                      className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                                    >
+                                      {childIsAccordionExpanded ? 'Close' : 'Menu'}
+                                    </Button>
                                   )}
-                                  <span className="font-medium flex-1 min-w-0">
-                                    {child.label}
-                                  </span>
+                                  
+                                  {/* Teams button for child leagues (only if kind is 'league', not 'topic') */}
+                                  {childIsLeague && child.entity_id && leagueKinds[child.entity_id] === 'league' && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        loadTeamsForLeague(child.entity_id!);
+                                      }}
+                                      className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                                    >
+                                      Teams
+                                      {(() => {
+                                        const count = getSelectedTeamCountForLeague(child.entity_id!);
+                                        return count > 0 ? ` (${count})` : '';
+                                      })()}
+                                    </Button>
+                                  )}
                                 </div>
                                 
-                                {/* Teams button for child leagues (only if kind is 'league', not 'topic') */}
-                                {childIsLeague && child.entity_id && leagueKinds[child.entity_id] === 'league' && (
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      loadTeamsForLeague(child.entity_id!);
-                                    }}
-                                    className="shrink-0 transition-colors w-20 justify-center text-black h-7"
-                                  >
-                                    Teams
-                                    {(() => {
-                                      const count = getSelectedTeamCountForLeague(child.entity_id!);
-                                      return count > 0 ? ` (${count})` : '';
-                                    })()}
-                                  </Button>
+                                {/* Nested accordion children (level 2) */}
+                                {childHasChildren && childIsAccordionExpanded && (
+                                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-muted-foreground/20 pl-2">
+                                    {getChildItems(child.id).map((grandchild) => {
+                                      const grandchildIsSelected = isItemSelected(grandchild);
+                                      const grandchildIsLeague = grandchild.entity_type === 'league';
+                                      
+                                      return (
+                                        <div 
+                                          key={grandchild.id}
+                                          onClick={() => handleItemClick(grandchild)}
+                                          className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none cursor-pointer ${
+                                            grandchildIsSelected 
+                                              ? 'bg-blue-500 border-blue-600 text-white' 
+                                              : 'bg-card border-muted-foreground/30'
+                                          }`}
+                                        >
+                                          {grandchild.logo_url && (
+                                            <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                              <img 
+                                                src={grandchild.logo_url} 
+                                                alt={grandchild.label} 
+                                                className="h-7 w-7 object-contain" 
+                                                onError={(e) => e.currentTarget.style.display = 'none'}
+                                              />
+                                            </div>
+                                          )}
+                                          <span className="font-medium flex-1 min-w-0">
+                                            {grandchild.label}
+                                          </span>
+                                          
+                                          {/* Teams button for grandchild leagues */}
+                                          {grandchildIsLeague && grandchild.entity_id && leagueKinds[grandchild.entity_id] === 'league' && (
+                                            <Button 
+                                              variant="outline" 
+                                              size="sm" 
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                loadTeamsForLeague(grandchild.entity_id!);
+                                              }}
+                                              className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                                            >
+                                              Teams
+                                              {(() => {
+                                                const count = getSelectedTeamCountForLeague(grandchild.entity_id!);
+                                                return count > 0 ? ` (${count})` : '';
+                                              })()}
+                                            </Button>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
                                 )}
                               </div>
                             );
