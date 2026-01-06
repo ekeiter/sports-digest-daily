@@ -1260,18 +1260,21 @@ export type Database = {
           app_order_id: number | null
           is_summer: boolean | null
           is_winter: boolean | null
+          logo_url: string | null
           sport_id: number
         }
         Insert: {
           app_order_id?: number | null
           is_summer?: boolean | null
           is_winter?: boolean | null
+          logo_url?: string | null
           sport_id: number
         }
         Update: {
           app_order_id?: number | null
           is_summer?: boolean | null
           is_winter?: boolean | null
+          logo_url?: string | null
           sport_id?: number
         }
         Relationships: [
