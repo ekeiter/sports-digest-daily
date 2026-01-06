@@ -796,7 +796,7 @@ export default function Preferences() {
                     return (
                       <div key={item.id}>
                         {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
-                        <div className="pt-3 pb-1">
+                        <div className="pt-1 pb-0.5">
                           <h3 className="text-lg font-bold text-black select-none">
                             {item.label}
                           </h3>
