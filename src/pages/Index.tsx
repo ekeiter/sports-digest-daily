@@ -6,6 +6,7 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
+
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
