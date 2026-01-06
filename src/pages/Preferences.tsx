@@ -780,20 +780,26 @@ export default function Preferences() {
                   const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item);
                   const isAccordionParent = !item.is_submenu && hasChildren(item);
                   const isAccordionExpanded = expandedAccordionIds.includes(item.id);
+                  const displayOptions = item.display_options as { divider_above?: boolean } | null;
+                  const showDivider = displayOptions?.divider_above === true;
 
                   // Non-clickable heading - render as plain text
                   if (isHeading) {
                     return (
-                      <div key={item.id} className="pt-3 pb-1">
-                        <h3 className="text-lg font-bold text-black select-none">
-                          {item.label}
-                        </h3>
+                      <div key={item.id}>
+                        {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
+                        <div className="pt-3 pb-1">
+                          <h3 className="text-lg font-bold text-black select-none">
+                            {item.label}
+                          </h3>
+                        </div>
                       </div>
                     );
                   }
 
                   return (
                     <div key={item.id}>
+                      {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
                       <div 
                         className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
                           isSelected 
