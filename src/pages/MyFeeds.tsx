@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
-import dashboardBg from "@/assets/dashboard-bg.png";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 import { useUserPreferences, useInvalidateUserPreferences, Person } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
@@ -176,7 +175,7 @@ export default function MyFeeds() {
   const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${dashboardBg})` }}>
+    <div className="min-h-screen bg-[#D5D5D5]">
       <header className="border-b">
         <div className="container mx-auto px-4 py-3 text-center">
           <h1 className="text-xl font-bold">

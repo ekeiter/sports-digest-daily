@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
-import dashboardBg from "@/assets/dashboard-bg.png";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
@@ -573,8 +572,7 @@ export default function Preferences() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
-      style={{ backgroundImage: `url(${dashboardBg})` }}
+      className="min-h-screen bg-[#D5D5D5]"
     >
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
