@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import dashboardBg from "@/assets/dashboard-bg.png";
 
 const Splash = () => {
   const navigate = useNavigate();
@@ -15,8 +14,7 @@ const Splash = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-fixed bg-cover bg-center"
-      style={{ backgroundImage: `url(${dashboardBg})` }}
+      className="min-h-screen flex items-center justify-center bg-[#D5D5D5]"
     >
       <h1 className="font-racing text-5xl md:text-7xl text-black animate-fade-in">
         SportsDig

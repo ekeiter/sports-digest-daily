@@ -1,12 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import dashboardBg from "@/assets/dashboard-bg.png";
 
 export default function MyFeedsSkeleton() {
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${dashboardBg})` }}
+      className="min-h-screen bg-[#D5D5D5]"
     >
       {/* Header skeleton */}
       <header className="border-b">

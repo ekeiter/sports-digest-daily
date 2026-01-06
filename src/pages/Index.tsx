@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import sportsDigLogo from "@/assets/sportsdig-logo.png";
-import dashboardBg from "@/assets/dashboard-bg.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
 const Index = () => {
@@ -78,16 +77,15 @@ const Index = () => {
     }
   };
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#1a3a2a]">
+    return <div className="min-h-screen flex items-center justify-center bg-[#D5D5D5]">
         <div className="text-center">
-          <p className="text-lg text-white">Loading...</p>
+          <p className="text-lg text-black">Loading...</p>
         </div>
       </div>;
   }
   if (!user) {
     return <div 
-      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat bg-[#1a3a2a]"
-      style={{ backgroundImage: `url(${dashboardBg})` }}
+      className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]"
     >
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
           <h1 className="font-racing text-5xl md:text-7xl text-gray-950">
@@ -110,9 +108,7 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-cover bg-center bg-no-repeat bg-[#1a3a2a]" style={{
-    backgroundImage: `url(${dashboardBg})`
-  }}>
+  return <div className="min-h-screen bg-[#D5D5D5]">
       <header className="border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">

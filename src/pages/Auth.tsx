@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { Eye, EyeOff } from "lucide-react";
-import dashboardBg from '@/assets/dashboard-bg.png';
 
 interface AuthFormData {
   email: string;
@@ -145,8 +144,7 @@ export default function Auth() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 bg-[#1a3a2a] bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${dashboardBg})` }}
+      className="min-h-screen flex items-center justify-center p-4 bg-[#D5D5D5]"
     >
       {showConfirmation ? (
         <Card className="w-full max-w-md mx-4">
