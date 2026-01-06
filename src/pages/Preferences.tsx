@@ -861,7 +861,7 @@ export default function Preferences() {
                               e.stopPropagation();
                               loadTeamsForLeague(item.entity_id!);
                             }}
-                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
                           >
                             Teams
                             {(() => {
@@ -880,7 +880,7 @@ export default function Preferences() {
                               e.stopPropagation();
                               loadAllSchools();
                             }}
-                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
                           >
                             Schools
                             {selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
@@ -954,7 +954,7 @@ export default function Preferences() {
                                         e.stopPropagation();
                                         loadTeamsForLeague(child.entity_id!);
                                       }}
-                                      className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                                      className="shrink-0 transition-colors w-16 justify-center text-black h-7"
                                     >
                                       Teams
                                       {(() => {
@@ -1005,7 +1005,7 @@ export default function Preferences() {
                                                 e.stopPropagation();
                                                 loadTeamsForLeague(grandchild.entity_id!);
                                               }}
-                                              className="shrink-0 transition-colors w-20 justify-center text-black h-7"
+                                              className="shrink-0 transition-colors w-16 justify-center text-black h-7"
                                             >
                                               Teams
                                               {(() => {
