@@ -135,9 +135,9 @@ export default function OlympicsPreferences() {
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black mb-1">Sport</label>
-                <div className="relative">
+                <div className="flex gap-2">
                   <Select value={selectedSport} onValueChange={setSelectedSport}>
-                    <SelectTrigger className="w-full bg-white pr-8">
+                    <SelectTrigger className="flex-1 bg-white">
                       <SelectValue placeholder="Select a sport" />
                     </SelectTrigger>
                     <SelectContent>
@@ -152,7 +152,7 @@ export default function OlympicsPreferences() {
                     <button
                       type="button"
                       onClick={() => setSelectedSport("")}
-                      className="absolute right-8 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                      className="flex items-center justify-center w-10 h-10 bg-white border border-input rounded-md hover:bg-gray-100"
                     >
                       <X className="h-4 w-4 text-gray-500" />
                     </button>
@@ -162,9 +162,9 @@ export default function OlympicsPreferences() {
               
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black mb-1">Country</label>
-                <div className="relative">
+                <div className="flex gap-2">
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                    <SelectTrigger className="w-full bg-white pr-8">
+                    <SelectTrigger className="flex-1 bg-white">
                       <SelectValue placeholder="Select a country" />
                     </SelectTrigger>
                     <SelectContent>
@@ -184,7 +184,7 @@ export default function OlympicsPreferences() {
                     <button
                       type="button"
                       onClick={() => setSelectedCountry("")}
-                      className="absolute right-8 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                      className="flex items-center justify-center w-10 h-10 bg-white border border-input rounded-md hover:bg-gray-100"
                     >
                       <X className="h-4 w-4 text-gray-500" />
                     </button>
@@ -192,6 +192,7 @@ export default function OlympicsPreferences() {
                 </div>
               </div>
             </div>
+              
 
             <Button 
               onClick={handleAddPreference} 
