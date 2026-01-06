@@ -23,6 +23,7 @@ const toTitleCase = (str: string) => {
 interface WinterSport {
   sport_id: number;
   sport_name: string;
+  logo_url: string | null;
 }
 
 interface Country {
@@ -63,16 +64,17 @@ export default function OlympicsPreferences() {
   const fetchData = async () => {
     setLoading(true);
     
-    // Fetch winter sports with sport names
+    // Fetch winter sports with sport names and logos
     const { data: sportsData } = await supabase
       .from("olympic_sports")
-      .select("sport_id, sports!inner(sport)")
+      .select("sport_id, logo_url, sports!inner(sport)")
       .eq("is_winter", true);
 
     if (sportsData) {
       const mapped = sportsData.map((item: any) => ({
         sport_id: item.sport_id,
         sport_name: item.sports.sport,
+        logo_url: item.logo_url,
       })).sort((a, b) => a.sport_name.localeCompare(b.sport_name));
       setWinterSports(mapped);
     }
@@ -143,7 +145,12 @@ export default function OlympicsPreferences() {
                     <SelectContent>
                       {winterSports.map((sport) => (
                         <SelectItem key={sport.sport_id} value={sport.sport_id.toString()}>
-                          {toTitleCase(sport.sport_name)}
+                          <div className="flex items-center gap-2">
+                            {sport.logo_url && (
+                              <img src={sport.logo_url} alt="" className="w-5 h-5 object-contain" />
+                            )}
+                            {toTitleCase(sport.sport_name)}
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
