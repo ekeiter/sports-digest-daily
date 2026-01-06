@@ -352,6 +352,13 @@ export default function Preferences() {
   };
 
   const handleItemClick = async (item: MenuItem) => {
+    // Check for custom route in display_options first
+    const displayOptions = item.display_options as { route?: string } | null;
+    if (displayOptions?.route) {
+      navigate(displayOptions.route);
+      return;
+    }
+
     // If it's a leaf node with an entity, toggle selection
     if (item.entity_type && item.entity_id) {
       if (item.entity_type === 'sport') {

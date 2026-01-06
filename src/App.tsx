@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
+import OlympicsPreferences from "./pages/OlympicsPreferences";
 import Feed from "./pages/Feed";
 import MyFeeds from "./pages/MyFeeds";
 import PlayerPreferences from "./pages/PlayerPreferences";
@@ -26,6 +27,7 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/preferences" element={<Preferences />} />
+          <Route path="/olympics-preferences" element={<OlympicsPreferences />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/my-feeds" element={<MyFeeds />} />
           <Route path="/player-preferences" element={<PlayerPreferences />} />
