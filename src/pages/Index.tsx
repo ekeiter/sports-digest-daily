@@ -88,7 +88,7 @@ const Index = () => {
       className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]"
     >
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
+          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
           <p className="text-base md:text-xl text-gray-800">
             Create your personalized sports news feed from your favorite sports, leagues, teams, and players/coaches.
           </p>
@@ -110,7 +110,7 @@ const Index = () => {
       <header className="border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16 md:h-20" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-20 md:h-24" />
           </div>
         </div>
       </header>
