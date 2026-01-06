@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Plus } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+// Helper to properly capitalize sport names
+const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 interface WinterSport {
   sport_id: number;
@@ -126,39 +135,61 @@ export default function OlympicsPreferences() {
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black mb-1">Sport</label>
-                <Select value={selectedSport} onValueChange={setSelectedSport}>
-                  <SelectTrigger className="w-full bg-white">
-                    <SelectValue placeholder="Select a sport" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {winterSports.map((sport) => (
-                      <SelectItem key={sport.sport_id} value={sport.sport_id.toString()}>
-                        {sport.sport_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={selectedSport} onValueChange={setSelectedSport}>
+                    <SelectTrigger className="w-full bg-white pr-8">
+                      <SelectValue placeholder="Select a sport" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {winterSports.map((sport) => (
+                        <SelectItem key={sport.sport_id} value={sport.sport_id.toString()}>
+                          {toTitleCase(sport.sport_name)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {selectedSport && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSport("")}
+                      className="absolute right-8 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                    >
+                      <X className="h-4 w-4 text-gray-500" />
+                    </button>
+                  )}
+                </div>
               </div>
               
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black mb-1">Country</label>
-                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                  <SelectTrigger className="w-full bg-white">
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.id} value={country.id.toString()}>
-                        <div className="flex items-center gap-2">
-                          {country.logo_url && (
-                            <img src={country.logo_url} alt="" className="w-5 h-4 object-contain" />
-                          )}
-                          {country.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                    <SelectTrigger className="w-full bg-white pr-8">
+                      <SelectValue placeholder="Select a country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country.id} value={country.id.toString()}>
+                          <div className="flex items-center gap-2">
+                            {country.logo_url && (
+                              <img src={country.logo_url} alt="" className="w-5 h-4 object-contain" />
+                            )}
+                            {country.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {selectedCountry && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCountry("")}
+                      className="absolute right-8 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                    >
+                      <X className="h-4 w-4 text-gray-500" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
