@@ -134,7 +134,7 @@ export default function OlympicsPreferences() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-black mb-1">Sport</label>
+                <label className="block text-sm font-medium text-black mb-1">Select Sport (leave blank for all)</label>
                 <div className="flex gap-2">
                   <Select value={selectedSport} onValueChange={setSelectedSport}>
                     <SelectTrigger className="flex-1 bg-white">
@@ -161,7 +161,7 @@ export default function OlympicsPreferences() {
               </div>
               
               <div className="flex-1">
-                <label className="block text-sm font-medium text-black mb-1">Country</label>
+                <label className="block text-sm font-medium text-black mb-1">Select Country (leave blank for all)</label>
                 <div className="flex gap-2">
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                     <SelectTrigger className="flex-1 bg-white">
