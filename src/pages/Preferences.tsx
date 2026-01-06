@@ -784,13 +784,14 @@ export default function Preferences() {
                   const isLeague = item.entity_type === 'league';
                   const isSchools = item.entity_type === 'schools';
                   const isSubmenu = item.is_submenu && hasChildren(item);
-                  const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item);
+                  const displayOptions = item.display_options as { divider_above?: boolean; route?: string } | null;
+                  const hasCustomRoute = !!displayOptions?.route;
+                  const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item) && !hasCustomRoute;
                   const isAccordionParent = !item.is_submenu && hasChildren(item);
                   const isAccordionExpanded = expandedAccordionIds.includes(item.id);
-                  const displayOptions = item.display_options as { divider_above?: boolean } | null;
                   const showDivider = displayOptions?.divider_above === true;
 
-                  // Non-clickable heading - render as plain text
+                  // Non-clickable heading - render as plain text (only if no custom route)
                   if (isHeading) {
                     return (
                       <div key={item.id}>
