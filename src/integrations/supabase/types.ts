@@ -1411,6 +1411,7 @@ export type Database = {
         Row: {
           app_order: number | null
           created_at: string | null
+          display_options: Json | null
           entity_id: number | null
           entity_type: string | null
           id: number
@@ -1424,6 +1425,7 @@ export type Database = {
         Insert: {
           app_order?: number | null
           created_at?: string | null
+          display_options?: Json | null
           entity_id?: number | null
           entity_type?: string | null
           id?: number
@@ -1437,6 +1439,7 @@ export type Database = {
         Update: {
           app_order?: number | null
           created_at?: string | null
+          display_options?: Json | null
           entity_id?: number | null
           entity_type?: string | null
           id?: number
