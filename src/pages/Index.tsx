@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
-import sportsDigLogo from "@/assets/sportsdig-logo.png";
+import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
 const Index = () => {
@@ -88,9 +88,7 @@ const Index = () => {
       className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]"
     >
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <h1 className="font-racing text-5xl md:text-7xl text-gray-950">
-            SportsDig
-          </h1>
+          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
           <p className="text-base md:text-xl text-gray-800">
             Create your personalized sports news feed from your favorite sports, leagues, teams, and players/coaches.
           </p>
@@ -112,7 +110,7 @@ const Index = () => {
       <header className="border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigLogo} alt="SportsDig" className="h-12 md:h-16" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16 md:h-20" />
           </div>
         </div>
       </header>
