@@ -183,7 +183,7 @@ export default function MyFeeds() {
   const selectedSchools = (preferences?.schools || []).filter(s => !deletedItems.has(`school-${s.id}`));
   const olympicsPrefs = (preferences?.olympicsPrefs || []).filter(o => !deletedItems.has(`olympics-${o.id}`));
 
-  const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0;
+  const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0 || olympicsPrefs.length > 0;
 
   const handleDeleteOlympics = async (prefId: number) => {
     const { error } = await supabase
@@ -334,6 +334,7 @@ export default function MyFeeds() {
                     const key = `school-${school.id}`;
                     const isMarked = toUnfollow.has(key);
                     const isFocused = localFocusedItems.has(key);
+                    const suffix = school.league_code ? `(${school.league_code})` : "(all sports)";
                     return (
                       <div
                         key={key}
@@ -343,13 +344,41 @@ export default function MyFeeds() {
                         onClick={() => toggleUnfollow('school' as any, school.id)}
                       >
                         {school.logo_url && <img src={school.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">{school.name}</span>
+                        <span className="text-sm font-medium flex-1">
+                          {school.name} <span className="text-muted-foreground">{suffix}</span>
+                        </span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'school' as any, school.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     );
                   })}
+                  
+                  {/* Olympics */}
+                  {olympicsPrefs.map(pref => (
+                    <div
+                      key={`olympics-${pref.id}`}
+                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                    >
+                      {pref.sport_logo && (
+                        <img src={pref.sport_logo} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
+                      )}
+                      {!pref.sport_logo && pref.country_logo && (
+                        <img src={pref.country_logo} alt="" className="h-5 w-4 object-contain flex-shrink-0" />
+                      )}
+                      <span className="text-sm font-medium flex-1">
+                        OLY - {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"} - {pref.country_name || "All Countries"}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteOlympics(pref.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
@@ -407,55 +436,6 @@ export default function MyFeeds() {
             </CardContent>
           </Card>
 
-          {/* Olympics Section */}
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="py-2 space-y-1">
-              <CardTitle className="text-base text-center">Olympics</CardTitle>
-              <div className="flex justify-center">
-                <Button size="sm" onClick={() => navigate("/olympics-preferences")}>
-                  Manage
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2 pt-0">
-              {olympicsPrefs.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No Olympics preferences selected</p>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {olympicsPrefs.map(pref => (
-                    <div
-                      key={`olympics-${pref.id}`}
-                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
-                    >
-                      <span className="font-semibold text-sm">OLY</span>
-                      <span className="text-muted-foreground">-</span>
-                      {pref.sport_logo && (
-                        <img src={pref.sport_logo} alt="" className="h-5 w-5 object-contain" />
-                      )}
-                      <span className="text-sm">
-                        {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"}
-                      </span>
-                      <span className="text-muted-foreground">-</span>
-                      {pref.country_logo && (
-                        <img src={pref.country_logo} alt="" className="h-5 w-4 object-contain" />
-                      )}
-                      <span className="text-sm flex-1">
-                        {pref.country_name || "All Countries"}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteOlympics(pref.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
