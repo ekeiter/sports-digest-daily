@@ -846,7 +846,7 @@ export default function Preferences() {
                             }}
                             className={`shrink-0 transition-colors w-16 justify-center h-7 ${
                               isAccordionExpanded 
-                                ? 'bg-black text-white border-black hover:bg-black/90' 
+                                ? 'bg-black text-white border-black hover:bg-black hover:text-white' 
                                 : 'text-black'
                             }`}
                           >
@@ -943,7 +943,7 @@ export default function Preferences() {
                                       }}
                                       className={`shrink-0 transition-colors w-16 justify-center h-7 ${
                                         childIsAccordionExpanded 
-                                          ? 'bg-black text-white border-black hover:bg-black/90' 
+                                          ? 'bg-black text-white border-black hover:bg-black hover:text-white' 
                                           : 'text-black'
                                       }`}
                                     >
