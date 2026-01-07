@@ -321,9 +321,10 @@ export default function Preferences() {
     }
   };
 
-  const handleSchoolToggle = async (schoolId: number) => {
-    const school = schools.find(s => s.id === schoolId);
-    const label = school?.name || 'school';
+  const handleSchoolToggle = async (schoolId: number, leagueId?: number | null) => {
+    const expandedItem = expandedLeagueItems.find(i => i.id === schoolId);
+    const schoolItem = schools.find(s => s.id === schoolId);
+    const label = expandedItem?.display_name || schoolItem?.name || 'school';
     const isCurrentlySelected = selectedSchools.includes(schoolId);
 
     try {
@@ -337,9 +338,17 @@ export default function Preferences() {
         setSelectedSchools(prev => prev.filter(id => id !== schoolId));
         toast(`Unfollowed ${label}`);
       } else {
+        // If we have a league context, save both school_id and league_id
+        const insertData: { subscriber_id: string | null; school_id: number; league_id?: number } = { 
+          subscriber_id: userId, 
+          school_id: schoolId 
+        };
+        if (leagueId) {
+          insertData.league_id = leagueId;
+        }
         const { error } = await supabase
           .from("subscriber_interests")
-          .insert({ subscriber_id: userId, school_id: schoolId });
+          .insert(insertData);
         if (error) throw error;
         setSelectedSchools(prev => [...prev, schoolId]);
         toast.success(`Followed ${label}`);
@@ -752,7 +761,7 @@ export default function Preferences() {
                         <div 
                           key={item.id} 
                           onClick={() => expandedLeagueType === 'school' 
-                            ? handleSchoolToggle(item.id) 
+                            ? handleSchoolToggle(item.id, expandedLeagueId) 
                             : handleTeamToggle(item.id)
                           }
                           className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${

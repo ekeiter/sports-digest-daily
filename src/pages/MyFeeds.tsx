@@ -78,7 +78,7 @@ export default function MyFeeds() {
     setUserId(user.id);
   };
 
-  const toggleUnfollow = (kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
+  const toggleUnfollow = (kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
     const key = `${kind}-${id}`;
     const newSet = new Set(toUnfollow);
     if (newSet.has(key)) {
@@ -89,14 +89,14 @@ export default function MyFeeds() {
     setToUnfollow(newSet);
   };
 
-  const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person', id: number) => {
+  const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
     e.stopPropagation();
     const key = `${kind}-${id}`;
     const isCurrentlyFocused = localFocusedItems.has(key);
     
     try {
       // Update the is_focused column based on the kind
-      const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id';
+      const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id' | 'school_id';
       const { error } = await supabase
         .from("subscriber_interests")
         .update({ is_focused: !isCurrentlyFocused })
@@ -135,7 +135,7 @@ export default function MyFeeds() {
       for (const key of toUnfollow) {
         const [kind, idStr] = key.split('-');
         const subjectId = Number(idStr);
-        const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id';
+        const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id' | 'school_id';
         
         await supabase
           .from("subscriber_interests")
@@ -180,9 +180,10 @@ export default function MyFeeds() {
   const selectedLeagues = (preferences?.leagues || []).filter(l => !deletedItems.has(`league-${l.id}`));
   const selectedTeams = (preferences?.teams || []).filter(t => !deletedItems.has(`team-${t.id}`));
   const selectedPeople = (preferences?.people || []).filter(p => !deletedItems.has(`person-${p.id}`));
+  const selectedSchools = (preferences?.schools || []).filter(s => !deletedItems.has(`school-${s.id}`));
   const olympicsPrefs = (preferences?.olympicsPrefs || []).filter(o => !deletedItems.has(`olympics-${o.id}`));
 
-  const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
+  const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0;
 
   const handleDeleteOlympics = async (prefId: number) => {
     const { error } = await supabase
@@ -322,6 +323,28 @@ export default function MyFeeds() {
                           )}
                         </span>
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'team', team.id)}>
+                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        </Button>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Schools */}
+                  {selectedSchools.map(school => {
+                    const key = `school-${school.id}`;
+                    const isMarked = toUnfollow.has(key);
+                    const isFocused = localFocusedItems.has(key);
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
+                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
+                        }`}
+                        onClick={() => toggleUnfollow('school' as any, school.id)}
+                      >
+                        {school.logo_url && <img src={school.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
+                        <span className="text-sm font-medium flex-1">{school.name}</span>
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'school' as any, school.id)}>
                           <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
