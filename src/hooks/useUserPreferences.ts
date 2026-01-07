@@ -33,12 +33,23 @@ export interface Person {
   } | null;
 }
 
+export interface OlympicsPreference {
+  id: number;
+  sport_id: number | null;
+  country_id: number | null;
+  sport_name?: string;
+  sport_logo?: string | null;
+  country_name?: string;
+  country_logo?: string | null;
+}
+
 export interface UserPreferences {
   sports: Sport[];
   leagues: League[];
   teams: Team[];
   people: Person[];
   schools: School[];
+  olympicsPrefs: OlympicsPreference[];
   focusedItems: Set<string>;
 }
 
@@ -46,7 +57,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   // Single query to get all interests with focus status using explicit FK columns
   const { data: allInterests, error: interestsError } = await supabase
     .from("subscriber_interests")
-    .select("sport_id, league_id, team_id, person_id, school_id, is_focused")
+    .select("id, sport_id, league_id, team_id, person_id, school_id, country_id, is_olympics, is_focused")
     .eq("subscriber_id", userId);
 
   if (interestsError) {
@@ -60,8 +71,19 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const teamIds: number[] = [];
   const personIds: number[] = [];
   const schoolIds: number[] = [];
+  const olympicsInterests: { id: number; sport_id: number | null; country_id: number | null }[] = [];
 
   (allInterests || []).forEach(interest => {
+    // Handle Olympics preferences separately
+    if (interest.is_olympics) {
+      olympicsInterests.push({
+        id: interest.id,
+        sport_id: interest.sport_id,
+        country_id: interest.country_id,
+      });
+      return;
+    }
+    
     if (interest.sport_id !== null) {
       sportIds.push(interest.sport_id);
       if (interest.is_focused) focused.add(`sport-${interest.sport_id}`);
@@ -84,8 +106,12 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   });
 
+  // Collect unique sport/country IDs from olympics interests for batch lookup
+  const olympicsSportIds = [...new Set(olympicsInterests.map(o => o.sport_id).filter((id): id is number => id !== null))];
+  const olympicsCountryIds = [...new Set(olympicsInterests.map(o => o.country_id).filter((id): id is number => id !== null))];
+
   // Fetch all details in parallel
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -121,7 +147,32 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     schoolIds.length > 0
       ? supabase.from("schools").select("*").in("id", schoolIds)
       : Promise.resolve({ data: [], error: null }),
+    olympicsSportIds.length > 0
+      ? supabase.from("sports").select("id, sport").in("id", olympicsSportIds)
+      : Promise.resolve({ data: [], error: null }),
+    olympicsCountryIds.length > 0
+      ? supabase.from("countries").select("id, name, logo_url").in("id", olympicsCountryIds)
+      : Promise.resolve({ data: [], error: null }),
+    olympicsSportIds.length > 0
+      ? supabase.from("olympic_sports").select("sport_id, logo_url").in("sport_id", olympicsSportIds)
+      : Promise.resolve({ data: [], error: null }),
   ]);
+
+  // Build lookup maps for olympics data
+  const sportsMap = new Map((olympicsSportsResult.data || []).map(s => [s.id, s.sport]));
+  const countriesMap = new Map((olympicsCountriesResult.data || []).map(c => [c.id, { name: c.name, logo_url: c.logo_url }]));
+  const sportLogosMap = new Map((olympicsSportLogosResult.data || []).map(s => [s.sport_id, s.logo_url]));
+
+  // Enrich olympics preferences
+  const olympicsPrefs: OlympicsPreference[] = olympicsInterests.map(o => ({
+    id: o.id,
+    sport_id: o.sport_id,
+    country_id: o.country_id,
+    sport_name: o.sport_id ? sportsMap.get(o.sport_id) : undefined,
+    sport_logo: o.sport_id ? sportLogosMap.get(o.sport_id) : undefined,
+    country_name: o.country_id ? countriesMap.get(o.country_id)?.name : undefined,
+    country_logo: o.country_id ? countriesMap.get(o.country_id)?.logo_url : undefined,
+  }));
 
   // Sort results alphabetically
   const sports = (sportsResult.data || []).sort((a, b) => 
@@ -146,6 +197,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     teams,
     people,
     schools,
+    olympicsPrefs,
     focusedItems: focused,
   };
 }

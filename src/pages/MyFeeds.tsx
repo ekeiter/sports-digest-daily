@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Star } from "lucide-react";
+import { Loader2, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
-import { useUserPreferences, useInvalidateUserPreferences, Person } from "@/hooks/useUserPreferences";
+import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+
+// Helper to properly capitalize sport names
+const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
 const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
@@ -171,8 +180,29 @@ export default function MyFeeds() {
   const selectedLeagues = (preferences?.leagues || []).filter(l => !deletedItems.has(`league-${l.id}`));
   const selectedTeams = (preferences?.teams || []).filter(t => !deletedItems.has(`team-${t.id}`));
   const selectedPeople = (preferences?.people || []).filter(p => !deletedItems.has(`person-${p.id}`));
+  const olympicsPrefs = (preferences?.olympicsPrefs || []).filter(o => !deletedItems.has(`olympics-${o.id}`));
 
   const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0;
+
+  const handleDeleteOlympics = async (prefId: number) => {
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .delete()
+      .eq("id", prefId);
+
+    if (error) {
+      console.error("Error removing olympics preference:", error);
+      toast.error("Failed to remove preference");
+      return;
+    }
+
+    setDeletedItems(prev => new Set([...prev, `olympics-${prefId}`]));
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
+    toast.success("Olympics preference removed");
+  };
 
   return (
     <div className="min-h-screen bg-[#D5D5D5]">
@@ -349,6 +379,56 @@ export default function MyFeeds() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Olympics Section */}
+          <Card className="bg-transparent border-none shadow-none">
+            <CardHeader className="py-2 space-y-1">
+              <CardTitle className="text-base text-center">Olympics</CardTitle>
+              <div className="flex justify-center">
+                <Button size="sm" onClick={() => navigate("/olympics-preferences")}>
+                  Manage
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-2 pt-0">
+              {olympicsPrefs.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No Olympics preferences selected</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {olympicsPrefs.map(pref => (
+                    <div
+                      key={`olympics-${pref.id}`}
+                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                    >
+                      <span className="font-semibold text-sm">OLY</span>
+                      <span className="text-muted-foreground">-</span>
+                      {pref.sport_logo && (
+                        <img src={pref.sport_logo} alt="" className="h-5 w-5 object-contain" />
+                      )}
+                      <span className="text-sm">
+                        {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"}
+                      </span>
+                      <span className="text-muted-foreground">-</span>
+                      {pref.country_logo && (
+                        <img src={pref.country_logo} alt="" className="h-5 w-4 object-contain" />
+                      )}
+                      <span className="text-sm flex-1">
+                        {pref.country_name || "All Countries"}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteOlympics(pref.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
