@@ -9,7 +9,9 @@ type Team = Database['public']['Tables']['teams']['Row'] & {
   } | null;
 };
 type Sport = Database['public']['Tables']['sports']['Row'];
-type School = Database['public']['Tables']['schools']['Row'];
+type School = Database['public']['Tables']['schools']['Row'] & {
+  league_code?: string | null;
+};
 
 export interface Person {
   id: number;
@@ -111,7 +113,15 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const olympicsCountryIds = [...new Set(olympicsInterests.map(o => o.country_id).filter((id): id is number => id !== null))];
 
   // Fetch all details in parallel
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult] = await Promise.all([
+  // Build a map of school_id to league_id from interests for enrichment
+  const schoolLeagueMap = new Map<number, number | null>();
+  (allInterests || []).forEach(interest => {
+    if (interest.school_id !== null) {
+      schoolLeagueMap.set(interest.school_id, interest.league_id);
+    }
+  });
+
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -147,6 +157,13 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     schoolIds.length > 0
       ? supabase.from("schools").select("*").in("id", schoolIds)
       : Promise.resolve({ data: [], error: null }),
+    // Fetch league codes for schools that have league_id
+    (() => {
+      const leagueIdsForSchools = [...new Set([...schoolLeagueMap.values()].filter((id): id is number => id !== null))];
+      return leagueIdsForSchools.length > 0
+        ? supabase.from("leagues").select("id, code").in("id", leagueIdsForSchools)
+        : Promise.resolve({ data: [], error: null });
+    })(),
     olympicsSportIds.length > 0
       ? supabase.from("sports").select("id, sport").in("id", olympicsSportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -187,9 +204,17 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const people = ((peopleResult.data || []) as Person[]).sort((a, b) => 
     a.name.localeCompare(b.name)
   );
-  const schools = ((schoolsResult.data || []) as School[]).sort((a, b) => 
-    a.name.localeCompare(b.name)
-  );
+  // Build league code lookup for schools
+  const schoolLeagueCodeMap = new Map((leaguesForSchoolsResult.data || []).map(l => [l.id, l.code]));
+  
+  // Enrich schools with their league_code
+  const schools = ((schoolsResult.data || []) as School[]).map(school => {
+    const leagueId = schoolLeagueMap.get(school.id);
+    return {
+      ...school,
+      league_code: leagueId ? schoolLeagueCodeMap.get(leagueId) : null,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   return {
     sports,
