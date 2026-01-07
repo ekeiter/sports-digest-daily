@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Plus, X } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, X, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,16 @@ interface Country {
   logo_url: string | null;
 }
 
+interface OlympicsPreference {
+  id: number;
+  sport_id: number | null;
+  country_id: number | null;
+  sport_name?: string;
+  sport_logo?: string | null;
+  country_name?: string;
+  country_logo?: string | null;
+}
+
 export default function OlympicsPreferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -41,6 +52,7 @@ export default function OlympicsPreferences() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [existingPrefs, setExistingPrefs] = useState<OlympicsPreference[]>([]);
 
   useEffect(() => {
     checkUser();
@@ -90,15 +102,120 @@ export default function OlympicsPreferences() {
       setCountries(countriesData);
     }
 
+    // Fetch existing olympics preferences
+    await fetchExistingPrefs();
+
     setLoading(false);
   };
 
-  const handleAddPreference = () => {
-    // TODO: Add preference to database
-    console.log("Adding preference:", { sport: selectedSport, country: selectedCountry });
+  const fetchExistingPrefs = async () => {
+    if (!userId) return;
+    
+    const { data: prefsData } = await supabase
+      .from("subscriber_interests")
+      .select("id, sport_id, country_id")
+      .eq("subscriber_id", userId)
+      .eq("is_olympics", true);
+
+    if (prefsData) {
+      // Enrich with sport/country names
+      const enriched = await Promise.all(prefsData.map(async (pref) => {
+        let sport_name: string | undefined;
+        let sport_logo: string | null | undefined;
+        let country_name: string | undefined;
+        let country_logo: string | null | undefined;
+
+        if (pref.sport_id) {
+          const { data: sportData } = await supabase
+            .from("sports")
+            .select("sport")
+            .eq("id", pref.sport_id)
+            .single();
+          const { data: olympicData } = await supabase
+            .from("olympic_sports")
+            .select("logo_url")
+            .eq("sport_id", pref.sport_id)
+            .single();
+          sport_name = sportData?.sport;
+          sport_logo = olympicData?.logo_url;
+        }
+
+        if (pref.country_id) {
+          const { data: countryData } = await supabase
+            .from("countries")
+            .select("name, logo_url")
+            .eq("id", pref.country_id)
+            .single();
+          country_name = countryData?.name;
+          country_logo = countryData?.logo_url;
+        }
+
+        return {
+          ...pref,
+          sport_name,
+          sport_logo,
+          country_name,
+          country_logo,
+        };
+      }));
+      setExistingPrefs(enriched);
+    }
   };
 
-  const canAdd = selectedSport && selectedCountry;
+  const handleAddPreference = async () => {
+    if (!userId) return;
+
+    const sportId = selectedSport ? Number(selectedSport) : null;
+    const countryId = selectedCountry ? Number(selectedCountry) : null;
+
+    // Check if this combination already exists
+    const exists = existingPrefs.some(
+      p => p.sport_id === sportId && p.country_id === countryId
+    );
+    if (exists) {
+      toast.error("This preference already exists");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .insert({
+        subscriber_id: userId,
+        sport_id: sportId,
+        country_id: countryId,
+        is_olympics: true,
+      });
+
+    if (error) {
+      console.error("Error adding preference:", error);
+      toast.error("Failed to add preference");
+      return;
+    }
+
+    toast.success("Preference added");
+    setSelectedSport("");
+    setSelectedCountry("");
+    await fetchExistingPrefs();
+  };
+
+  const handleRemovePreference = async (prefId: number) => {
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .delete()
+      .eq("id", prefId);
+
+    if (error) {
+      console.error("Error removing preference:", error);
+      toast.error("Failed to remove preference");
+      return;
+    }
+
+    toast.success("Preference removed");
+    setExistingPrefs(prev => prev.filter(p => p.id !== prefId));
+  };
+
+  // Always allow add - blank means "all"
+  const canAdd = true;
 
   if (loading) {
     return (
@@ -203,13 +320,53 @@ export default function OlympicsPreferences() {
 
             <Button 
               onClick={handleAddPreference} 
-              disabled={!canAdd}
               className="w-full sm:w-auto"
             >
               <Plus className="h-4 w-4 mr-1" />
               Add Preference
             </Button>
           </div>
+
+          {/* Existing Preferences */}
+          {existingPrefs.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-black mb-3">Your Olympics Preferences</h3>
+              <div className="space-y-2">
+                {existingPrefs.map((pref) => (
+                  <div
+                    key={pref.id}
+                    className="flex items-center justify-between gap-2 px-3 py-2 bg-white border rounded-md"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-black">OLY</span>
+                      <span className="text-muted-foreground">-</span>
+                      {pref.sport_logo && (
+                        <img src={pref.sport_logo} alt="" className="w-5 h-5 object-contain" />
+                      )}
+                      <span className="text-sm">
+                        {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"}
+                      </span>
+                      <span className="text-muted-foreground">-</span>
+                      {pref.country_logo && (
+                        <img src={pref.country_logo} alt="" className="w-5 h-4 object-contain" />
+                      )}
+                      <span className="text-sm">
+                        {pref.country_name || "All Countries"}
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemovePreference(pref.id)}
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
