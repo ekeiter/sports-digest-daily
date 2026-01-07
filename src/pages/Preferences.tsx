@@ -844,7 +844,11 @@ export default function Preferences() {
                               e.stopPropagation();
                               toggleAccordion(item.id);
                             }}
-                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                            className={`shrink-0 transition-colors w-16 justify-center h-7 ${
+                              isAccordionExpanded 
+                                ? 'bg-black text-white border-black hover:bg-black/90' 
+                                : 'text-black'
+                            }`}
                           >
                             {isAccordionExpanded ? 'Close' : 'Menu'}
                           </Button>
@@ -937,7 +941,11 @@ export default function Preferences() {
                                         e.stopPropagation();
                                         toggleAccordion(child.id);
                                       }}
-                                      className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                                      className={`shrink-0 transition-colors w-16 justify-center h-7 ${
+                                        childIsAccordionExpanded 
+                                          ? 'bg-black text-white border-black hover:bg-black/90' 
+                                          : 'text-black'
+                                      }`}
                                     >
                                       {childIsAccordionExpanded ? 'Close' : 'Menu'}
                                     </Button>
