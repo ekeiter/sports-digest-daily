@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { Eye, EyeOff } from "lucide-react";
+import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 
 interface AuthFormData {
   email: string;
@@ -206,6 +207,9 @@ export default function Auth() {
       ) : (
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
+            <div className="flex justify-center mb-2">
+              <img src={blimpLogo} alt="SportsDig" className="h-16 w-auto" />
+            </div>
             <CardTitle className="text-2xl text-center">
               {isSignUp ? (
                 <>Create a <span className="font-racing text-3xl">SportsDig</span> Account</>
