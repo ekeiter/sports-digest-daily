@@ -51,6 +51,8 @@ export default function Preferences() {
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
+  const [leagueSchoolMap, setLeagueSchoolMap] = useState<Record<number, number[]>>({});
+  const [selectedSchoolsByLeague, setSelectedSchoolsByLeague] = useState<Record<number, number[]>>({});
   const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
   
@@ -120,15 +122,26 @@ export default function Preferences() {
       // Load user's current interests
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
-        .select("sport_id, league_id, team_id, school_id")
+        .select("sport_id, league_id, team_id, school_id, country_id")
         .eq("subscriber_id", user.id);
 
       if (interestsError) throw interestsError;
 
       const sportIds = interests?.filter(i => i.sport_id !== null).map(i => i.sport_id as number) || [];
-      const leagueIds = interests?.filter(i => i.league_id !== null).map(i => i.league_id as number) || [];
+      // Only count as a league selection if league_id is set but no team/school/country is set (direct league follow)
+      const leagueIds = interests?.filter(i => i.league_id !== null && i.team_id === null && i.school_id === null && i.country_id === null).map(i => i.league_id as number) || [];
       const teamIds = interests?.filter(i => i.team_id !== null).map(i => i.team_id as number) || [];
       const schoolIds = interests?.filter(i => i.school_id !== null).map(i => i.school_id as number) || [];
+      
+      // Track schools selected with a league context (for counting on Teams button)
+      const schoolsByLeagueMap: Record<number, number[]> = {};
+      interests?.filter(i => i.school_id !== null && i.league_id !== null).forEach(i => {
+        const leagueId = i.league_id as number;
+        const schoolId = i.school_id as number;
+        if (!schoolsByLeagueMap[leagueId]) schoolsByLeagueMap[leagueId] = [];
+        schoolsByLeagueMap[leagueId].push(schoolId);
+      });
+      setSelectedSchoolsByLeague(schoolsByLeagueMap);
 
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
@@ -336,6 +349,13 @@ export default function Preferences() {
           .eq("school_id", schoolId);
         if (error) throw error;
         setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+        // Also remove from selectedSchoolsByLeague if it was in a league context
+        if (leagueId) {
+          setSelectedSchoolsByLeague(prev => ({
+            ...prev,
+            [leagueId]: (prev[leagueId] || []).filter(id => id !== schoolId)
+          }));
+        }
         toast(`Unfollowed ${label}`);
       } else {
         // If we have a league context, save both school_id and league_id
@@ -351,6 +371,13 @@ export default function Preferences() {
           .insert(insertData);
         if (error) throw error;
         setSelectedSchools(prev => [...prev, schoolId]);
+        // Also add to selectedSchoolsByLeague if it's in a league context
+        if (leagueId) {
+          setSelectedSchoolsByLeague(prev => ({
+            ...prev,
+            [leagueId]: [...(prev[leagueId] || []), schoolId]
+          }));
+        }
         toast.success(`Followed ${label}`);
       }
       
@@ -521,6 +548,12 @@ export default function Preferences() {
   };
 
   const getSelectedTeamCountForLeague = (leagueId: number) => {
+    // For school-type leagues, count selected schools within that league context
+    const schoolsForLeague = selectedSchoolsByLeague[leagueId] || [];
+    if (schoolsForLeague.length > 0) {
+      return schoolsForLeague.length;
+    }
+    // For team-type leagues, count selected teams
     const teamIdsForLeague = leagueTeamMap[leagueId] || [];
     return teamIdsForLeague.filter((teamId) => selectedTeams.includes(teamId)).length;
   };
