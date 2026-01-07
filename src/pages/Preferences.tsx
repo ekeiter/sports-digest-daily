@@ -133,14 +133,13 @@ export default function Preferences() {
       setSelectedSchools(schoolIds);
       setSelectedTeams(teamIds);
 
-      // Load team_league_map for counting
+      // Load league_teams for counting
       const allMappings: Array<{ league_id: number; team_id: number }> = [];
       const pageSize = 1000;
       for (let from = 0; ; from += pageSize) {
         const { data: page, error: pageError } = await supabase
-          .from("team_league_map")
+          .from("league_teams")
           .select("league_id, team_id")
-          .order("id", { ascending: true })
           .range(from, from + pageSize - 1);
 
         if (pageError) throw pageError;
