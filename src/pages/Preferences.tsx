@@ -27,6 +27,8 @@ export default function Preferences() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [expandedLeagueId, setExpandedLeagueId] = useState<number | null>(null);
   const [expandedLeagueTeamIds, setExpandedLeagueTeamIds] = useState<number[]>([]);
+  const [expandedLeagueItems, setExpandedLeagueItems] = useState<Array<{ id: number; display_name: string; nickname?: string; logo_url?: string | null }>>([]);
+  const [expandedLeagueType, setExpandedLeagueType] = useState<'team' | 'school' | 'country'>('team');
   const [loadingTeams, setLoadingTeams] = useState(false);
   
   // Accordion expansion for inline parent items
@@ -241,52 +243,56 @@ export default function Preferences() {
         .single();
 
       const teamType = leagueData?.team_type;
-      let teamsData: any[] = [];
+      let itemsData: Array<{ id: number; display_name: string; nickname?: string; logo_url?: string | null }> = [];
+      let resolvedType: 'team' | 'school' | 'country' = 'team';
 
       if (teamType === 'country') {
+        resolvedType = 'country';
         const { data: mappings, error } = await supabase
           .from("league_countries")
           .select("countries(*)")
           .eq("league_id", leagueId);
         if (error) throw error;
-        teamsData = (mappings?.map(m => m.countries).filter(Boolean) || []).map(c => ({
+        itemsData = (mappings?.map(m => m.countries).filter(Boolean) || []).map(c => ({
           id: c.id,
           display_name: c.name,
           nickname: c.code,
           logo_url: c.logo_url,
-          city_state_name: '',
         }));
       } else if (teamType === 'school') {
+        resolvedType = 'school';
         const { data: mappings, error } = await supabase
           .from("league_schools")
           .select("schools(*)")
           .eq("league_id", leagueId);
         if (error) throw error;
-        teamsData = (mappings?.map(m => m.schools).filter(Boolean) || []).map(s => ({
+        itemsData = (mappings?.map(m => m.schools).filter(Boolean) || []).map(s => ({
           id: s.id,
           display_name: s.name,
           nickname: s.short_name,
           logo_url: s.logo_url,
-          city_state_name: '',
         }));
       } else {
+        resolvedType = 'team';
         const { data: mappings, error } = await supabase
           .from("league_teams")
           .select("teams(*)")
           .eq("league_id", leagueId);
         if (error) throw error;
-        teamsData = mappings?.map(m => m.teams).filter(Boolean) || [];
+        itemsData = (mappings?.map(m => m.teams).filter(Boolean) || []).map(t => ({
+          id: t.id,
+          display_name: t.display_name,
+          nickname: t.nickname,
+          logo_url: t.logo_url,
+        }));
       }
 
-      const teamIds = teamsData.map(t => Number(t.id));
-      setExpandedLeagueTeamIds(teamIds);
-      
-      setTeams(prev => {
-        const existingIds = new Set(prev.map(t => t.id));
-        const newTeams = teamsData.filter(t => t && !existingIds.has(t.id));
-        return [...prev, ...newTeams].sort((a, b) => a.display_name.localeCompare(b.display_name));
-      });
-      
+      // Sort alphabetically
+      itemsData.sort((a, b) => a.display_name.localeCompare(b.display_name));
+
+      setExpandedLeagueItems(itemsData);
+      setExpandedLeagueType(resolvedType);
+      setExpandedLeagueTeamIds(itemsData.map(t => t.id));
       setExpandedLeagueId(leagueId);
     } catch (error) {
       console.error("Error loading teams:", error);
@@ -524,9 +530,7 @@ export default function Preferences() {
 
   const getExpandedLeagueTeams = () => {
     if (!expandedLeagueId) return [];
-    return teams
-      .filter(t => expandedLeagueTeamIds.includes(Number(t.id)))
-      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+    return expandedLeagueItems;
   };
 
   const isItemSelected = (item: MenuItem) => {
@@ -729,39 +733,46 @@ export default function Preferences() {
                 )}
               </div>
             ) : expandedLeagueId !== null ? (
-              /* Teams view when league is expanded */
+              /* Teams/Schools/Countries view when league is expanded */
               <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-center">{expandedLeague?.label} Teams</h2>
+                <h2 className="text-2xl font-bold text-center">
+                  {expandedLeague?.label} {expandedLeagueType === 'school' ? 'Schools' : expandedLeagueType === 'country' ? 'Countries' : 'Teams'}
+                </h2>
                 {loadingTeams ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {getExpandedLeagueTeams().map(team => {
-                      const isSelected = selectedTeams.includes(Number(team.id));
+                    {getExpandedLeagueTeams().map(item => {
+                      const isSelected = expandedLeagueType === 'school' 
+                        ? selectedSchools.includes(item.id)
+                        : selectedTeams.includes(item.id);
                       return (
                         <div 
-                          key={team.id} 
-                          onClick={() => handleTeamToggle(Number(team.id))}
+                          key={item.id} 
+                          onClick={() => expandedLeagueType === 'school' 
+                            ? handleSchoolToggle(item.id) 
+                            : handleTeamToggle(item.id)
+                          }
                           className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
                             isSelected 
                               ? 'bg-blue-500 border-blue-600 text-white' 
                               : 'bg-card border-muted-foreground/40'
                           }`}
                         >
-                          {team.logo_url && (
+                          {item.logo_url && (
                             <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                               <img 
-                                src={team.logo_url} 
-                                alt={team.display_name} 
+                                src={item.logo_url} 
+                                alt={item.display_name} 
                                 className="h-7 w-7 object-contain" 
                                 onError={(e) => e.currentTarget.style.display = 'none'}
                               />
                             </div>
                           )}
                           <span className="text-sm font-medium truncate flex-1 min-w-0">
-                            {team.display_name}
+                            {item.display_name}
                           </span>
                         </div>
                       );
