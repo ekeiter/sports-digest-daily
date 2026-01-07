@@ -6,7 +6,6 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
-
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -85,14 +84,9 @@ const Index = () => {
       </div>;
   }
   if (!user) {
-    return <div 
-      className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]"
-    >
+    return <div className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <div className="flex flex-col items-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
-            <h1 className="font-racing text-4xl md:text-5xl text-primary mt-2">SportsDig</h1>
-          </div>
+          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
           <p className="text-base md:text-xl text-gray-800">
             Create your personalized sports news feed from your favorite sports, leagues, teams, and players/coaches.
           </p>
@@ -132,7 +126,8 @@ const Index = () => {
               My Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
-              Manage Sports/Leagues/Teams
+              Feed Selections
+
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
               Manage Player &amp; Coach Preferences
