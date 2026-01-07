@@ -121,7 +121,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   });
 
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportLogosForPrefsResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -173,19 +173,24 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     olympicsSportIds.length > 0
       ? supabase.from("olympic_sports").select("sport_id, logo_url").in("sport_id", olympicsSportIds)
       : Promise.resolve({ data: [], error: null }),
-    // Fetch logos from olympic_sports for regular sport preferences (fallback)
+    // Fetch logos from preference_menu_items for sports
     sportIds.length > 0
-      ? supabase.from("olympic_sports").select("sport_id, logo_url").in("sport_id", sportIds)
+      ? supabase.from("preference_menu_items").select("entity_id, logo_url").eq("entity_type", "sport").in("entity_id", sportIds)
+      : Promise.resolve({ data: [], error: null }),
+    // Fetch logos from preference_menu_items for leagues
+    leagueIds.length > 0
+      ? supabase.from("preference_menu_items").select("entity_id, logo_url").eq("entity_type", "league").in("entity_id", leagueIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
+  // Build lookup maps for logos from preference_menu_items
+  const sportMenuLogosMap = new Map((sportMenuLogosResult.data || []).map(s => [s.entity_id, s.logo_url]));
+  const leagueMenuLogosMap = new Map((leagueMenuLogosResult.data || []).map(l => [l.entity_id, l.logo_url]));
+  
   // Build lookup maps for olympics data
   const sportsMap = new Map((olympicsSportsResult.data || []).map(s => [s.id, s.sport]));
   const countriesMap = new Map((olympicsCountriesResult.data || []).map(c => [c.id, { name: c.name, logo_url: c.logo_url }]));
   const sportLogosMap = new Map((olympicsSportLogosResult.data || []).map(s => [s.sport_id, s.logo_url]));
-  
-  // Build fallback logo map for regular sport preferences from olympic_sports
-  const sportPrefLogosMap = new Map((sportLogosForPrefsResult.data || []).map(s => [s.sport_id, s.logo_url]));
 
   // Enrich olympics preferences
   const olympicsPrefs: OlympicsPreference[] = olympicsInterests.map(o => ({
@@ -198,14 +203,19 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     country_logo: o.country_id ? countriesMap.get(o.country_id)?.logo_url : undefined,
   }));
 
-  // Sort and enrich sports with fallback logos from olympic_sports
+  // Sort and enrich sports with logos from preference_menu_items
   const sports = (sportsResult.data || []).map(sport => ({
     ...sport,
-    logo_url: sport.logo_url || sportPrefLogosMap.get(sport.id) || null,
+    logo_url: sport.logo_url || sportMenuLogosMap.get(sport.id) || null,
   })).sort((a, b) => 
     (a.display_label || a.sport).localeCompare(b.display_label || b.sport)
   );
-  const leagues = (leaguesResult.data || []).sort((a, b) => 
+  
+  // Sort and enrich leagues with logos from preference_menu_items
+  const leagues = (leaguesResult.data || []).map(league => ({
+    ...league,
+    logo_url: league.logo_url || leagueMenuLogosMap.get(league.id) || null,
+  })).sort((a, b) =>
     (a.code || a.name).localeCompare(b.code || b.name)
   );
   const teams = ((teamsResult.data || []) as Team[]).sort((a, b) => 
