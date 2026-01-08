@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Star, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
@@ -47,9 +47,7 @@ const getPersonLogo = (person: Person) => {
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [toUnfollow, setToUnfollow] = useState<Set<string>>(new Set());
-  const [localFocusedItems, setLocalFocusedItems] = useState<Set<string>>(new Set());
+  
   
   // Local state for optimistic updates after deletion
   const [deletedItems, setDeletedItems] = useState<Set<string>>(new Set());
@@ -58,12 +56,6 @@ export default function MyFeeds() {
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
 
-  // Sync focused items from query data
-  useEffect(() => {
-    if (preferences?.focusedItems) {
-      setLocalFocusedItems(new Set(preferences.focusedItems));
-    }
-  }, [preferences?.focusedItems]);
 
   useEffect(() => {
     checkUser();
@@ -78,85 +70,31 @@ export default function MyFeeds() {
     setUserId(user.id);
   };
 
-  const toggleUnfollow = (kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
-    const key = `${kind}-${id}`;
-    const newSet = new Set(toUnfollow);
-    if (newSet.has(key)) {
-      newSet.delete(key);
-    } else {
-      newSet.add(key);
-    }
-    setToUnfollow(newSet);
-  };
-
-  const toggleFocus = async (e: React.MouseEvent, kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
-    e.stopPropagation();
-    const key = `${kind}-${id}`;
-    const isCurrentlyFocused = localFocusedItems.has(key);
+  const handleDeleteItem = async (kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
+    if (!userId) return;
     
     try {
-      // Update the is_focused column based on the kind
       const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id' | 'school_id';
       const { error } = await supabase
         .from("subscriber_interests")
-        .update({ is_focused: !isCurrentlyFocused })
+        .delete()
         .eq("subscriber_id", userId)
         .eq(columnName, id);
       
       if (error) throw error;
       
-      const newFocused = new Set(localFocusedItems);
-      if (!isCurrentlyFocused) {
-        newFocused.add(key);
-      } else {
-        newFocused.delete(key);
-      }
-      setLocalFocusedItems(newFocused);
+      const key = `${kind}-${id}`;
+      setDeletedItems(prev => new Set([...prev, key]));
       
-      // Invalidate caches so feed reflects the new focus state
       if (userId) {
         invalidatePreferences(userId);
         invalidateFeed(userId);
       }
       
-      toast.success(!isCurrentlyFocused ? "Added to focus" : "Removed from focus");
+      toast.success("Removed from feed");
     } catch (error) {
-      console.error("Error toggling focus:", error);
-      toast.error("Failed to update focus");
-    }
-  };
-
-  const handleDeleteSelections = async () => {
-    if (!userId) return;
-    setSaving(true);
-    
-    try {
-      // Delete all selected items using direct delete with explicit FK columns
-      for (const key of toUnfollow) {
-        const [kind, idStr] = key.split('-');
-        const subjectId = Number(idStr);
-        const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id' | 'school_id';
-        
-        await supabase
-          .from("subscriber_interests")
-          .delete()
-          .eq("subscriber_id", userId)
-          .eq(columnName, subjectId);
-      }
-
-      // Track deleted items for optimistic UI update
-      setDeletedItems(prev => new Set([...prev, ...toUnfollow]));
-      setToUnfollow(new Set());
-      
-      // Invalidate cache to refetch on next visit
-      invalidatePreferences(userId);
-      
-      toast.success("Selections deleted");
-    } catch (error) {
-      console.error("Error deleting selections:", error);
-      toast.error("Failed to delete selections");
-    } finally {
-      setSaving(false);
+      console.error("Error deleting item:", error);
+      toast.error("Failed to remove item");
     }
   };
 
@@ -223,18 +161,6 @@ export default function MyFeeds() {
           <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/feed")}>
             Go To Sports Feed
           </Button>
-          {toUnfollow.size > 0 && (
-            <Button size="sm" onClick={handleDeleteSelections} disabled={saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete Selections"
-              )}
-            </Button>
-          )}
         </div>
         <div className="border-b border-blue-300 mb-4" />
 
@@ -254,100 +180,86 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-end px-2">
-                    <span className="text-sm text-foreground font-medium">Focus</span>
-                  </div>
                   {/* Sports */}
-                  {selectedSports.map(sport => {
-                    const key = `sport-${sport.id}`;
-                    const isMarked = toUnfollow.has(key);
-                    const isFocused = localFocusedItems.has(key);
-                    return (
-                      <div
-                        key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
-                        }`}
-                        onClick={() => toggleUnfollow('sport', sport.id)}
+                  {selectedSports.map(sport => (
+                    <div
+                      key={`sport-${sport.id}`}
+                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                    >
+                      {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
+                      <span className="text-sm font-medium flex-1">{sport.display_label || sport.sport}</span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteItem('sport', sport.id)}
                       >
-                        {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">{sport.display_label || sport.sport}</span>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'sport', sport.id)}>
-                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
-                        </Button>
-                      </div>
-                    );
-                  })}
-                  
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                   {/* Leagues */}
-                  {selectedLeagues.map(league => {
-                    const key = `league-${league.id}`;
-                    const isMarked = toUnfollow.has(key);
-                    const isFocused = localFocusedItems.has(key);
-                    return (
-                      <div
-                        key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
-                        }`}
-                        onClick={() => toggleUnfollow('league', league.id)}
+                  {selectedLeagues.map(league => (
+                    <div
+                      key={`league-${league.id}`}
+                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                    >
+                      {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
+                      <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteItem('league', league.id)}
                       >
-                        {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'league', league.id)}>
-                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
-                        </Button>
-                      </div>
-                    );
-                  })}
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                   
                   {/* Teams */}
-                  {selectedTeams.map(team => {
-                    const key = `team-${team.id}`;
-                    const isMarked = toUnfollow.has(key);
-                    const isFocused = localFocusedItems.has(key);
-                    return (
-                      <div
-                        key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
-                        }`}
-                        onClick={() => toggleUnfollow('team', team.id)}
+                  {selectedTeams.map(team => (
+                    <div
+                      key={`team-${team.id}`}
+                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                    >
+                      {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
+                      <span className="text-sm font-medium flex-1">
+                        {team.display_name}
+                        {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
+                          <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>
+                        )}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteItem('team', team.id)}
                       >
-                        {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">
-                          {team.display_name}
-                          {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
-                            <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>
-                          )}
-                        </span>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'team', team.id)}>
-                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
-                        </Button>
-                      </div>
-                    );
-                  })}
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                   
                   {/* Schools */}
                   {selectedSchools.map(school => {
-                    const key = `school-${school.id}`;
-                    const isMarked = toUnfollow.has(key);
-                    const isFocused = localFocusedItems.has(key);
                     const suffix = school.league_code ? `(${school.league_code})` : "(all sports)";
                     return (
                       <div
-                        key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
-                        }`}
-                        onClick={() => toggleUnfollow('school' as any, school.id)}
+                        key={`school-${school.id}`}
+                        className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
                       >
                         {school.logo_url && <img src={school.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">
                           {school.name} <span className="text-muted-foreground">{suffix}</span>
                         </span>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={e => toggleFocus(e, 'school' as any, school.id)}>
-                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteItem('school', school.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     );
@@ -398,23 +310,14 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-end px-2">
-                    <span className="text-sm text-foreground font-medium">Focus</span>
-                  </div>
                   {selectedPeople.map(person => {
-                    const key = `person-${person.id}`;
-                    const isMarked = toUnfollow.has(key);
-                    const isFocused = localFocusedItems.has(key);
                     const context = [];
                     if (person.teams?.display_name) context.push(person.teams.display_name);
                     if (person.leagues?.code) context.push(person.leagues.code);
                     return (
                       <div
-                        key={key}
-                        className={`flex items-center gap-2 px-2 py-1 border rounded-md cursor-pointer transition-colors w-full ${
-                          isMarked ? 'bg-destructive text-destructive-foreground border-destructive' : 'bg-card hover:bg-muted'
-                        }`}
-                        onClick={() => toggleUnfollow('person', person.id)}
+                        key={`person-${person.id}`}
+                        className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
                       >
                         {(() => {
                           const logo = getPersonLogo(person);
@@ -424,8 +327,13 @@ export default function MyFeeds() {
                           <span className="text-sm font-semibold">{person.name}</span>
                           {context.length > 0 && <span className="text-sm text-muted-foreground ml-1">({context.join(" • ")})</span>}
                         </div>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0" onClick={e => toggleFocus(e, 'person', person.id)}>
-                          <Star className={`h-4 w-4 transform scale-125 origin-center ${isFocused ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 flex-shrink-0 text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteItem('person', person.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     );
