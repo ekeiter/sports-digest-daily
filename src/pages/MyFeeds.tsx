@@ -169,7 +169,7 @@ export default function MyFeeds() {
           <Card className="bg-transparent border-none shadow-none">
             <CardHeader className="py-0 pb-2">
               <div className="flex items-center justify-center gap-2">
-                <CardTitle className="text-base w-48 text-right">Sports / Teams / Colleges</CardTitle>
+                <CardTitle className="text-base w-48 text-center">Sports / Teams / Colleges</CardTitle>
                 <Button size="sm" className="w-20" onClick={() => navigate("/preferences")}>
                   Manage
                 </Button>
@@ -299,7 +299,7 @@ export default function MyFeeds() {
           <Card className="bg-transparent border-none shadow-none">
             <CardHeader className="py-0 pb-2">
               <div className="flex items-center justify-center gap-2">
-                <CardTitle className="text-base w-48 text-right">Players & Coaches</CardTitle>
+                <CardTitle className="text-base w-48 text-center">Players & Coaches</CardTitle>
                 <Button size="sm" className="w-20" onClick={() => navigate("/player-preferences")}>
                   Manage
                 </Button>
