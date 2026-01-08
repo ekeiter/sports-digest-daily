@@ -122,7 +122,7 @@ const Index = () => {
               My Sports News Feed   
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
-              Current Feed Selections 
+                  My Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Sport, Team, and College Selections
