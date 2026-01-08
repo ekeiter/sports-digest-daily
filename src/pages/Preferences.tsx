@@ -622,9 +622,17 @@ export default function Preferences() {
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-black">
-              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- Sports/Teams Selector</span>
-            </h1>
+            <div className="flex items-center gap-4">
+              <img 
+                src="/lovable-uploads/79e9cc83-4c04-42df-9900-dead7e46d2a9.png" 
+                alt="SportsDig Logo" 
+                className="h-16 md:h-20"
+              />
+              <div className="flex flex-col">
+                <span className="font-racing text-2xl md:text-3xl text-black">SportsDig</span>
+                <span className="text-lg md:text-xl font-bold text-black">Sports/Teams Selector</span>
+              </div>
+            </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
                 Dashboard
@@ -646,8 +654,8 @@ export default function Preferences() {
       <main className="container mx-auto px-4 py-2 max-w-3xl">
         <div className="bg-transparent border-none shadow-none">
           <div className="pb-2 pt-0 px-1">
-            <p className="text-black font-bold text-sm">
-              Select your sport and teams by clicking on them directly • {selectedSports.length} sports, {selectedLeagues.length} leagues, {selectedTeams.length} teams, {selectedSchools.length} schools selected • Changes save automatically
+            <p className="text-black text-sm text-center">
+              Select your sport and teams by clicking on them directly. Changes save automatically.
             </p>
           </div>
           
