@@ -120,23 +120,26 @@ export default function Preferences() {
       if (menuError) throw menuError;
       setMenuItems(menuData || []);
 
-      // Load user's current interests
+      // Load user's current interests (exclude Olympics preferences)
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
-        .select("sport_id, league_id, team_id, school_id, country_id")
+        .select("sport_id, league_id, team_id, school_id, country_id, is_olympics")
         .eq("subscriber_id", user.id);
 
       if (interestsError) throw interestsError;
+      
+      // Filter out Olympics preferences - they're managed separately on /olympics
+      const nonOlympicsInterests = (interests || []).filter(i => !i.is_olympics);
 
-      const sportIds = interests?.filter(i => i.sport_id !== null).map(i => i.sport_id as number) || [];
+      const sportIds = nonOlympicsInterests.filter(i => i.sport_id !== null).map(i => i.sport_id as number);
       // Only count as a league selection if league_id is set but no team/school/country is set (direct league follow)
-      const leagueIds = interests?.filter(i => i.league_id !== null && i.team_id === null && i.school_id === null && i.country_id === null).map(i => i.league_id as number) || [];
-      const teamIds = interests?.filter(i => i.team_id !== null).map(i => i.team_id as number) || [];
-      const schoolIds = interests?.filter(i => i.school_id !== null).map(i => i.school_id as number) || [];
+      const leagueIds = nonOlympicsInterests.filter(i => i.league_id !== null && i.team_id === null && i.school_id === null && i.country_id === null).map(i => i.league_id as number);
+      const teamIds = nonOlympicsInterests.filter(i => i.team_id !== null).map(i => i.team_id as number);
+      const schoolIds = nonOlympicsInterests.filter(i => i.school_id !== null).map(i => i.school_id as number);
       
       // Track schools selected with a league context (for counting on Teams button)
       const schoolsByLeagueMap: Record<number, number[]> = {};
-      interests?.filter(i => i.school_id !== null && i.league_id !== null).forEach(i => {
+      nonOlympicsInterests.filter(i => i.school_id !== null && i.league_id !== null).forEach(i => {
         const leagueId = i.league_id as number;
         const schoolId = i.school_id as number;
         if (!schoolsByLeagueMap[leagueId]) schoolsByLeagueMap[leagueId] = [];
