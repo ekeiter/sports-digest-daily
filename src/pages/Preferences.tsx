@@ -624,14 +624,11 @@ export default function Preferences() {
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-4">
               <img 
-                src="/lovable-uploads/79e9cc83-4c04-42df-9900-dead7e46d2a9.png" 
+                src="/lovable-uploads/e4518f60-feb9-4e03-b13b-d476fdaa0768.png" 
                 alt="SportsDig Logo" 
                 className="h-16 md:h-20"
               />
-              <div className="flex flex-col">
-                <span className="font-racing text-2xl md:text-3xl text-black">SportsDig</span>
-                <span className="text-lg md:text-xl font-bold text-black">Sports/Teams Selector</span>
-              </div>
+              <span className="text-lg md:text-xl font-bold text-black">Sports/Teams Selector</span>
             </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
