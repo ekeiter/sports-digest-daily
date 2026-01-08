@@ -214,9 +214,9 @@ export default function MyFeeds() {
         </div>
       </header>
 
-      <div className="container mx-auto px-2 py-4 max-w-3xl">
+      <div className="container mx-auto px-2 pt-2 pb-4 max-w-3xl">
         {/* Navigation Buttons - Centered at top */}
-        <div className="flex justify-center gap-2 mb-4">
+        <div className="flex justify-center gap-2 mb-2">
           <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/")}>
             Dashboard
           </Button>
@@ -236,6 +236,7 @@ export default function MyFeeds() {
             </Button>
           )}
         </div>
+        <div className="border-b border-blue-300 mb-4" />
 
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
