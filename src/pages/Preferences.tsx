@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
@@ -624,7 +625,7 @@ export default function Preferences() {
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-4">
               <img 
-                src="/lovable-uploads/e4518f60-feb9-4e03-b13b-d476fdaa0768.png" 
+                src={sportsdigLogo} 
                 alt="SportsDig Logo" 
                 className="h-16 md:h-20"
               />
