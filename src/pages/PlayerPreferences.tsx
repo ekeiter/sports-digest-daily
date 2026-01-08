@@ -2,13 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 
 export default function PlayerPreferences() {
   const navigate = useNavigate();
@@ -258,14 +258,19 @@ export default function PlayerPreferences() {
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-center text-black">
-              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- Player/Coach Selector</span>
-            </h1>
-            <div className="flex gap-2">
-              <Button className="min-w-[120px]" onClick={() => navigate("/")}>
+            <div className="flex items-center gap-4">
+              <img 
+                src={sportsdigLogo} 
+                alt="SportsDig Logo" 
+                className="h-16 md:h-20"
+              />
+              <span className="text-lg md:text-xl font-bold text-black">Player/Coach Selector</span>
+            </div>
+            <div className="flex gap-1.5 md:gap-2">
+              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button className="min-w-[120px]" onClick={() => navigate("/my-feeds")}>
+              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/my-feeds")}>
                 My Selections
               </Button>
             </div>
