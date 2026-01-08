@@ -284,7 +284,7 @@ export default function PlayerPreferences() {
           {/* Search Section */}
           <div className="bg-transparent border-none shadow-none">
             <div className="py-1">
-              <p className="flex items-center gap-2 text-black font-bold text-sm">
+              <p className="flex items-center gap-2 text-black font-bold text-base">
                 <Search className="h-4 w-4" />
                 Search Players & Coaches
               </p>
@@ -337,7 +337,7 @@ export default function PlayerPreferences() {
           {/* Followed People Section */}
           <div className="bg-transparent border-none shadow-none">
             <div className="py-1">
-              <p className="text-black font-bold text-sm">Your Player and Coach Selections ({followedPeople.length})</p>
+              <p className="text-black font-bold text-base">Your Player and Coach Selections ({followedPeople.length})</p>
             </div>
             <div className="px-0">
               {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-1">
