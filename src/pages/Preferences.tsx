@@ -649,9 +649,9 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-2 max-w-3xl">
+      <main className="container mx-auto px-4 pt-0 pb-2 max-w-3xl">
         <div className="bg-transparent border-none shadow-none">
-          <div className="pb-2 pt-0 px-1">
+          <div className="pb-2 px-1">
             <p className="text-black text-sm text-center">
               Select your sport and teams by clicking on them directly. Changes save automatically.
             </p>
