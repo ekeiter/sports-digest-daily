@@ -241,8 +241,8 @@ export default function MyFeeds() {
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
           <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="py-2">
-              <div className="flex items-center justify-between">
+            <CardHeader className="py-0 pb-2">
+              <div className="flex items-center justify-center gap-3">
                 <CardTitle className="text-base">Sports / Teams / Colleges</CardTitle>
                 <Button size="sm" onClick={() => navigate("/preferences")}>
                   Manage
