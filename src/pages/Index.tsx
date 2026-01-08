@@ -123,14 +123,14 @@ const Index = () => {
               Current Feed Selections
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
-              My Current Feed Selections 
+              Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Manage Sport, Team, and College Selections
 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
-              Manage Player &amp; Coach Preferences
+              Manage Player & Coach Selections
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/why-sportsdig")}>
               Why SportsDig?
