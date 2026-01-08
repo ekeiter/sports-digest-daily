@@ -240,9 +240,9 @@ export default function MyFeeds() {
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
           <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="py-2 space-y-1">
-              <CardTitle className="text-base text-center">Sports / Leagues / Teams</CardTitle>
-              <div className="flex justify-center">
+            <CardHeader className="py-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Sports / Teams / Colleges</CardTitle>
                 <Button size="sm" onClick={() => navigate("/preferences")}>
                   Manage
                 </Button>
