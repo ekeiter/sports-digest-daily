@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-
+import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
   return str
@@ -208,22 +208,20 @@ export default function MyFeeds() {
   return (
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-3 text-center">
-          <h1 className="text-xl font-bold">
-            <span className="font-racing text-2xl">SportsDig</span> - My Feed Selections
-          </h1>
-          <p className="text-sm text-primary">(Select items to delete, stars to focus)</p>
+        <div className="container mx-auto px-4 py-3 flex flex-col items-center">
+          <img src={sportsdigLogo} alt="SportsDig" className="h-20 md:h-24 object-contain" />
+          <h1 className="text-xl font-bold mt-2">My Feed Selections</h1>
         </div>
       </header>
 
       <div className="container mx-auto px-2 py-4 max-w-3xl">
         {/* Navigation Buttons - Centered at top */}
         <div className="flex justify-center gap-2 mb-4">
-          <Button size="sm" onClick={() => navigate("/")}>
+          <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/")}>
             Dashboard
           </Button>
-          <Button size="sm" onClick={() => navigate("/feed")}>
-            Sports Feed
+          <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/feed")}>
+            Go To Sports Feed
           </Button>
           {toUnfollow.size > 0 && (
             <Button size="sm" onClick={handleDeleteSelections} disabled={saving}>
