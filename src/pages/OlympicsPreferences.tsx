@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
@@ -53,6 +55,9 @@ export default function OlympicsPreferences() {
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [existingPrefs, setExistingPrefs] = useState<OlympicsPreference[]>([]);
+  
+  const invalidatePreferences = useInvalidateUserPreferences();
+  const invalidateFeed = useInvalidateArticleFeed();
 
   useEffect(() => {
     checkUser();
@@ -196,6 +201,12 @@ export default function OlympicsPreferences() {
     setSelectedSport("");
     setSelectedCountry("");
     await fetchExistingPrefs();
+    
+    // Invalidate caches so other pages reflect the change
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
   };
 
   const handleRemovePreference = async (prefId: number) => {
@@ -212,6 +223,12 @@ export default function OlympicsPreferences() {
 
     toast.success("Preference removed");
     setExistingPrefs(prev => prev.filter(p => p.id !== prefId));
+    
+    // Invalidate caches so other pages reflect the change
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
   };
 
   // Always allow add - blank means "all"
