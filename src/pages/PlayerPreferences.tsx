@@ -131,9 +131,35 @@ export default function PlayerPreferences() {
           name,
           short_name,
           logo_url
-        )
+        ),
+        last_school_espn_id
       `).in("id", personIds);
-    if (people) setFollowedPeople(people as unknown as PersonSearchResult[]);
+    
+    if (people) {
+      // For people without school data but with last_school_espn_id, fetch school info
+      const needsSchoolLookup = (people as any[]).filter(
+        p => !p.schools && p.last_school_espn_id
+      );
+      
+      if (needsSchoolLookup.length > 0) {
+        const espnIds = [...new Set(needsSchoolLookup.map(p => p.last_school_espn_id))];
+        const { data: schoolsByEspn } = await supabase
+          .from("schools")
+          .select("id, name, short_name, logo_url, espn_id")
+          .in("espn_id", espnIds);
+        
+        const espnSchoolsMap = new Map((schoolsByEspn || []).map(s => [s.espn_id, s]));
+        
+        // Merge school data into people
+        for (const person of people as any[]) {
+          if (!person.schools && person.last_school_espn_id) {
+            person.schools = espnSchoolsMap.get(person.last_school_espn_id) || null;
+          }
+        }
+      }
+      
+      setFollowedPeople(people as unknown as PersonSearchResult[]);
+    }
   };
   const performSearch = async (isAutocomplete: boolean = false) => {
     const term = searchTerm.trim();
