@@ -6,6 +6,7 @@ export interface PersonSearchResult {
   normalized_name?: string;
   role: string;
   position?: string;
+  country_code?: string;
   team_id?: number;
   teams?: {
     id: number;
@@ -34,6 +35,12 @@ export interface PersonSearchResult {
     short_name: string;
     logo_url: string | null;
   } | null;
+  countries?: {
+    id: number;
+    name: string;
+    code: string;
+    logo_url: string | null;
+  } | null;
 }
 
 export async function searchPeople(searchTerm: string): Promise<PersonSearchResult[]> {
@@ -56,7 +63,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
 
   const { data: people, error: peopleError } = await supabase
     .from("people")
-    .select("id, name, normalized_name, role, position, team_id, league_id, sport_id, school_id, last_school_espn_id")
+    .select("id, name, normalized_name, role, position, team_id, league_id, sport_id, school_id, last_school_espn_id, country_code")
     .ilike("normalized_name", combinedPattern)
     .order("name")
     .limit(100);
@@ -84,6 +91,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const leagueIds = [...new Set(filteredPeople.map((p: any) => p.league_id).filter(Boolean))] as number[];
   const sportIds = [...new Set(filteredPeople.map((p: any) => p.sport_id).filter(Boolean))] as number[];
   const schoolIds = [...new Set(filteredPeople.map((p: any) => p.school_id).filter(Boolean))] as number[];
+  const countryCodes = [...new Set(filteredPeople.map((p: any) => p.country_code).filter(Boolean))] as string[];
   
   // Collect last_school_espn_id values for people without school_id
   const espnSchoolIds = [...new Set(
@@ -92,7 +100,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
       .map((p: any) => p.last_school_espn_id)
   )] as string[];
 
-  const [teamsResult, leaguesResult, sportsResult, schoolsResult, espnSchoolsResult, menuItemsResult] = await Promise.all([
+  const [teamsResult, leaguesResult, sportsResult, schoolsResult, espnSchoolsResult, countriesResult, menuItemsResult] = await Promise.all([
     teamIds.length > 0
       ? supabase
           .from("teams")
@@ -124,6 +132,13 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
           .select("id, name, short_name, logo_url, espn_id")
           .in("espn_id", espnSchoolIds)
       : Promise.resolve({ data: [], error: null }),
+    // Fetch countries by code
+    countryCodes.length > 0
+      ? supabase
+          .from("countries")
+          .select("id, name, code, logo_url")
+          .in("code", countryCodes)
+      : Promise.resolve({ data: [], error: null }),
     // Fetch logos from preference_menu_items for leagues and sports
     (leagueIds.length > 0 || sportIds.length > 0)
       ? supabase
@@ -142,7 +157,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   if (leaguesResult.error) console.error("Error fetching leagues:", leaguesResult.error);
   if (sportsResult.error) console.error("Error fetching sports:", sportsResult.error);
   if (schoolsResult.error) console.error("Error fetching schools:", schoolsResult.error);
-
+  if (countriesResult.error) console.error("Error fetching countries:", countriesResult.error);
   if (menuItemsResult.error) console.error("Error fetching menu items:", menuItemsResult.error);
 
   const teamsMap = new Map<number, any>((teamsResult.data || []).map((t: any) => [t.id, t]));
@@ -151,6 +166,8 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const schoolsMap = new Map<number, any>((schoolsResult.data || []).map((s: any) => [s.id, s]));
   // Map schools by espn_id for lookup
   const espnSchoolsMap = new Map<string, any>((espnSchoolsResult.data || []).map((s: any) => [s.espn_id, s]));
+  // Map countries by code for lookup
+  const countriesMap = new Map<string, any>((countriesResult.data || []).map((c: any) => [c.code, c]));
   
   // Build maps for menu item logos by entity type and id
   const leagueLogosMap = new Map<number, string>();
@@ -182,12 +199,16 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
       sport = { ...sport, logo_url: sportLogosMap.get(person.sport_id) || null };
     }
     
+    // Get country by code
+    const country = person.country_code ? countriesMap.get(person.country_code) || null : null;
+    
     return {
       ...person,
       teams: person.team_id ? teamsMap.get(person.team_id) || null : null,
       leagues: league,
       sports: sport,
       schools: school,
+      countries: country,
     };
   });
 }

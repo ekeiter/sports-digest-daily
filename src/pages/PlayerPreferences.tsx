@@ -132,7 +132,8 @@ export default function PlayerPreferences() {
           short_name,
           logo_url
         ),
-        last_school_espn_id
+        last_school_espn_id,
+        country_code
       `).in("id", personIds);
     
     if (people) {
@@ -140,6 +141,11 @@ export default function PlayerPreferences() {
       const needsSchoolLookup = (people as any[]).filter(
         p => !p.schools && p.last_school_espn_id
       );
+      
+      // Collect country codes that need lookup
+      const countryCodes = [...new Set(
+        (people as any[]).filter(p => p.country_code).map(p => p.country_code)
+      )] as string[];
       
       // Collect league and sport ids that need logo lookups
       const leagueIdsNeedingLogos = [...new Set(
@@ -149,12 +155,18 @@ export default function PlayerPreferences() {
         (people as any[]).filter(p => p.sport_id && !p.sports?.logo_url).map(p => p.sport_id)
       )];
       
-      const [schoolsByEspnResult, menuItemsResult] = await Promise.all([
+      const [schoolsByEspnResult, countriesResult, menuItemsResult] = await Promise.all([
         needsSchoolLookup.length > 0
           ? supabase
               .from("schools")
               .select("id, name, short_name, logo_url, espn_id")
               .in("espn_id", [...new Set(needsSchoolLookup.map(p => p.last_school_espn_id))])
+          : Promise.resolve({ data: [] }),
+        countryCodes.length > 0
+          ? supabase
+              .from("countries")
+              .select("id, name, code, logo_url")
+              .in("code", countryCodes)
           : Promise.resolve({ data: [] }),
         (leagueIdsNeedingLogos.length > 0 || sportIdsNeedingLogos.length > 0)
           ? supabase
@@ -170,6 +182,7 @@ export default function PlayerPreferences() {
       ]);
       
       const espnSchoolsMap = new Map((schoolsByEspnResult.data || []).map((s: any) => [s.espn_id, s]));
+      const countriesMap = new Map((countriesResult.data || []).map((c: any) => [c.code, c]));
       
       // Build logo maps from preference_menu_items
       const leagueLogosMap = new Map<number, string>();
@@ -182,7 +195,7 @@ export default function PlayerPreferences() {
         }
       }
       
-      // Merge school, league logo, and sport logo data into people
+      // Merge school, league logo, sport logo, and country data into people
       for (const person of people as any[]) {
         if (!person.schools && person.last_school_espn_id) {
           person.schools = espnSchoolsMap.get(person.last_school_espn_id) || null;
@@ -192,6 +205,9 @@ export default function PlayerPreferences() {
         }
         if (person.sports && !person.sports.logo_url && sportLogosMap.has(person.sport_id)) {
           person.sports = { ...person.sports, logo_url: sportLogosMap.get(person.sport_id) };
+        }
+        if (person.country_code) {
+          person.countries = countriesMap.get(person.country_code) || null;
         }
       }
       
@@ -310,6 +326,12 @@ export default function PlayerPreferences() {
       return {
         url: person.schools.logo_url,
         alt: person.schools.short_name || 'School'
+      };
+    }
+    if (person.countries?.logo_url) {
+      return {
+        url: person.countries.logo_url,
+        alt: person.countries.name || 'Country'
       };
     }
     if (person.leagues?.logo_url) {
