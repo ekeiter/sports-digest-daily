@@ -316,6 +316,7 @@ export default function PlayerPreferences() {
     return parts.join(" • ");
   };
   const getPersonLogo = (person: PersonSearchResult) => {
+    // Priority: Team → School → League → Sport (country flag shown inline)
     if (person.teams?.logo_url) {
       return {
         url: person.teams.logo_url,
@@ -326,12 +327,6 @@ export default function PlayerPreferences() {
       return {
         url: person.schools.logo_url,
         alt: person.schools.short_name || 'School'
-      };
-    }
-    if (person.countries?.logo_url) {
-      return {
-        url: person.countries.logo_url,
-        alt: person.countries.name || 'Country'
       };
     }
     if (person.leagues?.logo_url) {
@@ -422,8 +417,16 @@ export default function PlayerPreferences() {
                               {person.name}
                               {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                              {getContextDisplay(person)}
+                            <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+                              <span>{getContextDisplay(person)}</span>
+                              {person.countries?.logo_url && (
+                                <img 
+                                  src={person.countries.logo_url} 
+                                  alt={person.countries.name || ''} 
+                                  className="h-3.5 w-5 object-contain"
+                                  title={person.countries.name}
+                                />
+                              )}
                             </div>
                           </div>
                         </div>;
@@ -451,8 +454,16 @@ export default function PlayerPreferences() {
                             {person.name}
                             {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {getContextDisplay(person)}
+                          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            <span>{getContextDisplay(person)}</span>
+                            {person.countries?.logo_url && (
+                              <img 
+                                src={person.countries.logo_url} 
+                                alt={person.countries.name || ''} 
+                                className="h-3.5 w-5 object-contain"
+                                title={person.countries.name}
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
