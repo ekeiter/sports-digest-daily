@@ -27,6 +27,13 @@ export interface PersonSearchResult {
     display_label: string | null;
     logo_url: string | null;
   } | null;
+  school_id?: number;
+  schools?: {
+    id: number;
+    name: string;
+    short_name: string;
+    logo_url: string | null;
+  } | null;
 }
 
 export async function searchPeople(searchTerm: string): Promise<PersonSearchResult[]> {
@@ -49,8 +56,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
 
   const { data: people, error: peopleError } = await supabase
     .from("people")
-    .select("id, name, normalized_name, role, position, team_id, league_id, sport_id")
-    .eq("is_active", true)
+    .select("id, name, normalized_name, role, position, team_id, league_id, sport_id, school_id")
     .ilike("normalized_name", combinedPattern)
     .order("name")
     .limit(100);
@@ -77,8 +83,9 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const teamIds = [...new Set(filteredPeople.map((p: any) => p.team_id).filter(Boolean))] as number[];
   const leagueIds = [...new Set(filteredPeople.map((p: any) => p.league_id).filter(Boolean))] as number[];
   const sportIds = [...new Set(filteredPeople.map((p: any) => p.sport_id).filter(Boolean))] as number[];
+  const schoolIds = [...new Set(filteredPeople.map((p: any) => p.school_id).filter(Boolean))] as number[];
 
-  const [teamsResult, leaguesResult, sportsResult] = await Promise.all([
+  const [teamsResult, leaguesResult, sportsResult, schoolsResult] = await Promise.all([
     teamIds.length > 0
       ? supabase
           .from("teams")
@@ -97,20 +104,29 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
           .select("id, sport, display_label, logo_url")
           .in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
+    schoolIds.length > 0
+      ? supabase
+          .from("schools")
+          .select("id, name, short_name, logo_url")
+          .in("id", schoolIds)
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   if (teamsResult.error) console.error("Error fetching teams:", teamsResult.error);
   if (leaguesResult.error) console.error("Error fetching leagues:", leaguesResult.error);
   if (sportsResult.error) console.error("Error fetching sports:", sportsResult.error);
+  if (schoolsResult.error) console.error("Error fetching schools:", schoolsResult.error);
 
   const teamsMap = new Map<number, any>((teamsResult.data || []).map((t: any) => [t.id, t]));
   const leaguesMap = new Map<number, any>((leaguesResult.data || []).map((l: any) => [l.id, l]));
   const sportsMap = new Map<number, any>((sportsResult.data || []).map((s: any) => [s.id, s]));
+  const schoolsMap = new Map<number, any>((schoolsResult.data || []).map((s: any) => [s.id, s]));
 
   return filteredPeople.map((person) => ({
     ...person,
     teams: person.team_id ? teamsMap.get(person.team_id) || null : null,
     leagues: person.league_id ? leaguesMap.get(person.league_id) || null : null,
     sports: person.sport_id ? sportsMap.get(person.sport_id) || null : null,
+    schools: person.school_id ? schoolsMap.get(person.school_id) || null : null,
   }));
 }

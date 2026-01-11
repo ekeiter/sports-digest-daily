@@ -1294,14 +1294,15 @@ export type Database = {
           country_code: string | null
           created_at: string | null
           id: number
-          is_active: boolean | null
           jersey_number: string | null
+          last_school_espn_id: string | null
           last_updated: string | null
           league_id: number | null
           name: string
           normalized_name: string
           position: string | null
           role: string
+          school_id: number | null
           sport_id: number | null
           team_id: number | null
         }
@@ -1311,14 +1312,15 @@ export type Database = {
           country_code?: string | null
           created_at?: string | null
           id?: number
-          is_active?: boolean | null
           jersey_number?: string | null
+          last_school_espn_id?: string | null
           last_updated?: string | null
           league_id?: number | null
           name: string
           normalized_name: string
           position?: string | null
           role: string
+          school_id?: number | null
           sport_id?: number | null
           team_id?: number | null
         }
@@ -1328,14 +1330,15 @@ export type Database = {
           country_code?: string | null
           created_at?: string | null
           id?: number
-          is_active?: boolean | null
           jersey_number?: string | null
+          last_school_espn_id?: string | null
           last_updated?: string | null
           league_id?: number | null
           name?: string
           normalized_name?: string
           position?: string | null
           role?: string
+          school_id?: number | null
           sport_id?: number | null
           team_id?: number | null
         }
@@ -1344,14 +1347,21 @@ export type Database = {
             foreignKeyName: "people_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
-            referencedRelation: "leagues_old"
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "people_sport_id_fkey"
             columns: ["sport_id"]
             isOneToOne: false
-            referencedRelation: "sports_old"
+            referencedRelation: "sports"
             referencedColumns: ["id"]
           },
           {
@@ -1469,6 +1479,7 @@ export type Database = {
           created_at: string | null
           id: number
           is_active: boolean | null
+          is_tournament: boolean | null
           last_sync_error: string | null
           last_sync_errors: number | null
           last_sync_status: string | null
@@ -1491,6 +1502,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           is_active?: boolean | null
+          is_tournament?: boolean | null
           last_sync_error?: string | null
           last_sync_errors?: number | null
           last_sync_status?: string | null
@@ -1513,6 +1525,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           is_active?: boolean | null
+          is_tournament?: boolean | null
           last_sync_error?: string | null
           last_sync_errors?: number | null
           last_sync_status?: string | null
@@ -1535,14 +1548,14 @@ export type Database = {
             foreignKeyName: "roster_api_sources_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
-            referencedRelation: "leagues_old"
+            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "roster_api_sources_sport_id_fkey"
             columns: ["sport_id"]
             isOneToOne: false
-            referencedRelation: "sports_old"
+            referencedRelation: "sports"
             referencedColumns: ["id"]
           },
         ]
@@ -1996,6 +2009,66 @@ export type Database = {
             columns: ["metro_area_id"]
             isOneToOne: false
             referencedRelation: "metro_areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transition_queue: {
+        Row: {
+          created_at: string | null
+          direction: string
+          from_name: string | null
+          from_person_id: number | null
+          id: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          to_api_id: string | null
+          to_league_id: number | null
+          to_team_name: string | null
+          transition_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          direction?: string
+          from_name?: string | null
+          from_person_id?: number | null
+          id?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          to_api_id?: string | null
+          to_league_id?: number | null
+          to_team_name?: string | null
+          transition_type: string
+        }
+        Update: {
+          created_at?: string | null
+          direction?: string
+          from_name?: string | null
+          from_person_id?: number | null
+          id?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          to_api_id?: string | null
+          to_league_id?: number | null
+          to_team_name?: string | null
+          transition_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transition_queue_from_person_id_fkey"
+            columns: ["from_person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transition_queue_to_league_id_fkey"
+            columns: ["to_league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
         ]
