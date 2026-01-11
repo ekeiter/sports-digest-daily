@@ -124,8 +124,15 @@ export default function PlayerPreferences() {
           sport,
           display_label,
           logo_url
+        ),
+        school_id,
+        schools (
+          id,
+          name,
+          short_name,
+          logo_url
         )
-      `).in("id", personIds).eq("is_active", true);
+      `).in("id", personIds);
     if (people) setFollowedPeople(people as unknown as PersonSearchResult[]);
   };
   const performSearch = async (isAutocomplete: boolean = false) => {
@@ -222,8 +229,9 @@ export default function PlayerPreferences() {
     }
   };
   const getContextDisplay = (person: PersonSearchResult) => {
-    const parts = [];
+    const parts: string[] = [];
     if (person.teams?.display_name) parts.push(person.teams.display_name);
+    else if (person.schools?.short_name) parts.push(person.schools.short_name);
     if (person.leagues?.code) parts.push(person.leagues.code);
     if (person.position) parts.push(person.position);
     return parts.join(" • ");
@@ -233,6 +241,12 @@ export default function PlayerPreferences() {
       return {
         url: person.teams.logo_url,
         alt: person.teams.display_name || 'Team'
+      };
+    }
+    if (person.schools?.logo_url) {
+      return {
+        url: person.schools.logo_url,
+        alt: person.schools.short_name || 'School'
       };
     }
     if (person.leagues?.logo_url) {
