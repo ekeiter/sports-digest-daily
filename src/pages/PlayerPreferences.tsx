@@ -141,20 +141,57 @@ export default function PlayerPreferences() {
         p => !p.schools && p.last_school_espn_id
       );
       
-      if (needsSchoolLookup.length > 0) {
-        const espnIds = [...new Set(needsSchoolLookup.map(p => p.last_school_espn_id))];
-        const { data: schoolsByEspn } = await supabase
-          .from("schools")
-          .select("id, name, short_name, logo_url, espn_id")
-          .in("espn_id", espnIds);
-        
-        const espnSchoolsMap = new Map((schoolsByEspn || []).map(s => [s.espn_id, s]));
-        
-        // Merge school data into people
-        for (const person of people as any[]) {
-          if (!person.schools && person.last_school_espn_id) {
-            person.schools = espnSchoolsMap.get(person.last_school_espn_id) || null;
-          }
+      // Collect league and sport ids that need logo lookups
+      const leagueIdsNeedingLogos = [...new Set(
+        (people as any[]).filter(p => p.league_id && !p.leagues?.logo_url).map(p => p.league_id)
+      )];
+      const sportIdsNeedingLogos = [...new Set(
+        (people as any[]).filter(p => p.sport_id && !p.sports?.logo_url).map(p => p.sport_id)
+      )];
+      
+      const [schoolsByEspnResult, menuItemsResult] = await Promise.all([
+        needsSchoolLookup.length > 0
+          ? supabase
+              .from("schools")
+              .select("id, name, short_name, logo_url, espn_id")
+              .in("espn_id", [...new Set(needsSchoolLookup.map(p => p.last_school_espn_id))])
+          : Promise.resolve({ data: [] }),
+        (leagueIdsNeedingLogos.length > 0 || sportIdsNeedingLogos.length > 0)
+          ? supabase
+              .from("preference_menu_items")
+              .select("entity_type, entity_id, logo_url")
+              .or(
+                [
+                  leagueIdsNeedingLogos.length > 0 ? `and(entity_type.eq.league,entity_id.in.(${leagueIdsNeedingLogos.join(',')}))` : null,
+                  sportIdsNeedingLogos.length > 0 ? `and(entity_type.eq.sport,entity_id.in.(${sportIdsNeedingLogos.join(',')}))` : null
+                ].filter(Boolean).join(',')
+              )
+          : Promise.resolve({ data: [] }),
+      ]);
+      
+      const espnSchoolsMap = new Map((schoolsByEspnResult.data || []).map((s: any) => [s.espn_id, s]));
+      
+      // Build logo maps from preference_menu_items
+      const leagueLogosMap = new Map<number, string>();
+      const sportLogosMap = new Map<number, string>();
+      for (const item of (menuItemsResult.data || []) as any[]) {
+        if (item.entity_type === 'league' && item.logo_url) {
+          leagueLogosMap.set(item.entity_id, item.logo_url);
+        } else if (item.entity_type === 'sport' && item.logo_url) {
+          sportLogosMap.set(item.entity_id, item.logo_url);
+        }
+      }
+      
+      // Merge school, league logo, and sport logo data into people
+      for (const person of people as any[]) {
+        if (!person.schools && person.last_school_espn_id) {
+          person.schools = espnSchoolsMap.get(person.last_school_espn_id) || null;
+        }
+        if (person.leagues && !person.leagues.logo_url && leagueLogosMap.has(person.league_id)) {
+          person.leagues = { ...person.leagues, logo_url: leagueLogosMap.get(person.league_id) };
+        }
+        if (person.sports && !person.sports.logo_url && sportLogosMap.has(person.sport_id)) {
+          person.sports = { ...person.sports, logo_url: sportLogosMap.get(person.sport_id) };
         }
       }
       

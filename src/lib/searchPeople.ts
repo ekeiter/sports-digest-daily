@@ -92,7 +92,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
       .map((p: any) => p.last_school_espn_id)
   )] as string[];
 
-  const [teamsResult, leaguesResult, sportsResult, schoolsResult, espnSchoolsResult] = await Promise.all([
+  const [teamsResult, leaguesResult, sportsResult, schoolsResult, espnSchoolsResult, menuItemsResult] = await Promise.all([
     teamIds.length > 0
       ? supabase
           .from("teams")
@@ -124,6 +124,18 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
           .select("id, name, short_name, logo_url, espn_id")
           .in("espn_id", espnSchoolIds)
       : Promise.resolve({ data: [], error: null }),
+    // Fetch logos from preference_menu_items for leagues and sports
+    (leagueIds.length > 0 || sportIds.length > 0)
+      ? supabase
+          .from("preference_menu_items")
+          .select("entity_type, entity_id, logo_url")
+          .or(
+            [
+              leagueIds.length > 0 ? `and(entity_type.eq.league,entity_id.in.(${leagueIds.join(',')}))` : null,
+              sportIds.length > 0 ? `and(entity_type.eq.sport,entity_id.in.(${sportIds.join(',')}))` : null
+            ].filter(Boolean).join(',')
+          )
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   if (teamsResult.error) console.error("Error fetching teams:", teamsResult.error);
@@ -131,7 +143,7 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   if (sportsResult.error) console.error("Error fetching sports:", sportsResult.error);
   if (schoolsResult.error) console.error("Error fetching schools:", schoolsResult.error);
 
-  if (espnSchoolsResult.error) console.error("Error fetching schools by espn_id:", espnSchoolsResult.error);
+  if (menuItemsResult.error) console.error("Error fetching menu items:", menuItemsResult.error);
 
   const teamsMap = new Map<number, any>((teamsResult.data || []).map((t: any) => [t.id, t]));
   const leaguesMap = new Map<number, any>((leaguesResult.data || []).map((l: any) => [l.id, l]));
@@ -139,6 +151,17 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   const schoolsMap = new Map<number, any>((schoolsResult.data || []).map((s: any) => [s.id, s]));
   // Map schools by espn_id for lookup
   const espnSchoolsMap = new Map<string, any>((espnSchoolsResult.data || []).map((s: any) => [s.espn_id, s]));
+  
+  // Build maps for menu item logos by entity type and id
+  const leagueLogosMap = new Map<number, string>();
+  const sportLogosMap = new Map<number, string>();
+  for (const item of (menuItemsResult.data || []) as any[]) {
+    if (item.entity_type === 'league' && item.logo_url) {
+      leagueLogosMap.set(item.entity_id, item.logo_url);
+    } else if (item.entity_type === 'sport' && item.logo_url) {
+      sportLogosMap.set(item.entity_id, item.logo_url);
+    }
+  }
 
   return filteredPeople.map((person) => {
     // Try school_id first, then fall back to last_school_espn_id
@@ -147,11 +170,23 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
       school = espnSchoolsMap.get(person.last_school_espn_id) || null;
     }
     
+    // Get league with logo fallback from preference_menu_items
+    let league = person.league_id ? leaguesMap.get(person.league_id) || null : null;
+    if (league && !league.logo_url) {
+      league = { ...league, logo_url: leagueLogosMap.get(person.league_id) || null };
+    }
+    
+    // Get sport with logo fallback from preference_menu_items
+    let sport = person.sport_id ? sportsMap.get(person.sport_id) || null : null;
+    if (sport && !sport.logo_url) {
+      sport = { ...sport, logo_url: sportLogosMap.get(person.sport_id) || null };
+    }
+    
     return {
       ...person,
       teams: person.team_id ? teamsMap.get(person.team_id) || null : null,
-      leagues: person.league_id ? leaguesMap.get(person.league_id) || null : null,
-      sports: person.sport_id ? sportsMap.get(person.sport_id) || null : null,
+      leagues: league,
+      sports: sport,
       schools: school,
     };
   });
