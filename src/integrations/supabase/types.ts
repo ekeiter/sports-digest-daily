@@ -805,11 +805,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_endpoints_league"
+            foreignKeyName: "endpoints_league_fkey"
             columns: ["league"]
             isOneToOne: false
-            referencedRelation: "leagues_old"
+            referencedRelation: "leagues"
             referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "endpoints_sport_fkey"
+            columns: ["sport"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["sport"]
           },
         ]
       }
@@ -1153,62 +1160,6 @@ export type Database = {
             columns: ["sport_id"]
             isOneToOne: false
             referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      leagues_old: {
-        Row: {
-          aliases: string[]
-          app_order_id: number | null
-          code: string
-          created_at: string
-          description: string | null
-          display_label: string | null
-          display_options: Json | null
-          id: number
-          kind: Database["public"]["Enums"]["topic_kind"]
-          logo_url: string | null
-          name: string
-          sport_id: number
-          updated_at: string
-        }
-        Insert: {
-          aliases?: string[]
-          app_order_id?: number | null
-          code: string
-          created_at?: string
-          description?: string | null
-          display_label?: string | null
-          display_options?: Json | null
-          id?: number
-          kind: Database["public"]["Enums"]["topic_kind"]
-          logo_url?: string | null
-          name: string
-          sport_id: number
-          updated_at?: string
-        }
-        Update: {
-          aliases?: string[]
-          app_order_id?: number | null
-          code?: string
-          created_at?: string
-          description?: string | null
-          display_label?: string | null
-          display_options?: Json | null
-          id?: number
-          kind?: Database["public"]["Enums"]["topic_kind"]
-          logo_url?: string | null
-          name?: string
-          sport_id?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "leagues_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports_old"
             referencedColumns: ["id"]
           },
         ]
@@ -1721,48 +1672,6 @@ export type Database = {
           },
         ]
       }
-      sports_old: {
-        Row: {
-          app_order_id: number | null
-          created_at: string | null
-          description: string | null
-          display_label: string | null
-          display_name: string
-          display_options: Json | null
-          extract_level: Database["public"]["Enums"]["extract_level"] | null
-          icon_emoji: string | null
-          id: number
-          logo_url: string | null
-          sport: string
-        }
-        Insert: {
-          app_order_id?: number | null
-          created_at?: string | null
-          description?: string | null
-          display_label?: string | null
-          display_name: string
-          display_options?: Json | null
-          extract_level?: Database["public"]["Enums"]["extract_level"] | null
-          icon_emoji?: string | null
-          id?: number
-          logo_url?: string | null
-          sport: string
-        }
-        Update: {
-          app_order_id?: number | null
-          created_at?: string | null
-          description?: string | null
-          display_label?: string | null
-          display_name?: string
-          display_options?: Json | null
-          extract_level?: Database["public"]["Enums"]["extract_level"] | null
-          icon_emoji?: string | null
-          id?: number
-          logo_url?: string | null
-          sport?: string
-        }
-        Relationships: []
-      }
       subscriber_interests: {
         Row: {
           added_at: string | null
@@ -1899,45 +1808,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
-      }
-      team_league_map: {
-        Row: {
-          created_at: string
-          id: number
-          is_primary: boolean
-          league_id: number
-          team_id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          is_primary?: boolean
-          league_id: number
-          team_id: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          is_primary?: boolean
-          league_id?: number
-          team_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "team_league_map_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues_old"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "team_league_map_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       teams: {
         Row: {
