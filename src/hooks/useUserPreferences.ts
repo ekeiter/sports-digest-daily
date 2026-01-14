@@ -30,7 +30,7 @@ export interface Person {
   } | null;
   sports?: {
     sport: string;
-    display_name: string;
+    display_label: string | null;
     logo_url: string | null;
   } | null;
 }
@@ -149,7 +149,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
           ),
           sports (
             sport,
-            display_name,
+            display_label,
             logo_url
           )
         `).in("id", personIds)
