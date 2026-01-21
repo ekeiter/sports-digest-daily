@@ -13,7 +13,7 @@ export default function ArticlePlaceholder() {
       <img 
         src={blimpLogo} 
         alt="SportsDig" 
-        className="h-16 md:h-20 object-contain"
+        className="h-24 md:h-28 object-contain"
       />
     </div>
   );
