@@ -837,6 +837,7 @@ export type Database = {
           feed_etag: string | null
           feed_item_count: number | null
           feed_last_modified_at: string | null
+          fetch_failed: number | null
           fetched: number | null
           finished_at: string | null
           http_status: number | null
@@ -872,6 +873,7 @@ export type Database = {
           feed_etag?: string | null
           feed_item_count?: number | null
           feed_last_modified_at?: string | null
+          fetch_failed?: number | null
           fetched?: number | null
           finished_at?: string | null
           http_status?: number | null
@@ -907,6 +909,7 @@ export type Database = {
           feed_etag?: string | null
           feed_item_count?: number | null
           feed_last_modified_at?: string | null
+          fetch_failed?: number | null
           fetched?: number | null
           finished_at?: string | null
           http_status?: number | null
