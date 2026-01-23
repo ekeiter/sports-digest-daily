@@ -35,8 +35,13 @@ async function fetchFeedPage(
 }
 
 export function useArticleFeed(userId: string | null, interestId?: number) {
+  // Only include interestId in queryKey if it's defined (avoids cache key mismatch)
+  const queryKey = interestId 
+    ? ['articleFeed', userId, interestId] 
+    : ['articleFeed', userId];
+    
   return useQuery({
-    queryKey: ['articleFeed', userId, interestId],
+    queryKey,
     queryFn: () => fetchFeedPage(userId!, undefined, interestId),
     enabled: !!userId,
     refetchOnMount: "always",
