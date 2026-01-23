@@ -181,7 +181,7 @@ export default function MyFeeds() {
             </div>
             {/* Swipe hint for mobile users - single location */}
             {isMobile && (
-              <p className="text-xs text-muted-foreground text-center mt-2">
+              <p className="text-xs text-foreground text-center mt-1">
                 Swipe right on any item to focus your feed
               </p>
             )}
