@@ -13,12 +13,30 @@ type School = Database['public']['Tables']['schools']['Row'] & {
   league_code?: string | null;
 };
 
+// Enriched types that include the subscriber_interests.id for focus navigation
+export interface SportWithInterest extends Sport {
+  interestId: number;
+}
+
+export interface LeagueWithInterest extends League {
+  interestId: number;
+}
+
+export interface TeamWithInterest extends Team {
+  interestId: number;
+}
+
+export interface SchoolWithInterest extends School {
+  interestId: number;
+}
+
 export interface Person {
   id: number;
   name: string;
   role: string;
   position?: string;
   country_code?: string | null;
+  interestId: number;
   teams?: {
     display_name: string;
     nickname: string;
@@ -49,7 +67,7 @@ export interface Person {
 }
 
 export interface OlympicsPreference {
-  id: number;
+  id: number; // This is already the subscriber_interests.id
   sport_id: number | null;
   country_id: number | null;
   sport_name?: string;
@@ -59,11 +77,11 @@ export interface OlympicsPreference {
 }
 
 export interface UserPreferences {
-  sports: Sport[];
-  leagues: League[];
-  teams: Team[];
+  sports: SportWithInterest[];
+  leagues: LeagueWithInterest[];
+  teams: TeamWithInterest[];
   people: Person[];
-  schools: School[];
+  schools: SchoolWithInterest[];
   olympicsPrefs: OlympicsPreference[];
   focusedItems: Set<string>;
 }
@@ -79,7 +97,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     throw interestsError;
   }
 
-  // Build focused items set and group by type
+  // Build focused items set and group by type with interest ID mapping
   const focused = new Set<string>();
   const sportIds: number[] = [];
   const leagueIds: number[] = [];
@@ -87,6 +105,13 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const personIds: number[] = [];
   const schoolIds: number[] = [];
   const olympicsInterests: { id: number; sport_id: number | null; country_id: number | null }[] = [];
+  
+  // Maps from entity ID to subscriber_interests.id for focus navigation
+  const sportInterestMap = new Map<number, number>();
+  const leagueInterestMap = new Map<number, number>();
+  const teamInterestMap = new Map<number, number>();
+  const personInterestMap = new Map<number, number>();
+  const schoolInterestMap = new Map<number, number>();
 
   (allInterests || []).forEach(interest => {
     // Handle Olympics preferences separately
@@ -101,22 +126,28 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     
     if (interest.sport_id !== null) {
       sportIds.push(interest.sport_id);
+      sportInterestMap.set(interest.sport_id, interest.id);
       if (interest.is_focused) focused.add(`sport-${interest.sport_id}`);
     }
-    if (interest.league_id !== null) {
+    if (interest.league_id !== null && interest.team_id === null && interest.school_id === null && interest.country_id === null) {
+      // Pure league follow (not associated with team/school/country)
       leagueIds.push(interest.league_id);
+      leagueInterestMap.set(interest.league_id, interest.id);
       if (interest.is_focused) focused.add(`league-${interest.league_id}`);
     }
     if (interest.team_id !== null) {
       teamIds.push(interest.team_id);
+      teamInterestMap.set(interest.team_id, interest.id);
       if (interest.is_focused) focused.add(`team-${interest.team_id}`);
     }
     if (interest.person_id !== null) {
       personIds.push(interest.person_id);
+      personInterestMap.set(interest.person_id, interest.id);
       if (interest.is_focused) focused.add(`person-${interest.person_id}`);
     }
     if (interest.school_id !== null) {
       schoolIds.push(interest.school_id);
+      schoolInterestMap.set(interest.school_id, interest.id);
       if (interest.is_focused) focused.add(`school-${interest.school_id}`);
     }
   });
@@ -228,11 +259,12 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     country_logo: o.country_id ? countriesMap.get(o.country_id)?.logo_url : undefined,
   }));
 
-  // Sort and enrich sports with label and logo from preference_menu_items
-  const sports = (sportsResult.data || []).map(sport => {
+  // Sort and enrich sports with label, logo, and interestId
+  const sports: SportWithInterest[] = (sportsResult.data || []).map(sport => {
     const menuData = sportMenuMap.get(sport.id);
     return {
       ...sport,
+      interestId: sportInterestMap.get(sport.id) || 0,
       display_label: menuData?.label || sport.display_label || sport.sport,
       logo_url: sport.logo_url || menuData?.logo_url || null,
     };
@@ -240,18 +272,24 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     (a.display_label || a.sport).localeCompare(b.display_label || b.sport)
   );
   
-  // Sort and enrich leagues with label and logo from preference_menu_items
-  const leagues = (leaguesResult.data || []).map(league => {
+  // Sort and enrich leagues with label, logo, and interestId
+  const leagues: LeagueWithInterest[] = (leaguesResult.data || []).map(league => {
     const menuData = leagueMenuMap.get(league.id);
     return {
       ...league,
+      interestId: leagueInterestMap.get(league.id) || 0,
       name: menuData?.label || league.name,
       logo_url: league.logo_url || menuData?.logo_url || null,
     };
   }).sort((a, b) =>
     (a.code || a.name).localeCompare(b.code || b.name)
   );
-  const teams = ((teamsResult.data || []) as Team[]).sort((a, b) => 
+  
+  // Sort and enrich teams with interestId
+  const teams: TeamWithInterest[] = ((teamsResult.data || []) as Team[]).map(team => ({
+    ...team,
+    interestId: teamInterestMap.get(Number(team.id)) || 0,
+  })).sort((a, b) => 
     a.display_name.localeCompare(b.display_name)
   );
   // Fetch countries for people by country_code and logos from preference_menu_items
@@ -300,8 +338,8 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   }
   
-  // Enrich people with country data and sport/league logos
-  const people = peopleRaw.map(person => {
+  // Enrich people with country data, sport/league logos, and interestId
+  const people: Person[] = peopleRaw.map(person => {
     // Add sport logo from preference_menu_items if missing
     let sports = person.sports;
     if (sports && !sports.logo_url && person.sport_id && peopleSportLogosMap.has(person.sport_id)) {
@@ -316,19 +354,22 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     
     return {
       ...person,
+      interestId: personInterestMap.get(person.id) || 0,
       sports,
       leagues,
       countries: person.country_code ? personCountriesMap.get(person.country_code) || null : null,
     };
-  }).sort((a, b) => a.name.localeCompare(b.name)) as Person[];
+  }).sort((a, b) => a.name.localeCompare(b.name));
+  
   // Build league code lookup for schools
   const schoolLeagueCodeMap = new Map((leaguesForSchoolsResult.data || []).map(l => [l.id, l.code]));
   
-  // Enrich schools with their league_code
-  const schools = ((schoolsResult.data || []) as School[]).map(school => {
+  // Enrich schools with their league_code and interestId
+  const schools: SchoolWithInterest[] = ((schoolsResult.data || []) as School[]).map(school => {
     const leagueId = schoolLeagueMap.get(school.id);
     return {
       ...school,
+      interestId: schoolInterestMap.get(school.id) || 0,
       league_code: leagueId ? schoolLeagueCodeMap.get(leagueId) : null,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));

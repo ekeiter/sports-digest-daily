@@ -12,15 +12,10 @@ export type FeedRow = {
   updated_at: string | null;
 };
 
-export type FocusFilter = {
-  type: string;
-  id: number;
-};
-
 async function fetchFeedPage(
   userId: string,
   cursor?: { time: string; id: number } | null,
-  focus?: FocusFilter
+  interestId?: number
 ): Promise<FeedRow[]> {
   const args: any = { p_subscriber_id: userId, p_limit: 100 };
   if (cursor) {
@@ -28,10 +23,9 @@ async function fetchFeedPage(
     args.p_cursor_id = cursor.id;
   }
   
-  // Add focus filter if provided
-  if (focus) {
-    args.p_focus_type = focus.type;
-    args.p_focus_id = focus.id;
+  // Add interest ID filter if provided (for focused feed)
+  if (interestId) {
+    args.p_interest_id = interestId;
   }
 
   const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
@@ -40,10 +34,10 @@ async function fetchFeedPage(
   return (data ?? []) as FeedRow[];
 }
 
-export function useArticleFeed(userId: string | null, focus?: FocusFilter) {
+export function useArticleFeed(userId: string | null, interestId?: number) {
   return useQuery({
-    queryKey: ['articleFeed', userId, focus?.type, focus?.id],
-    queryFn: () => fetchFeedPage(userId!, undefined, focus),
+    queryKey: ['articleFeed', userId, interestId],
+    queryFn: () => fetchFeedPage(userId!, undefined, interestId),
     enabled: !!userId,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -68,7 +62,11 @@ export function usePrefetchArticleFeed() {
 export function useInvalidateArticleFeed() {
   const queryClient = useQueryClient();
 
-  return (userId: string) => {
-    queryClient.invalidateQueries({ queryKey: ['articleFeed', userId] });
+  return (userId: string, interestId?: number) => {
+    if (interestId) {
+      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, interestId] });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId] });
+    }
   };
 }
