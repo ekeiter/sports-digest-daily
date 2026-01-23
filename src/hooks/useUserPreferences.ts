@@ -152,6 +152,10 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
           position,
           country_code,
           last_school_espn_id,
+          team_id,
+          league_id,
+          sport_id,
+          school_id,
           teams (
             display_name,
             nickname,
