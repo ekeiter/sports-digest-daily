@@ -134,8 +134,8 @@ export default function SwipeableFeedItem({
           {/* Focus button - visible on tablet and desktop */}
           <Button
             size="sm"
-            variant="ghost"
-            className="hidden md:flex h-7 px-2 text-primary hover:text-primary hover:bg-primary/10"
+            variant="outline"
+            className="hidden md:flex h-7 px-2 text-primary border-primary hover:text-primary hover:bg-primary/10"
             onClick={(e) => {
               e.stopPropagation();
               handleFocus();
@@ -143,7 +143,7 @@ export default function SwipeableFeedItem({
             title="Focus on this"
           >
             <Focus className="h-4 w-4" />
-            <span className="ml-1 hidden lg:inline text-xs">Focus</span>
+            <span className="ml-1 text-xs">Focus</span>
           </Button>
           
           {/* Delete button passed from parent */}
