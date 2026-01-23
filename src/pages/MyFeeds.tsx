@@ -179,12 +179,13 @@ export default function MyFeeds() {
                 Go To Sports Feed
               </Button>
             </div>
-            {/* Swipe hint for mobile users - single location */}
-            {isMobile && (
-              <p className="text-xs text-foreground text-center mt-1">
-                Swipe right on any item to focus your feed
-              </p>
-            )}
+            {/* Instruction hint - different text for mobile vs desktop/tablet */}
+            <p className="text-xs text-foreground text-center mt-1">
+              {isMobile 
+                ? "Swipe right on any item to focus your feed"
+                : "Click on button on any item to focus your feed"
+              }
+            </p>
           </div>
         </div>
       </header>
