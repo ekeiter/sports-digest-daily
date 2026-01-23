@@ -161,25 +161,26 @@ export default function MyFeeds() {
 
   return (
     <div className="min-h-screen bg-[#D5D5D5]">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-3 flex flex-col items-center">
-          <img src={sportsdigLogo} alt="SportsDig" className="h-20 md:h-24 object-contain" />
-          <h1 className="text-xl font-bold mt-2">My Feed Selections</h1>
+      <header className="bg-transparent">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex items-center gap-4">
+              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-16 md:h-20" />
+              <span className="text-lg md:text-xl font-bold text-black">My Feed Selections</span>
+            </div>
+            <div className="flex gap-1.5 md:gap-2">
+              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
+                Dashboard
+              </Button>
+              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/feed")}>
+                Go To Sports Feed
+              </Button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-2 pt-2 pb-4 max-w-3xl">
-        {/* Navigation Buttons - Centered at top */}
-        <div className="flex justify-center gap-2 mb-2">
-          <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/")}>
-            Dashboard
-          </Button>
-          <Button size="sm" className="min-w-[140px]" onClick={() => navigate("/feed")}>
-            Go To Sports Feed
-          </Button>
-        </div>
-        <div className="border-b border-blue-300 mb-4" />
-
+      <div className="container mx-auto px-4 pt-2 pb-4 max-w-3xl">
         <div className="space-y-4">
           {/* Sports/Leagues/Teams Section */}
           <Card className="bg-transparent border-none shadow-none">
