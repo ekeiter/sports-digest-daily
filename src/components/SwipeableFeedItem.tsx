@@ -6,16 +6,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SwipeableFeedItemProps {
   children: ReactNode;
-  focusType: 'sport' | 'league' | 'team' | 'person' | 'school' | 'olympics';
-  focusId: number;
+  interestId: number; // subscriber_interests.id for focused feed
   onDelete?: () => void;
   deleteButton?: ReactNode;
 }
 
 export default function SwipeableFeedItem({
   children,
-  focusType,
-  focusId,
+  interestId,
   deleteButton,
 }: SwipeableFeedItemProps) {
   const navigate = useNavigate();
@@ -31,7 +29,7 @@ export default function SwipeableFeedItem({
   const REVEAL_WIDTH = 100;
 
   const handleFocus = () => {
-    navigate(`/feed?focus=${focusType}-${focusId}`);
+    navigate(`/feed?focus=${interestId}`);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {

@@ -28,15 +28,12 @@ export default function Feed() {
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
   const [focusLabel, setFocusLabel] = useState<string | null>(null);
   
-  // Parse focus parameter (e.g., "team-123", "person-456")
+  // Parse focus parameter - now expects interest ID (e.g., "123" for subscriber_interests.id)
   const focusParam = searchParams.get("focus");
-  const [focusType, focusId] = focusParam?.split("-") ?? [null, null];
+  const interestId = focusParam ? parseInt(focusParam) : undefined;
 
-  // For focused feed, we'll use a different hook/query
-  const { data: initialArticles, isLoading, refetch } = useArticleFeed(
-    user?.id, 
-    focusType && focusId ? { type: focusType, id: parseInt(focusId) } : undefined
-  );
+  // Fetch feed with optional interest ID for focused feed
+  const { data: initialArticles, isLoading, refetch } = useArticleFeed(user?.id, interestId);
   const invalidateFeed = useInvalidateArticleFeed();
 
   // Combined articles: initial from React Query + any loaded via "Load More"
@@ -46,73 +43,77 @@ export default function Feed() {
     checkUser();
   }, []);
 
-  // Fetch the label for the focused item
+  // Fetch the label for the focused item based on interest ID
   useEffect(() => {
-    if (focusType && focusId) {
+    if (interestId && user?.id) {
       fetchFocusLabel();
     } else {
       setFocusLabel(null);
     }
-  }, [focusType, focusId]);
-
-  // Preload images after articles load
-  useEffect(() => {
-    if (articles.length > 0) {
-      const imagesToPreload = articles
-        .map(a => a.thumbnail_url)
-        .filter((url): url is string => url !== null);
-      
-      const batchSize = 10;
-      for (let i = 0; i < imagesToPreload.length; i += batchSize) {
-        const batch = imagesToPreload.slice(i, i + batchSize);
-        setTimeout(() => preloadImages(batch), (i / batchSize) * 100);
-      }
-    }
-  }, [articles]);
+  }, [interestId, user?.id]);
 
   const fetchFocusLabel = async () => {
-    if (!focusType || !focusId) return;
+    if (!interestId || !user?.id) return;
     
     try {
-      let label = "";
-      const id = parseInt(focusId);
+      // Fetch the subscriber_interest row to determine what to display
+      const { data: interest, error } = await supabase
+        .from("subscriber_interests")
+        .select("team_id, league_id, sport_id, person_id, school_id, country_id, is_olympics")
+        .eq("id", interestId)
+        .eq("subscriber_id", user.id)
+        .single();
       
-      switch (focusType) {
-        case "team": {
-          const { data } = await supabase.from("teams").select("display_name").eq("id", id).single();
-          label = data?.display_name || "Team";
-          break;
+      if (error || !interest) {
+        setFocusLabel(null);
+        return;
+      }
+
+      let label = "";
+
+      // Build label based on what's in the interest
+      if (interest.team_id) {
+        const { data } = await supabase.from("teams").select("display_name").eq("id", interest.team_id).single();
+        label = data?.display_name || "Team";
+      } else if (interest.person_id) {
+        const { data } = await supabase.from("people").select("name").eq("id", interest.person_id).single();
+        label = data?.name || "Player";
+      } else if (interest.is_olympics) {
+        let parts = ["Olympics"];
+        if (interest.sport_id) {
+          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", interest.sport_id).single();
+          parts.push(data?.display_label || data?.sport || "");
         }
-        case "league": {
-          const { data } = await supabase.from("leagues").select("code, name").eq("id", id).single();
-          label = data?.code || data?.name || "League";
-          break;
+        if (interest.country_id) {
+          const { data } = await supabase.from("countries").select("name").eq("id", interest.country_id).single();
+          parts.push(data?.name || "");
         }
-        case "sport": {
-          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", id).single();
-          label = data?.display_label || data?.sport || "Sport";
-          break;
+        label = parts.filter(Boolean).join(" - ");
+      } else if (interest.school_id) {
+        const { data: school } = await supabase.from("schools").select("short_name, name").eq("id", interest.school_id).single();
+        let schoolName = school?.short_name || school?.name || "School";
+        if (interest.league_id) {
+          const { data: league } = await supabase.from("leagues").select("code").eq("id", interest.league_id).single();
+          label = `${schoolName} (${league?.code || ""})`;
+        } else {
+          label = schoolName;
         }
-        case "person": {
-          const { data } = await supabase.from("people").select("name").eq("id", id).single();
-          label = data?.name || "Player";
-          break;
-        }
-        case "school": {
-          const { data } = await supabase.from("schools").select("short_name, name").eq("id", id).single();
-          label = data?.short_name || data?.name || "School";
-          break;
-        }
-        case "olympics": {
-          label = "Olympics";
-          break;
-        }
+      } else if (interest.country_id && interest.league_id) {
+        const { data: country } = await supabase.from("countries").select("name").eq("id", interest.country_id).single();
+        const { data: league } = await supabase.from("leagues").select("code, name").eq("id", interest.league_id).single();
+        label = `${league?.code || league?.name || ""} - ${country?.name || ""}`;
+      } else if (interest.league_id) {
+        const { data } = await supabase.from("leagues").select("code, name").eq("id", interest.league_id).single();
+        label = data?.code || data?.name || "League";
+      } else if (interest.sport_id) {
+        const { data } = await supabase.from("sports").select("display_label, sport").eq("id", interest.sport_id).single();
+        label = data?.display_label || data?.sport || "Sport";
       }
       
       setFocusLabel(label);
     } catch (error) {
       console.error("Error fetching focus label:", error);
-      setFocusLabel(focusType);
+      setFocusLabel(null);
     }
   };
 
@@ -146,10 +147,9 @@ export default function Feed() {
       p_cursor_id: cursor.id 
     };
     
-    // Add focus filter if present
-    if (focusType && focusId) {
-      args.p_focus_type = focusType;
-      args.p_focus_id = parseInt(focusId);
+    // Add interest ID filter if present
+    if (interestId) {
+      args.p_interest_id = interestId;
     }
 
     const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
@@ -180,7 +180,7 @@ export default function Feed() {
     setRefreshing(true);
     setExtraArticles([]);
     if (user) {
-      invalidateFeed(user.id);
+      invalidateFeed(user.id, interestId);
     }
     await refetch();
     setRefreshing(false);
@@ -228,7 +228,7 @@ export default function Feed() {
             </h1>
             
             {/* Clear focus button when in focus mode */}
-            {focusParam && (
+            {interestId && (
               <div className="flex justify-center">
                 <Button 
                   size="sm" 

@@ -211,8 +211,7 @@ export default function MyFeeds() {
                   {selectedSports.map(sport => (
                     <SwipeableFeedItem
                       key={`sport-${sport.id}`}
-                      focusType="sport"
-                      focusId={sport.id}
+                      interestId={sport.interestId}
                       deleteButton={
                         <Button
                           size="sm"
@@ -233,8 +232,7 @@ export default function MyFeeds() {
                   {selectedLeagues.map(league => (
                     <SwipeableFeedItem
                       key={`league-${league.id}`}
-                      focusType="league"
-                      focusId={league.id}
+                      interestId={league.interestId}
                       deleteButton={
                         <Button
                           size="sm"
@@ -255,14 +253,13 @@ export default function MyFeeds() {
                   {selectedTeams.map(team => (
                     <SwipeableFeedItem
                       key={`team-${team.id}`}
-                      focusType="team"
-                      focusId={team.id}
+                      interestId={team.interestId}
                       deleteButton={
                         <Button
                           size="sm"
                           variant="ghost"
                           className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                          onClick={() => handleDeleteItem('team', team.id)}
+                          onClick={() => handleDeleteItem('team', Number(team.id))}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -284,8 +281,7 @@ export default function MyFeeds() {
                     return (
                       <SwipeableFeedItem
                         key={`school-${school.id}`}
-                        focusType="school"
-                        focusId={school.id}
+                        interestId={school.interestId}
                         deleteButton={
                           <Button
                             size="sm"
@@ -309,8 +305,7 @@ export default function MyFeeds() {
                   {olympicsPrefs.map(pref => (
                     <SwipeableFeedItem
                       key={`olympics-${pref.id}`}
-                      focusType="olympics"
-                      focusId={pref.id}
+                      interestId={pref.id}
                       deleteButton={
                         <Button
                           size="sm"
@@ -365,8 +360,7 @@ export default function MyFeeds() {
                     return (
                       <SwipeableFeedItem
                         key={`person-${person.id}`}
-                        focusType="person"
-                        focusId={person.id}
+                        interestId={person.interestId}
                         deleteButton={
                           <Button
                             size="sm"
