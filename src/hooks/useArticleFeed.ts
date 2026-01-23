@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type FeedRow = {
@@ -12,14 +12,26 @@ export type FeedRow = {
   updated_at: string | null;
 };
 
+export type FocusFilter = {
+  type: string;
+  id: number;
+};
+
 async function fetchFeedPage(
   userId: string,
-  cursor?: { time: string; id: number } | null
+  cursor?: { time: string; id: number } | null,
+  focus?: FocusFilter
 ): Promise<FeedRow[]> {
   const args: any = { p_subscriber_id: userId, p_limit: 100 };
   if (cursor) {
     args.p_cursor_time = cursor.time;
     args.p_cursor_id = cursor.id;
+  }
+  
+  // Add focus filter if provided
+  if (focus) {
+    args.p_focus_type = focus.type;
+    args.p_focus_id = focus.id;
   }
 
   const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
@@ -28,10 +40,10 @@ async function fetchFeedPage(
   return (data ?? []) as FeedRow[];
 }
 
-export function useArticleFeed(userId: string | null) {
+export function useArticleFeed(userId: string | null, focus?: FocusFilter) {
   return useQuery({
-    queryKey: ['articleFeed', userId],
-    queryFn: () => fetchFeedPage(userId!),
+    queryKey: ['articleFeed', userId, focus?.type, focus?.id],
+    queryFn: () => fetchFeedPage(userId!, undefined, focus),
     enabled: !!userId,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,

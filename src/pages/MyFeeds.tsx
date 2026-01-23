@@ -6,9 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
+import SwipeableFeedItem from "@/components/SwipeableFeedItem";
 import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
   return str
@@ -63,7 +66,7 @@ const getContextDisplay = (person: Person) => {
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
-  
+  const isMobile = useIsMobile();
   
   // Local state for optimistic updates after deletion
   const [deletedItems, setDeletedItems] = useState<Set<string>>(new Set());
@@ -197,48 +200,73 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
+                  {/* Swipe hint for mobile users */}
+                  {isMobile && (selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0 || olympicsPrefs.length > 0) && (
+                    <p className="text-xs text-muted-foreground text-center mb-1">
+                      Swipe right on any item to focus your feed
+                    </p>
+                  )}
+                  
                   {/* Sports */}
                   {selectedSports.map(sport => (
-                    <div
+                    <SwipeableFeedItem
                       key={`sport-${sport.id}`}
-                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                      focusType="sport"
+                      focusId={sport.id}
+                      deleteButton={
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                          onClick={() => handleDeleteItem('sport', sport.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
                     >
                       {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                       <span className="text-sm font-medium flex-1">{sport.display_label || sport.sport}</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteItem('sport', sport.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    </SwipeableFeedItem>
                   ))}
+                  
                   {/* Leagues */}
                   {selectedLeagues.map(league => (
-                    <div
+                    <SwipeableFeedItem
                       key={`league-${league.id}`}
-                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                      focusType="league"
+                      focusId={league.id}
+                      deleteButton={
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                          onClick={() => handleDeleteItem('league', league.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
                     >
                       {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                       <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteItem('league', league.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    </SwipeableFeedItem>
                   ))}
                   
                   {/* Teams */}
                   {selectedTeams.map(team => (
-                    <div
+                    <SwipeableFeedItem
                       key={`team-${team.id}`}
-                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                      focusType="team"
+                      focusId={team.id}
+                      deleteButton={
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                          onClick={() => handleDeleteItem('team', team.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
                     >
                       {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                       <span className="text-sm font-medium flex-1">
@@ -247,46 +275,52 @@ export default function MyFeeds() {
                           <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>
                         )}
                       </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteItem('team', team.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    </SwipeableFeedItem>
                   ))}
                   
                   {/* Schools */}
                   {selectedSchools.map(school => {
                     const suffix = school.league_code ? `(${school.league_code})` : "(all sports)";
                     return (
-                      <div
+                      <SwipeableFeedItem
                         key={`school-${school.id}`}
-                        className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                        focusType="school"
+                        focusId={school.id}
+                        deleteButton={
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                            onClick={() => handleDeleteItem('school', school.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        }
                       >
                         {school.logo_url && <img src={school.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
                         <span className="text-sm font-medium flex-1">
                           {school.name} <span className="text-muted-foreground">{suffix}</span>
                         </span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteItem('school', school.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      </SwipeableFeedItem>
                     );
                   })}
                   
                   {/* Olympics */}
                   {olympicsPrefs.map(pref => (
-                    <div
+                    <SwipeableFeedItem
                       key={`olympics-${pref.id}`}
-                      className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                      focusType="olympics"
+                      focusId={pref.id}
+                      deleteButton={
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                          onClick={() => handleDeleteOlympics(pref.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
                     >
                       {pref.sport_logo && (
                         <img src={pref.sport_logo} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
@@ -297,15 +331,7 @@ export default function MyFeeds() {
                       <span className="text-sm font-medium flex-1">
                         OLY - {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"} - {pref.country_name || "All Countries"}
                       </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteOlympics(pref.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    </SwipeableFeedItem>
                   ))}
                 </div>
               )}
@@ -327,12 +353,30 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
+                  {/* Swipe hint for mobile users */}
+                  {isMobile && (
+                    <p className="text-xs text-muted-foreground text-center mb-1">
+                      Swipe right on any item to focus your feed
+                    </p>
+                  )}
+                  
                   {selectedPeople.map(person => {
                     const context = getContextDisplay(person);
                     return (
-                      <div
+                      <SwipeableFeedItem
                         key={`person-${person.id}`}
-                        className="flex items-center gap-2 px-2 py-1 border rounded-md bg-card"
+                        focusType="person"
+                        focusId={person.id}
+                        deleteButton={
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 p-0 flex-shrink-0 text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteItem('person', person.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        }
                       >
                         {(() => {
                           const logo = getPersonLogo(person);
@@ -355,15 +399,7 @@ export default function MyFeeds() {
                             )}
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 flex-shrink-0 text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteItem('person', person.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      </SwipeableFeedItem>
                     );
                   })}
                 </div>
