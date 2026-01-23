@@ -18,6 +18,7 @@ export interface Person {
   name: string;
   role: string;
   position?: string;
+  country_code?: string | null;
   teams?: {
     display_name: string;
     nickname: string;
@@ -31,6 +32,18 @@ export interface Person {
   sports?: {
     sport: string;
     display_label: string | null;
+    logo_url: string | null;
+  } | null;
+  schools?: {
+    id: number;
+    name: string;
+    short_name: string;
+    logo_url: string | null;
+  } | null;
+  countries?: {
+    id: number;
+    name: string;
+    code: string;
     logo_url: string | null;
   } | null;
 }
@@ -137,6 +150,8 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
           name,
           role,
           position,
+          country_code,
+          last_school_espn_id,
           teams (
             display_name,
             nickname,
@@ -150,6 +165,12 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
           sports (
             sport,
             display_label,
+            logo_url
+          ),
+          schools (
+            id,
+            name,
+            short_name,
             logo_url
           )
         `).in("id", personIds)
@@ -229,9 +250,25 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const teams = ((teamsResult.data || []) as Team[]).sort((a, b) => 
     a.display_name.localeCompare(b.display_name)
   );
-  const people = ((peopleResult.data || []) as Person[]).sort((a, b) => 
-    a.name.localeCompare(b.name)
+  // Fetch countries for people by country_code
+  const peopleRaw = (peopleResult.data || []) as any[];
+  const personCountryCodes = [...new Set(
+    peopleRaw.filter(p => p.country_code).map(p => p.country_code as string)
+  )];
+  
+  const personCountriesResult = personCountryCodes.length > 0
+    ? await supabase.from("countries").select("id, name, code, logo_url").in("code", personCountryCodes)
+    : { data: [] };
+  
+  const personCountriesMap = new Map(
+    (personCountriesResult.data || []).map((c: any) => [c.code, c])
   );
+  
+  // Enrich people with country data
+  const people = peopleRaw.map(person => ({
+    ...person,
+    countries: person.country_code ? personCountriesMap.get(person.country_code) || null : null,
+  })).sort((a, b) => a.name.localeCompare(b.name)) as Person[];
   // Build league code lookup for schools
   const schoolLeagueCodeMap = new Map((leaguesForSchoolsResult.data || []).map(l => [l.id, l.code]));
   
