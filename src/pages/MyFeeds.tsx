@@ -179,6 +179,12 @@ export default function MyFeeds() {
                 Go To Sports Feed
               </Button>
             </div>
+            {/* Swipe hint for mobile users - single location */}
+            {isMobile && (
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Swipe right on any item to focus your feed
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -200,12 +206,6 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {/* Swipe hint for mobile users */}
-                  {isMobile && (selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0 || olympicsPrefs.length > 0) && (
-                    <p className="text-xs text-muted-foreground text-center mb-1">
-                      Swipe right on any item to focus your feed
-                    </p>
-                  )}
                   
                   {/* Sports */}
                   {selectedSports.map(sport => (
@@ -348,12 +348,6 @@ export default function MyFeeds() {
                 <p className="text-muted-foreground text-sm">No players or coaches selected</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {/* Swipe hint for mobile users */}
-                  {isMobile && (
-                    <p className="text-xs text-muted-foreground text-center mb-1">
-                      Swipe right on any item to focus your feed
-                    </p>
-                  )}
                   
                   {selectedPeople.map(person => {
                     const context = getContextDisplay(person);
