@@ -7,6 +7,7 @@ import { Loader2, RefreshCw, X } from "lucide-react";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
+import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -217,15 +218,20 @@ export default function Feed() {
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="container mx-auto px-3 py-2 max-w-3xl">
           <div className="flex flex-col gap-2">
-            <h1 className="text-xl md:text-2xl font-bold text-center text-foreground">
-              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> 
-              <span className="text-lg md:text-xl">
-                - My Feed
-                {focusLabel && (
-                  <span className="text-primary"> - {focusLabel}</span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src={blimpLogo} 
+                alt="SportsDig" 
+                className="h-8 md:h-10 object-contain"
+              />
+              <h1 className="text-lg md:text-xl font-bold text-foreground">
+                {interestId && focusLabel ? (
+                  <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
+                ) : (
+                  "My Combined Feed"
                 )}
-              </span>
-            </h1>
+              </h1>
+            </div>
             
             {/* Clear focus button when in focus mode */}
             {interestId && (
