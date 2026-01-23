@@ -888,7 +888,7 @@ export default function Preferences() {
                               />
                             </div>
                           )}
-                          <span className="font-medium flex-1 min-w-0">
+                          <span className="text-sm font-medium flex-1 min-w-0">
                             {item.label}
                           </span>
                           {isSubmenu && (
@@ -924,7 +924,7 @@ export default function Preferences() {
                               e.stopPropagation();
                               loadTeamsForLeague(item.entity_id!);
                             }}
-                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
                           >
                             Teams
                             {(() => {
@@ -943,7 +943,7 @@ export default function Preferences() {
                               e.stopPropagation();
                               loadAllSchools();
                             }}
-                            className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                            className="shrink-0 transition-colors w-20 justify-center text-black h-7"
                           >
                             Schools
                             {selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
@@ -988,7 +988,7 @@ export default function Preferences() {
                                         />
                                       </div>
                                     )}
-                                    <span className={`font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
+                                    <span className={`text-sm font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
                                       {child.label}
                                     </span>
                                   </div>
@@ -1021,7 +1021,7 @@ export default function Preferences() {
                                         e.stopPropagation();
                                         loadTeamsForLeague(child.entity_id!);
                                       }}
-                                      className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                                      className="shrink-0 transition-colors w-20 justify-center text-black h-7"
                                     >
                                       Teams
                                       {(() => {
@@ -1059,7 +1059,7 @@ export default function Preferences() {
                                               />
                                             </div>
                                           )}
-                                          <span className="font-medium flex-1 min-w-0">
+                                          <span className="text-sm font-medium flex-1 min-w-0">
                                             {grandchild.label}
                                           </span>
                                           
@@ -1072,7 +1072,7 @@ export default function Preferences() {
                                                 e.stopPropagation();
                                                 loadTeamsForLeague(grandchild.entity_id!);
                                               }}
-                                              className="shrink-0 transition-colors w-16 justify-center text-black h-7"
+                                              className="shrink-0 transition-colors w-20 justify-center text-black h-7"
                                             >
                                               Teams
                                               {(() => {
