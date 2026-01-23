@@ -86,7 +86,9 @@ const Index = () => {
   if (!user) {
     return <div className="min-h-screen flex items-center justify-center px-4 bg-[#D5D5D5]">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
+          <div className="flex justify-center">
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
+          </div>
           <p className="text-base md:text-xl text-gray-800">
             Create your personalized sports news feed from your favorite sports, leagues, teams, and players/coaches.
           </p>
