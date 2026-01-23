@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, X } from "lucide-react";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
@@ -20,14 +20,23 @@ const preloadImages = (urls: string[]) => {
 
 export default function Feed() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
-  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [focusLabel, setFocusLabel] = useState<string | null>(null);
+  
+  // Parse focus parameter (e.g., "team-123", "person-456")
+  const focusParam = searchParams.get("focus");
+  const [focusType, focusId] = focusParam?.split("-") ?? [null, null];
 
-  const { data: initialArticles, isLoading, refetch } = useArticleFeed(user?.id);
+  // For focused feed, we'll use a different hook/query
+  const { data: initialArticles, isLoading, refetch } = useArticleFeed(
+    user?.id, 
+    focusType && focusId ? { type: focusType, id: parseInt(focusId) } : undefined
+  );
   const invalidateFeed = useInvalidateArticleFeed();
 
   // Combined articles: initial from React Query + any loaded via "Load More"
@@ -36,6 +45,15 @@ export default function Feed() {
   useEffect(() => {
     checkUser();
   }, []);
+
+  // Fetch the label for the focused item
+  useEffect(() => {
+    if (focusType && focusId) {
+      fetchFocusLabel();
+    } else {
+      setFocusLabel(null);
+    }
+  }, [focusType, focusId]);
 
   // Preload images after articles load
   useEffect(() => {
@@ -52,6 +70,52 @@ export default function Feed() {
     }
   }, [articles]);
 
+  const fetchFocusLabel = async () => {
+    if (!focusType || !focusId) return;
+    
+    try {
+      let label = "";
+      const id = parseInt(focusId);
+      
+      switch (focusType) {
+        case "team": {
+          const { data } = await supabase.from("teams").select("display_name").eq("id", id).single();
+          label = data?.display_name || "Team";
+          break;
+        }
+        case "league": {
+          const { data } = await supabase.from("leagues").select("code, name").eq("id", id).single();
+          label = data?.code || data?.name || "League";
+          break;
+        }
+        case "sport": {
+          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", id).single();
+          label = data?.display_label || data?.sport || "Sport";
+          break;
+        }
+        case "person": {
+          const { data } = await supabase.from("people").select("name").eq("id", id).single();
+          label = data?.name || "Player";
+          break;
+        }
+        case "school": {
+          const { data } = await supabase.from("schools").select("short_name, name").eq("id", id).single();
+          label = data?.short_name || data?.name || "School";
+          break;
+        }
+        case "olympics": {
+          label = "Olympics";
+          break;
+        }
+      }
+      
+      setFocusLabel(label);
+    } catch (error) {
+      console.error("Error fetching focus label:", error);
+      setFocusLabel(focusType);
+    }
+  };
+
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -67,24 +131,11 @@ export default function Feed() {
     } catch (error) {
       console.error("Error ensuring subscriber:", error);
     }
-    
-    // Check if focus mode is active
-    await checkFocusMode(user.id);
   };
 
-  const checkFocusMode = async (userId: string) => {
-    try {
-      const { data } = await supabase
-        .from("subscriber_interests")
-        .select("is_focused")
-        .eq("subscriber_id", userId)
-        .eq("is_focused", true)
-        .limit(1);
-      
-      setIsFocusMode(data && data.length > 0);
-    } catch (error) {
-      console.error("Error checking focus mode:", error);
-    }
+  const clearFocus = () => {
+    setSearchParams({});
+    setExtraArticles([]);
   };
 
   const fetchMoreArticles = async (cursor: { time: string; id: number }) => {
@@ -94,6 +145,12 @@ export default function Feed() {
       p_cursor_time: cursor.time,
       p_cursor_id: cursor.id 
     };
+    
+    // Add focus filter if present
+    if (focusType && focusId) {
+      args.p_focus_type = focusType;
+      args.p_focus_id = parseInt(focusId);
+    }
 
     const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
     if (error) throw error;
@@ -160,9 +217,30 @@ export default function Feed() {
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <div className="container mx-auto px-3 py-2 max-w-3xl">
           <div className="flex flex-col gap-2">
-            <h1 className="text-xl md:text-2xl font-bold text-center text-black">
-              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- My Feed{isFocusMode ? <span className="text-red-500"> - Focused</span> : ""}</span>
+            <h1 className="text-xl md:text-2xl font-bold text-center text-foreground">
+              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> 
+              <span className="text-lg md:text-xl">
+                - My Feed
+                {focusLabel && (
+                  <span className="text-primary"> - {focusLabel}</span>
+                )}
+              </span>
             </h1>
+            
+            {/* Clear focus button when in focus mode */}
+            {focusParam && (
+              <div className="flex justify-center">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-6 px-2 text-xs gap-1"
+                  onClick={clearFocus}
+                >
+                  <X className="h-3 w-3" />
+                  Clear Focus
+                </Button>
+              </div>
+            )}
             <div className="flex gap-1.5 justify-center">
               <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
                 Dashboard
