@@ -250,25 +250,73 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const teams = ((teamsResult.data || []) as Team[]).sort((a, b) => 
     a.display_name.localeCompare(b.display_name)
   );
-  // Fetch countries for people by country_code
+  // Fetch countries for people by country_code and logos from preference_menu_items
   const peopleRaw = (peopleResult.data || []) as any[];
   const personCountryCodes = [...new Set(
     peopleRaw.filter(p => p.country_code).map(p => p.country_code as string)
   )];
   
-  const personCountriesResult = personCountryCodes.length > 0
-    ? await supabase.from("countries").select("id, name, code, logo_url").in("code", personCountryCodes)
-    : { data: [] };
+  // Collect sport/league ids for people that need logo lookups
+  const peopleSportIdsNeedingLogos = [...new Set(
+    peopleRaw.filter(p => p.sport_id && !p.sports?.logo_url).map(p => p.sport_id as number)
+  )];
+  const peopleLeagueIdsNeedingLogos = [...new Set(
+    peopleRaw.filter(p => p.league_id && !p.leagues?.logo_url).map(p => p.league_id as number)
+  )];
+  
+  const [personCountriesResult, peopleMenuItemsResult] = await Promise.all([
+    personCountryCodes.length > 0
+      ? supabase.from("countries").select("id, name, code, logo_url").in("code", personCountryCodes)
+      : Promise.resolve({ data: [] }),
+    (peopleSportIdsNeedingLogos.length > 0 || peopleLeagueIdsNeedingLogos.length > 0)
+      ? supabase
+          .from("preference_menu_items")
+          .select("entity_type, entity_id, logo_url")
+          .or(
+            [
+              peopleSportIdsNeedingLogos.length > 0 ? `and(entity_type.eq.sport,entity_id.in.(${peopleSportIdsNeedingLogos.join(',')}))` : null,
+              peopleLeagueIdsNeedingLogos.length > 0 ? `and(entity_type.eq.league,entity_id.in.(${peopleLeagueIdsNeedingLogos.join(',')}))` : null
+            ].filter(Boolean).join(',')
+          )
+      : Promise.resolve({ data: [] }),
+  ]);
   
   const personCountriesMap = new Map(
     (personCountriesResult.data || []).map((c: any) => [c.code, c])
   );
   
-  // Enrich people with country data
-  const people = peopleRaw.map(person => ({
-    ...person,
-    countries: person.country_code ? personCountriesMap.get(person.country_code) || null : null,
-  })).sort((a, b) => a.name.localeCompare(b.name)) as Person[];
+  // Build logo maps from preference_menu_items for people
+  const peopleSportLogosMap = new Map<number, string>();
+  const peopleLeagueLogosMap = new Map<number, string>();
+  for (const item of (peopleMenuItemsResult.data || []) as any[]) {
+    if (item.entity_type === 'sport' && item.logo_url) {
+      peopleSportLogosMap.set(item.entity_id, item.logo_url);
+    } else if (item.entity_type === 'league' && item.logo_url) {
+      peopleLeagueLogosMap.set(item.entity_id, item.logo_url);
+    }
+  }
+  
+  // Enrich people with country data and sport/league logos
+  const people = peopleRaw.map(person => {
+    // Add sport logo from preference_menu_items if missing
+    let sports = person.sports;
+    if (sports && !sports.logo_url && person.sport_id && peopleSportLogosMap.has(person.sport_id)) {
+      sports = { ...sports, logo_url: peopleSportLogosMap.get(person.sport_id) };
+    }
+    
+    // Add league logo from preference_menu_items if missing
+    let leagues = person.leagues;
+    if (leagues && !leagues.logo_url && person.league_id && peopleLeagueLogosMap.has(person.league_id)) {
+      leagues = { ...leagues, logo_url: peopleLeagueLogosMap.get(person.league_id) };
+    }
+    
+    return {
+      ...person,
+      sports,
+      leagues,
+      countries: person.country_code ? personCountriesMap.get(person.country_code) || null : null,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name)) as Person[];
   // Build league code lookup for schools
   const schoolLeagueCodeMap = new Map((leaguesForSchoolsResult.data || []).map(l => [l.id, l.code]));
   
