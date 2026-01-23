@@ -23,10 +23,17 @@ const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
 const LEAGUE_CODE_DISPLAY: Record<string, string> = { 'World Baseball Classic': 'WBC' };
 
 const getPersonLogo = (person: Person) => {
+  // Priority: Team → School → League → Sport (country flag shown inline)
   if (person.teams?.logo_url) {
     return {
       url: person.teams.logo_url,
       alt: person.teams.display_name || 'Team'
+    };
+  }
+  if (person.schools?.logo_url) {
+    return {
+      url: person.schools.logo_url,
+      alt: person.schools.short_name || 'School'
     };
   }
   if (person.leagues?.logo_url) {
@@ -38,10 +45,19 @@ const getPersonLogo = (person: Person) => {
   if (person.sports?.logo_url) {
     return {
       url: person.sports.logo_url,
-      alt: person.sports.sport || 'Sport'
+      alt: person.sports.display_label || person.sports.sport || 'Sport'
     };
   }
   return null;
+};
+
+const getContextDisplay = (person: Person) => {
+  const parts: string[] = [];
+  if (person.teams?.display_name) parts.push(person.teams.display_name);
+  else if (person.schools?.short_name) parts.push(person.schools.short_name);
+  if (person.leagues?.code) parts.push(person.leagues.code);
+  if (person.position) parts.push(person.position);
+  return parts.join(" • ");
 };
 
 export default function MyFeeds() {
@@ -311,9 +327,7 @@ export default function MyFeeds() {
               ) : (
                 <div className="flex flex-col gap-2">
                   {selectedPeople.map(person => {
-                    const context = [];
-                    if (person.teams?.display_name) context.push(person.teams.display_name);
-                    if (person.leagues?.code) context.push(person.leagues.code);
+                    const context = getContextDisplay(person);
                     return (
                       <div
                         key={`person-${person.id}`}
@@ -321,11 +335,24 @@ export default function MyFeeds() {
                       >
                         {(() => {
                           const logo = getPersonLogo(person);
-                          return logo ? <img src={logo.url} alt={logo.alt} className="h-5 w-5 object-contain flex-shrink-0" /> : null;
+                          return logo ? <img src={logo.url} alt={logo.alt} className="h-6 w-6 object-contain flex-shrink-0" /> : null;
                         })()}
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm font-semibold">{person.name}</span>
-                          {context.length > 0 && <span className="text-sm text-muted-foreground ml-1">({context.join(" • ")})</span>}
+                          <div className="font-semibold flex items-center gap-2 text-sm whitespace-nowrap">
+                            {person.name}
+                            {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
+                          </div>
+                          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            <span>{context}</span>
+                            {person.countries?.logo_url && (
+                              <img 
+                                src={person.countries.logo_url} 
+                                alt={person.countries.name || ''} 
+                                className="h-3.5 w-5 object-contain"
+                                title={person.countries.name}
+                              />
+                            )}
+                          </div>
                         </div>
                         <Button
                           size="sm"
