@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
@@ -467,8 +467,8 @@ export default function PlayerPreferences() {
                           </div>
                         </div>
                       </div>
-                      <Button size="sm" variant="outline" className="flex-shrink-0" onClick={() => handleUnfollow(person.id)}>
-                        <X className="h-4 w-4" />
+                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0 text-destructive hover:text-destructive" onClick={() => handleUnfollow(person.id)}>
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>)}
                 </div>}
