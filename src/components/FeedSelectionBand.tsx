@@ -32,9 +32,9 @@ function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardPr
   return (
     <button
       onClick={() => navigate(`/feed?focus=${interestId}`)}
-      className="flex flex-col items-center justify-start w-14 h-16 p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0"
+      className="flex flex-col items-center justify-start w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0"
     >
-      <div className="w-8 h-8 flex items-center justify-center">
+      <div className="w-7 h-7 flex items-center justify-center">
         {logoUrl ? (
           <img 
             src={logoUrl} 
@@ -42,14 +42,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardPr
             className="max-w-full max-h-full object-contain"
           />
         ) : (
-          <div className="w-6 h-6 rounded-full bg-muted" />
+          <div className="w-5 h-5 rounded-full bg-muted" />
         )}
       </div>
-      <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight text-foreground">
+      <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
         {label}
       </span>
       {sublabel && (
-        <span className="text-[8px] text-center leading-none text-foreground">
+        <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
           {sublabel}
         </span>
       )}
@@ -119,24 +119,10 @@ export default function FeedSelectionBand({
   };
 
   return (
-    <div className="w-full relative">
-      {/* Left scroll indicator */}
-      {showLeftArrow && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-          <ChevronLeft className="w-4 h-4 text-muted-foreground" />
-        </div>
-      )}
-      
-      {/* Right scroll indicator */}
-      {showRightArrow && (
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </div>
-      )}
-
+    <div className="w-full">
       <div 
         ref={scrollContainerRef}
-        className="flex gap-2 pb-3 px-1 overflow-x-auto scrollbar-hide"
+        className="flex gap-1 pb-1 px-1 overflow-x-auto scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {/* Sports */}
@@ -207,6 +193,18 @@ export default function FeedSelectionBand({
             );
           })}
       </div>
+      
+      {/* Scroll indicators below cards */}
+      {(showLeftArrow || showRightArrow) && (
+        <div className="flex justify-between items-center px-2 pt-1">
+          <div className="w-4">
+            {showLeftArrow && <ChevronLeft className="w-4 h-4 text-muted-foreground" />}
+          </div>
+          <div className="w-4">
+            {showRightArrow && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
