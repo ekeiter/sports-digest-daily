@@ -634,9 +634,8 @@ export default function Preferences() {
       setSearchingPeople(true);
       try {
         const results = await searchPeople(teamSearchTerm);
-        // Filter out already followed people
-        const filtered = results.filter(p => !followedPersonIds.has(p.id));
-        setPeopleSearchResults(filtered.slice(0, 10)); // Limit to 10 results
+        // Don't filter out followed people - they'll show greyed out instead
+        setPeopleSearchResults(results.slice(0, 10)); // Limit to 10 results
       } catch (error) {
         console.error("Error searching people:", error);
       } finally {
