@@ -997,11 +997,14 @@ export default function Preferences() {
                           ) : (
                             peopleSearchResults.map(person => {
                               const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
+                              const isFollowed = followedPersonIds.has(person.id);
                               return (
                                 <div 
                                   key={`person-${person.id}`} 
-                                  onClick={() => handlePersonFollow(person)}
-                                  className="flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none"
+                                  onClick={() => !isFollowed && handlePersonFollow(person)}
+                                  className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                    isFollowed ? 'opacity-50' : ''
+                                  }`}
                                 >
                                   {logoUrl && (
                                     <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
