@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
-import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import FeedSelectionBand from "@/components/FeedSelectionBand";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
@@ -61,6 +62,9 @@ export default function Preferences() {
   
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
+  
+  // Fetch user preferences for the selection band
+  const { data: userPreferences } = useUserPreferences(userId);
 
   useEffect(() => {
     checkUser();
@@ -683,6 +687,18 @@ export default function Preferences() {
                 </Button>
               )}
             </div>
+            
+            {/* Horizontal scrolling selection band */}
+            {userPreferences && (
+              <FeedSelectionBand
+                sports={userPreferences.sports}
+                leagues={userPreferences.leagues}
+                teams={userPreferences.teams}
+                schools={userPreferences.schools}
+                people={userPreferences.people}
+                olympicsPrefs={userPreferences.olympicsPrefs}
+              />
+            )}
           </div>
         </div>
       </header>

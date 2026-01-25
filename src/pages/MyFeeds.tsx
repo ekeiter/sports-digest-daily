@@ -7,8 +7,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
 import SwipeableFeedItem from "@/components/SwipeableFeedItem";
-import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference, SportWithInterest, LeagueWithInterest, TeamWithInterest, SchoolWithInterest } from "@/hooks/useUserPreferences";
-import FeedSelectionBand from "@/components/FeedSelectionBand";
+import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -183,21 +182,11 @@ export default function MyFeeds() {
             {/* Instruction hint - different text for mobile vs desktop/tablet */}
             <p className="text-xs text-foreground text-center mt-1">
               {isMobile 
-                ? "Swipe right or tap a card to focus your feed"
-                : "Click a card or button to focus your feed"
+                ? "Swipe right on any item to focus your feed"
+                : "Click on button on any item to focus your feed"
               }
             </p>
           </div>
-          
-          {/* Horizontal scrolling selection band */}
-          <FeedSelectionBand
-            sports={selectedSports}
-            leagues={selectedLeagues}
-            teams={selectedTeams}
-            schools={selectedSchools}
-            people={selectedPeople}
-            olympicsPrefs={olympicsPrefs}
-          />
         </div>
       </header>
 
