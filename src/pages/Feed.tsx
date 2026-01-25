@@ -147,22 +147,22 @@ export default function Feed() {
   };
 
   const fetchMoreArticles = async (cursor: { time: string; id: number }) => {
-    const args: any = { 
-      p_subscriber_id: user.id, 
-      p_limit: 100,
-      p_cursor_time: cursor.time,
-      p_cursor_id: cursor.id 
+    // Build request body for edge function
+    const body: Record<string, unknown> = { 
+      limit: 100,
+      cursor_time: cursor.time,
+      cursor_id: cursor.id 
     };
     
     // Add interest ID filter if present
     if (interestId) {
-      args.p_interest_id = interestId;
+      body.interest_id = interestId;
     }
 
-    const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
-    if (error) throw error;
+    const response = await supabase.functions.invoke("get-feed", { body });
+    if (response.error) throw new Error(response.error.message);
 
-    return (data ?? []) as FeedRow[];
+    return (response.data ?? []) as FeedRow[];
   };
 
   const loadMore = async () => {

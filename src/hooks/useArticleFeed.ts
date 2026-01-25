@@ -17,21 +17,32 @@ async function fetchFeedPage(
   cursor?: { time: string; id: number } | null,
   interestId?: number
 ): Promise<FeedRow[]> {
-  const args: any = { p_subscriber_id: userId, p_limit: 100 };
+  // Get the current session for auth header
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new Error("No active session");
+  }
+
+  // Build request body
+  const body: Record<string, unknown> = { limit: 100 };
   if (cursor) {
-    args.p_cursor_time = cursor.time;
-    args.p_cursor_id = cursor.id;
+    body.cursor_time = cursor.time;
+    body.cursor_id = cursor.id;
   }
-  
-  // Add interest ID filter if provided (for focused feed)
   if (interestId) {
-    args.p_interest_id = interestId;
+    body.interest_id = interestId;
   }
 
-  const { data, error } = await supabase.rpc('get_subscriber_feed' as any, args);
-  if (error) throw error;
+  // Call the edge function instead of direct RPC (bypasses PostgREST cache)
+  const response = await supabase.functions.invoke("get-feed", {
+    body,
+  });
 
-  return (data ?? []) as FeedRow[];
+  if (response.error) {
+    throw new Error(response.error.message || "Failed to fetch feed");
+  }
+
+  return (response.data ?? []) as FeedRow[];
 }
 
 export function useArticleFeed(userId: string | null, interestId?: number) {
