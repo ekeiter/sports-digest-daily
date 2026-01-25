@@ -31,9 +31,9 @@ function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardPr
   return (
     <button
       onClick={() => navigate(`/feed?focus=${interestId}`)}
-      className="flex flex-col items-center justify-start w-20 h-24 p-2 rounded-lg bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0"
+      className="flex flex-col items-center justify-start w-14 h-16 p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0"
     >
-      <div className="w-12 h-12 flex items-center justify-center">
+      <div className="w-8 h-8 flex items-center justify-center">
         {logoUrl ? (
           <img 
             src={logoUrl} 
@@ -41,14 +41,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardPr
             className="max-w-full max-h-full object-contain"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-muted" />
+          <div className="w-6 h-6 rounded-full bg-muted" />
         )}
       </div>
-      <span className="text-xs font-medium text-center mt-1 line-clamp-2 leading-tight">
+      <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight">
         {label}
       </span>
       {sublabel && (
-        <span className="text-[10px] text-muted-foreground text-center leading-tight">
+        <span className="text-[8px] text-muted-foreground text-center leading-none">
           {sublabel}
         </span>
       )}
