@@ -34,7 +34,13 @@ export default function Feed() {
   const interestId = focusParam ? parseInt(focusParam) : undefined;
 
   // Fetch feed with optional interest ID for focused feed
-  const { data: initialArticles, isLoading, refetch } = useArticleFeed(user?.id, interestId);
+  const {
+    data: initialArticles,
+    isLoading,
+    refetch,
+    isError,
+    error,
+  } = useArticleFeed(user?.id, interestId);
   const invalidateFeed = useInvalidateArticleFeed();
 
   // Combined articles: initial from React Query + any loaded via "Load More"
@@ -211,6 +217,56 @@ export default function Feed() {
 
   if (checkingAuth || isLoading) {
     return <FeedSkeleton />;
+  }
+
+  // If the RPC fails, React Query will treat it as an error; previously we weren't
+  // showing anything, which looked like "no articles".
+  if (isError) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : JSON.stringify(error);
+
+    return (
+      <div className="min-h-screen">
+        <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
+          <div className="container mx-auto px-3 py-2 max-w-3xl">
+            <div className="flex items-center justify-center gap-2">
+              <img
+                src={blimpLogo}
+                alt="SportsDig"
+                className="h-8 md:h-10 object-contain"
+              />
+              <h1 className="text-lg md:text-xl font-bold text-foreground">
+                Feed Error
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-2 py-2 max-w-3xl">
+          <Card>
+            <CardContent className="p-6 space-y-3">
+              <h2 className="text-base font-semibold">Couldn’t load articles</h2>
+              <p className="text-sm text-muted-foreground break-words">
+                {message}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button onClick={handleRefresh} disabled={refreshing}>
+                  Retry
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/my-feeds")}
+                >
+                  Check Selections
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
   }
 
   return (
