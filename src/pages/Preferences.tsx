@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -10,6 +10,7 @@ import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUse
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import FeedSelectionBand from "@/components/FeedSelectionBand";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
+import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
@@ -59,6 +60,11 @@ export default function Preferences() {
   const [selectedSchoolsByLeague, setSelectedSchoolsByLeague] = useState<Record<number, number[]>>({});
   const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
+  
+  // People search
+  const [peopleSearchResults, setPeopleSearchResults] = useState<PersonSearchResult[]>([]);
+  const [searchingPeople, setSearchingPeople] = useState(false);
+  const [followedPersonIds, setFollowedPersonIds] = useState<Set<number>>(new Set());
   
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
@@ -613,6 +619,81 @@ export default function Preferences() {
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
+  // Debounced people search
+  useEffect(() => {
+    if (!teamSearchTerm || teamSearchTerm.length < 2) {
+      setPeopleSearchResults([]);
+      return;
+    }
+    
+    const timer = setTimeout(async () => {
+      setSearchingPeople(true);
+      try {
+        const results = await searchPeople(teamSearchTerm);
+        // Filter out already followed people
+        const filtered = results.filter(p => !followedPersonIds.has(p.id));
+        setPeopleSearchResults(filtered.slice(0, 10)); // Limit to 10 results
+      } catch (error) {
+        console.error("Error searching people:", error);
+      } finally {
+        setSearchingPeople(false);
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [teamSearchTerm, followedPersonIds]);
+
+  // Load followed person IDs from preferences
+  useEffect(() => {
+    if (userPreferences?.people) {
+      setFollowedPersonIds(new Set(userPreferences.people.map(p => p.id)));
+    }
+  }, [userPreferences?.people]);
+
+  const getFilteredSportsAndLeagues = useCallback(() => {
+    if (!teamSearchTerm) return { sports: [] as MenuItem[], leagues: [] as MenuItem[] };
+    const searchLower = teamSearchTerm.toLowerCase();
+    
+    const sports = menuItems.filter(item => 
+      item.entity_type === 'sport' && 
+      item.label.toLowerCase().includes(searchLower)
+    );
+    
+    const leagues = menuItems.filter(item => 
+      item.entity_type === 'league' && 
+      item.label.toLowerCase().includes(searchLower)
+    );
+    
+    return { sports, leagues };
+  }, [teamSearchTerm, menuItems]);
+
+  const handlePersonFollow = async (person: PersonSearchResult) => {
+    if (!userId) return;
+    
+    try {
+      const { error } = await supabase.from("subscriber_interests").insert({
+        subscriber_id: userId,
+        person_id: person.id,
+        notification_enabled: true,
+        priority: 1
+      });
+      
+      if (error) throw error;
+      
+      toast.success(`Now following ${person.name}`);
+      setFollowedPersonIds(prev => new Set([...prev, person.id]));
+      setPeopleSearchResults(prev => prev.filter(p => p.id !== person.id));
+      setShowSearchDropdown(false);
+      setTeamSearchTerm("");
+      
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error following person:", error);
+      toast.error("Failed to follow. Please try again.");
+    }
+  };
+
   const getExpandedLeagueTeams = () => {
     if (!expandedLeagueId) return [];
     return expandedLeagueItems;
@@ -712,13 +793,13 @@ export default function Preferences() {
           </div>
           
           <div className="pt-2">
-            {/* Team Search */}
+            {/* Universal Search */}
             <div className="mb-4 relative" ref={searchRef}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
                     type="text"
-                    placeholder="Search teams & schools..."
+                    placeholder="Search teams, players, sports, leagues..."
                     value={teamSearchTerm}
                     onChange={(e) => {
                       setTeamSearchTerm(e.target.value);
@@ -733,15 +814,15 @@ export default function Preferences() {
                   {teamSearchTerm && (
                     <button
                       type="button"
-                      onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); }}
+                      onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   )}
                 </div>
-                <Button disabled={loadingAllTeams || loadingAllSchoolsSearch}>
-                  {(loadingAllTeams || loadingAllSchoolsSearch) ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                <Button disabled={loadingAllTeams || loadingAllSchoolsSearch || searchingPeople}>
+                  {(loadingAllTeams || loadingAllSchoolsSearch || searchingPeople) ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 </Button>
               </div>
 
@@ -753,11 +834,89 @@ export default function Preferences() {
                     </div>
                   ) : (
                     <>
+                      {/* Sports Section */}
+                      {getFilteredSportsAndLeagues().sports.length > 0 && (
+                        <>
+                          <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Sports</h3>
+                          {getFilteredSportsAndLeagues().sports.slice(0, 10).map(item => {
+                            const isSelected = item.entity_id ? selectedSports.includes(item.entity_id) : false;
+                            return (
+                              <div 
+                                key={`sport-${item.id}`} 
+                                onClick={() => {
+                                  if (item.entity_id) {
+                                    handleSportToggle(item.entity_id, item.label);
+                                  }
+                                  setShowSearchDropdown(false);
+                                  setTeamSearchTerm("");
+                                }}
+                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                  isSelected ? 'opacity-50' : ''
+                                }`}
+                              >
+                                {item.logo_url && (
+                                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                    <img 
+                                      src={item.logo_url} 
+                                      alt={item.label} 
+                                      className="h-7 w-7 object-contain" 
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
+                                    />
+                                  </div>
+                                )}
+                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                  {item.label}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                      
+                      {/* Leagues Section */}
+                      {getFilteredSportsAndLeagues().leagues.length > 0 && (
+                        <>
+                          <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Leagues</h3>
+                          {getFilteredSportsAndLeagues().leagues.slice(0, 10).map(item => {
+                            const isSelected = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
+                            return (
+                              <div 
+                                key={`league-${item.id}`} 
+                                onClick={() => {
+                                  if (item.entity_id) {
+                                    handleLeagueToggle(item.entity_id, item.label);
+                                  }
+                                  setShowSearchDropdown(false);
+                                  setTeamSearchTerm("");
+                                }}
+                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                  isSelected ? 'opacity-50' : ''
+                                }`}
+                              >
+                                {item.logo_url && (
+                                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                    <img 
+                                      src={item.logo_url} 
+                                      alt={item.label} 
+                                      className="h-7 w-7 object-contain" 
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
+                                    />
+                                  </div>
+                                )}
+                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                  {item.label}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                      
                       {/* Teams Section */}
                       {getFilteredTeams().length > 0 && (
                         <>
                           <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Teams</h3>
-                          {getFilteredTeams().map(team => {
+                          {getFilteredTeams().slice(0, 15).map(team => {
                             const isSelected = selectedTeams.includes(Number(team.id));
                             return (
                               <div 
@@ -794,7 +953,7 @@ export default function Preferences() {
                       {getFilteredSchools().length > 0 && (
                         <>
                           <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
-                          {getFilteredSchools().map(school => {
+                          {getFilteredSchools().slice(0, 15).map(school => {
                             const isSelected = selectedSchools.includes(school.id);
                             return (
                               <div 
@@ -827,8 +986,66 @@ export default function Preferences() {
                         </>
                       )}
                       
-                      {getFilteredTeams().length === 0 && getFilteredSchools().length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">No teams or schools found</p>
+                      {/* Players & Coaches Section */}
+                      {peopleSearchResults.length > 0 && (
+                        <>
+                          <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Players & Coaches</h3>
+                          {searchingPeople ? (
+                            <div className="flex items-center justify-center py-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            </div>
+                          ) : (
+                            peopleSearchResults.map(person => {
+                              const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
+                              return (
+                                <div 
+                                  key={`person-${person.id}`} 
+                                  onClick={() => handlePersonFollow(person)}
+                                  className="flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none"
+                                >
+                                  {logoUrl && (
+                                    <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                      <img 
+                                        src={logoUrl} 
+                                        alt={person.name} 
+                                        className="h-7 w-7 object-contain" 
+                                        onError={(e) => e.currentTarget.style.display = 'none'}
+                                      />
+                                    </div>
+                                  )}
+                                  <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="text-sm font-medium truncate">
+                                      {person.name}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground truncate">
+                                      {[
+                                        person.teams?.display_name || person.schools?.short_name,
+                                        person.position,
+                                        person.role === 'coach' ? 'Coach' : null
+                                      ].filter(Boolean).join(' • ')}
+                                    </span>
+                                  </div>
+                                  {person.countries?.logo_url && (
+                                    <img 
+                                      src={person.countries.logo_url} 
+                                      alt={person.countries.name} 
+                                      className="h-4 w-6 object-contain flex-shrink-0"
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })
+                          )}
+                        </>
+                      )}
+                      
+                      {getFilteredSportsAndLeagues().sports.length === 0 && 
+                       getFilteredSportsAndLeagues().leagues.length === 0 && 
+                       getFilteredTeams().length === 0 && 
+                       getFilteredSchools().length === 0 && 
+                       peopleSearchResults.length === 0 && 
+                       !searchingPeople && (
+                        <p className="text-sm text-muted-foreground text-center py-4">No results found</p>
                       )}
                     </>
                   )}
