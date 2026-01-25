@@ -2043,14 +2043,14 @@ export type Database = {
           p_subscriber_id: string
         }
         Returns: {
-          article_id: number
-          domain: string
+          id: number
           published_at: string
           published_effective: string
           thumbnail_url: string
           title: string
           updated_at: string
           url: string
+          url_domain: string
         }[]
       }
       link_article_source: {
