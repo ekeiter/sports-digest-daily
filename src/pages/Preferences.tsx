@@ -135,7 +135,7 @@ export default function Preferences() {
       // Load user's current interests (exclude Olympics preferences)
       const { data: interests, error: interestsError } = await supabase
         .from("subscriber_interests")
-        .select("sport_id, league_id, team_id, school_id, country_id, is_olympics")
+        .select("sport_id, league_id, team_id, school_id, country_id, person_id, is_olympics")
         .eq("subscriber_id", user.id);
 
       if (interestsError) throw interestsError;
@@ -148,6 +148,10 @@ export default function Preferences() {
       const leagueIds = nonOlympicsInterests.filter(i => i.league_id !== null && i.team_id === null && i.school_id === null && i.country_id === null).map(i => i.league_id as number);
       const teamIds = nonOlympicsInterests.filter(i => i.team_id !== null).map(i => i.team_id as number);
       const schoolIds = nonOlympicsInterests.filter(i => i.school_id !== null).map(i => i.school_id as number);
+      const personIds = nonOlympicsInterests.filter(i => i.person_id !== null).map(i => i.person_id as number);
+      
+      // Populate followed person IDs for greying out in search
+      setFollowedPersonIds(new Set(personIds));
       
       // Track schools selected with a league context (for counting on Teams button)
       const schoolsByLeagueMap: Record<number, number[]> = {};
