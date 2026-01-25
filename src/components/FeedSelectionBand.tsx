@@ -28,11 +28,12 @@ interface SelectionCardProps {
 
 function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardProps) {
   const navigate = useNavigate();
+  const hasSublabel = !!sublabel;
   
   return (
     <button
       onClick={() => navigate(`/feed?focus=${interestId}`)}
-      className="flex flex-col items-center justify-start w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0"
+      className={`flex flex-col items-center w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0 ${hasSublabel ? 'justify-start' : 'justify-center'}`}
     >
       <div className="w-7 h-7 flex items-center justify-center">
         {logoUrl ? (
@@ -161,7 +162,7 @@ export default function FeedSelectionBand({
               key={`school-${school.id}`}
               logoUrl={school.logo_url}
               label={school.short_name}
-              sublabel={school.league_code || "all"}
+              sublabel={school.league_code || "All Sports"}
               interestId={school.interestId}
             />
           ))}
@@ -170,7 +171,7 @@ export default function FeedSelectionBand({
           {olympicsPrefs.map(pref => (
             <SelectionCard
               key={`olympics-${pref.id}`}
-              logoUrl={pref.sport_logo || pref.country_logo}
+              logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
               label={pref.sport_name ? toTitleCase(pref.sport_name) : "Olympics"}
               sublabel={pref.country_name || "All"}
               interestId={pref.id}
