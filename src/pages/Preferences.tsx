@@ -46,10 +46,12 @@ export default function Preferences() {
   const [loadingSchools, setLoadingSchools] = useState(false);
   const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   
-  // Team search
+  // Team & School search
   const [teamSearchTerm, setTeamSearchTerm] = useState("");
   const [allTeamsLoaded, setAllTeamsLoaded] = useState(false);
+  const [allSchoolsLoaded, setAllSchoolsLoaded] = useState(false);
   const [loadingAllTeams, setLoadingAllTeams] = useState(false);
+  const [loadingAllSchoolsSearch, setLoadingAllSchoolsSearch] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
   const [leagueSchoolMap, setLeagueSchoolMap] = useState<Record<number, number[]>>({});
@@ -208,44 +210,65 @@ export default function Preferences() {
     }
   };
 
-  const loadAllTeams = async () => {
-    if (allTeamsLoaded) return;
-    
-    setLoadingAllTeams(true);
-    try {
-      const pageSize = 1000;
-      let allTeamsData: Team[] = [];
-      let page = 0;
-      let hasMore = true;
-      
-      while (hasMore) {
-        const from = page * pageSize;
-        const to = from + pageSize - 1;
+  const loadAllTeamsAndSchools = async () => {
+    // Load teams if not already loaded
+    if (!allTeamsLoaded) {
+      setLoadingAllTeams(true);
+      try {
+        const pageSize = 1000;
+        let allTeamsData: Team[] = [];
+        let page = 0;
+        let hasMore = true;
         
-        const { data: teamsData, error: teamsError } = await supabase
-          .from("teams")
-          .select("*")
-          .order("display_name", { ascending: true })
-          .range(from, to);
+        while (hasMore) {
+          const from = page * pageSize;
+          const to = from + pageSize - 1;
+          
+          const { data: teamsData, error: teamsError } = await supabase
+            .from("teams")
+            .select("*")
+            .order("display_name", { ascending: true })
+            .range(from, to);
 
-        if (teamsError) throw teamsError;
-        
-        if (teamsData && teamsData.length > 0) {
-          allTeamsData = [...allTeamsData, ...teamsData];
-          hasMore = teamsData.length === pageSize;
-          page++;
-        } else {
-          hasMore = false;
+          if (teamsError) throw teamsError;
+          
+          if (teamsData && teamsData.length > 0) {
+            allTeamsData = [...allTeamsData, ...teamsData];
+            hasMore = teamsData.length === pageSize;
+            page++;
+          } else {
+            hasMore = false;
+          }
         }
+        
+        setTeams(allTeamsData);
+        setAllTeamsLoaded(true);
+      } catch (error) {
+        console.error("Error loading all teams:", error);
+        toast.error("Failed to load teams");
+      } finally {
+        setLoadingAllTeams(false);
       }
-      
-      setTeams(allTeamsData);
-      setAllTeamsLoaded(true);
-    } catch (error) {
-      console.error("Error loading all teams:", error);
-      toast.error("Failed to load teams");
-    } finally {
-      setLoadingAllTeams(false);
+    }
+    
+    // Load schools if not already loaded
+    if (!allSchoolsLoaded) {
+      setLoadingAllSchoolsSearch(true);
+      try {
+        const { data: schoolsData, error } = await supabase
+          .from("schools")
+          .select("*")
+          .order("name", { ascending: true });
+        
+        if (error) throw error;
+        setSchools(schoolsData || []);
+        setAllSchoolsLoaded(true);
+      } catch (error) {
+        console.error("Error loading all schools:", error);
+        toast.error("Failed to load schools");
+      } finally {
+        setLoadingAllSchoolsSearch(false);
+      }
     }
   };
 
@@ -574,6 +597,18 @@ export default function Preferences() {
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
 
+  const getFilteredSchools = () => {
+    if (!teamSearchTerm) return [];
+    const searchLower = teamSearchTerm.toLowerCase();
+    return schools
+      .filter(school => 
+        school.name.toLowerCase().includes(searchLower) ||
+        school.short_name?.toLowerCase().includes(searchLower) ||
+        school.aliases?.some(alias => alias.toLowerCase().includes(searchLower))
+      )
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
   const getExpandedLeagueTeams = () => {
     if (!expandedLeagueId) return [];
     return expandedLeagueItems;
@@ -667,13 +702,13 @@ export default function Preferences() {
                 <div className="relative flex-1">
                   <Input
                     type="text"
-                    placeholder="Search all teams..."
+                    placeholder="Search teams & schools..."
                     value={teamSearchTerm}
                     onChange={(e) => {
                       setTeamSearchTerm(e.target.value);
                       setShowSearchDropdown(true);
-                      if (e.target.value && !allTeamsLoaded) {
-                        loadAllTeams();
+                      if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
+                        loadAllTeamsAndSchools();
                       }
                     }}
                     onFocus={() => teamSearchTerm && setShowSearchDropdown(true)}
@@ -689,52 +724,95 @@ export default function Preferences() {
                     </button>
                   )}
                 </div>
-                <Button disabled={loadingAllTeams}>
-                  {loadingAllTeams ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                <Button disabled={loadingAllTeams || loadingAllSchoolsSearch}>
+                  {(loadingAllTeams || loadingAllSchoolsSearch) ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 </Button>
               </div>
 
               {showSearchDropdown && teamSearchTerm && (
                 <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
-                  <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b">Search Results</h3>
-                  {loadingAllTeams ? (
+                  {(loadingAllTeams || loadingAllSchoolsSearch) ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-5 w-5 animate-spin" />
                     </div>
                   ) : (
                     <>
-                      {getFilteredTeams().map(team => {
-                        const isSelected = selectedTeams.includes(Number(team.id));
-                        return (
-                          <div 
-                            key={team.id} 
-                            onClick={() => {
-                              handleTeamToggle(Number(team.id));
-                              setShowSearchDropdown(false);
-                              setTeamSearchTerm("");
-                            }}
-                            className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                              isSelected ? 'opacity-50' : ''
-                            }`}
-                          >
-                            {team.logo_url && (
-                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                <img 
-                                  src={team.logo_url} 
-                                  alt={team.display_name} 
-                                  className="h-7 w-7 object-contain" 
-                                  onError={(e) => e.currentTarget.style.display = 'none'}
-                                />
+                      {/* Teams Section */}
+                      {getFilteredTeams().length > 0 && (
+                        <>
+                          <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Teams</h3>
+                          {getFilteredTeams().map(team => {
+                            const isSelected = selectedTeams.includes(Number(team.id));
+                            return (
+                              <div 
+                                key={`team-${team.id}`} 
+                                onClick={() => {
+                                  handleTeamToggle(Number(team.id));
+                                  setShowSearchDropdown(false);
+                                  setTeamSearchTerm("");
+                                }}
+                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                  isSelected ? 'opacity-50' : ''
+                                }`}
+                              >
+                                {team.logo_url && (
+                                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                    <img 
+                                      src={team.logo_url} 
+                                      alt={team.display_name} 
+                                      className="h-7 w-7 object-contain" 
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
+                                    />
+                                  </div>
+                                )}
+                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                  {team.display_name}
+                                </span>
                               </div>
-                            )}
-                            <span className="text-sm font-medium truncate flex-1 min-w-0">
-                              {team.display_name}
-                            </span>
-                          </div>
-                        );
-                      })}
-                      {getFilteredTeams().length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">No teams found</p>
+                            );
+                          })}
+                        </>
+                      )}
+                      
+                      {/* Schools Section */}
+                      {getFilteredSchools().length > 0 && (
+                        <>
+                          <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
+                          {getFilteredSchools().map(school => {
+                            const isSelected = selectedSchools.includes(school.id);
+                            return (
+                              <div 
+                                key={`school-${school.id}`} 
+                                onClick={() => {
+                                  handleSchoolToggle(school.id);
+                                  setShowSearchDropdown(false);
+                                  setTeamSearchTerm("");
+                                }}
+                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
+                                  isSelected ? 'opacity-50' : ''
+                                }`}
+                              >
+                                {school.logo_url && (
+                                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                    <img 
+                                      src={school.logo_url} 
+                                      alt={school.name} 
+                                      className="h-7 w-7 object-contain" 
+                                      onError={(e) => e.currentTarget.style.display = 'none'}
+                                    />
+                                  </div>
+                                )}
+                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                  {school.name}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                      
+                      {getFilteredTeams().length === 0 && getFilteredSchools().length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">No teams or schools found</p>
                       )}
                     </>
                   )}
