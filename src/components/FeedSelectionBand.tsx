@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useRef, useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { 
   SportWithInterest, 
   LeagueWithInterest, 
@@ -44,11 +45,11 @@ function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardPr
           <div className="w-6 h-6 rounded-full bg-muted" />
         )}
       </div>
-      <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight">
+      <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight text-foreground">
         {label}
       </span>
       {sublabel && (
-        <span className="text-[8px] text-muted-foreground text-center leading-none">
+        <span className="text-[8px] text-center leading-none text-foreground">
           {sublabel}
         </span>
       )}
@@ -73,9 +74,38 @@ export default function FeedSelectionBand({
   people,
   olympicsPrefs,
 }: FeedSelectionBandProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+
   const hasItems = sports.length > 0 || leagues.length > 0 || teams.length > 0 || 
                    schools.length > 0 || people.length > 0 || olympicsPrefs.length > 0;
-  
+
+  useEffect(() => {
+    if (!hasItems) return;
+    
+    const checkScroll = () => {
+      const container = scrollContainerRef.current;
+      if (container) {
+        const { scrollLeft, scrollWidth, clientWidth } = container;
+        setShowLeftArrow(scrollLeft > 5);
+        setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      checkScroll();
+      container.addEventListener('scroll', checkScroll);
+      const resizeObserver = new ResizeObserver(checkScroll);
+      resizeObserver.observe(container);
+      return () => {
+        container.removeEventListener('scroll', checkScroll);
+        resizeObserver.disconnect();
+      };
+    }
+  }, [sports, leagues, teams, schools, people, olympicsPrefs, hasItems]);
+
   if (!hasItems) {
     return null;
   }
@@ -88,19 +118,29 @@ export default function FeedSelectionBand({
     return null;
   };
 
-  const getPersonContext = (person: Person) => {
-    if (person.teams?.nickname) return person.teams.nickname;
-    if (person.schools?.short_name) return person.schools.short_name;
-    if (person.leagues?.code) return person.leagues.code;
-    return "";
-  };
-
   return (
-    <div className="w-full">
-      <ScrollArea className="w-full whitespace-nowrap">
-        <div className="flex gap-2 pb-3 px-1">
-          {/* Sports */}
-          {sports.map(sport => (
+    <div className="w-full relative">
+      {/* Left scroll indicator */}
+      {showLeftArrow && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+          <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+        </div>
+      )}
+      
+      {/* Right scroll indicator */}
+      {showRightArrow && (
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        </div>
+      )}
+
+      <div 
+        ref={scrollContainerRef}
+        className="flex gap-2 pb-3 px-1 overflow-x-auto scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {/* Sports */}
+        {sports.map(sport => (
             <SelectionCard
               key={`sport-${sport.id}`}
               logoUrl={sport.logo_url}
@@ -152,18 +192,21 @@ export default function FeedSelectionBand({
           ))}
           
           {/* People */}
-          {people.map(person => (
-            <SelectionCard
-              key={`person-${person.id}`}
-              logoUrl={getPersonLogo(person)}
-              label={person.name.split(' ').slice(-1)[0]} // Last name only
-              sublabel={getPersonContext(person)}
-              interestId={person.interestId}
-            />
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+          {people.map(person => {
+            const nameParts = person.name.split(' ');
+            const firstName = nameParts.slice(0, -1).join(' ') || nameParts[0];
+            const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
+            return (
+              <SelectionCard
+                key={`person-${person.id}`}
+                logoUrl={getPersonLogo(person)}
+                label={firstName}
+                sublabel={lastName}
+                interestId={person.interestId}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 }
