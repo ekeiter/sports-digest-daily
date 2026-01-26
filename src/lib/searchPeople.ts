@@ -51,15 +51,22 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   }
 
   // Split search into words for fuzzy matching (e.g., "brooke hen" matches "brooke m henderson")
-  const words = term.toLowerCase().split(/\s+/).filter(w => w.length >= 2);
+  // First word requires 2+ chars, subsequent words can be 1+ char for immediate narrowing
+  const allWords = term.toLowerCase().split(/\s+/).filter(w => w.length >= 1);
   
-  if (words.length === 0) {
+  // Require at least the first word to have 2+ characters
+  if (allWords.length === 0 || allWords[0].length < 2) {
     return [];
   }
+  
+  // For DB query, use words with 2+ chars for better indexing
+  // For client-side filtering, we'll use all words including single-char ones
+  const dbQueryWords = allWords.filter(w => w.length >= 2);
+  const clientFilterWords = allWords; // includes single-char words after first word
 
   // Build pattern that matches all words in sequence for better DB-level filtering
   // e.g., "paul sk" becomes "%paul%sk%" to prioritize names where words appear in order
-  const combinedPattern = `%${words.join('%')}%`;
+  const combinedPattern = `%${dbQueryWords.join('%')}%`;
 
   const { data: people, error: peopleError } = await supabase
     .from("people")
@@ -78,9 +85,10 @@ export async function searchPeople(searchTerm: string): Promise<PersonSearchResu
   }
 
   // Filter to only include results where ALL words appear in normalized_name
+  // This includes single-char words for immediate narrowing after first word
   const filteredPeople = (people as any[]).filter(person => {
     const normalizedName = person.normalized_name?.toLowerCase() || "";
-    return words.every(word => normalizedName.includes(word));
+    return clientFilterWords.every(word => normalizedName.includes(word));
   }).slice(0, 50);
 
   if (filteredPeople.length === 0) {
