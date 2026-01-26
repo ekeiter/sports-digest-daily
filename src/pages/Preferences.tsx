@@ -41,6 +41,8 @@ export default function Preferences() {
   const [selectedSports, setSelectedSports] = useState<number[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<number[]>([]);
   const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<number[]>([]);
+  const [selectedCountriesByLeague, setSelectedCountriesByLeague] = useState<Record<number, number[]>>({});
   
   // Schools view
   const [schools, setSchools] = useState<School[]>([]);
@@ -164,6 +166,17 @@ export default function Preferences() {
       });
       setSelectedSchoolsByLeague(schoolsByLeagueMap);
       
+      // Track countries selected with a league context (for World Cup, WBC, etc.)
+      const countriesByLeagueMap: Record<number, number[]> = {};
+      const countryIds = nonOlympicsInterests.filter(i => i.country_id !== null).map(i => i.country_id as number);
+      nonOlympicsInterests.filter(i => i.country_id !== null && i.league_id !== null).forEach(i => {
+        const leagueId = i.league_id as number;
+        const countryId = i.country_id as number;
+        if (!countriesByLeagueMap[leagueId]) countriesByLeagueMap[leagueId] = [];
+        countriesByLeagueMap[leagueId].push(countryId);
+      });
+      setSelectedCountriesByLeague(countriesByLeagueMap);
+      
       // Track schools with "All Sports" selection (school_id with NO league_id)
       const allSportsSchoolIds = nonOlympicsInterests
         .filter(i => i.school_id !== null && i.league_id === null)
@@ -173,6 +186,7 @@ export default function Preferences() {
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
       setSelectedSchools(schoolIds);
+      setSelectedCountries(countryIds);
       setSelectedTeams(teamIds);
 
       // Load league_teams for counting
@@ -439,8 +453,67 @@ export default function Preferences() {
     }
   };
 
+  const handleCountryToggle = async (countryId: number, leagueId?: number | null) => {
+    const expandedItem = expandedLeagueItems.find(i => i.id === countryId);
+    const label = expandedItem?.display_name || 'country';
+    const isCurrentlySelected = selectedCountries.includes(countryId);
+
+    try {
+      if (isCurrentlySelected) {
+        // Delete - if leagueId provided, delete that specific combo; otherwise delete all with this country_id
+        let query = supabase
+          .from("subscriber_interests")
+          .delete()
+          .eq("subscriber_id", userId)
+          .eq("country_id", countryId);
+        if (leagueId) {
+          query = query.eq("league_id", leagueId);
+        }
+        const { error } = await query;
+        if (error) throw error;
+        setSelectedCountries(prev => prev.filter(id => id !== countryId));
+        if (leagueId) {
+          setSelectedCountriesByLeague(prev => ({
+            ...prev,
+            [leagueId]: (prev[leagueId] || []).filter(id => id !== countryId)
+          }));
+        }
+        toast(`Unfollowed ${label}`);
+      } else {
+        // Insert - if we have a league context, save both country_id and league_id
+        const insertData: { subscriber_id: string | null; country_id: number; league_id?: number } = { 
+          subscriber_id: userId, 
+          country_id: countryId 
+        };
+        if (leagueId) {
+          insertData.league_id = leagueId;
+        }
+        const { error } = await supabase
+          .from("subscriber_interests")
+          .insert(insertData);
+        if (error) throw error;
+        setSelectedCountries(prev => [...prev, countryId]);
+        if (leagueId) {
+          setSelectedCountriesByLeague(prev => ({
+            ...prev,
+            [leagueId]: [...(prev[leagueId] || []), countryId]
+          }));
+        }
+        toast.success(`Followed ${label}`);
+      }
+      
+      if (userId) {
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+      }
+    } catch (error) {
+      console.error("Error toggling country:", error);
+      toast.error("Could not update your preferences. Please try again.");
+    }
+  };
+
   // Navigate to focused feed for an entity - no need to create a favorite
-  const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person', entityId: number) => {
+  const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person' | 'country', entityId: number) => {
     navigate(`/feed?type=${entityType}&id=${entityId}`);
   };
 
@@ -1378,8 +1451,12 @@ export default function Preferences() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {getExpandedLeagueTeams().map(item => {
                       // For schools: selected if "All Sports" is selected OR this specific combo exists
+                      // For countries: check selectedCountries
+                      // For teams: check selectedTeams
                       const isSelected = expandedLeagueType === 'school' 
                         ? (allSportsSchools.has(item.id) || selectedSchools.includes(item.id))
+                        : expandedLeagueType === 'country'
+                        ? selectedCountries.includes(item.id)
                         : selectedTeams.includes(item.id);
                       return (
                         <div 
@@ -1388,7 +1465,7 @@ export default function Preferences() {
                         >
                           <div 
                             onClick={() => handleNavigateToFocus(
-                              expandedLeagueType === 'school' ? 'school' : 'team', 
+                              expandedLeagueType === 'school' ? 'school' : expandedLeagueType === 'country' ? 'country' : 'team', 
                               item.id
                             )}
                             className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
@@ -1408,12 +1485,14 @@ export default function Preferences() {
                             </span>
                           </div>
                           
-                          {/* Heart toggle for favoriting teams/schools */}
+                          {/* Heart toggle for favoriting teams/schools/countries */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               if (expandedLeagueType === 'school') {
                                 handleSchoolToggle(item.id, expandedLeagueId);
+                              } else if (expandedLeagueType === 'country') {
+                                handleCountryToggle(item.id, expandedLeagueId);
                               } else {
                                 handleTeamToggle(item.id);
                               }
