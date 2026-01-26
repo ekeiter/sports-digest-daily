@@ -45,6 +45,8 @@ serve(async (req) => {
     const cursorTime = body.cursor_time ?? null;
     const cursorId = body.cursor_id ?? null;
     const interestId = body.interest_id ?? null;
+    const entityType = body.entity_type ?? null;
+    const entityId = body.entity_id ?? null;
 
     // Use service role client to call the RPC (bypasses PostgREST cache issues)
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -59,6 +61,8 @@ serve(async (req) => {
     if (cursorTime) rpcArgs.p_cursor_time = cursorTime;
     if (cursorId) rpcArgs.p_cursor_id = cursorId;
     if (interestId) rpcArgs.p_interest_id = interestId;
+    if (entityType) rpcArgs.p_entity_type = entityType;
+    if (entityId) rpcArgs.p_entity_id = entityId;
 
     const { data, error } = await adminClient.rpc("get_subscriber_feed", rpcArgs);
 

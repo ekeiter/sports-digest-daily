@@ -29,18 +29,23 @@ export default function Feed() {
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
   const [focusLabel, setFocusLabel] = useState<string | null>(null);
   
-  // Parse focus parameter - now expects interest ID (e.g., "123" for subscriber_interests.id)
+  // Parse focus parameters - supports both old interestId format and new type+id format
   const focusParam = searchParams.get("focus");
   const interestId = focusParam ? parseInt(focusParam) : undefined;
+  
+  // New type + id based focus (no favorite required)
+  const entityType = searchParams.get("type");
+  const entityIdParam = searchParams.get("id");
+  const entityId = entityIdParam ? parseInt(entityIdParam) : undefined;
 
-  // Fetch feed with optional interest ID for focused feed
+  // Fetch feed with optional focus parameters
   const {
     data: initialArticles,
     isLoading,
     refetch,
     isError,
     error,
-  } = useArticleFeed(user?.id, interestId);
+  } = useArticleFeed(user?.id, interestId, entityType || undefined, entityId);
   const invalidateFeed = useInvalidateArticleFeed();
 
   // Combined articles: initial from React Query + any loaded via "Load More"
@@ -50,19 +55,49 @@ export default function Feed() {
     checkUser();
   }, []);
 
-  // Fetch the label for the focused item based on interest ID
+  // Fetch the label for the focused item
   useEffect(() => {
-    if (interestId && user?.id) {
+    if ((interestId || (entityType && entityId)) && user?.id) {
       fetchFocusLabel();
     } else {
       setFocusLabel(null);
     }
-  }, [interestId, user?.id]);
+  }, [interestId, entityType, entityId, user?.id]);
 
   const fetchFocusLabel = async () => {
-    if (!interestId || !user?.id) return;
+    if (!user?.id) return;
     
     try {
+      let label = "";
+
+      // Handle new type + id format first
+      if (entityType && entityId) {
+        if (entityType === 'team') {
+          const { data } = await supabase.from("teams").select("display_name").eq("id", entityId).single();
+          label = data?.display_name || "Team";
+        } else if (entityType === 'person') {
+          const { data } = await supabase.from("people").select("name").eq("id", entityId).single();
+          label = data?.name || "Player";
+        } else if (entityType === 'school') {
+          const { data } = await supabase.from("schools").select("short_name, name").eq("id", entityId).single();
+          label = data?.short_name || data?.name || "School";
+        } else if (entityType === 'league') {
+          const { data } = await supabase.from("leagues").select("code, name").eq("id", entityId).single();
+          label = data?.code || data?.name || "League";
+        } else if (entityType === 'sport') {
+          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", entityId).single();
+          label = data?.display_label || data?.sport || "Sport";
+        }
+        setFocusLabel(label);
+        return;
+      }
+
+      // Handle old interestId format for backward compatibility (FeedSelectionBand uses this)
+      if (!interestId) {
+        setFocusLabel(null);
+        return;
+      }
+      
       // Fetch the subscriber_interest row to determine what to display
       const { data: interest, error } = await supabase
         .from("subscriber_interests")
@@ -75,8 +110,6 @@ export default function Feed() {
         setFocusLabel(null);
         return;
       }
-
-      let label = "";
 
       // Build label based on what's in the interest
       if (interest.team_id) {
@@ -154,9 +187,15 @@ export default function Feed() {
       cursor_id: cursor.id 
     };
     
-    // Add interest ID filter if present
+    // Add focus filters if present
     if (interestId) {
       body.interest_id = interestId;
+    }
+    if (entityType) {
+      body.entity_type = entityType;
+    }
+    if (entityId) {
+      body.entity_id = entityId;
     }
 
     const response = await supabase.functions.invoke("get-feed", { body });
@@ -187,7 +226,7 @@ export default function Feed() {
     setRefreshing(true);
     setExtraArticles([]);
     if (user) {
-      invalidateFeed(user.id, interestId);
+      invalidateFeed(user.id, interestId, entityType || undefined, entityId);
     }
     await refetch();
     setRefreshing(false);
@@ -281,7 +320,7 @@ export default function Feed() {
                 className="h-8 md:h-10 object-contain"
               />
               <h1 className="text-lg md:text-xl font-bold text-foreground">
-                {interestId && focusLabel ? (
+                {(interestId || (entityType && entityId)) && focusLabel ? (
                   <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
                 ) : (
                   "My Combined Feed"
@@ -290,7 +329,7 @@ export default function Feed() {
             </div>
             
             {/* Clear focus button when in focus mode */}
-            {interestId && (
+            {(interestId || (entityType && entityId)) && (
               <div className="flex justify-center">
                 <Button 
                   size="sm" 

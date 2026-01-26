@@ -15,7 +15,9 @@ export type FeedRow = {
 async function fetchFeedPage(
   userId: string,
   cursor?: { time: string; id: number } | null,
-  interestId?: number
+  interestId?: number,
+  entityType?: string,
+  entityId?: number
 ): Promise<FeedRow[]> {
   // Get the current session for auth header
   const { data: { session } } = await supabase.auth.getSession();
@@ -32,6 +34,12 @@ async function fetchFeedPage(
   if (interestId) {
     body.interest_id = interestId;
   }
+  if (entityType) {
+    body.entity_type = entityType;
+  }
+  if (entityId) {
+    body.entity_id = entityId;
+  }
 
   // Call the edge function instead of direct RPC (bypasses PostgREST cache)
   const response = await supabase.functions.invoke("get-feed", {
@@ -45,15 +53,20 @@ async function fetchFeedPage(
   return (response.data ?? []) as FeedRow[];
 }
 
-export function useArticleFeed(userId: string | null, interestId?: number) {
-  // Only include interestId in queryKey if it's defined (avoids cache key mismatch)
-  const queryKey = interestId 
-    ? ['articleFeed', userId, interestId] 
-    : ['articleFeed', userId];
+export function useArticleFeed(userId: string | null, interestId?: number, entityType?: string, entityId?: number) {
+  // Build query key based on which focus method is used
+  let queryKey: (string | number | null | undefined)[];
+  if (entityType && entityId) {
+    queryKey = ['articleFeed', userId, entityType, entityId];
+  } else if (interestId) {
+    queryKey = ['articleFeed', userId, 'interest', interestId];
+  } else {
+    queryKey = ['articleFeed', userId];
+  }
     
   return useQuery({
     queryKey,
-    queryFn: () => fetchFeedPage(userId!, undefined, interestId),
+    queryFn: () => fetchFeedPage(userId!, undefined, interestId, entityType, entityId),
     enabled: !!userId,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -78,9 +91,11 @@ export function usePrefetchArticleFeed() {
 export function useInvalidateArticleFeed() {
   const queryClient = useQueryClient();
 
-  return (userId: string, interestId?: number) => {
-    if (interestId) {
-      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, interestId] });
+  return (userId: string, interestId?: number, entityType?: string, entityId?: number) => {
+    if (entityType && entityId) {
+      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, entityType, entityId] });
+    } else if (interestId) {
+      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, 'interest', interestId] });
     } else {
       queryClient.invalidateQueries({ queryKey: ['articleFeed', userId] });
     }
