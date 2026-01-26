@@ -296,8 +296,7 @@ export default function Feed() {
                 <Button onClick={handleRefresh} disabled={refreshing}>
                   Retry
                 </Button>
-                <Button variant="outline" onClick={() => navigate("/my-feeds")}
-                >
+                <Button variant="outline" onClick={() => navigate("/preferences")}>
                   Check Selections
                 </Button>
               </div>
@@ -346,7 +345,7 @@ export default function Feed() {
               <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/my-feeds")}>
+              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/preferences")}>
                 Selections
               </Button>
               <Button size="sm" className="h-7 px-3" onClick={handleRefresh} disabled={refreshing}>
