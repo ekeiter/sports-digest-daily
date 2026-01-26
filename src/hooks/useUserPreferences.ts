@@ -28,6 +28,7 @@ export interface TeamWithInterest extends Team {
 
 export interface SchoolWithInterest extends School {
   interestId: number;
+  league_id?: number | null;
 }
 
 export interface Person {
@@ -371,6 +372,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
       ...school,
       interestId: schoolInterestMap.get(school.id) || 0,
       league_code: leagueId ? schoolLeagueCodeMap.get(leagueId) : null,
+      league_id: leagueId || null,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
