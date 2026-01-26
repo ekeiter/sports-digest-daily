@@ -1476,8 +1476,14 @@ export default function Preferences() {
                         className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30"
                       >
                         <div 
-                          onClick={() => handleItemClick(item)}
-                          className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                          onClick={() => {
+                            // Skip click for schools header (entity_type='schools' with no entity_id)
+                            if (item.entity_type === 'schools' && !item.entity_id) return;
+                            handleItemClick(item);
+                          }}
+                          className={`flex items-center gap-1.5 flex-1 min-w-0 ${
+                            item.entity_type === 'schools' && !item.entity_id ? '' : 'cursor-pointer'
+                          }`}
                         >
                           {item.logo_url && (
                             <div className="flex items-center justify-center w-8 h-8 shrink-0">
