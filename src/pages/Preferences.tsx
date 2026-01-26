@@ -1033,17 +1033,26 @@ export default function Preferences() {
                                 >
                                   {school.name}
                                 </span>
-                                <Heart 
-                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
-                                    isSelected 
-                                      ? 'fill-red-500 text-red-500' 
-                                      : 'text-muted-foreground hover:text-red-500'
-                                  }`}
+                                <div 
+                                  className="relative flex-shrink-0 cursor-pointer"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleSchoolToggle(school.id);
                                   }}
-                                />
+                                >
+                                  <Heart 
+                                    className={`h-5 w-5 ${
+                                      isSelected 
+                                        ? 'fill-red-500 text-red-500' 
+                                        : 'text-muted-foreground hover:text-red-500'
+                                    }`}
+                                  />
+                                  {allSportsSchools.has(school.id) && (
+                                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
+                                      A
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             );
                           })}
@@ -1180,12 +1189,17 @@ export default function Preferences() {
                               e.stopPropagation();
                               handleSchoolToggle(school.id);
                             }}
-                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors relative"
                             title={isSelected ? "Remove from favorites" : "Add to favorites"}
                           >
                             <Heart 
                               className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                             />
+                            {allSportsSchools.has(school.id) && (
+                              <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
+                                A
+                              </span>
+                            )}
                           </button>
                         </div>
                       );
@@ -1247,12 +1261,17 @@ export default function Preferences() {
                                 handleTeamToggle(item.id);
                               }
                             }}
-                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors relative"
                             title={isSelected ? "Remove from favorites" : "Add to favorites"}
                           >
                             <Heart 
                               className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                             />
+                            {expandedLeagueType === 'school' && allSportsSchools.has(item.id) && (
+                              <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
+                                A
+                              </span>
+                            )}
                           </button>
                         </div>
                       );
