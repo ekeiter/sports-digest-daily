@@ -56,6 +56,16 @@ export default function Feed() {
     window.scrollTo(0, 0);
   }, []);
 
+  // Preload all thumbnail images in the background once articles load
+  useEffect(() => {
+    if (articles.length > 0) {
+      const thumbnailUrls = articles
+        .map(a => a.thumbnail_url)
+        .filter((url): url is string => !!url);
+      preloadImages(thumbnailUrls);
+    }
+  }, [initialArticles, extraArticles]);
+
   // Fetch the label for the focused item
   useEffect(() => {
     if ((interestId || (entityType && entityId)) && user?.id) {
