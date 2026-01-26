@@ -5,7 +5,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
+import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart } from "lucide-react";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import FeedSelectionBand from "@/components/FeedSelectionBand";
@@ -432,6 +432,61 @@ export default function Preferences() {
     }
   };
 
+  // Navigate to focused feed for an entity - creates interest if needed
+  const handleNavigateToFocus = async (entityType: 'sport' | 'league' | 'team' | 'school', entityId: number) => {
+    if (!userId) return;
+    
+    try {
+      // Check if interest already exists based on entity type
+      let existingQuery = supabase
+        .from("subscriber_interests")
+        .select("id")
+        .eq("subscriber_id", userId);
+      
+      if (entityType === 'sport') existingQuery = existingQuery.eq("sport_id", entityId);
+      if (entityType === 'league') existingQuery = existingQuery.eq("league_id", entityId);
+      if (entityType === 'team') existingQuery = existingQuery.eq("team_id", entityId);
+      if (entityType === 'school') existingQuery = existingQuery.eq("school_id", entityId);
+      
+      const { data: existing } = await existingQuery.maybeSingle();
+      
+      if (existing) {
+        navigate(`/feed?focus=${existing.id}`);
+      } else {
+        // Create a new interest and navigate
+        const insertData: { subscriber_id: string; sport_id?: number; league_id?: number; team_id?: number; school_id?: number } = { 
+          subscriber_id: userId 
+        };
+        if (entityType === 'sport') insertData.sport_id = entityId;
+        if (entityType === 'league') insertData.league_id = entityId;
+        if (entityType === 'team') insertData.team_id = entityId;
+        if (entityType === 'school') insertData.school_id = entityId;
+        
+        const { data: newInterest, error } = await supabase
+          .from("subscriber_interests")
+          .insert(insertData)
+          .select("id")
+          .single();
+        
+        if (error) throw error;
+        
+        // Update local state
+        if (entityType === 'sport') setSelectedSports(prev => [...prev, entityId]);
+        if (entityType === 'league') setSelectedLeagues(prev => [...prev, entityId]);
+        if (entityType === 'team') setSelectedTeams(prev => [...prev, entityId]);
+        if (entityType === 'school') setSelectedSchools(prev => [...prev, entityId]);
+        
+        invalidatePreferences(userId);
+        invalidateFeed(userId);
+        
+        navigate(`/feed?focus=${newInterest.id}`);
+      }
+    } catch (error) {
+      console.error("Error navigating to focus:", error);
+      toast.error("Could not open focused feed");
+    }
+  };
+
   const handleItemClick = async (item: MenuItem) => {
     // Check for custom route in display_options first
     const displayOptions = item.display_options as { route?: string } | null;
@@ -440,12 +495,12 @@ export default function Preferences() {
       return;
     }
 
-    // If it's a leaf node with an entity, toggle selection
+    // If it's a leaf node with an entity, navigate to focused feed
     if (item.entity_type && item.entity_id) {
       if (item.entity_type === 'sport') {
-        await handleSportToggle(item.entity_id, item.label);
+        await handleNavigateToFocus('sport', item.entity_id);
       } else if (item.entity_type === 'league') {
-        await handleLeagueToggle(item.entity_id, item.label);
+        await handleNavigateToFocus('league', item.entity_id);
       }
       return;
     }
@@ -1074,26 +1129,44 @@ export default function Preferences() {
                       return (
                         <div 
                           key={school.id} 
-                          onClick={() => handleSchoolToggle(school.id)}
-                          className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
+                          className={`flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none ${
                             isSelected 
                               ? 'bg-blue-500 border-blue-600 text-white' 
                               : 'bg-card border-muted-foreground/40'
                           }`}
                         >
-                          {school.logo_url && (
-                            <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                              <img 
-                                src={school.logo_url} 
-                                alt={school.name} 
-                                className="h-7 w-7 object-contain" 
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                            </div>
-                          )}
-                          <span className="text-sm font-medium truncate flex-1 min-w-0">
-                            {school.name}
-                          </span>
+                          <div 
+                            onClick={() => handleNavigateToFocus('school', school.id)}
+                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                          >
+                            {school.logo_url && (
+                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                <img 
+                                  src={school.logo_url} 
+                                  alt={school.name} 
+                                  className="h-7 w-7 object-contain" 
+                                  onError={(e) => e.currentTarget.style.display = 'none'}
+                                />
+                              </div>
+                            )}
+                            <span className="text-sm font-medium truncate flex-1 min-w-0">
+                              {school.name}
+                            </span>
+                          </div>
+                          
+                          {/* Heart toggle for favoriting schools */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSchoolToggle(school.id);
+                            }}
+                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                            title={isSelected ? "Remove from favorites" : "Add to favorites"}
+                          >
+                            <Heart 
+                              className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                            />
+                          </button>
                         </div>
                       );
                     })}
@@ -1119,29 +1192,51 @@ export default function Preferences() {
                       return (
                         <div 
                           key={item.id} 
-                          onClick={() => expandedLeagueType === 'school' 
-                            ? handleSchoolToggle(item.id, expandedLeagueId) 
-                            : handleTeamToggle(item.id)
-                          }
-                          className={`flex items-center gap-1.5 p-1 rounded-lg cursor-pointer transition-colors border select-none ${
+                          className={`flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none ${
                             isSelected 
                               ? 'bg-blue-500 border-blue-600 text-white' 
                               : 'bg-card border-muted-foreground/40'
                           }`}
                         >
-                          {item.logo_url && (
-                            <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                              <img 
-                                src={item.logo_url} 
-                                alt={item.display_name} 
-                                className="h-7 w-7 object-contain" 
-                                onError={(e) => e.currentTarget.style.display = 'none'}
-                              />
-                            </div>
-                          )}
-                          <span className="text-sm font-medium truncate flex-1 min-w-0">
-                            {item.display_name}
-                          </span>
+                          <div 
+                            onClick={() => handleNavigateToFocus(
+                              expandedLeagueType === 'school' ? 'school' : 'team', 
+                              item.id
+                            )}
+                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                          >
+                            {item.logo_url && (
+                              <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                <img 
+                                  src={item.logo_url} 
+                                  alt={item.display_name} 
+                                  className="h-7 w-7 object-contain" 
+                                  onError={(e) => e.currentTarget.style.display = 'none'}
+                                />
+                              </div>
+                            )}
+                            <span className="text-sm font-medium truncate flex-1 min-w-0">
+                              {item.display_name}
+                            </span>
+                          </div>
+                          
+                          {/* Heart toggle for favoriting teams/schools */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (expandedLeagueType === 'school') {
+                                handleSchoolToggle(item.id, expandedLeagueId);
+                              } else {
+                                handleTeamToggle(item.id);
+                              }
+                            }}
+                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                            title={isSelected ? "Remove from favorites" : "Add to favorites"}
+                          >
+                            <Heart 
+                              className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                            />
+                          </button>
                         </div>
                       );
                     })}
@@ -1212,6 +1307,26 @@ export default function Preferences() {
                             <ChevronRight className="h-5 w-5 text-muted-foreground" />
                           )}
                         </div>
+                        
+                        {/* Heart toggle for favoriting sports and leagues */}
+                        {(item.entity_type === 'sport' || item.entity_type === 'league') && item.entity_id && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (item.entity_type === 'sport') {
+                                handleSportToggle(item.entity_id!, item.label);
+                              } else if (item.entity_type === 'league') {
+                                handleLeagueToggle(item.entity_id!, item.label);
+                              }
+                            }}
+                            className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                            title={isSelected ? "Remove from favorites" : "Add to favorites"}
+                          >
+                            <Heart 
+                              className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                            />
+                          </button>
+                        )}
                         
                         {/* Menu button for accordion parents */}
                         {isAccordionParent && (
@@ -1310,6 +1425,26 @@ export default function Preferences() {
                                     </span>
                                   </div>
                                   
+                                  {/* Heart toggle for favoriting child sports and leagues */}
+                                  {(child.entity_type === 'sport' || child.entity_type === 'league') && child.entity_id && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (child.entity_type === 'sport') {
+                                          handleSportToggle(child.entity_id!, child.label);
+                                        } else if (child.entity_type === 'league') {
+                                          handleLeagueToggle(child.entity_id!, child.label);
+                                        }
+                                      }}
+                                      className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                                      title={childIsSelected ? "Remove from favorites" : "Add to favorites"}
+                                    >
+                                      <Heart 
+                                        className={`h-5 w-5 ${childIsSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                                      />
+                                    </button>
+                                  )}
+                                  
                                   {/* Menu button for nested accordion parents */}
                                   {childHasChildren && (
                                     <Button 
@@ -1359,26 +1494,50 @@ export default function Preferences() {
                                       return (
                                         <div 
                                           key={grandchild.id}
-                                          onClick={() => handleItemClick(grandchild)}
-                                          className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none cursor-pointer ${
+                                          className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
                                             grandchildIsSelected 
                                               ? 'bg-blue-500 border-blue-600 text-white' 
                                               : 'bg-card border-muted-foreground/30'
                                           }`}
                                         >
-                                          {grandchild.logo_url && (
-                                            <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                                              <img 
-                                                src={grandchild.logo_url} 
-                                                alt={grandchild.label} 
-                                                className="h-7 w-7 object-contain" 
-                                                onError={(e) => e.currentTarget.style.display = 'none'}
+                                          <div
+                                            onClick={() => handleItemClick(grandchild)}
+                                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                                          >
+                                            {grandchild.logo_url && (
+                                              <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                                <img 
+                                                  src={grandchild.logo_url} 
+                                                  alt={grandchild.label} 
+                                                  className="h-7 w-7 object-contain" 
+                                                  onError={(e) => e.currentTarget.style.display = 'none'}
+                                                />
+                                              </div>
+                                            )}
+                                            <span className="text-sm font-medium flex-1 min-w-0">
+                                              {grandchild.label}
+                                            </span>
+                                          </div>
+                                          
+                                          {/* Heart toggle for favoriting grandchild sports and leagues */}
+                                          {(grandchild.entity_type === 'sport' || grandchild.entity_type === 'league') && grandchild.entity_id && (
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (grandchild.entity_type === 'sport') {
+                                                  handleSportToggle(grandchild.entity_id!, grandchild.label);
+                                                } else if (grandchild.entity_type === 'league') {
+                                                  handleLeagueToggle(grandchild.entity_id!, grandchild.label);
+                                                }
+                                              }}
+                                              className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
+                                              title={grandchildIsSelected ? "Remove from favorites" : "Add to favorites"}
+                                            >
+                                              <Heart 
+                                                className={`h-5 w-5 ${grandchildIsSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                                               />
-                                            </div>
+                                            </button>
                                           )}
-                                          <span className="text-sm font-medium flex-1 min-w-0">
-                                            {grandchild.label}
-                                          </span>
                                           
                                           {/* Teams button for grandchild leagues */}
                                           {grandchildIsLeague && grandchild.entity_id && leagueKinds[grandchild.entity_id] === 'league' && (
