@@ -1129,11 +1129,7 @@ export default function Preferences() {
                       return (
                         <div 
                           key={school.id} 
-                          className={`flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none ${
-                            isSelected 
-                              ? 'bg-blue-500 border-blue-600 text-white' 
-                              : 'bg-card border-muted-foreground/40'
-                          }`}
+                          className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40"
                         >
                           <div 
                             onClick={() => handleNavigateToFocus('school', school.id)}
@@ -1192,11 +1188,7 @@ export default function Preferences() {
                       return (
                         <div 
                           key={item.id} 
-                          className={`flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none ${
-                            isSelected 
-                              ? 'bg-blue-500 border-blue-600 text-white' 
-                              : 'bg-card border-muted-foreground/40'
-                          }`}
+                          className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40"
                         >
                           <div 
                             onClick={() => handleNavigateToFocus(
@@ -1280,11 +1272,7 @@ export default function Preferences() {
                     <div key={item.id}>
                       {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
                       <div 
-                        className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
-                          isSelected 
-                            ? 'bg-blue-500 border-blue-600 text-white' 
-                            : 'bg-card border-muted-foreground/30'
-                        }`}
+                        className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30"
                       >
                         <div 
                           onClick={() => handleItemClick(item)}
@@ -1398,12 +1386,8 @@ export default function Preferences() {
                             return (
                               <div key={child.id}>
                                 <div 
-                                  className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
+                                  className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30 ${
                                     childIsHeadingWithMenu ? '' : 'cursor-pointer'
-                                  } ${
-                                    childIsSelected 
-                                      ? 'bg-blue-500 border-blue-600 text-white' 
-                                      : 'bg-card border-muted-foreground/30'
                                   }`}
                                 >
                                   <div 
@@ -1494,11 +1478,7 @@ export default function Preferences() {
                                       return (
                                         <div 
                                           key={grandchild.id}
-                                          className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none ${
-                                            grandchildIsSelected 
-                                              ? 'bg-blue-500 border-blue-600 text-white' 
-                                              : 'bg-card border-muted-foreground/30'
-                                          }`}
+                                          className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30"
                                         >
                                           <div
                                             onClick={() => handleItemClick(grandchild)}
