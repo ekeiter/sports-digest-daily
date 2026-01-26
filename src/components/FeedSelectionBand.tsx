@@ -35,9 +35,9 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete }: Selec
     <div className="flex flex-col items-center flex-shrink-0">
       <button
         onClick={() => navigate(`/feed?focus=${interestId}`)}
-        className={`flex flex-col items-center w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'}`}
+        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] p-0.5 md:p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'}`}
       >
-        <div className="w-7 h-7 flex items-center justify-center">
+        <div className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center">
           {logoUrl ? (
             <img 
               src={logoUrl} 
@@ -45,14 +45,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete }: Selec
               className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="w-5 h-5 rounded-full bg-muted" />
+            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-muted" />
           )}
         </div>
-        <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
+        <span className="text-[9px] md:text-[11px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
           {label}
         </span>
         {sublabel && (
-          <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
+          <span className="text-[9px] md:text-[11px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
             {sublabel}
           </span>
         )}
