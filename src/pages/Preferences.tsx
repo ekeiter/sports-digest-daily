@@ -433,7 +433,7 @@ export default function Preferences() {
   };
 
   // Navigate to focused feed for an entity - creates interest if needed
-  const handleNavigateToFocus = async (entityType: 'sport' | 'league' | 'team' | 'school', entityId: number) => {
+  const handleNavigateToFocus = async (entityType: 'sport' | 'league' | 'team' | 'school' | 'person', entityId: number) => {
     if (!userId) return;
     
     try {
@@ -447,6 +447,7 @@ export default function Preferences() {
       if (entityType === 'league') existingQuery = existingQuery.eq("league_id", entityId);
       if (entityType === 'team') existingQuery = existingQuery.eq("team_id", entityId);
       if (entityType === 'school') existingQuery = existingQuery.eq("school_id", entityId);
+      if (entityType === 'person') existingQuery = existingQuery.eq("person_id", entityId);
       
       const { data: existing } = await existingQuery.maybeSingle();
       
@@ -454,13 +455,14 @@ export default function Preferences() {
         navigate(`/feed?focus=${existing.id}`);
       } else {
         // Create a new interest and navigate
-        const insertData: { subscriber_id: string; sport_id?: number; league_id?: number; team_id?: number; school_id?: number } = { 
+        const insertData: { subscriber_id: string; sport_id?: number; league_id?: number; team_id?: number; school_id?: number; person_id?: number } = { 
           subscriber_id: userId 
         };
         if (entityType === 'sport') insertData.sport_id = entityId;
         if (entityType === 'league') insertData.league_id = entityId;
         if (entityType === 'team') insertData.team_id = entityId;
         if (entityType === 'school') insertData.school_id = entityId;
+        if (entityType === 'person') insertData.person_id = entityId;
         
         const { data: newInterest, error } = await supabase
           .from("subscriber_interests")
@@ -475,6 +477,7 @@ export default function Preferences() {
         if (entityType === 'league') setSelectedLeagues(prev => [...prev, entityId]);
         if (entityType === 'team') setSelectedTeams(prev => [...prev, entityId]);
         if (entityType === 'school') setSelectedSchools(prev => [...prev, entityId]);
+        if (entityType === 'person') setFollowedPersonIds(prev => new Set([...prev, entityId]));
         
         invalidatePreferences(userId);
         invalidateFeed(userId);
@@ -901,16 +904,7 @@ export default function Preferences() {
                             return (
                               <div 
                                 key={`sport-${item.id}`} 
-                                onClick={() => {
-                                  if (item.entity_id) {
-                                    handleSportToggle(item.entity_id, item.label);
-                                  }
-                                  setShowSearchDropdown(false);
-                                  setTeamSearchTerm("");
-                                }}
-                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                  isSelected ? 'opacity-50' : ''
-                                }`}
+                                className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none"
                               >
                                 {item.logo_url && (
                                   <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
@@ -922,9 +916,31 @@ export default function Preferences() {
                                     />
                                   </div>
                                 )}
-                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                <span 
+                                  onClick={() => {
+                                    if (item.entity_id) {
+                                      handleNavigateToFocus('sport', item.entity_id);
+                                    }
+                                    setShowSearchDropdown(false);
+                                    setTeamSearchTerm("");
+                                  }}
+                                  className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer"
+                                >
                                   {item.label}
                                 </span>
+                                <Heart 
+                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
+                                    isSelected 
+                                      ? 'fill-red-500 text-red-500' 
+                                      : 'text-muted-foreground hover:text-red-500'
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (item.entity_id) {
+                                      handleSportToggle(item.entity_id, item.label);
+                                    }
+                                  }}
+                                />
                               </div>
                             );
                           })}
@@ -940,16 +956,7 @@ export default function Preferences() {
                             return (
                               <div 
                                 key={`league-${item.id}`} 
-                                onClick={() => {
-                                  if (item.entity_id) {
-                                    handleLeagueToggle(item.entity_id, item.label);
-                                  }
-                                  setShowSearchDropdown(false);
-                                  setTeamSearchTerm("");
-                                }}
-                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                  isSelected ? 'opacity-50' : ''
-                                }`}
+                                className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none"
                               >
                                 {item.logo_url && (
                                   <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
@@ -961,9 +968,31 @@ export default function Preferences() {
                                     />
                                   </div>
                                 )}
-                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                <span 
+                                  onClick={() => {
+                                    if (item.entity_id) {
+                                      handleNavigateToFocus('league', item.entity_id);
+                                    }
+                                    setShowSearchDropdown(false);
+                                    setTeamSearchTerm("");
+                                  }}
+                                  className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer"
+                                >
                                   {item.label}
                                 </span>
+                                <Heart 
+                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
+                                    isSelected 
+                                      ? 'fill-red-500 text-red-500' 
+                                      : 'text-muted-foreground hover:text-red-500'
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (item.entity_id) {
+                                      handleLeagueToggle(item.entity_id, item.label);
+                                    }
+                                  }}
+                                />
                               </div>
                             );
                           })}
@@ -979,14 +1008,7 @@ export default function Preferences() {
                             return (
                               <div 
                                 key={`team-${team.id}`} 
-                                onClick={() => {
-                                  handleTeamToggle(Number(team.id));
-                                  setShowSearchDropdown(false);
-                                  setTeamSearchTerm("");
-                                }}
-                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                  isSelected ? 'opacity-50' : ''
-                                }`}
+                                className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none"
                               >
                                 {team.logo_url && (
                                   <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
@@ -998,9 +1020,27 @@ export default function Preferences() {
                                     />
                                   </div>
                                 )}
-                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                <span 
+                                  onClick={() => {
+                                    handleNavigateToFocus('team', Number(team.id));
+                                    setShowSearchDropdown(false);
+                                    setTeamSearchTerm("");
+                                  }}
+                                  className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer"
+                                >
                                   {team.display_name}
                                 </span>
+                                <Heart 
+                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
+                                    isSelected 
+                                      ? 'fill-red-500 text-red-500' 
+                                      : 'text-muted-foreground hover:text-red-500'
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTeamToggle(Number(team.id));
+                                  }}
+                                />
                               </div>
                             );
                           })}
@@ -1016,14 +1056,7 @@ export default function Preferences() {
                             return (
                               <div 
                                 key={`school-${school.id}`} 
-                                onClick={() => {
-                                  handleSchoolToggle(school.id);
-                                  setShowSearchDropdown(false);
-                                  setTeamSearchTerm("");
-                                }}
-                                className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                  isSelected ? 'opacity-50' : ''
-                                }`}
+                                className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none"
                               >
                                 {school.logo_url && (
                                   <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
@@ -1035,9 +1068,27 @@ export default function Preferences() {
                                     />
                                   </div>
                                 )}
-                                <span className="text-sm font-medium truncate flex-1 min-w-0">
+                                <span 
+                                  onClick={() => {
+                                    handleNavigateToFocus('school', school.id);
+                                    setShowSearchDropdown(false);
+                                    setTeamSearchTerm("");
+                                  }}
+                                  className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer"
+                                >
                                   {school.name}
                                 </span>
+                                <Heart 
+                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
+                                    isSelected 
+                                      ? 'fill-red-500 text-red-500' 
+                                      : 'text-muted-foreground hover:text-red-500'
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSchoolToggle(school.id);
+                                  }}
+                                />
                               </div>
                             );
                           })}
@@ -1059,10 +1110,7 @@ export default function Preferences() {
                               return (
                                 <div 
                                   key={`person-${person.id}`} 
-                                  onClick={() => !isFollowed && handlePersonFollow(person)}
-                                  className={`flex items-center gap-1.5 p-2 hover:bg-accent cursor-pointer border-b last:border-b-0 select-none ${
-                                    isFollowed ? 'opacity-50' : ''
-                                  }`}
+                                  className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none"
                                 >
                                   {logoUrl && (
                                     <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
@@ -1074,7 +1122,14 @@ export default function Preferences() {
                                       />
                                     </div>
                                   )}
-                                  <div className="flex flex-col min-w-0 flex-1">
+                                  <div 
+                                    onClick={() => {
+                                      handleNavigateToFocus('person', person.id);
+                                      setShowSearchDropdown(false);
+                                      setTeamSearchTerm("");
+                                    }}
+                                    className="flex flex-col min-w-0 flex-1 cursor-pointer"
+                                  >
                                     <span className="text-sm font-medium truncate">
                                       {person.name}
                                     </span>
@@ -1093,6 +1148,19 @@ export default function Preferences() {
                                       className="h-4 w-6 object-contain flex-shrink-0"
                                     />
                                   )}
+                                  <Heart 
+                                    className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
+                                      isFollowed 
+                                        ? 'fill-red-500 text-red-500' 
+                                        : 'text-muted-foreground hover:text-red-500'
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!isFollowed) {
+                                        handlePersonFollow(person);
+                                      }
+                                    }}
+                                  />
                                 </div>
                               );
                             })
