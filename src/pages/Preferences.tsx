@@ -958,7 +958,7 @@ export default function Preferences() {
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
             {/* Universal Search */}
-            <div className="mb-4 relative" ref={searchRef}>
+            <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
