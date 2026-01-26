@@ -326,26 +326,16 @@ export default function Feed() {
                 )}
               </h1>
             </div>
-            
-            {/* Clear focus button when in focus mode */}
-            {(interestId || (entityType && entityId)) && (
-              <div className="flex justify-center">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="h-6 px-2 text-xs gap-1"
-                  onClick={clearFocus}
-                >
-                  <X className="h-3 w-3" />
-                  Clear Focus
-                </Button>
-              </div>
-            )}
             <div className="flex gap-1.5 justify-center">
               <Button size="sm" className="h-7 w-28" onClick={() => navigate("/preferences")}>
                 Selections
               </Button>
-              <Button size="sm" className="h-7 w-28" onClick={clearFocus}>
+              <Button 
+                size="sm" 
+                className="h-7 w-28" 
+                onClick={clearFocus}
+                disabled={!interestId && !entityType && !entityId}
+              >
                 Combined Feed
               </Button>
               <Button size="sm" className="h-7 w-28" onClick={handleRefresh} disabled={refreshing}>
