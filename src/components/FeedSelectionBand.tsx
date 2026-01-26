@@ -106,6 +106,17 @@ export default function FeedSelectionBand({
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
   const hasItems = sports.length > 0 || leagues.length > 0 || teams.length > 0 || 
                    schools.length > 0 || people.length > 0 || olympicsPrefs.length > 0;
 
@@ -231,12 +242,22 @@ export default function FeedSelectionBand({
       {/* Scroll indicators below cards */}
       {(showLeftArrow || showRightArrow) && (
         <div className="flex justify-between items-center px-2 pt-1">
-          <div className="w-4">
-            {showLeftArrow && <ChevronLeft className="w-4 h-4 text-muted-foreground" />}
-          </div>
-          <div className="w-4">
-            {showRightArrow && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
-          </div>
+          <button 
+            onClick={scrollLeft}
+            className="w-6 h-6 flex items-center justify-center hover:bg-accent rounded transition-colors disabled:opacity-30"
+            disabled={!showLeftArrow}
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+          </button>
+          <button 
+            onClick={scrollRight}
+            className="w-6 h-6 flex items-center justify-center hover:bg-accent rounded transition-colors disabled:opacity-30"
+            disabled={!showRightArrow}
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
         </div>
       )}
     </div>
