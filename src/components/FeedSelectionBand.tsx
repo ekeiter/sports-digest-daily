@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { 
   SportWithInterest, 
   LeagueWithInterest, 
@@ -25,17 +25,72 @@ interface SelectionCardProps {
   sublabel?: string;
   interestId: number;
   onDelete?: () => void;
+  isDeleteMode?: boolean;
 }
 
-function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete }: SelectionCardProps) {
+function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDeleteMode }: SelectionCardProps) {
   const navigate = useNavigate();
   const hasSublabel = !!sublabel;
-  
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const [isLongPressing, setIsLongPressing] = useState(false);
+
+  const handleMouseDown = () => {
+    // Only for touch/mobile - start long press timer
+    longPressTimer.current = setTimeout(() => {
+      setIsLongPressing(true);
+    }, 500);
+  };
+
+  const handleMouseUp = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleClick = () => {
+    if (isLongPressing || isDeleteMode) {
+      // In delete mode, clicking deletes
+      if (onDelete) onDelete();
+      setIsLongPressing(false);
+    } else {
+      navigate(`/feed?focus=${interestId}`);
+    }
+  };
+
+  // Reset long press state when delete mode changes externally
+  useEffect(() => {
+    if (!isDeleteMode) {
+      setIsLongPressing(false);
+    }
+  }, [isDeleteMode]);
+
+  const showDeleteOverlay = isDeleteMode || isLongPressing;
+
   return (
-    <div className="flex flex-col items-center flex-shrink-0">
+    <div className="relative flex-shrink-0">
+      {/* Desktop X button - always visible on hover */}
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="hidden md:flex absolute -top-1 -right-1 z-10 w-4 h-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+          title="Remove from favorites"
+        >
+          <X className="h-2.5 w-2.5" />
+        </button>
+      )}
+      
       <button
-        onClick={() => navigate(`/feed?focus=${interestId}`)}
-        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] p-0.5 md:p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'}`}
+        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
+        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] p-0.5 md:p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle md:animate-none' : ''}`}
       >
         <div className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center">
           {logoUrl ? (
@@ -57,17 +112,21 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete }: Selec
           </span>
         )}
       </button>
-      {onDelete && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="mt-0.5 p-0.5 text-destructive hover:text-destructive/80 transition-colors"
-          title="Remove from favorites"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+      
+      {/* Mobile/Tablet delete overlay - shows on long press */}
+      {showDeleteOverlay && onDelete && (
+        <div className="md:hidden absolute -top-1 -right-1 z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+              setIsLongPressing(false);
+            }}
+            className="w-5 h-5 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
       )}
     </div>
   );
