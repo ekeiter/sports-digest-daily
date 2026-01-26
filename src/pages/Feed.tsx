@@ -342,13 +342,13 @@ export default function Feed() {
               </div>
             )}
             <div className="flex gap-1.5 justify-center">
-              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/")}>
-                Dashboard
-              </Button>
-              <Button size="sm" className="h-7 px-3" onClick={() => navigate("/preferences")}>
+              <Button size="sm" className="h-7 w-28" onClick={() => navigate("/preferences")}>
                 Selections
               </Button>
-              <Button size="sm" className="h-7 px-3" onClick={handleRefresh} disabled={refreshing}>
+              <Button size="sm" className="h-7 w-28" onClick={clearFocus}>
+                Combined Feed
+              </Button>
+              <Button size="sm" className="h-7 w-28" onClick={handleRefresh} disabled={refreshing}>
                 {refreshing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
