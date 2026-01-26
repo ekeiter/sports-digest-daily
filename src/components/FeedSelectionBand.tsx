@@ -32,6 +32,7 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
   const navigate = useNavigate();
   const hasSublabel = !!sublabel;
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isLongPressing, setIsLongPressing] = useState(false);
 
   const handleMouseDown = () => {
@@ -64,6 +65,25 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
       setIsLongPressing(false);
     }
   }, [isDeleteMode]);
+
+  // Click outside to cancel long press delete mode
+  useEffect(() => {
+    if (!isLongPressing) return;
+    
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        setIsLongPressing(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isLongPressing]);
 
   const showDeleteOverlay = isDeleteMode || isLongPressing;
 
