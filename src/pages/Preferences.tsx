@@ -709,6 +709,153 @@ export default function Preferences() {
     }
   };
 
+  // Delete handlers for FeedSelectionBand (delete-only, no toggle)
+  const handleDeleteSport = async (sportId: number) => {
+    if (!userId) return;
+    try {
+      const sport = userPreferences?.sports.find(s => s.id === sportId);
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("sport_id", sportId);
+      if (error) throw error;
+      setSelectedSports(prev => prev.filter(id => id !== sportId));
+      toast(`Unfollowed ${sport?.display_label || sport?.sport || 'sport'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting sport:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
+  const handleDeleteLeague = async (leagueId: number) => {
+    if (!userId) return;
+    try {
+      const league = userPreferences?.leagues.find(l => l.id === leagueId);
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("league_id", leagueId);
+      if (error) throw error;
+      setSelectedLeagues(prev => prev.filter(id => id !== leagueId));
+      toast(`Unfollowed ${league?.name || 'league'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting league:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
+  const handleDeleteTeam = async (teamId: number) => {
+    if (!userId) return;
+    try {
+      const team = userPreferences?.teams.find(t => t.id === teamId);
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("team_id", teamId);
+      if (error) throw error;
+      setSelectedTeams(prev => prev.filter(id => id !== teamId));
+      toast(`Unfollowed ${team?.display_name || 'team'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting team:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
+  const handleDeleteSchool = async (schoolId: number, leagueId?: number) => {
+    if (!userId) return;
+    try {
+      const school = userPreferences?.schools.find(s => s.id === schoolId);
+      let query = supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("school_id", schoolId);
+      
+      // If leagueId is provided, also match on league_id for compound interests
+      if (leagueId) {
+        query = query.eq("league_id", leagueId);
+      }
+      
+      const { error } = await query;
+      if (error) throw error;
+      
+      // Update local state
+      if (leagueId) {
+        setSelectedSchoolsByLeague(prev => {
+          const updated = { ...prev };
+          if (updated[leagueId]) {
+            updated[leagueId] = updated[leagueId].filter(id => id !== schoolId);
+          }
+          return updated;
+        });
+      } else {
+        // All sports school
+        setAllSportsSchools(prev => {
+          const updated = new Set(prev);
+          updated.delete(schoolId);
+          return updated;
+        });
+      }
+      
+      toast(`Unfollowed ${school?.short_name || 'school'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting school:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
+  const handleDeletePerson = async (personId: number) => {
+    if (!userId) return;
+    try {
+      const person = userPreferences?.people.find(p => p.id === personId);
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("person_id", personId);
+      if (error) throw error;
+      setFollowedPersonIds(prev => {
+        const updated = new Set(prev);
+        updated.delete(personId);
+        return updated;
+      });
+      toast(`Unfollowed ${person?.name || 'person'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting person:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
+  const handleDeleteOlympics = async (interestId: number) => {
+    if (!userId) return;
+    try {
+      const { error } = await supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("id", interestId);
+      if (error) throw error;
+      toast(`Removed Olympics preference`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting Olympics preference:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
   const getExpandedLeagueTeams = () => {
     if (!expandedLeagueId) return [];
     return expandedLeagueItems;
@@ -793,6 +940,12 @@ export default function Preferences() {
                 schools={userPreferences.schools}
                 people={userPreferences.people}
                 olympicsPrefs={userPreferences.olympicsPrefs}
+                onDeleteSport={handleDeleteSport}
+                onDeleteLeague={handleDeleteLeague}
+                onDeleteTeam={handleDeleteTeam}
+                onDeleteSchool={handleDeleteSchool}
+                onDeletePerson={handleDeletePerson}
+                onDeleteOlympics={handleDeleteOlympics}
               />
             )}
           </div>

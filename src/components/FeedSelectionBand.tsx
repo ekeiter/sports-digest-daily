@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { 
   SportWithInterest, 
   LeagueWithInterest, 
@@ -24,37 +24,52 @@ interface SelectionCardProps {
   label: string;
   sublabel?: string;
   interestId: number;
+  onDelete?: () => void;
 }
 
-function SelectionCard({ logoUrl, label, sublabel, interestId }: SelectionCardProps) {
+function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete }: SelectionCardProps) {
   const navigate = useNavigate();
   const hasSublabel = !!sublabel;
   
   return (
-    <button
-      onClick={() => navigate(`/feed?focus=${interestId}`)}
-      className={`flex flex-col items-center w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none flex-shrink-0 ${hasSublabel ? 'justify-start' : 'justify-center'}`}
-    >
-      <div className="w-7 h-7 flex items-center justify-center">
-        {logoUrl ? (
-          <img 
-            src={logoUrl} 
-            alt="" 
-            className="max-w-full max-h-full object-contain"
-          />
-        ) : (
-          <div className="w-5 h-5 rounded-full bg-muted" />
-        )}
-      </div>
-      <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
-        {label}
-      </span>
-      {sublabel && (
+    <div className="flex flex-col items-center flex-shrink-0">
+      <button
+        onClick={() => navigate(`/feed?focus=${interestId}`)}
+        className={`flex flex-col items-center w-16 h-14 p-0.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'}`}
+      >
+        <div className="w-7 h-7 flex items-center justify-center">
+          {logoUrl ? (
+            <img 
+              src={logoUrl} 
+              alt="" 
+              className="max-w-full max-h-full object-contain"
+            />
+          ) : (
+            <div className="w-5 h-5 rounded-full bg-muted" />
+          )}
+        </div>
         <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
-          {sublabel}
+          {label}
         </span>
+        {sublabel && (
+          <span className="text-[9px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
+            {sublabel}
+          </span>
+        )}
+      </button>
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="mt-0.5 p-0.5 text-destructive hover:text-destructive/80 transition-colors"
+          title="Remove from favorites"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
       )}
-    </button>
+    </div>
   );
 }
 
@@ -65,6 +80,12 @@ interface FeedSelectionBandProps {
   schools: SchoolWithInterest[];
   people: Person[];
   olympicsPrefs: OlympicsPreference[];
+  onDeleteSport?: (id: number) => void;
+  onDeleteLeague?: (id: number) => void;
+  onDeleteTeam?: (id: number) => void;
+  onDeleteSchool?: (id: number, leagueId?: number) => void;
+  onDeletePerson?: (id: number) => void;
+  onDeleteOlympics?: (id: number) => void;
 }
 
 export default function FeedSelectionBand({
@@ -74,6 +95,12 @@ export default function FeedSelectionBand({
   schools,
   people,
   olympicsPrefs,
+  onDeleteSport,
+  onDeleteLeague,
+  onDeleteTeam,
+  onDeleteSchool,
+  onDeletePerson,
+  onDeleteOlympics,
 }: FeedSelectionBandProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -133,6 +160,7 @@ export default function FeedSelectionBand({
               logoUrl={sport.logo_url}
               label={sport.display_label || toTitleCase(sport.sport)}
               interestId={sport.interestId}
+              onDelete={onDeleteSport ? () => onDeleteSport(sport.id) : undefined}
             />
           ))}
           
@@ -143,6 +171,7 @@ export default function FeedSelectionBand({
               logoUrl={league.logo_url}
               label={league.code || league.name}
               interestId={league.interestId}
+              onDelete={onDeleteLeague ? () => onDeleteLeague(league.id) : undefined}
             />
           ))}
           
@@ -153,6 +182,7 @@ export default function FeedSelectionBand({
               logoUrl={team.logo_url}
               label={team.nickname || team.display_name}
               interestId={team.interestId}
+              onDelete={onDeleteTeam ? () => onDeleteTeam(team.id) : undefined}
             />
           ))}
           
@@ -164,6 +194,7 @@ export default function FeedSelectionBand({
               label={school.short_name}
               sublabel={school.league_code || "All Sports"}
               interestId={school.interestId}
+              onDelete={onDeleteSchool ? () => onDeleteSchool(school.id, school.league_id) : undefined}
             />
           ))}
           
@@ -175,6 +206,7 @@ export default function FeedSelectionBand({
               label={pref.sport_name ? toTitleCase(pref.sport_name) : "Olympics"}
               sublabel={pref.country_name || "All"}
               interestId={pref.id}
+              onDelete={onDeleteOlympics ? () => onDeleteOlympics(pref.id) : undefined}
             />
           ))}
           
@@ -190,6 +222,7 @@ export default function FeedSelectionBand({
                 label={firstName}
                 sublabel={lastName}
                 interestId={person.interestId}
+                onDelete={onDeletePerson ? () => onDeletePerson(person.id) : undefined}
               />
             );
           })}
