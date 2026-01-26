@@ -58,6 +58,7 @@ export default function Preferences() {
   const [leagueTeamMap, setLeagueTeamMap] = useState<Record<number, number[]>>({});
   const [leagueSchoolMap, setLeagueSchoolMap] = useState<Record<number, number[]>>({});
   const [selectedSchoolsByLeague, setSelectedSchoolsByLeague] = useState<Record<number, number[]>>({});
+  const [allSportsSchools, setAllSportsSchools] = useState<Set<number>>(new Set());
   const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
   
@@ -162,6 +163,12 @@ export default function Preferences() {
         schoolsByLeagueMap[leagueId].push(schoolId);
       });
       setSelectedSchoolsByLeague(schoolsByLeagueMap);
+      
+      // Track schools with "All Sports" selection (school_id with NO league_id)
+      const allSportsSchoolIds = nonOlympicsInterests
+        .filter(i => i.school_id !== null && i.league_id === null)
+        .map(i => i.school_id as number);
+      setAllSportsSchools(new Set(allSportsSchoolIds));
 
       setSelectedSports(sportIds);
       setSelectedLeagues(leagueIds);
@@ -999,7 +1006,8 @@ export default function Preferences() {
                         <>
                           <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
                           {getFilteredSchools().slice(0, 15).map(school => {
-                            const isSelected = selectedSchools.includes(school.id);
+                            // Selected if "All Sports" is selected OR any interest exists for this school
+                            const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
                             return (
                               <div 
                                 key={`school-${school.id}`} 
@@ -1140,7 +1148,8 @@ export default function Preferences() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {schools.map(school => {
-                      const isSelected = selectedSchools.includes(school.id);
+                      // In the Schools browser (All Sports context), selected if any interest exists
+                      const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
                       return (
                         <div 
                           key={school.id} 
@@ -1197,8 +1206,9 @@ export default function Preferences() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {getExpandedLeagueTeams().map(item => {
+                      // For schools: selected if "All Sports" is selected OR this specific combo exists
                       const isSelected = expandedLeagueType === 'school' 
-                        ? selectedSchools.includes(item.id)
+                        ? (allSportsSchools.has(item.id) || selectedSchools.includes(item.id))
                         : selectedTeams.includes(item.id);
                       return (
                         <div 
