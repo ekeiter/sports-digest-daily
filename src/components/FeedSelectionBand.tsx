@@ -309,8 +309,11 @@ export default function FeedSelectionBand({
           >
             <ChevronLeft className="w-4 h-4 text-muted-foreground" />
           </button>
-          <span className="hidden lg:block text-[10px] text-muted-foreground">
+          <span className="lg:hidden text-[10px] text-foreground">
             scroll right/left, press &amp; hold to delete
+          </span>
+          <span className="hidden lg:block text-[10px] text-foreground">
+            scroll right/left
           </span>
           <button 
             onClick={scrollRight}
