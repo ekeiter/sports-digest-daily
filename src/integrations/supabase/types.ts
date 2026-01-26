@@ -2034,47 +2034,27 @@ export type Database = {
       clear_all_focus: { Args: never; Returns: undefined }
       ensure_my_subscriber: { Args: never; Returns: undefined }
       extract_domain: { Args: { url: string }; Returns: string }
-      get_subscriber_feed:
-        | {
-            Args: {
-              p_cursor_id?: number
-              p_cursor_time?: string
-              p_interest_id?: number
-              p_limit?: number
-              p_subscriber_id: string
-            }
-            Returns: {
-              article_id: number
-              domain: string
-              published_at: string
-              published_effective: string
-              thumbnail_url: string
-              title: string
-              updated_at: string
-              url: string
-            }[]
-          }
-        | {
-            Args: {
-              p_cursor_id?: number
-              p_cursor_time?: string
-              p_entity_id?: number
-              p_entity_type?: string
-              p_interest_id?: number
-              p_limit?: number
-              p_subscriber_id: string
-            }
-            Returns: {
-              article_id: number
-              domain: string
-              published_at: string
-              published_effective: string
-              thumbnail_url: string
-              title: string
-              updated_at: string
-              url: string
-            }[]
-          }
+      get_subscriber_feed: {
+        Args: {
+          p_cursor_id?: number
+          p_cursor_time?: string
+          p_entity_id?: number
+          p_entity_type?: string
+          p_interest_id?: number
+          p_limit?: number
+          p_subscriber_id: string
+        }
+        Returns: {
+          article_id: number
+          domain: string
+          published_at: string
+          published_effective: string
+          thumbnail_url: string
+          title: string
+          updated_at: string
+          url: string
+        }[]
+      }
       link_article_source: {
         Args: {
           p_article_id: number
