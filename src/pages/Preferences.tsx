@@ -432,62 +432,9 @@ export default function Preferences() {
     }
   };
 
-  // Navigate to focused feed for an entity - creates interest if needed
-  const handleNavigateToFocus = async (entityType: 'sport' | 'league' | 'team' | 'school' | 'person', entityId: number) => {
-    if (!userId) return;
-    
-    try {
-      // Check if interest already exists based on entity type
-      let existingQuery = supabase
-        .from("subscriber_interests")
-        .select("id")
-        .eq("subscriber_id", userId);
-      
-      if (entityType === 'sport') existingQuery = existingQuery.eq("sport_id", entityId);
-      if (entityType === 'league') existingQuery = existingQuery.eq("league_id", entityId);
-      if (entityType === 'team') existingQuery = existingQuery.eq("team_id", entityId);
-      if (entityType === 'school') existingQuery = existingQuery.eq("school_id", entityId);
-      if (entityType === 'person') existingQuery = existingQuery.eq("person_id", entityId);
-      
-      const { data: existing } = await existingQuery.maybeSingle();
-      
-      if (existing) {
-        navigate(`/feed?focus=${existing.id}`);
-      } else {
-        // Create a new interest and navigate
-        const insertData: { subscriber_id: string; sport_id?: number; league_id?: number; team_id?: number; school_id?: number; person_id?: number } = { 
-          subscriber_id: userId 
-        };
-        if (entityType === 'sport') insertData.sport_id = entityId;
-        if (entityType === 'league') insertData.league_id = entityId;
-        if (entityType === 'team') insertData.team_id = entityId;
-        if (entityType === 'school') insertData.school_id = entityId;
-        if (entityType === 'person') insertData.person_id = entityId;
-        
-        const { data: newInterest, error } = await supabase
-          .from("subscriber_interests")
-          .insert(insertData)
-          .select("id")
-          .single();
-        
-        if (error) throw error;
-        
-        // Update local state
-        if (entityType === 'sport') setSelectedSports(prev => [...prev, entityId]);
-        if (entityType === 'league') setSelectedLeagues(prev => [...prev, entityId]);
-        if (entityType === 'team') setSelectedTeams(prev => [...prev, entityId]);
-        if (entityType === 'school') setSelectedSchools(prev => [...prev, entityId]);
-        if (entityType === 'person') setFollowedPersonIds(prev => new Set([...prev, entityId]));
-        
-        invalidatePreferences(userId);
-        invalidateFeed(userId);
-        
-        navigate(`/feed?focus=${newInterest.id}`);
-      }
-    } catch (error) {
-      console.error("Error navigating to focus:", error);
-      toast.error("Could not open focused feed");
-    }
+  // Navigate to focused feed for an entity - no need to create a favorite
+  const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person', entityId: number) => {
+    navigate(`/feed?type=${entityType}&id=${entityId}`);
   };
 
   const handleItemClick = async (item: MenuItem) => {
