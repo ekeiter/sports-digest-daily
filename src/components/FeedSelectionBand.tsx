@@ -88,7 +88,7 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
   const showDeleteOverlay = isDeleteMode || isLongPressing;
 
   return (
-    <div className="relative flex-shrink-0">
+    <div ref={cardRef} className="relative flex-shrink-0">
       {/* Desktop X button - only on lg+ screens, positioned inside the card */}
       {onDelete && (
         <button
