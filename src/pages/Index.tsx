@@ -127,7 +127,7 @@ const Index = () => {
                   My Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
-              Manage Sport, Team, and College Selections
+              Feed Topic Manager  
 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
