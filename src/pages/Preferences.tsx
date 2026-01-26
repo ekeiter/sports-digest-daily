@@ -990,6 +990,14 @@ export default function Preferences() {
                 </Button>
               </div>
 
+              {/* Backdrop blur overlay when dropdown is open */}
+              {showSearchDropdown && teamSearchTerm && (
+                <div 
+                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]"
+                  onClick={() => setShowSearchDropdown(false)}
+                />
+              )}
+
               {showSearchDropdown && teamSearchTerm && (
                 <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
                   {(loadingAllTeams || loadingAllSchoolsSearch) ? (
