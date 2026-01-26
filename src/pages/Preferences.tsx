@@ -1312,13 +1312,13 @@ export default function Preferences() {
                         </div>
                         
                         {/* Heart toggle for favoriting sports and leagues */}
-                        {(item.entity_type === 'sport' || item.entity_type === 'league') && item.entity_id && (
+                        {(item.entity_type?.toLowerCase() === 'sport' || item.entity_type?.toLowerCase() === 'league') && item.entity_id && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (item.entity_type === 'sport') {
+                              if (item.entity_type?.toLowerCase() === 'sport') {
                                 handleSportToggle(item.entity_id!, item.label);
-                              } else if (item.entity_type === 'league') {
+                              } else if (item.entity_type?.toLowerCase() === 'league') {
                                 handleLeagueToggle(item.entity_id!, item.label);
                               }
                             }}
@@ -1329,6 +1329,11 @@ export default function Preferences() {
                               className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                             />
                           </button>
+                        )}
+                        
+                        {/* Spacer to align hearts when there's no button */}
+                        {!isAccordionParent && !(isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league') && !isSchools && (
+                          <div className="w-20 shrink-0" />
                         )}
                         
                         {/* Menu button for accordion parents */}
