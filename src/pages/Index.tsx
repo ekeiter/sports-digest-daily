@@ -120,18 +120,11 @@ const Index = () => {
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
           
           <div className="mt-8 flex flex-col gap-4 max-w-md mx-auto w-full">
-            <Button className="w-full" size="lg" onClick={() => navigate("/feed")}>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/feed")}>
               Go To My Combined Sports News Feed   
-            </Button>
-            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/my-feeds")}>
-                  My Current Feed Selections 
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Feed Topic Manager  
-
-            </Button>
-            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/player-preferences")}>
-              Manage Player & Coach Selections
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/why-sportsdig")}>
               Why SportsDig?
