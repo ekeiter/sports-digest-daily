@@ -1642,6 +1642,13 @@ export default function Preferences() {
                                     </button>
                                   )}
                                   
+                                  {/* Spacer to align hearts when no Menu or Teams button */}
+                                  {(child.entity_type === 'sport' || child.entity_type === 'league') && child.entity_id && 
+                                   !childHasChildren && 
+                                   !(childIsLeague && child.entity_id && leagueKinds[child.entity_id] === 'league') && (
+                                    <div className="w-20" />
+                                  )}
+                                  
                                   {/* Menu button for nested accordion parents */}
                                   {childHasChildren && (
                                     <Button 
@@ -1730,6 +1737,12 @@ export default function Preferences() {
                                                 className={`h-5 w-5 ${grandchildIsSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                                               />
                                             </button>
+                                          )}
+                                          
+                                          {/* Spacer to align hearts when no Teams button */}
+                                          {(grandchild.entity_type === 'sport' || grandchild.entity_type === 'league') && grandchild.entity_id && 
+                                           !(grandchildIsLeague && grandchild.entity_id && leagueKinds[grandchild.entity_id] === 'league') && (
+                                            <div className="w-20" />
                                           )}
                                           
                                           {/* Teams button for grandchild leagues */}
