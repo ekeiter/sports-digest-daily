@@ -1251,8 +1251,15 @@ export default function Preferences() {
                                     }}
                                     className="flex flex-col min-w-0 flex-1 cursor-pointer"
                                   >
-                                    <span className="text-sm font-medium truncate">
+                                    <span className="text-sm font-medium truncate flex items-center gap-1.5">
                                       {person.name}
+                                      {person.countries?.logo_url && (
+                                        <img 
+                                          src={person.countries.logo_url} 
+                                          alt={person.countries.name} 
+                                          className="h-3 w-4 object-contain flex-shrink-0"
+                                        />
+                                      )}
                                     </span>
                                     <span className="text-xs text-muted-foreground truncate">
                                       {[
@@ -1262,13 +1269,6 @@ export default function Preferences() {
                                       ].filter(Boolean).join(' • ')}
                                     </span>
                                   </div>
-                                  {person.countries?.logo_url && (
-                                    <img 
-                                      src={person.countries.logo_url} 
-                                      alt={person.countries.name} 
-                                      className="h-4 w-6 object-contain flex-shrink-0"
-                                    />
-                                  )}
                                   <Heart 
                                     className={`h-5 w-5 cursor-pointer flex-shrink-0 ${
                                       isFollowed 
