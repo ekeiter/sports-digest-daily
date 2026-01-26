@@ -1477,12 +1477,12 @@ export default function Preferences() {
                       >
                         <div 
                           onClick={() => {
-                            // Skip click for schools header (entity_type='schools' with no entity_id)
-                            if (item.entity_type === 'schools' && !item.entity_id) return;
+                            // Skip click for items with no entity_id (section headers, container items)
+                            if (!item.entity_id) return;
                             handleItemClick(item);
                           }}
                           className={`flex items-center gap-1.5 flex-1 min-w-0 ${
-                            item.entity_type === 'schools' && !item.entity_id ? '' : 'cursor-pointer'
+                            !item.entity_id ? '' : 'cursor-pointer'
                           }`}
                         >
                           {item.logo_url && (
