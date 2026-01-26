@@ -920,8 +920,8 @@ export default function Preferences() {
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/my-feeds")}>
-                My Selections
+              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/feed")}>
+                Combined Feed
               </Button>
               {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
                 <Button className="text-sm px-3 md:px-4" onClick={handleBack}>
