@@ -52,7 +52,7 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Build the RPC call
+    // Build the RPC call - only use parameters the DB function supports
     const rpcArgs: Record<string, unknown> = {
       p_subscriber_id: user.id,
       p_limit: limit,
@@ -61,8 +61,7 @@ serve(async (req) => {
     if (cursorTime) rpcArgs.p_cursor_time = cursorTime;
     if (cursorId) rpcArgs.p_cursor_id = cursorId;
     if (interestId) rpcArgs.p_interest_id = interestId;
-    if (entityType) rpcArgs.p_entity_type = entityType;
-    if (entityId) rpcArgs.p_entity_id = entityId;
+    // Note: entity_type and entity_id are not currently supported by the DB function
 
     const { data, error } = await adminClient.rpc("get_subscriber_feed", rpcArgs);
 
