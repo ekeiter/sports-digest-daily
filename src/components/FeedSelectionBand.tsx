@@ -69,14 +69,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
 
   return (
     <div className="relative flex-shrink-0">
-      {/* Desktop X button - always visible on hover */}
+      {/* Desktop X button - only on lg+ screens, positioned inside the card */}
       {onDelete && (
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="hidden md:flex absolute -top-1 -right-1 z-10 w-4 h-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+          className="hidden lg:flex absolute top-0.5 right-0.5 z-10 w-4 h-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
           title="Remove from favorites"
         >
           <X className="h-2.5 w-2.5" />
@@ -90,9 +90,9 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
         onMouseLeave={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
-        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] p-0.5 md:p-1 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle md:animate-none' : ''}`}
+        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] lg:w-24 lg:h-[84px] p-0.5 md:p-1 lg:p-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle lg:animate-none' : ''}`}
       >
-        <div className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center">
+        <div className="w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 flex items-center justify-center">
           {logoUrl ? (
             <img 
               src={logoUrl} 
@@ -100,14 +100,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
               className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-muted" />
+            <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 rounded-full bg-muted" />
           )}
         </div>
-        <span className="text-[9px] md:text-[11px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
+        <span className="text-[9px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
           {label}
         </span>
         {sublabel && (
-          <span className="text-[9px] md:text-[11px] font-semibold text-center line-clamp-1 leading-tight text-foreground">
+          <span className="text-[9px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
             {sublabel}
           </span>
         )}
@@ -115,7 +115,7 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
       
       {/* Mobile/Tablet delete overlay - shows on long press */}
       {showDeleteOverlay && onDelete && (
-        <div className="md:hidden absolute -top-1 -right-1 z-10">
+        <div className="lg:hidden absolute -top-1 -right-1 z-10">
           <button
             onClick={(e) => {
               e.stopPropagation();
