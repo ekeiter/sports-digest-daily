@@ -309,6 +309,9 @@ export default function FeedSelectionBand({
           >
             <ChevronLeft className="w-4 h-4 text-muted-foreground" />
           </button>
+          <span className="hidden lg:block text-[10px] text-muted-foreground">
+            scroll right/left, press &amp; hold to delete
+          </span>
           <button 
             onClick={scrollRight}
             className="w-6 h-6 flex items-center justify-center hover:bg-accent rounded transition-colors disabled:opacity-30"
