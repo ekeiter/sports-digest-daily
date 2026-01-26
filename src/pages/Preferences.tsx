@@ -906,7 +906,7 @@ export default function Preferences() {
       className="min-h-screen bg-[#D5D5D5]"
     >
       <header className="bg-transparent">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 max-w-3xl">
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-4">
               <img 
@@ -930,9 +930,11 @@ export default function Preferences() {
                 </Button>
               )}
             </div>
-            
-            {/* Horizontal scrolling selection band */}
-            {userPreferences && (
+          </div>
+          
+          {/* Horizontal scrolling selection band - left aligned */}
+          {userPreferences && (
+            <div className="mt-3">
               <FeedSelectionBand
                 sports={userPreferences.sports}
                 leagues={userPreferences.leagues}
@@ -947,8 +949,8 @@ export default function Preferences() {
                 onDeletePerson={handleDeletePerson}
                 onDeleteOlympics={handleDeleteOlympics}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
