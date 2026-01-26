@@ -1477,12 +1477,13 @@ export default function Preferences() {
                       >
                         <div 
                           onClick={() => {
-                            // Skip click for items with no entity_id (section headers, container items)
-                            if (!item.entity_id) return;
+                            // Skip click for items with no entity_id, unless they have a custom route (like Winter Olympics Selector)
+                            const hasCustomRoute = item.display_options && (item.display_options as any).route;
+                            if (!item.entity_id && !hasCustomRoute) return;
                             handleItemClick(item);
                           }}
                           className={`flex items-center gap-1.5 flex-1 min-w-0 ${
-                            !item.entity_id ? '' : 'cursor-pointer'
+                            (!item.entity_id && !(item.display_options && (item.display_options as any).route)) ? '' : 'cursor-pointer'
                           }`}
                         >
                           {item.logo_url && (
