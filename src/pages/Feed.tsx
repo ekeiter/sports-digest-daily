@@ -53,6 +53,7 @@ export default function Feed() {
 
   useEffect(() => {
     checkUser();
+    window.scrollTo(0, 0);
   }, []);
 
   // Fetch the label for the focused item
