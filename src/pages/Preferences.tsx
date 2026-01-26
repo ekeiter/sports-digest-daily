@@ -1257,7 +1257,7 @@ export default function Preferences() {
                                         <img 
                                           src={person.countries.logo_url} 
                                           alt={person.countries.name} 
-                                          className="h-3 w-4 object-contain flex-shrink-0"
+                                          className="h-4 w-5 object-contain flex-shrink-0"
                                         />
                                       )}
                                     </span>
