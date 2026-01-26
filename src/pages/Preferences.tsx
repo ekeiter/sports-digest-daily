@@ -957,6 +957,14 @@ export default function Preferences() {
       <main className="container mx-auto px-4 pt-0 pb-2 max-w-3xl">
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
+            {/* Backdrop blur overlay when dropdown is open - placed outside search container */}
+            {showSearchDropdown && teamSearchTerm && (
+              <div 
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]"
+                onClick={() => setShowSearchDropdown(false)}
+              />
+            )}
+            
             {/* Universal Search */}
             <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
               <div className="flex gap-2">
@@ -989,14 +997,6 @@ export default function Preferences() {
                   {(loadingAllTeams || loadingAllSchoolsSearch || searchingPeople) ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 </Button>
               </div>
-
-              {/* Backdrop blur overlay when dropdown is open */}
-              {showSearchDropdown && teamSearchTerm && (
-                <div 
-                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]"
-                  onClick={() => setShowSearchDropdown(false)}
-                />
-              )}
 
               {showSearchDropdown && teamSearchTerm && (
                 <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
