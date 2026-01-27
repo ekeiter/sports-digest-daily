@@ -403,12 +403,7 @@ export default function Feed() {
                       
                       <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
-                          <span>{(() => {
-                            // For aggregators like Yahoo, show url_domain (actual source) instead of domain
-                            const aggregators = ['sports.yahoo.com', 'news.yahoo.com', 'yahoo.com'];
-                            const isAggregator = article.domain && aggregators.some(agg => article.domain?.includes(agg));
-                            return (isAggregator && article.url_domain) ? article.url_domain : (article.domain || 'Unknown source');
-                          })()}</span>
+                          <span>{article.url_domain || article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
                           <span>•</span>
