@@ -2057,6 +2057,7 @@ export type Database = {
           title: string
           updated_at: string
           url: string
+          url_domain: string
         }[]
       }
       link_article_source: {
