@@ -124,7 +124,7 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
             <div className="w-6 h-6 md:w-6 md:h-6 lg:w-7 lg:h-7 rounded-full bg-muted" />
           )}
         </div>
-        <span className="text-[10px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
+        <span className="text-[9.5px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
           {label}
         </span>
         {sublabel && (
