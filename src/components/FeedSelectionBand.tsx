@@ -273,8 +273,12 @@ export default function FeedSelectionBand({
           {/* Teams */}
           {teams.map(team => {
             // Show league code as sublabel for soccer teams
-            const leagueCode = team.leagues?.code;
-            const isSoccer = leagueCode && ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1', 'UCL'].includes(leagueCode);
+            const soccerLeagues = ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1', 'UCL'];
+            const leaguesArray = team.leagues as unknown as { code: string }[] | { code: string } | null;
+            const leagueCode = Array.isArray(leaguesArray) 
+              ? leaguesArray.find(l => soccerLeagues.includes(l.code))?.code 
+              : leaguesArray?.code;
+            const isSoccer = leagueCode && soccerLeagues.includes(leagueCode);
             return (
               <SelectionCard
                 key={`team-${team.id}`}
