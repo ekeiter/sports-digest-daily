@@ -271,15 +271,21 @@ export default function FeedSelectionBand({
           ))}
           
           {/* Teams */}
-          {teams.map(team => (
-            <SelectionCard
-              key={`team-${team.id}`}
-              logoUrl={team.logo_url}
-              label={team.nickname || team.display_name}
-              interestId={team.interestId}
-              onDelete={onDeleteTeam ? () => onDeleteTeam(team.id) : undefined}
-            />
-          ))}
+          {teams.map(team => {
+            // Show league code as sublabel for soccer teams
+            const leagueCode = team.leagues?.code;
+            const isSoccer = leagueCode && ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1', 'UCL'].includes(leagueCode);
+            return (
+              <SelectionCard
+                key={`team-${team.id}`}
+                logoUrl={team.logo_url}
+                label={team.nickname || team.display_name}
+                sublabel={isSoccer ? leagueCode : undefined}
+                interestId={team.interestId}
+                onDelete={onDeleteTeam ? () => onDeleteTeam(team.id) : undefined}
+              />
+            );
+          })}
           
           {/* Schools */}
           {schools.map(school => (
