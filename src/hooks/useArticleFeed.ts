@@ -7,6 +7,7 @@ export type FeedRow = {
   url: string;
   thumbnail_url: string | null;
   domain: string | null;
+  url_domain: string | null;
   published_effective: string;
   published_at: string | null;
   updated_at: string | null;
