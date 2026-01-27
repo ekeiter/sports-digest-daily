@@ -942,20 +942,20 @@ export default function Preferences() {
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
   return <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
-        <div className="container mx-auto px-4 py-4 max-w-3xl">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center gap-4">
-              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-16 md:h-20" />
-              <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager </span>
+        <div className="container mx-auto px-4 py-2 max-w-3xl">
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-3">
+              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-10 md:h-12" />
+              <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager</span>
             </div>
-            <div className="flex gap-1.5 md:gap-2">
-              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
+            <div className="flex gap-1.5 justify-center">
+              <Button size="sm" className="h-7 w-28" onClick={() => navigate("/")}>
                 Dashboard
               </Button>
-              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/feed")}>
+              <Button size="sm" className="h-7 w-28" onClick={() => navigate("/feed")}>
                 Combined Feed
               </Button>
-              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && <Button className="text-sm px-3 md:px-4" onClick={handleBack}>
+              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && <Button size="sm" className="h-7 w-28" onClick={handleBack}>
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Back
                 </Button>}

@@ -111,9 +111,9 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
         onMouseLeave={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
-        className={`flex flex-col items-center w-16 h-14 md:w-20 md:h-[72px] lg:w-24 lg:h-[84px] p-0.5 md:p-1 lg:p-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle lg:animate-none' : ''}`}
+        className={`flex flex-col items-center w-[72px] h-16 md:w-20 md:h-[72px] lg:w-24 lg:h-[84px] p-0.5 md:p-1 lg:p-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle lg:animate-none' : ''}`}
       >
-        <div className="w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 flex items-center justify-center">
+        <div className="w-8 h-8 md:w-9 md:h-9 lg:w-11 lg:h-11 flex items-center justify-center">
           {logoUrl ? (
             <img 
               src={logoUrl} 
@@ -121,10 +121,10 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
               className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 rounded-full bg-muted" />
+            <div className="w-6 h-6 md:w-6 md:h-6 lg:w-7 lg:h-7 rounded-full bg-muted" />
           )}
         </div>
-        <span className="text-[9px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
+        <span className="text-[10px] md:text-[11px] lg:text-xs font-semibold text-center line-clamp-1 leading-tight text-foreground">
           {label}
         </span>
         {sublabel && (
