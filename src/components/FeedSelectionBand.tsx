@@ -6,6 +6,7 @@ import {
   LeagueWithInterest, 
   TeamWithInterest, 
   SchoolWithInterest, 
+  CountryWithInterest,
   Person,
   OlympicsPreference 
 } from "@/hooks/useUserPreferences";
@@ -157,12 +158,14 @@ interface FeedSelectionBandProps {
   leagues: LeagueWithInterest[];
   teams: TeamWithInterest[];
   schools: SchoolWithInterest[];
+  countries: CountryWithInterest[];
   people: Person[];
   olympicsPrefs: OlympicsPreference[];
   onDeleteSport?: (id: number) => void;
   onDeleteLeague?: (id: number) => void;
   onDeleteTeam?: (id: number) => void;
   onDeleteSchool?: (id: number, leagueId?: number) => void;
+  onDeleteCountry?: (id: number, leagueId?: number) => void;
   onDeletePerson?: (id: number) => void;
   onDeleteOlympics?: (id: number) => void;
 }
@@ -172,12 +175,14 @@ export default function FeedSelectionBand({
   leagues,
   teams,
   schools,
+  countries,
   people,
   olympicsPrefs,
   onDeleteSport,
   onDeleteLeague,
   onDeleteTeam,
   onDeleteSchool,
+  onDeleteCountry,
   onDeletePerson,
   onDeleteOlympics,
 }: FeedSelectionBandProps) {
@@ -197,7 +202,7 @@ export default function FeedSelectionBand({
     }
   };
   const hasItems = sports.length > 0 || leagues.length > 0 || teams.length > 0 || 
-                   schools.length > 0 || people.length > 0 || olympicsPrefs.length > 0;
+                   schools.length > 0 || countries.length > 0 || people.length > 0 || olympicsPrefs.length > 0;
 
   useEffect(() => {
     if (!hasItems) return;
@@ -222,7 +227,7 @@ export default function FeedSelectionBand({
         resizeObserver.disconnect();
       };
     }
-  }, [sports, leagues, teams, schools, people, olympicsPrefs, hasItems]);
+  }, [sports, leagues, teams, schools, countries, people, olympicsPrefs, hasItems]);
 
   if (!hasItems) {
     return null;
@@ -284,7 +289,19 @@ export default function FeedSelectionBand({
               label={school.short_name}
               sublabel={school.league_code || "All Sports"}
               interestId={school.interestId}
-              onDelete={onDeleteSchool ? () => onDeleteSchool(school.id, school.league_id) : undefined}
+              onDelete={onDeleteSchool ? () => onDeleteSchool(school.id, school.league_id ?? undefined) : undefined}
+            />
+          ))}
+          
+          {/* Countries (non-Olympics) */}
+          {countries.map(country => (
+            <SelectionCard
+              key={`country-${country.id}-${country.league_id || 'all'}`}
+              logoUrl={country.logo_url}
+              label={country.name}
+              sublabel={country.league_code || undefined}
+              interestId={country.interestId}
+              onDelete={onDeleteCountry ? () => onDeleteCountry(country.id, country.league_id ?? undefined) : undefined}
             />
           ))}
           

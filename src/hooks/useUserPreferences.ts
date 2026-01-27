@@ -31,6 +31,16 @@ export interface SchoolWithInterest extends School {
   league_id?: number | null;
 }
 
+export interface CountryWithInterest {
+  id: number;
+  name: string;
+  code: string;
+  logo_url: string | null;
+  interestId: number;
+  league_id?: number | null;
+  league_code?: string | null;
+}
+
 export interface Person {
   id: number;
   name: string;
@@ -83,6 +93,7 @@ export interface UserPreferences {
   teams: TeamWithInterest[];
   people: Person[];
   schools: SchoolWithInterest[];
+  countries: CountryWithInterest[];
   olympicsPrefs: OlympicsPreference[];
   focusedItems: Set<string>;
 }
@@ -105,6 +116,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const teamIds: number[] = [];
   const personIds: number[] = [];
   const schoolIds: number[] = [];
+  const countryInterests: { id: number; country_id: number; league_id: number | null }[] = [];
   const olympicsInterests: { id: number; sport_id: number | null; country_id: number | null }[] = [];
   
   // Maps from entity ID to subscriber_interests.id for focus navigation
@@ -113,6 +125,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const teamInterestMap = new Map<number, number>();
   const personInterestMap = new Map<number, number>();
   const schoolInterestMap = new Map<number, number>();
+  const countryInterestMap = new Map<string, number>(); // key: "countryId-leagueId"
 
   (allInterests || []).forEach(interest => {
     // Handle Olympics preferences separately
@@ -151,11 +164,26 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
       schoolInterestMap.set(interest.school_id, interest.id);
       if (interest.is_focused) focused.add(`school-${interest.school_id}`);
     }
+    // Non-Olympics country interests (e.g., USA in World Cup)
+    if (interest.country_id !== null && !interest.is_olympics) {
+      countryInterests.push({
+        id: interest.id,
+        country_id: interest.country_id,
+        league_id: interest.league_id,
+      });
+      const key = `${interest.country_id}-${interest.league_id || 'null'}`;
+      countryInterestMap.set(key, interest.id);
+      if (interest.is_focused) focused.add(`country-${interest.country_id}`);
+    }
   });
 
   // Collect unique sport/country IDs from olympics interests for batch lookup
   const olympicsSportIds = [...new Set(olympicsInterests.map(o => o.sport_id).filter((id): id is number => id !== null))];
   const olympicsCountryIds = [...new Set(olympicsInterests.map(o => o.country_id).filter((id): id is number => id !== null))];
+  
+  // Collect unique country IDs from non-Olympics country interests
+  const nonOlympicsCountryIds = [...new Set(countryInterests.map(c => c.country_id))];
+  const countryLeagueIds = [...new Set(countryInterests.map(c => c.league_id).filter((id): id is number => id !== null))];
 
   // Fetch all details in parallel
   // Build a map of school_id to league_id from interests for enrichment
@@ -166,7 +194,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   });
 
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult, nonOlympicsCountriesResult, countryLeaguesResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -237,6 +265,14 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     // Fetch label and logo from preference_menu_items for leagues
     leagueIds.length > 0
       ? supabase.from("preference_menu_items").select("entity_id, label, logo_url").eq("entity_type", "league").in("entity_id", leagueIds)
+      : Promise.resolve({ data: [], error: null }),
+    // Fetch country details for non-Olympics country interests
+    nonOlympicsCountryIds.length > 0
+      ? supabase.from("countries").select("id, name, code, logo_url").in("id", nonOlympicsCountryIds)
+      : Promise.resolve({ data: [], error: null }),
+    // Fetch league codes for countries that have league_id
+    countryLeagueIds.length > 0
+      ? supabase.from("leagues").select("id, code").in("id", countryLeagueIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -376,12 +412,34 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
+  // Build country lookup and league code lookup for countries
+  const countryDetailsMap = new Map(
+    (nonOlympicsCountriesResult.data || []).map((c: any) => [c.id, { name: c.name, code: c.code, logo_url: c.logo_url }])
+  );
+  const countryLeagueCodeMap = new Map((countryLeaguesResult.data || []).map(l => [l.id, l.code]));
+  
+  // Enrich countries with their league_code and interestId
+  const countries: CountryWithInterest[] = countryInterests.map(ci => {
+    const details = countryDetailsMap.get(ci.country_id);
+    const key = `${ci.country_id}-${ci.league_id || 'null'}`;
+    return {
+      id: ci.country_id,
+      name: details?.name || 'Unknown',
+      code: details?.code || '',
+      logo_url: details?.logo_url || null,
+      interestId: countryInterestMap.get(key) || ci.id,
+      league_id: ci.league_id,
+      league_code: ci.league_id ? countryLeagueCodeMap.get(ci.league_id) : null,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
   return {
     sports,
     leagues,
     teams,
     people,
     schools,
+    countries,
     olympicsPrefs,
     focusedItems: focused,
   };
