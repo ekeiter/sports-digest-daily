@@ -425,6 +425,7 @@ export type Database = {
           duplicate_of_id: number | null
           duration_seconds: number | null
           excerpt: string | null
+          excerpt_hash: string | null
           fetched_at: string | null
           first_seen_at: string | null
           guid: string | null
@@ -482,6 +483,7 @@ export type Database = {
           duplicate_of_id?: number | null
           duration_seconds?: number | null
           excerpt?: string | null
+          excerpt_hash?: string | null
           fetched_at?: string | null
           first_seen_at?: string | null
           guid?: string | null
@@ -539,6 +541,7 @@ export type Database = {
           duplicate_of_id?: number | null
           duration_seconds?: number | null
           excerpt?: string | null
+          excerpt_hash?: string | null
           fetched_at?: string | null
           first_seen_at?: string | null
           guid?: string | null
@@ -1987,6 +1990,7 @@ export type Database = {
           duplicate_of_id: number | null
           duration_seconds: number | null
           excerpt: string | null
+          excerpt_hash: string | null
           fetched_at: string | null
           first_seen_at: string | null
           guid: string | null
