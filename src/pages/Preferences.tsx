@@ -888,6 +888,43 @@ export default function Preferences() {
     }
   };
 
+  const handleDeleteCountry = async (countryId: number, leagueId?: number) => {
+    if (!userId) return;
+    try {
+      const country = userPreferences?.countries.find(c => c.id === countryId && c.league_id === (leagueId ?? null));
+      let query = supabase
+        .from("subscriber_interests")
+        .delete()
+        .eq("subscriber_id", userId)
+        .eq("country_id", countryId);
+      
+      if (leagueId) {
+        query = query.eq("league_id", leagueId);
+      }
+      
+      const { error } = await query;
+      if (error) throw error;
+      
+      setSelectedCountries(prev => prev.filter(id => id !== countryId));
+      if (leagueId) {
+        setSelectedCountriesByLeague(prev => {
+          const updated = { ...prev };
+          if (updated[leagueId]) {
+            updated[leagueId] = updated[leagueId].filter(id => id !== countryId);
+          }
+          return updated;
+        });
+      }
+      
+      toast(`Unfollowed ${country?.name || 'country'}`);
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    } catch (error) {
+      console.error("Error deleting country:", error);
+      toast.error("Could not remove. Please try again.");
+    }
+  };
+
   const handleDeletePerson = async (personId: number) => {
     if (!userId) return;
     try {
@@ -1013,12 +1050,14 @@ export default function Preferences() {
                 leagues={userPreferences.leagues}
                 teams={userPreferences.teams}
                 schools={userPreferences.schools}
+                countries={userPreferences.countries}
                 people={userPreferences.people}
                 olympicsPrefs={userPreferences.olympicsPrefs}
                 onDeleteSport={handleDeleteSport}
                 onDeleteLeague={handleDeleteLeague}
                 onDeleteTeam={handleDeleteTeam}
                 onDeleteSchool={handleDeleteSchool}
+                onDeleteCountry={handleDeleteCountry}
                 onDeletePerson={handleDeletePerson}
                 onDeleteOlympics={handleDeleteOlympics}
               />
