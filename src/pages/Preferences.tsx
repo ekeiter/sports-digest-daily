@@ -1269,7 +1269,7 @@ export default function Preferences() {
                           {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
                               <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                             </div>}
-                          <span className="text-sm font-medium flex-1 min-w-0">
+                          <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
                             {item.label}
                           </span>
                           {isSubmenu && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
@@ -1336,7 +1336,7 @@ export default function Preferences() {
                                     {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
                                         <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                       </div>}
-                                    <span className={`text-sm font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
+                                    <span className={`text-xs md:text-sm font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
                                       {child.label}
                                     </span>
                                   </div>
@@ -1387,7 +1387,7 @@ export default function Preferences() {
                                             {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                               </div>}
-                                            <span className="text-sm font-medium flex-1 min-w-0">
+                                            <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
                                               {grandchild.label}
                                             </span>
                                           </div>
