@@ -272,13 +272,19 @@ export default function FeedSelectionBand({
           
           {/* Teams */}
           {teams.map(team => {
-            // Show league code as sublabel for soccer teams
-            const soccerLeagues = ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1', 'UCL'];
+            // Show league code as sublabel for soccer teams - prioritize domestic leagues
+            const domesticLeagues = ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1'];
+            const continentalLeagues = ['UCL', 'UEL', 'UECL'];
             const leaguesArray = team.leagues as unknown as { code: string }[] | { code: string } | null;
-            const leagueCode = Array.isArray(leaguesArray) 
-              ? leaguesArray.find(l => soccerLeagues.includes(l.code))?.code 
-              : leaguesArray?.code;
-            const isSoccer = leagueCode && soccerLeagues.includes(leagueCode);
+            let leagueCode: string | undefined;
+            if (Array.isArray(leaguesArray)) {
+              // First try domestic, then continental
+              leagueCode = leaguesArray.find(l => domesticLeagues.includes(l.code))?.code
+                || leaguesArray.find(l => continentalLeagues.includes(l.code))?.code;
+            } else {
+              leagueCode = leaguesArray?.code;
+            }
+            const isSoccer = leagueCode && [...domesticLeagues, ...continentalLeagues].includes(leagueCode);
             return (
               <SelectionCard
                 key={`team-${team.id}`}
