@@ -5,7 +5,14 @@ import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart } from "lucide-react";
+import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart, HelpCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import FeedSelectionBand from "@/components/FeedSelectionBand";
@@ -18,6 +25,7 @@ type School = Database['public']['Tables']['schools']['Row'];
 export default function Preferences() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
   // Menu structure
@@ -978,7 +986,68 @@ export default function Preferences() {
             <div className="flex items-center gap-3">
               <img src={sportsdigLogo} alt="SportsDig Logo" className="h-10 md:h-12" />
               <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager</span>
+              <button
+                onClick={() => setShowHelpDialog(true)}
+                className="p-1 rounded-full hover:bg-black/10 transition-colors"
+                aria-label="Help"
+                title="How to use"
+              >
+                <HelpCircle className="h-5 w-5 text-muted-foreground" />
+              </button>
             </div>
+
+            {/* Help Dialog */}
+            <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
+                  <DialogDescription className="sr-only">
+                    Instructions for using the Feed Topic Manager
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Browsing Topics</h3>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <li>Select any topic to drill down into more specific categories</li>
+                      <li>Continue drilling down to find teams, schools, players, and more</li>
+                      <li>Clicking any item opens a focused news feed for that topic</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Searching</h3>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <li>Use the search box to find any topic quickly</li>
+                      <li>Search includes teams, players, coaches, schools, and leagues</li>
+                      <li>Click any search result to view its focused news feed</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Favoriting Topics</h3>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <li>Click the heart icon to favorite any topic</li>
+                      <li>Click again to remove from favorites</li>
+                      <li>Favorites appear at the top of the screen for quick access</li>
+                      <li>Click any favorite to see its focused news feed</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Removing Favorites</h3>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <li><span className="font-medium">Mobile/Tablet:</span> Press and hold a favorite card, then tap the X</li>
+                      <li><span className="font-medium">Desktop:</span> Click the X button on the favorite card</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Combined Feed</h3>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                      <li>Click "Combined Feed" button to see news from all favorites</li>
+                      <li>Your feed can include any mix of players, teams, leagues, and more</li>
+                    </ul>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="flex gap-1.5 justify-center">
               <Button size="sm" className="h-7 w-28" onClick={() => navigate("/")}>
                 Dashboard
