@@ -200,6 +200,13 @@ const Index = () => {
                 <li><span className="font-medium">Desktop:</span> Click the X button on the favorite card</li>
               </ul>
             </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Combined Feed</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                <li>Click "Combined Feed" button to see a news feed from all of your favorite topics</li>
+                <li>Your feed can include any mix of players, teams, leagues, and more</li>
+              </ul>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
