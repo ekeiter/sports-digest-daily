@@ -992,7 +992,7 @@ export default function Preferences() {
                 aria-label="Help"
                 title="How to use"
               >
-                <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
               </button>
             </div>
 
