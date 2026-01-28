@@ -18,7 +18,8 @@ async function fetchFeedPage(
   cursor?: { time: string; id: number } | null,
   interestId?: number,
   entityType?: string,
-  entityId?: number
+  entityId?: number,
+  focusLeagueId?: number
 ): Promise<FeedRow[]> {
   // Get the current session for auth header
   const { data: { session } } = await supabase.auth.getSession();
@@ -41,6 +42,9 @@ async function fetchFeedPage(
   if (entityId) {
     body.entity_id = entityId;
   }
+  if (focusLeagueId) {
+    body.focus_league_id = focusLeagueId;
+  }
 
   // Call the edge function instead of direct RPC (bypasses PostgREST cache)
   const response = await supabase.functions.invoke("get-feed", {
@@ -54,11 +58,11 @@ async function fetchFeedPage(
   return (response.data ?? []) as FeedRow[];
 }
 
-export function useArticleFeed(userId: string | null, interestId?: number, entityType?: string, entityId?: number) {
+export function useArticleFeed(userId: string | null, interestId?: number, entityType?: string, entityId?: number, focusLeagueId?: number) {
   // Build query key based on which focus method is used
   let queryKey: (string | number | null | undefined)[];
   if (entityType && entityId) {
-    queryKey = ['articleFeed', userId, entityType, entityId];
+    queryKey = ['articleFeed', userId, entityType, entityId, focusLeagueId];
   } else if (interestId) {
     queryKey = ['articleFeed', userId, 'interest', interestId];
   } else {
@@ -67,7 +71,7 @@ export function useArticleFeed(userId: string | null, interestId?: number, entit
     
   return useQuery({
     queryKey,
-    queryFn: () => fetchFeedPage(userId!, undefined, interestId, entityType, entityId),
+    queryFn: () => fetchFeedPage(userId!, undefined, interestId, entityType, entityId, focusLeagueId),
     enabled: !!userId,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -92,9 +96,9 @@ export function usePrefetchArticleFeed() {
 export function useInvalidateArticleFeed() {
   const queryClient = useQueryClient();
 
-  return (userId: string, interestId?: number, entityType?: string, entityId?: number) => {
+  return (userId: string, interestId?: number, entityType?: string, entityId?: number, focusLeagueId?: number) => {
     if (entityType && entityId) {
-      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, entityType, entityId] });
+      queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, entityType, entityId, focusLeagueId] });
     } else if (interestId) {
       queryClient.invalidateQueries({ queryKey: ['articleFeed', userId, 'interest', interestId] });
     } else {

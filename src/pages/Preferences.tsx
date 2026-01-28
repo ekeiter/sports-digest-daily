@@ -514,8 +514,13 @@ export default function Preferences() {
   };
 
   // Navigate to focused feed for an entity - no need to create a favorite
-  const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person' | 'country', entityId: number) => {
-    navigate(`/feed?type=${entityType}&id=${entityId}`);
+  // For schools, optionally pass leagueId to filter by specific sport
+  const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person' | 'country', entityId: number, leagueId?: number | null) => {
+    let url = `/feed?type=${entityType}&id=${entityId}`;
+    if (entityType === 'school' && leagueId) {
+      url += `&leagueId=${leagueId}`;
+    }
+    navigate(url);
   };
   const handleItemClick = async (item: MenuItem) => {
     // Check for custom route in display_options first
@@ -1127,7 +1132,7 @@ export default function Preferences() {
                                     <img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
-                        handleNavigateToFocus('school', result.school_id);
+                        handleNavigateToFocus('school', result.school_id, result.league_id);
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
                       }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
