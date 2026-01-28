@@ -160,11 +160,8 @@ const Index = () => {
       <Dialog open={showInstructionsDialog} onOpenChange={setShowInstructionsDialog}>
         <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <div className="flex justify-center mb-4">
-              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
-            </div>
             <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="sr-only">
               Instructions for using the Feed Topic Manager
             </DialogDescription>
           </DialogHeader>
