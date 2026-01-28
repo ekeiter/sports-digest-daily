@@ -37,6 +37,10 @@ export default function Feed() {
   const entityType = searchParams.get("type");
   const entityIdParam = searchParams.get("id");
   const entityId = entityIdParam ? parseInt(entityIdParam) : undefined;
+  
+  // Optional league filter for schools (e.g., Virginia NCAAF vs Virginia NCAAM)
+  const leagueIdParam = searchParams.get("leagueId");
+  const focusLeagueId = leagueIdParam ? parseInt(leagueIdParam) : undefined;
 
   // Fetch feed with optional focus parameters
   const {
@@ -45,7 +49,7 @@ export default function Feed() {
     refetch,
     isError,
     error,
-  } = useArticleFeed(user?.id, interestId, entityType || undefined, entityId);
+  } = useArticleFeed(user?.id, interestId, entityType || undefined, entityId, focusLeagueId);
   const invalidateFeed = useInvalidateArticleFeed();
 
   // Combined articles: initial from React Query + any loaded via "Load More"
@@ -73,7 +77,7 @@ export default function Feed() {
     } else {
       setFocusLabel(null);
     }
-  }, [interestId, entityType, entityId, user?.id]);
+  }, [interestId, entityType, entityId, focusLeagueId, user?.id]);
 
   const fetchFocusLabel = async () => {
     if (!user?.id) return;
@@ -90,8 +94,15 @@ export default function Feed() {
           const { data } = await supabase.from("people").select("name").eq("id", entityId).single();
           label = data?.name || "Player";
         } else if (entityType === 'school') {
-          const { data } = await supabase.from("schools").select("short_name, name").eq("id", entityId).single();
-          label = data?.short_name || data?.name || "School";
+          const { data: school } = await supabase.from("schools").select("short_name, name").eq("id", entityId).single();
+          const schoolName = school?.short_name || school?.name || "School";
+          // If we have a league filter, append the league code
+          if (focusLeagueId) {
+            const { data: league } = await supabase.from("leagues").select("code").eq("id", focusLeagueId).single();
+            label = league?.code ? `${schoolName} (${league.code})` : schoolName;
+          } else {
+            label = `${schoolName} (All Sports)`;
+          }
         } else if (entityType === 'league') {
           const { data } = await supabase.from("leagues").select("code, name").eq("id", entityId).single();
           label = data?.code || data?.name || "League";
@@ -208,6 +219,9 @@ export default function Feed() {
     if (entityId) {
       body.entity_id = entityId;
     }
+    if (focusLeagueId) {
+      body.focus_league_id = focusLeagueId;
+    }
 
     const response = await supabase.functions.invoke("get-feed", { body });
     if (response.error) throw new Error(response.error.message);
@@ -237,7 +251,7 @@ export default function Feed() {
     setRefreshing(true);
     setExtraArticles([]);
     if (user) {
-      invalidateFeed(user.id, interestId, entityType || undefined, entityId);
+      invalidateFeed(user.id, interestId, entityType || undefined, entityId, focusLeagueId);
     }
     await refetch();
     setRefreshing(false);
