@@ -132,10 +132,10 @@ const Index = () => {
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/feed")}>
               Go To My Combined Sports News Feed   
             </Button>
-            <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
-              <img src={sportsDigBlimpLogo} alt="" className="h-5 w-auto" />
-              Feed Topic Manager
-              <img src={sportsDigBlimpLogo} alt="" className="h-5 w-auto" />
+            <Button className="w-full justify-between" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
+              <img src={sportsDigBlimpLogo} alt="" className="h-7 w-auto" />
+              <span>Feed Topic Manager</span>
+              <img src={sportsDigBlimpLogo} alt="" className="h-7 w-auto" />
             </Button>
             
             <div className="border-t border-gray-400 my-1" />
