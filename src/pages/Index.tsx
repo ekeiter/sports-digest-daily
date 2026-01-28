@@ -6,10 +6,19 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showInstructionsDialog, setShowInstructionsDialog] = useState(false);
   const navigate = useNavigate();
   const prefetchPreferences = usePrefetchUserPreferences();
   const prefetchFeed = usePrefetchArticleFeed();
@@ -126,6 +135,9 @@ const Index = () => {
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
               Feed Topic Manager  
             </Button>
+            <Button className="w-full" size="lg" variant="outline" onClick={() => setShowInstructionsDialog(true)}>
+              Instructions
+            </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/why-sportsdig")}>
               Why SportsDig?
             </Button>
@@ -138,6 +150,54 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      {/* Instructions Dialog */}
+      <Dialog open={showInstructionsDialog} onOpenChange={setShowInstructionsDialog}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
+            </div>
+            <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
+            <DialogDescription>
+              Instructions for using the Feed Topic Manager
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Browsing Topics</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                <li>Clicking any item opens a focused news feed for that topic</li>
+                <li>Select any menu button to drill down into more specific categories including teams, schools, etc.</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Searching</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                <li>Use the search box to find any topic quickly</li>
+                <li>Search includes teams, players, coaches, schools, and leagues</li>
+                <li>Click any search result to view its focused news feed</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Favoriting Topics</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                <li>Click the heart icon to favorite any topic</li>
+                <li>Favorites appear at the top of the screen for quick access</li>
+                <li>Click any favorite to see its focused news feed</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Removing Favorites</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
+                <li>Click the heart again to remove from favorites</li>
+                <li><span className="font-medium">Mobile/Tablet:</span> Press and hold a favorite card, then tap the X</li>
+                <li><span className="font-medium">Desktop:</span> Click the X button on the favorite card</li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
 export default Index;
