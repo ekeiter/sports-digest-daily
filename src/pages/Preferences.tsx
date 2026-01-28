@@ -11,6 +11,7 @@ import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import FeedSelectionBand from "@/components/FeedSelectionBand";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
+import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 type School = Database['public']['Tables']['schools']['Row'];
@@ -74,6 +75,10 @@ export default function Preferences() {
   const [peopleSearchResults, setPeopleSearchResults] = useState<PersonSearchResult[]>([]);
   const [searchingPeople, setSearchingPeople] = useState(false);
   const [followedPersonIds, setFollowedPersonIds] = useState<Set<number>>(new Set());
+
+  // School search (with league context)
+  const [schoolSearchResults, setSchoolSearchResults] = useState<SchoolSearchResult[]>([]);
+  const [searchingSchools, setSearchingSchools] = useState(false);
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
 
@@ -677,11 +682,32 @@ export default function Preferences() {
     const searchLower = teamSearchTerm.toLowerCase();
     return teams.filter(team => team.display_name.toLowerCase().includes(searchLower) || team.nickname?.toLowerCase().includes(searchLower) || team.city_state_name?.toLowerCase().includes(searchLower)).sort((a, b) => a.display_name.localeCompare(b.display_name));
   };
+  // Keep getFilteredSchools for backward compatibility (Schools browser view)
   const getFilteredSchools = () => {
     if (!teamSearchTerm) return [];
     const searchLower = teamSearchTerm.toLowerCase();
     return schools.filter(school => school.name.toLowerCase().includes(searchLower) || school.short_name?.toLowerCase().includes(searchLower) || school.aliases?.some(alias => alias.toLowerCase().includes(searchLower))).sort((a, b) => a.name.localeCompare(b.name));
   };
+
+  // Debounced school search (with league context)
+  useEffect(() => {
+    if (!teamSearchTerm || teamSearchTerm.length < 2) {
+      setSchoolSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearchingSchools(true);
+      try {
+        const results = await searchSchools(teamSearchTerm);
+        setSchoolSearchResults(results.slice(0, 30)); // Limit to 30 results
+      } catch (error) {
+        console.error("Error searching schools:", error);
+      } finally {
+        setSearchingSchools(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [teamSearchTerm]);
 
   // Debounced people search
   useEffect(() => {
@@ -990,17 +1016,18 @@ export default function Preferences() {
                   setTeamSearchTerm("");
                   setShowSearchDropdown(false);
                   setPeopleSearchResults([]);
+                  setSchoolSearchResults([]);
                 }} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       <X className="h-4 w-4" />
                     </button>}
                 </div>
-                <Button disabled={loadingAllTeams || loadingAllSchoolsSearch || searchingPeople}>
-                  {loadingAllTeams || loadingAllSchoolsSearch || searchingPeople ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                <Button disabled={loadingAllTeams || searchingSchools || searchingPeople}>
+                  {loadingAllTeams || searchingSchools || searchingPeople ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 </Button>
               </div>
 
               {showSearchDropdown && teamSearchTerm && <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
-                  {loadingAllTeams || loadingAllSchoolsSearch ? <div className="flex items-center justify-center py-4">
+                  {loadingAllTeams ? <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-5 w-5 animate-spin" />
                     </div> : <>
                       {/* Sports Section */}
@@ -1083,32 +1110,36 @@ export default function Preferences() {
                   })}
                         </>}
                       
-                      {/* Schools Section */}
-                      {getFilteredSchools().length > 0 && <>
+                      {/* Schools Section - now with league context */}
+                      {(schoolSearchResults.length > 0 || searchingSchools) && <>
                           <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
-                          {getFilteredSchools().slice(0, 15).map(school => {
-                    // Selected if "All Sports" is selected OR any interest exists for this school
-                    const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
-                    return <div key={`school-${school.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                                    <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                          {searchingSchools ? <div className="flex items-center justify-center py-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            </div> : schoolSearchResults.map(result => {
+                    // Check if this specific school+league combo is selected
+                    const isAllSportsSelected = result.league_id === null && allSportsSchools.has(result.school_id);
+                    const isLeagueSpecificSelected = result.league_id !== null && 
+                      selectedSchoolsByLeague[result.league_id]?.includes(result.school_id);
+                    const isSelected = isAllSportsSelected || isLeagueSpecificSelected;
+                    
+                    return <div key={`school-${result.school_id}-${result.league_id ?? 'all'}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
+                                {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                    <img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
-                        handleNavigateToFocus('school', school.id);
+                        handleNavigateToFocus('school', result.school_id);
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
                       }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
-                                  {school.name}
+                                  {result.display_label}
                                 </span>
-                                <div className="relative flex-shrink-0 cursor-pointer" onClick={e => {
-                        e.stopPropagation();
-                        handleSchoolToggle(school.id);
-                      }}>
-                                  <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} />
-                                  {allSportsSchools.has(school.id) && <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
-                                      A
-                                    </span>}
-                                </div>
+                                <Heart 
+                                  className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} 
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleSchoolToggle(result.school_id, result.league_id);
+                                  }} 
+                                />
                               </div>;
                   })}
                         </>}
@@ -1148,7 +1179,7 @@ export default function Preferences() {
                   })}
                         </>}
                       
-                      {getFilteredSportsAndLeagues().sports.length === 0 && getFilteredSportsAndLeagues().leagues.length === 0 && getFilteredTeams().length === 0 && getFilteredSchools().length === 0 && peopleSearchResults.length === 0 && !searchingPeople && <p className="text-sm text-muted-foreground text-center py-4">No results found</p>}
+                      {getFilteredSportsAndLeagues().sports.length === 0 && getFilteredSportsAndLeagues().leagues.length === 0 && getFilteredTeams().length === 0 && schoolSearchResults.length === 0 && peopleSearchResults.length === 0 && !searchingPeople && !searchingSchools && <p className="text-sm text-muted-foreground text-center py-4">No results found</p>}
                     </>}
                 </div>}
             </div>
