@@ -1005,45 +1005,12 @@ export default function Preferences() {
                     Instructions for using the Feed Topic Manager
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Browsing Topics</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                      <li>Clicking any item opens a focused news feed for that topic</li>
-                      <li>Select any menu button to drill down into more specific categories including teams, schools, etc.</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Searching</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                      <li>Use the search box to find any topic quickly</li>
-                      <li>Search includes teams, players, coaches, schools, and leagues</li>
-                      <li>Click any search result to view its focused news feed</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Favoriting Topics</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                      <li>Click the heart icon to favorite any topic</li>
-                      <li>Favorites appear at the top of the screen for quick access</li>
-                      <li>Click any favorite to see its focused news feed</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Removing Favorites</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                      <li>Click the heart again to remove from favorites</li>
-                      <li><span className="font-medium">Mobile/Tablet:</span> Press and hold a favorite card, then tap the X</li>
-                      <li><span className="font-medium">Desktop:</span> Click the X button on the favorite card</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Combined Feed</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                      <li>Click "Combined Feed" button to see a news feed from all of your favorite topics</li>
-                      <li>Your feed can include any mix of players, teams, leagues, and more</li>
-                    </ul>
-                  </div>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking any item opens a focused news feed for that topic. Select any menu button to drill down into more specific categories including teams, schools, etc.</p>
+                  <p><span className="font-bold text-foreground">Searching</span> - Use the search box to find any topic quickly. Search includes teams, players, coaches, schools, and leagues. Click any search result to view its focused news feed.</p>
+                  <p><span className="font-bold text-foreground">Favoriting Topics</span> - Click the heart icon to favorite any topic. Favorites appear at the top of the screen for quick access. Click any favorite to see its focused news feed.</p>
+                  <p><span className="font-bold text-foreground">Removing Favorites</span> - Click the heart again to remove from favorites. Mobile/Tablet: Press and hold a favorite card, then tap the X. Desktop: Click the X button on the favorite card.</p>
+                  <p><span className="font-bold text-foreground">Combined Feed</span> - Click "Combined Feed" button to see a news feed from all of your favorite topics. Your feed can include any mix of players, teams, leagues, and more.</p>
                 </div>
               </DialogContent>
             </Dialog>
