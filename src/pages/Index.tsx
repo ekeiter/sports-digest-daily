@@ -133,8 +133,13 @@ const Index = () => {
               Go To My Combined Sports News Feed   
             </Button>
             <Button className="w-full" size="lg" variant="outline" onClick={() => navigate("/preferences")}>
-              Feed Topic Manager  
+              <img src={sportsDigBlimpLogo} alt="" className="h-5 w-auto" />
+              Feed Topic Manager
+              <img src={sportsDigBlimpLogo} alt="" className="h-5 w-auto" />
             </Button>
+            
+            <div className="border-t border-gray-400 my-1" />
+            
             <Button className="w-full" size="lg" variant="outline" onClick={() => setShowInstructionsDialog(true)}>
               Instructions
             </Button>
