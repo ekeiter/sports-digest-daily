@@ -1,0 +1,2 @@
+-- Drop the old 7-parameter version of get_subscriber_feed to resolve PostgREST ambiguity
+DROP FUNCTION IF EXISTS public.get_subscriber_feed(uuid, integer, timestamp with time zone, bigint, bigint, text, bigint);
