@@ -1051,7 +1051,7 @@ export default function Preferences() {
                   if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
                     loadAllTeamsAndSchools();
                   }
-                }} onFocus={() => teamSearchTerm && setShowSearchDropdown(true)} className="pr-8 bg-white text-[11px] md:text-sm placeholder:text-[11px] md:placeholder:text-sm" />
+                }} onFocus={() => teamSearchTerm && setShowSearchDropdown(true)} className="pr-8 bg-white text-[12px] md:text-sm placeholder:text-[12px] md:placeholder:text-sm" />
                   {teamSearchTerm && <button type="button" onClick={() => {
                   setTeamSearchTerm("");
                   setShowSearchDropdown(false);
