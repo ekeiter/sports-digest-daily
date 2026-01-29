@@ -8,18 +8,18 @@ const WhySportsDig = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#D5D5D5' }}>
-      <header className="py-6">
+      <header className="py-3">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16 md:h-20" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 max-w-3xl">
+      <main className="container mx-auto px-4 pb-6 max-w-3xl">
         <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 space-y-8">
           <div className="flex justify-center">
-            <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+            <Button size="sm" onClick={() => navigate("/")}>
               Return to Dashboard
             </Button>
           </div>
@@ -136,7 +136,7 @@ const WhySportsDig = () => {
           </section>
 
           <div className="flex justify-center pt-4">
-            <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+            <Button size="sm" onClick={() => navigate("/")}>
               Return to Dashboard
             </Button>
           </div>
