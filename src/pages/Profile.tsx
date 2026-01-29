@@ -70,24 +70,18 @@ export default function Profile() {
         <p className="text-muted-foreground">Loading...</p>
       </div>;
   }
-  return <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#D5D5D5' }}>
-      <header className="py-3">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
+  return <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#D5D5D5' }}>
+      <Card className="w-full max-w-3xl">
+        <CardHeader className="space-y-1">
+          <div className="flex justify-center mb-2">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
-        </div>
-      </header>
-      
-      <div className="flex-1 flex items-center justify-center p-4">
-        <Card className="w-full max-w-3xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>
-            <CardDescription>
-              Welcome to Sports Digest
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <CardTitle className="text-xl md:text-2xl text-center">Your Profile</CardTitle>
+          <CardDescription className="text-center">
+            Welcome to Sports Digest
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
             {needsConfirm && <Alert>
                 <AlertDescription>
                   Please confirm your email to continue. Check your inbox for the confirmation link.
@@ -116,6 +110,5 @@ export default function Profile() {
             </div>
           </CardContent>
         </Card>
-      </div>
     </div>;
 }
