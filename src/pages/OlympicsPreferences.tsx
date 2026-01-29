@@ -6,6 +6,7 @@ import { Loader2, ArrowLeft, Plus, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 
 // Helper to properly capitalize sport names
@@ -196,9 +197,10 @@ export default function OlympicsPreferences() {
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-black">
-              <span className="font-racing text-2xl md:text-3xl">SportsDig</span> <span className="text-lg md:text-xl">- Olympics</span>
-            </h1>
+            <div className="flex items-center gap-2">
+              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 md:h-12" />
+              <span className="text-lg md:text-xl font-bold text-black">- Olympics</span>
+            </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
                 Dashboard
