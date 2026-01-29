@@ -1051,7 +1051,7 @@ export default function Preferences() {
                   if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
                     loadAllTeamsAndSchools();
                   }
-                }} onFocus={() => teamSearchTerm && setShowSearchDropdown(true)} className="pr-8 bg-white" />
+                }} onFocus={() => teamSearchTerm && setShowSearchDropdown(true)} className="pr-8 bg-white text-[9.5px] md:text-sm placeholder:text-[9.5px] md:placeholder:text-sm" />
                   {teamSearchTerm && <button type="button" onClick={() => {
                   setTeamSearchTerm("");
                   setShowSearchDropdown(false);
