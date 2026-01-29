@@ -115,8 +115,8 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-[#D5D5D5]">
-      <header className="border-b border-white/20">
+  return <div className="h-screen overflow-hidden flex flex-col bg-[#D5D5D5]">
+      <header className="border-b border-white/20 flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-20 md:h-24" />
@@ -124,7 +124,7 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-4 text-gray-950 max-w-3xl">
+      <main className="container mx-auto px-4 py-4 text-gray-950 max-w-3xl flex-1 flex flex-col justify-center">
         <div className="text-center space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
           
