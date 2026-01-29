@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { User } from '@supabase/supabase-js';
+import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 interface Subscriber {
   id: string;
   email: string;
@@ -65,46 +66,56 @@ export default function Profile() {
   };
   const needsConfirm = user && !user.email_confirmed_at;
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#D5D5D5' }}>
         <p className="text-muted-foreground">Loading...</p>
       </div>;
   }
-  return <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-3xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>
-          <CardDescription>
-            Welcome to Sports Digest
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {needsConfirm && <Alert>
-              <AlertDescription>
-                Please confirm your email to continue. Check your inbox for the confirmation link.
-              </AlertDescription>
-            </Alert>}
-
-          <div className="space-y-2">
-            <div className="text-sm">
-              <span className="font-medium">Email:</span> {subscriber?.email}
-            </div>
-            <div className="text-sm">
-              <span className="font-medium">Subscription:</span> {subscriber?.subscription_tier || 'free'}
-            </div>
-            <div className="text-sm">
-              <span className="font-medium">Notifications:</span> {subscriber?.notification_frequency || 'daily'}
-            </div>
+  return <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#D5D5D5' }}>
+      <header className="py-3">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center">
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
+        </div>
+      </header>
+      
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-3xl">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-xl md:text-2xl">Your Profile</CardTitle>
+            <CardDescription>
+              Welcome to Sports Digest
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {needsConfirm && <Alert>
+                <AlertDescription>
+                  Please confirm your email to continue. Check your inbox for the confirmation link.
+                </AlertDescription>
+              </Alert>}
 
-          <div className="flex flex-col md:flex-row gap-2">
-            <Button onClick={() => navigate('/')} className="flex-1 w-full">
-              Dashboard
-            </Button>
-            <Button onClick={handleSignOut} variant="outline" className="w-full md:w-auto">
-              Sign out
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="space-y-2">
+              <div className="text-sm">
+                <span className="font-medium">Email:</span> {subscriber?.email}
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">Subscription:</span> {subscriber?.subscription_tier || 'free'}
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">Notifications:</span> {subscriber?.notification_frequency || 'daily'}
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-2">
+              <Button onClick={() => navigate('/')} className="flex-1 w-full">
+                Dashboard
+              </Button>
+              <Button onClick={handleSignOut} variant="outline" className="w-full md:w-auto">
+                Sign out
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>;
 }
