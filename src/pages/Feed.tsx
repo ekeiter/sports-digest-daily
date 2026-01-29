@@ -8,6 +8,7 @@ import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
+import { openUrl } from "@/hooks/useOpenUrl";
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -394,13 +395,12 @@ export default function Feed() {
             {articles.map((article) => (
               <Card key={article.article_id} className="overflow-hidden">
                 <CardContent className="p-0">
-                  <a 
-                    href={article.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block hover:opacity-80 transition-opacity"
+                  <button
+                    type="button"
+                    onClick={() => openUrl(article.url)}
+                    className="block w-full text-left hover:opacity-80 transition-opacity cursor-pointer"
                   >
-                      <div className="flex flex-col md:flex-row">
+                    <div className="flex flex-col md:flex-row">
                       <div className="w-full md:w-64 md:flex-shrink-0">
                         {article.thumbnail_url ? (
                           <img 
@@ -429,7 +429,7 @@ export default function Feed() {
                         </h3>
                       </div>
                     </div>
-                  </a>
+                  </button>
                 </CardContent>
               </Card>
             ))}
