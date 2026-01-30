@@ -216,7 +216,7 @@ export default function OlympicsPreferences() {
 
       <main className="container mx-auto px-4 py-2 max-w-3xl">
         <div className="bg-white/90 rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-black mb-4">Winter Olympics Preferences</h2>
+          <h2 className="text-xl font-bold text-black mb-4">Winter Olympics Selector</h2>
           
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
@@ -268,7 +268,7 @@ export default function OlympicsPreferences() {
 
             <Button onClick={handleAddPreference} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-1" />
-              Add Preference
+              Add Favorite 
             </Button>
           </div>
 
