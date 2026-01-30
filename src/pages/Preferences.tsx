@@ -1085,7 +1085,7 @@ export default function Preferences() {
                         }
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
-                      }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
+                      }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
                                   {item.label}
                                 </span>
                                 <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => {
@@ -1113,7 +1113,7 @@ export default function Preferences() {
                         }
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
-                      }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
+                      }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
                                   {item.label}
                                 </span>
                                 <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => {
@@ -1139,7 +1139,7 @@ export default function Preferences() {
                         handleNavigateToFocus('team', Number(team.id));
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
-                      }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
+                      }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
                                   {team.display_name}
                                 </span>
                                 <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => {
@@ -1170,7 +1170,7 @@ export default function Preferences() {
                         handleNavigateToFocus('school', result.school_id, result.league_id);
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
-                      }} className="text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
+                      }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
                                   {result.display_label}
                                 </span>
                                 <Heart 
@@ -1201,7 +1201,7 @@ export default function Preferences() {
                         setShowSearchDropdown(false);
                         setTeamSearchTerm("");
                       }} className="flex flex-col min-w-0 flex-1 cursor-pointer">
-                                    <span className="text-sm font-medium truncate flex items-center gap-1.5">
+                                    <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                                       {person.name}
                                       {person.countries?.logo_url && <img src={person.countries.logo_url} alt={person.countries.name} className="h-4 w-5 object-contain flex-shrink-0" />}
                                     </span>
