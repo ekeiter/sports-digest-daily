@@ -1045,7 +1045,7 @@ export default function Preferences() {
             <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Input type="text" placeholder="Search teams, players, sports, leagues..." value={teamSearchTerm} onChange={e => {
+                  <Input type="text" placeholder="Search teams, players, colleges, sports, leagues..." value={teamSearchTerm} onChange={e => {
                   setTeamSearchTerm(e.target.value);
                   setShowSearchDropdown(true);
                   if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
