@@ -274,7 +274,7 @@ export default function OlympicsPreferences() {
 
           {/* Existing Preferences */}
           {existingPrefs.length > 0 && <div className="mt-6">
-              <h3 className="text-lg font-semibold text-black mb-3">Your Olympics Preferences</h3>
+              <h3 className="text-lg font-semibold text-black mb-3">Your Olympics Favorites</h3>
               <div className="space-y-2">
                 {existingPrefs.map(pref => <div key={pref.id} className="flex items-center justify-between gap-2 px-3 py-2 bg-white border rounded-md">
                     <div className="flex items-center gap-2">
