@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Plus, X, Trash2 } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, X, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
@@ -290,9 +290,13 @@ export default function OlympicsPreferences() {
                         {pref.country_name || "All Countries"}
                       </span>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => handleRemovePreference(pref.id)} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <button 
+                      onClick={() => handleRemovePreference(pref.id)} 
+                      className="p-1 hover:scale-110 transition-transform"
+                      aria-label="Remove favorite"
+                    >
+                      <Heart className="h-5 w-5 text-destructive fill-destructive" />
+                    </button>
                   </div>)}
               </div>
             </div>}
