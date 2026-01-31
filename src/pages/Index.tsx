@@ -153,7 +153,7 @@ const Index = () => {
               Sign Out ({user.email})
             </Button>
             
-            <p className="text-xs text-foreground text-center pt-4">
+            <p className="text-sm text-foreground text-center pt-4">
               SportsDig™ — Personalized Sports News<br />
               © 2026 SportsDig. All rights reserved.
             </p>
