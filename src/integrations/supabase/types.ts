@@ -821,6 +821,20 @@ export type Database = {
             referencedRelation: "sports"
             referencedColumns: ["sport"]
           },
+          {
+            foreignKeyName: "endpoints_sport_fkey"
+            columns: ["sport"]
+            isOneToOne: false
+            referencedRelation: "subscriber_int_view"
+            referencedColumns: ["sport_name"]
+          },
+          {
+            foreignKeyName: "endpoints_sport_fkey"
+            columns: ["sport"]
+            isOneToOne: false
+            referencedRelation: "subscriber_interests_view"
+            referencedColumns: ["sport_name"]
+          },
         ]
       }
       ingest_run_endpoints: {
@@ -1951,7 +1965,109 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      subscriber_int_view: {
+        Row: {
+          added_at: string | null
+          country_name: string | null
+          id: number | null
+          is_focused: boolean | null
+          is_olympics: boolean | null
+          league_name: string | null
+          notification_enabled: boolean | null
+          person_name: string | null
+          priority: number | null
+          school_name: string | null
+          sport_name: string | null
+          subscriber_email: string | null
+          subscriber_id: string | null
+          team_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriber_interests_view: {
+        Row: {
+          added_at: string | null
+          country_id: number | null
+          country_name: string | null
+          id: number | null
+          is_focused: boolean | null
+          is_olympics: boolean | null
+          league_id: number | null
+          league_name: string | null
+          notification_enabled: boolean | null
+          person_id: number | null
+          person_name: string | null
+          priority: number | null
+          school_id: number | null
+          school_name: string | null
+          sport_id: number | null
+          sport_name: string | null
+          subscriber_email: string | null
+          subscriber_id: string | null
+          team_id: number | null
+          team_location: string | null
+          team_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriber_interests_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriber_interests_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       basic_user_feed: {
