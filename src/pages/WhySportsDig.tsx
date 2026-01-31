@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { Target, Smartphone, Newspaper, Trophy, Zap, Globe, Settings } from "lucide-react";
-
 const WhySportsDig = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: '#D5D5D5' }}>
+  return <div className="min-h-screen" style={{
+    backgroundColor: '#D5D5D5'
+  }}>
       <header className="py-3">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
@@ -109,9 +108,7 @@ const WhySportsDig = () => {
                 Fast, Comprehensive Coverage
               </h2>
             </div>
-            <p className="text-sm md:text-base text-foreground">
-              SportsDig continuously ingests news throughout the day. Articles appear within minutes of publication, not hours. If news breaks, you see it fast.
-            </p>
+            <p className="text-sm md:text-base text-foreground">SportsDig updates coverage throughout the day.  Articles appear within minutes of publication, not hours. If news breaks, you see it fast.</p>
           </section>
 
           <section className="space-y-2">
@@ -142,8 +139,6 @@ const WhySportsDig = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default WhySportsDig;
