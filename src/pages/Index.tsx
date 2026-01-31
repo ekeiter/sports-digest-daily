@@ -152,6 +152,11 @@ const Index = () => {
             <Button className="w-full" size="lg" variant="outline" onClick={handleSignOut}>
               Sign Out ({user.email})
             </Button>
+            
+            <p className="text-xs text-muted-foreground text-center pt-4">
+              SportsDig™ — Personalized Sports News<br />
+              © 2026 SportsDig. All rights reserved.
+            </p>
           </div>
         </div>
       </main>
