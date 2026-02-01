@@ -88,10 +88,10 @@ export default function TrendingPlayers({
         personCounts[personId] = (personCounts[personId] || 0) + 1;
       }
       
-      // Sort by count and take top 30
+      // Sort by count and take top 20
       const sortedPersonIds = Object.entries(personCounts)
         .sort(([, a], [, b]) => b - a)
-        .slice(0, 30)
+        .slice(0, 20)
         .map(([id]) => parseInt(id));
       
       if (sortedPersonIds.length === 0) {
@@ -217,7 +217,10 @@ export default function TrendingPlayers({
       >
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <span className="text-sm font-bold">Trending Players</span>
+          <div className="flex flex-col items-start">
+            <span className="text-sm font-bold">Trending Players</span>
+            <span className="text-[10px] text-muted-foreground leading-tight">article mentions in last 2 hours</span>
+          </div>
         </div>
         {expanded ? (
           <ChevronUp className="h-5 w-5 text-muted-foreground" />
