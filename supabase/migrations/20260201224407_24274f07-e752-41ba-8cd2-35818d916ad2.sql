@@ -1,0 +1,66 @@
+-- Create RPC to return trending people with correct server-side aggregation
+CREATE OR REPLACE FUNCTION public.get_trending_people(
+  p_hours integer DEFAULT 2,
+  p_limit integer DEFAULT 20
+)
+RETURNS TABLE(
+  person_id bigint,
+  person_name text,
+  article_count integer,
+  person_role text,
+  person_position text,
+  sport_name text,
+  sport_logo_url text,
+  league_code text,
+  league_logo_url text,
+  team_name text,
+  team_logo_url text,
+  school_short_name text,
+  school_logo_url text,
+  person_country_code text,
+  country_logo_url text
+)
+LANGUAGE sql
+STABLE
+SET search_path TO 'public'
+AS $$
+WITH recent_articles AS (
+  SELECT id
+  FROM public.articles
+  WHERE published_at >= (now() - make_interval(hours => p_hours))
+),
+person_counts AS (
+  SELECT
+    apm.person_id::bigint AS person_id,
+    COUNT(DISTINCT apm.article_id) :: integer AS article_count
+  FROM public.article_person_map apm
+  JOIN recent_articles ra ON ra.id = apm.article_id
+  GROUP BY apm.person_id
+  ORDER BY article_count DESC
+  LIMIT LEAST(p_limit, 50)
+)
+SELECT
+  p.id::bigint AS person_id,
+  p.name AS person_name,
+  pc.article_count,
+  p.role AS person_role,
+  p.position AS person_position,
+  s.sport AS sport_name,
+  s.logo_url AS sport_logo_url,
+  l.code AS league_code,
+  l.logo_url AS league_logo_url,
+  t.display_name AS team_name,
+  t.logo_url AS team_logo_url,
+  sch.short_name AS school_short_name,
+  sch.logo_url AS school_logo_url,
+  p.country_code AS person_country_code,
+  c.logo_url AS country_logo_url
+FROM person_counts pc
+JOIN public.people p ON p.id = pc.person_id
+LEFT JOIN public.sports s ON s.id = p.sport_id
+LEFT JOIN public.leagues l ON l.id = p.league_id
+LEFT JOIN public.teams t ON t.id = p.team_id
+LEFT JOIN public.schools sch ON sch.id = p.school_id
+LEFT JOIN public.countries c ON c.code = p.country_code
+ORDER BY pc.article_count DESC;
+$$;

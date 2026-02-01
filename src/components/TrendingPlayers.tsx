@@ -48,118 +48,59 @@ export default function TrendingPlayers({
   const loadTrendingPeople = async () => {
     setLoading(true);
     try {
-      // Get all mappings for recent articles with article published_at filter
-      // Use a large limit to avoid the default 1000 row cap
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      // Use server-side RPC for accurate aggregation
+      const { data, error } = await supabase.rpc('get_trending_people', {
+        p_hours: 2,
+        p_limit: 20
+      });
       
-      const { data: mappings, error: mappingsError } = await supabase
-        .from("article_person_map")
-        .select(`
-          person_id,
-          article_id,
-          articles!inner(published_at)
-        `)
-        .gte("articles.published_at", twoHoursAgo)
-        .limit(10000);
+      if (error) throw error;
       
-      if (mappingsError) throw mappingsError;
-      
-      if (!mappings || mappings.length === 0) {
+      if (!data || data.length === 0) {
         setTrendingPeople([]);
         setLoading(false);
         return;
       }
       
-      // Count DISTINCT articles per person (in case of duplicates)
-      const personArticles: Record<number, Set<number>> = {};
-      for (const mapping of mappings) {
-        const personId = mapping.person_id;
-        if (!personArticles[personId]) {
-          personArticles[personId] = new Set();
-        }
-        personArticles[personId].add(mapping.article_id);
-      }
-      
-      // Convert to counts
-      const personCounts: Record<number, number> = {};
-      for (const [personId, articles] of Object.entries(personArticles)) {
-        personCounts[parseInt(personId)] = articles.size;
-      }
-      
-      // Sort by count and take top 20
-      const sortedPersonIds = Object.entries(personCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 20)
-        .map(([id]) => parseInt(id));
-      
-      if (sortedPersonIds.length === 0) {
-        setTrendingPeople([]);
-        setLoading(false);
-        return;
-      }
-      
-      // Fetch person details
-      const { data: peopleData, error: peopleError } = await supabase
-        .from("people")
-        .select(`
-          id,
-          name,
-          role,
-          position,
-          sport_id,
-          sports (sport, logo_url),
-          league_id,
-          leagues (code, logo_url),
-          team_id,
-          teams (display_name, logo_url),
-          school_id,
-          schools (name, short_name, logo_url),
-          country_code
-        `)
-        .in("id", sortedPersonIds);
-      
-      if (peopleError) throw peopleError;
-      
-      // Get country logos if needed
-      const countryCodes = [...new Set(
-        (peopleData || []).filter(p => p.country_code).map(p => p.country_code)
-      )] as string[];
-      
-      let countriesMap: Map<string, string> = new Map();
-      if (countryCodes.length > 0) {
-        const { data: countries } = await supabase
-          .from("countries")
-          .select("code, logo_url")
-          .in("code", countryCodes);
-        countriesMap = new Map((countries || []).map(c => [c.code, c.logo_url]));
-      }
-      
-      // Build the result with article counts, maintaining sort order
-      const result: TrendingPerson[] = sortedPersonIds.map(personId => {
-        const person = (peopleData || []).find(p => p.id === personId);
-        if (!person) return null;
-        
+      // Map RPC result to component format
+      const result: TrendingPerson[] = data.map((row: {
+        person_id: number;
+        person_name: string;
+        article_count: number;
+        person_role: string | null;
+        person_position: string | null;
+        sport_name: string | null;
+        sport_logo_url: string | null;
+        league_code: string | null;
+        league_logo_url: string | null;
+        team_name: string | null;
+        team_logo_url: string | null;
+        school_short_name: string | null;
+        school_logo_url: string | null;
+        person_country_code: string | null;
+        country_logo_url: string | null;
+      }) => {
         // Get logo priority: team > school > league > sport
         let logo_url: string | null = null;
-        if (person.teams?.logo_url) logo_url = person.teams.logo_url;
-        else if (person.schools?.logo_url) logo_url = person.schools.logo_url;
-        else if (person.leagues?.logo_url) logo_url = person.leagues.logo_url;
-        else if (person.sports?.logo_url) logo_url = person.sports.logo_url;
+        if (row.team_logo_url) logo_url = row.team_logo_url;
+        else if (row.school_logo_url) logo_url = row.school_logo_url;
+        else if (row.league_logo_url) logo_url = row.league_logo_url;
+        else if (row.sport_logo_url) logo_url = row.sport_logo_url;
         
         return {
-          id: person.id,
-          name: person.name,
-          article_count: personCounts[personId],
-          sport: person.sports?.sport || null,
-          league: person.leagues?.code || null,
-          team: person.teams?.display_name || null,
-          school: person.schools?.short_name || null,
-          role: person.role,
-          position: person.position,
+          id: row.person_id,
+          name: row.person_name,
+          article_count: row.article_count,
+          sport: row.sport_name,
+          league: row.league_code,
+          team: row.team_name,
+          school: row.school_short_name,
+          role: row.person_role,
+          position: row.person_position,
           logo_url,
-          country_logo_url: person.country_code ? countriesMap.get(person.country_code) || null : null,
+          country_logo_url: row.country_logo_url,
         };
-      }).filter(Boolean) as TrendingPerson[];
+      });
       
       setTrendingPeople(result);
     } catch (error) {
