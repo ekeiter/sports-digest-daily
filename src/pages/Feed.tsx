@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw, X } from "lucide-react";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
+import ArticleImage from "@/components/ArticleImage";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
@@ -403,12 +404,9 @@ export default function Feed() {
                     <div className="flex flex-col md:flex-row">
                       <div className="w-full md:w-64 md:flex-shrink-0">
                         {article.thumbnail_url ? (
-                          <img 
+                          <ArticleImage 
                             src={article.thumbnail_url} 
-                            alt=""
                             className="w-full aspect-video object-cover"
-                            loading="lazy"
-                            referrerPolicy="no-referrer"
                           />
                         ) : (
                           <ArticlePlaceholder />
