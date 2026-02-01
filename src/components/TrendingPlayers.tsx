@@ -218,7 +218,7 @@ export default function TrendingPlayers({
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
           <span className="text-sm font-bold">Trending Players</span>
-          <span className="text-[11px] text-foreground leading-tight text-center flex-1">article mentions<br />in last 2 hours</span>
+          <span className="text-[11px] text-foreground leading-tight text-left ml-4">article mentions<br />in last 2 hours</span>
         </div>
         {expanded ? (
           <ChevronUp className="h-5 w-5 text-muted-foreground" />
