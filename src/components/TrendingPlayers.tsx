@@ -48,30 +48,22 @@ export default function TrendingPlayers({
   const loadTrendingPeople = async () => {
     setLoading(true);
     try {
-      // Get trending people from last 2 hours
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      // Use RPC or raw query to get accurate counts with proper JOINs
+      // First get the cutoff time from the server to avoid timezone issues
+      const { data: serverTime } = await supabase.rpc('now' as never);
+      const cutoffTime = serverTime 
+        ? new Date(new Date(serverTime).getTime() - 2 * 60 * 60 * 1000).toISOString()
+        : new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
       
-      // First, get recent article IDs
-      const { data: recentArticles, error: articlesError } = await supabase
-        .from("articles")
-        .select("id")
-        .gte("published_at", twoHoursAgo);
-      
-      if (articlesError) throw articlesError;
-      
-      if (!recentArticles || recentArticles.length === 0) {
-        setTrendingPeople([]);
-        setLoading(false);
-        return;
-      }
-      
-      const articleIds = recentArticles.map(a => a.id);
-      
-      // Get person mappings for those articles (batch if needed)
+      // Get all mappings for recent articles with article published_at filter
       const { data: mappings, error: mappingsError } = await supabase
         .from("article_person_map")
-        .select("person_id, article_id")
-        .in("article_id", articleIds.slice(0, 1000)); // Limit to avoid query size issues
+        .select(`
+          person_id,
+          article_id,
+          articles!inner(published_at)
+        `)
+        .gte("articles.published_at", cutoffTime);
       
       if (mappingsError) throw mappingsError;
       
@@ -81,11 +73,20 @@ export default function TrendingPlayers({
         return;
       }
       
-      // Count articles per person
-      const personCounts: Record<number, number> = {};
+      // Count DISTINCT articles per person (in case of duplicates)
+      const personArticles: Record<number, Set<number>> = {};
       for (const mapping of mappings) {
         const personId = mapping.person_id;
-        personCounts[personId] = (personCounts[personId] || 0) + 1;
+        if (!personArticles[personId]) {
+          personArticles[personId] = new Set();
+        }
+        personArticles[personId].add(mapping.article_id);
+      }
+      
+      // Convert to counts
+      const personCounts: Record<number, number> = {};
+      for (const [personId, articles] of Object.entries(personArticles)) {
+        personCounts[parseInt(personId)] = articles.size;
       }
       
       // Sort by count and take top 20
