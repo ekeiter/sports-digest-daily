@@ -155,7 +155,7 @@ export default function TrendingPlayers({
         className="w-full flex items-center justify-between py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30 hover:bg-accent transition-colors select-none"
       >
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
+          <TrendingUp className="h-5 w-5 text-green-500" />
           <span className="text-sm font-bold">Trending Players</span>
           <span className="text-[11px] text-foreground leading-tight text-left ml-4">article mentions<br />in last 2 hours</span>
         </div>
