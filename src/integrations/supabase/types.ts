@@ -2177,6 +2177,26 @@ export type Database = {
           url_domain: string
         }[]
       }
+      get_trending_people: {
+        Args: { p_hours?: number; p_limit?: number }
+        Returns: {
+          article_count: number
+          country_logo_url: string
+          league_code: string
+          league_logo_url: string
+          person_country_code: string
+          person_id: number
+          person_name: string
+          person_position: string
+          person_role: string
+          school_logo_url: string
+          school_short_name: string
+          sport_logo_url: string
+          sport_name: string
+          team_logo_url: string
+          team_name: string
+        }[]
+      }
       link_article_source: {
         Args: {
           p_article_id: number
