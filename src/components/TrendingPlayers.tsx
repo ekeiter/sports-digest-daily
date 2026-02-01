@@ -204,9 +204,6 @@ export default function TrendingPlayers({
                   >
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {person.name}
-                      {person.role === 'coach' && (
-                        <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded">Coach</span>
-                      )}
                       {person.country_logo_url && (
                         <img
                           src={person.country_logo_url}

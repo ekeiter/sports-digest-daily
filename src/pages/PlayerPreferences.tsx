@@ -415,7 +415,6 @@ export default function PlayerPreferences() {
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold flex items-center gap-2 whitespace-nowrap">
                               {person.name}
-                              {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                             </div>
                             <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                               <span>{getContextDisplay(person)}</span>
@@ -452,7 +451,6 @@ export default function PlayerPreferences() {
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold flex items-center gap-2 whitespace-nowrap">
                             {person.name}
-                            {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
                           </div>
                           <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                             <span>{getContextDisplay(person)}</span>

@@ -1207,7 +1207,7 @@ export default function Preferences() {
                                       {person.countries?.logo_url && <img src={person.countries.logo_url} alt={person.countries.name} className="h-4 w-5 object-contain flex-shrink-0" />}
                                     </span>
                                     <span className="text-xs text-muted-foreground truncate">
-                                      {[person.teams?.display_name || person.schools?.short_name, person.position, person.role === 'coach' ? 'Coach' : null].filter(Boolean).join(' • ')}
+                                      {[person.teams?.display_name || person.schools?.short_name, person.position].filter(Boolean).join(' • ')}
                                     </span>
                                   </div>
                                   <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isFollowed ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => {
