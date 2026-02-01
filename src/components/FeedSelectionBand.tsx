@@ -25,11 +25,15 @@ interface SelectionCardProps {
   label: string;
   sublabel?: string;
   interestId: number;
+  // Entity-based navigation (takes priority when provided)
+  entityType?: string;
+  entityId?: number;
+  leagueId?: number;
   onDelete?: () => void;
   isDeleteMode?: boolean;
 }
 
-function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDeleteMode }: SelectionCardProps) {
+function SelectionCard({ logoUrl, label, sublabel, interestId, entityType, entityId, leagueId, onDelete, isDeleteMode }: SelectionCardProps) {
   const navigate = useNavigate();
   const hasSublabel = !!sublabel;
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
@@ -56,7 +60,14 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, onDelete, isDelet
       if (onDelete) onDelete();
       setIsLongPressing(false);
     } else {
-      navigate(`/feed?focus=${interestId}`);
+      // Use entity-based navigation if provided, otherwise fall back to interest-based
+      if (entityType && entityId) {
+        let url = `/feed?type=${entityType}&id=${entityId}`;
+        if (leagueId) url += `&leagueId=${leagueId}`;
+        navigate(url);
+      } else {
+        navigate(`/feed?focus=${interestId}`);
+      }
     }
   };
 
@@ -297,14 +308,17 @@ export default function FeedSelectionBand({
             );
           })}
           
-          {/* Schools */}
+        {/* Schools - use entity-based navigation for precise filtering */}
           {schools.map(school => (
             <SelectionCard
-              key={`school-${school.id}`}
+              key={`school-${school.id}-${school.league_id || 'all'}`}
               logoUrl={school.logo_url}
               label={school.short_name}
               sublabel={school.league_code || "All Sports"}
               interestId={school.interestId}
+              entityType="school"
+              entityId={school.id}
+              leagueId={school.league_id ?? undefined}
               onDelete={onDeleteSchool ? () => onDeleteSchool(school.id, school.league_id ?? undefined) : undefined}
             />
           ))}
