@@ -51,21 +51,31 @@ export default function TrendingPlayers({
       // Get trending people from last 2 hours
       const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
       
-      // First, get article_person_map entries with recent articles
-      const { data: recentMappings, error: mappingsError } = await supabase
+      // First, get recent article IDs
+      const { data: recentArticles, error: articlesError } = await supabase
+        .from("articles")
+        .select("id")
+        .gte("published_at", twoHoursAgo);
+      
+      if (articlesError) throw articlesError;
+      
+      if (!recentArticles || recentArticles.length === 0) {
+        setTrendingPeople([]);
+        setLoading(false);
+        return;
+      }
+      
+      const articleIds = recentArticles.map(a => a.id);
+      
+      // Get person mappings for those articles (batch if needed)
+      const { data: mappings, error: mappingsError } = await supabase
         .from("article_person_map")
-        .select(`
-          person_id,
-          articles!inner (
-            id,
-            published_at
-          )
-        `)
-        .gte("articles.published_at", twoHoursAgo);
+        .select("person_id, article_id")
+        .in("article_id", articleIds.slice(0, 1000)); // Limit to avoid query size issues
       
       if (mappingsError) throw mappingsError;
       
-      if (!recentMappings || recentMappings.length === 0) {
+      if (!mappings || mappings.length === 0) {
         setTrendingPeople([]);
         setLoading(false);
         return;
@@ -73,7 +83,7 @@ export default function TrendingPlayers({
       
       // Count articles per person
       const personCounts: Record<number, number> = {};
-      for (const mapping of recentMappings) {
+      for (const mapping of mappings) {
         const personId = mapping.person_id;
         personCounts[personId] = (personCounts[personId] || 0) + 1;
       }
