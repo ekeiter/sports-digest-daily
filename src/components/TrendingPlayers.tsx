@@ -48,14 +48,10 @@ export default function TrendingPlayers({
   const loadTrendingPeople = async () => {
     setLoading(true);
     try {
-      // Use RPC or raw query to get accurate counts with proper JOINs
-      // First get the cutoff time from the server to avoid timezone issues
-      const { data: serverTime } = await supabase.rpc('now' as never);
-      const cutoffTime = serverTime 
-        ? new Date(new Date(serverTime).getTime() - 2 * 60 * 60 * 1000).toISOString()
-        : new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-      
       // Get all mappings for recent articles with article published_at filter
+      // Use a large limit to avoid the default 1000 row cap
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      
       const { data: mappings, error: mappingsError } = await supabase
         .from("article_person_map")
         .select(`
@@ -63,7 +59,8 @@ export default function TrendingPlayers({
           article_id,
           articles!inner(published_at)
         `)
-        .gte("articles.published_at", cutoffTime);
+        .gte("articles.published_at", twoHoursAgo)
+        .limit(10000);
       
       if (mappingsError) throw mappingsError;
       
