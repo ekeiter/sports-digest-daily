@@ -40,7 +40,7 @@ export default function TrendingPlayers({
   const invalidateFeed = useInvalidateArticleFeed();
 
   useEffect(() => {
-    if (expanded && trendingPeople.length === 0) {
+    if (expanded) {
       loadTrendingPeople();
     }
   }, [expanded]);
