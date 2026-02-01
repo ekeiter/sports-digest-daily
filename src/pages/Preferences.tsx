@@ -19,6 +19,7 @@ import FeedSelectionBand from "@/components/FeedSelectionBand";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
+import TrendingPlayers from "@/components/TrendingPlayers";
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 type School = Database['public']['Tables']['schools']['Row'];
@@ -1301,6 +1302,17 @@ export default function Preferences() {
               </div>) : (/* Menu items view */
           <div className="space-y-2">
                 {currentLabel && <h2 className="text-xl font-bold text-center mb-4">{currentLabel}</h2>}
+                
+                {/* Trending Players - only show at root level */}
+                {currentParentId === null && (
+                  <TrendingPlayers
+                    userId={userId}
+                    followedPersonIds={followedPersonIds}
+                    onPersonFollowed={(personId) => {
+                      setFollowedPersonIds(prev => new Set([...prev, personId]));
+                    }}
+                  />
+                )}
                 
                 {currentItems.map(item => {
               const isSelected = isItemSelected(item);
