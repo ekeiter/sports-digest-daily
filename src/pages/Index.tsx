@@ -6,14 +6,7 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -153,10 +146,11 @@ const Index = () => {
               Sign Out ({user.email})
             </Button>
             
-            <p className="text-sm text-foreground text-center pt-4">
-              SportsDig™ — Personalized Sports News<br />
-              © 2026 SportsDig. All rights reserved.<br />
-              For questions or comments, please contact info@sportsdig.com
+            <p className="text-sm text-foreground text-center pt-4">SportsDig™ — Personalized Sports News
+© 2026 SportsDig. All rights reserved.
+
+For questions or comments, please contact info@sportsdig.com<br />
+              © 2026 SportsDig. All rights reserved.
             </p>
           </div>
         </div>
