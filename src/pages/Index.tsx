@@ -155,7 +155,8 @@ const Index = () => {
             
             <p className="text-sm text-foreground text-center pt-4">
               SportsDig™ — Personalized Sports News<br />
-              © 2026 SportsDig. All rights reserved.
+              © 2026 SportsDig. All rights reserved.<br />
+              For questions or comments, please contact info@sportsdig.com
             </p>
           </div>
         </div>
