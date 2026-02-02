@@ -105,6 +105,16 @@ export default function Feed() {
           } else {
             label = `${schoolName} (All Sports)`;
           }
+        } else if (entityType === 'country') {
+          const { data: country } = await supabase.from("countries").select("name").eq("id", entityId).single();
+          const countryName = country?.name || "Country";
+          // If we have a league filter (e.g., World Cup), prepend the league code
+          if (focusLeagueId) {
+            const { data: league } = await supabase.from("leagues").select("code, name").eq("id", focusLeagueId).single();
+            label = league?.code ? `${league.code} - ${countryName}` : countryName;
+          } else {
+            label = countryName;
+          }
         } else if (entityType === 'league') {
           const { data } = await supabase.from("leagues").select("code, name").eq("id", entityId).single();
           label = data?.code || data?.name || "League";

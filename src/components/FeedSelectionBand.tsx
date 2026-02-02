@@ -323,7 +323,7 @@ export default function FeedSelectionBand({
             />
           ))}
           
-          {/* Countries (non-Olympics) */}
+          {/* Countries (non-Olympics) - use entity-based navigation for precise filtering */}
           {countries.map(country => (
             <SelectionCard
               key={`country-${country.id}-${country.league_id || 'all'}`}
@@ -331,6 +331,9 @@ export default function FeedSelectionBand({
               label={country.name}
               sublabel={country.league_code || undefined}
               interestId={country.interestId}
+              entityType="country"
+              entityId={country.id}
+              leagueId={country.league_id ?? undefined}
               onDelete={onDeleteCountry ? () => onDeleteCountry(country.id, country.league_id ?? undefined) : undefined}
             />
           ))}
