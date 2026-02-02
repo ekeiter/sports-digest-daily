@@ -1053,18 +1053,22 @@ export default function Preferences() {
                     placeholder="Search teams, players, colleges, sports, leagues..." 
                     value={teamSearchTerm} 
                     onChange={e => {
-                      setTeamSearchTerm(e.target.value);
+                      const newValue = e.target.value;
+                      const wasEmpty = !teamSearchTerm;
+                      setTeamSearchTerm(newValue);
                       setShowSearchDropdown(true);
-                      if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
+                      if (newValue && (!allTeamsLoaded || !allSchoolsLoaded)) {
                         loadAllTeamsAndSchools();
+                      }
+                      // Scroll to top on mobile/tablet when user starts typing
+                      if (wasEmpty && newValue && window.innerWidth < 1024) {
+                        setTimeout(() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 100);
                       }
                     }} 
                     onFocus={() => {
                       if (teamSearchTerm) setShowSearchDropdown(true);
-                      // Scroll to top on mobile/tablet
-                      if (window.innerWidth < 1024 && searchRef.current) {
-                        searchRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
                     }} 
                     className="pr-8 bg-white text-[12px] md:text-sm placeholder:text-[12px] md:placeholder:text-sm" 
                   />
