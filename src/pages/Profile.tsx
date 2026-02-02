@@ -77,9 +77,6 @@ export default function Profile() {
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
           <CardTitle className="text-xl md:text-2xl text-center">Your Profile</CardTitle>
-          <CardDescription className="text-center">
-            Welcome to Sports Digest
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             {needsConfirm && <Alert>
@@ -100,11 +97,11 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-2">
-              <Button onClick={() => navigate('/')} className="flex-1 w-full">
+            <div className="flex flex-row gap-2">
+              <Button onClick={() => navigate('/')} className="flex-1">
                 Dashboard
               </Button>
-              <Button onClick={handleSignOut} variant="outline" className="w-full md:w-auto">
+              <Button onClick={handleSignOut} variant="outline" className="flex-1">
                 Sign out
               </Button>
             </div>
