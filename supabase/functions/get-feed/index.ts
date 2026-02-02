@@ -6,6 +6,42 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting: 60 requests per minute per user
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 60;
+
+// In-memory store for rate limiting (resets on cold start)
+const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
+
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetIn: number } {
+  const now = Date.now();
+  const userLimit = rateLimitStore.get(userId);
+
+  // Clean up expired entries periodically
+  if (rateLimitStore.size > 10000) {
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (now - value.windowStart > RATE_LIMIT_WINDOW_MS) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }
+
+  if (!userLimit || now - userLimit.windowStart > RATE_LIMIT_WINDOW_MS) {
+    // New window
+    rateLimitStore.set(userId, { count: 1, windowStart: now });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+  }
+
+  if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
+    const resetIn = RATE_LIMIT_WINDOW_MS - (now - userLimit.windowStart);
+    return { allowed: false, remaining: 0, resetIn };
+  }
+
+  userLimit.count++;
+  const resetIn = RATE_LIMIT_WINDOW_MS - (now - userLimit.windowStart);
+  return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - userLimit.count, resetIn };
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -36,6 +72,25 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Not authenticated" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check rate limit
+    const rateLimit = checkRateLimit(user.id);
+    if (!rateLimit.allowed) {
+      console.warn(`Rate limit exceeded for user ${user.id}`);
+      return new Response(JSON.stringify({ 
+        error: "Too many requests", 
+        retryAfter: Math.ceil(rateLimit.resetIn / 1000) 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Retry-After": String(Math.ceil(rateLimit.resetIn / 1000)),
+          "X-RateLimit-Remaining": "0",
+          "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetIn / 1000))
+        },
       });
     }
 
