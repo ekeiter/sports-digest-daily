@@ -1290,7 +1290,24 @@ export default function Preferences() {
                 // For teams: check selectedTeams
                 const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || selectedSchools.includes(item.id) : expandedLeagueType === 'country' ? selectedCountries.includes(item.id) : selectedTeams.includes(item.id);
                 return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
-                          <div onClick={() => handleNavigateToFocus(expandedLeagueType === 'school' ? 'school' : expandedLeagueType === 'country' ? 'country' : 'team', item.id)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
+                          <div
+                            onClick={() =>
+                              handleNavigateToFocus(
+                                expandedLeagueType === 'school'
+                                  ? 'school'
+                                  : expandedLeagueType === 'country'
+                                    ? 'country'
+                                    : 'team',
+                                item.id,
+                                // When browsing Teams within a league context (e.g., World Cup countries),
+                                // carry the leagueId into the focused feed for proper intersection filtering.
+                                expandedLeagueType === 'school' || expandedLeagueType === 'country'
+                                  ? expandedLeagueId
+                                  : undefined
+                              )
+                            }
+                            className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
+                          >
                             {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                 <img src={item.logo_url} alt={item.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
