@@ -524,10 +524,10 @@ export default function Preferences() {
   };
 
   // Navigate to focused feed for an entity - no need to create a favorite
-  // For schools, optionally pass leagueId to filter by specific sport
+  // For schools and countries, optionally pass leagueId to filter by specific league
   const handleNavigateToFocus = (entityType: 'sport' | 'league' | 'team' | 'school' | 'person' | 'country', entityId: number, leagueId?: number | null) => {
     let url = `/feed?type=${entityType}&id=${entityId}`;
-    if (entityType === 'school' && leagueId) {
+    if ((entityType === 'school' || entityType === 'country') && leagueId) {
       url += `&leagueId=${leagueId}`;
     }
     navigate(url);
