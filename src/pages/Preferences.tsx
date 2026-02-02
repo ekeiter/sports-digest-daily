@@ -79,6 +79,7 @@ export default function Preferences() {
   const [allSportsSchools, setAllSportsSchools] = useState<Set<number>>(new Set());
   const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // People search
   const [peopleSearchResults, setPeopleSearchResults] = useState<PersonSearchResult[]>([]);
@@ -1046,13 +1047,27 @@ export default function Preferences() {
             <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Input type="text" placeholder="Search teams, players, colleges, sports, leagues..." value={teamSearchTerm} onChange={e => {
-                  setTeamSearchTerm(e.target.value);
-                  setShowSearchDropdown(true);
-                  if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
-                    loadAllTeamsAndSchools();
-                  }
-                }} onFocus={() => teamSearchTerm && setShowSearchDropdown(true)} className="pr-8 bg-white text-[12px] md:text-sm placeholder:text-[12px] md:placeholder:text-sm" />
+                  <Input 
+                    ref={searchInputRef}
+                    type="text" 
+                    placeholder="Search teams, players, colleges, sports, leagues..." 
+                    value={teamSearchTerm} 
+                    onChange={e => {
+                      setTeamSearchTerm(e.target.value);
+                      setShowSearchDropdown(true);
+                      if (e.target.value && (!allTeamsLoaded || !allSchoolsLoaded)) {
+                        loadAllTeamsAndSchools();
+                      }
+                    }} 
+                    onFocus={() => {
+                      if (teamSearchTerm) setShowSearchDropdown(true);
+                      // Scroll to top on mobile/tablet
+                      if (window.innerWidth < 1024 && searchRef.current) {
+                        searchRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }} 
+                    className="pr-8 bg-white text-[12px] md:text-sm placeholder:text-[12px] md:placeholder:text-sm" 
+                  />
                   {teamSearchTerm && <button type="button" onClick={() => {
                   setTeamSearchTerm("");
                   setShowSearchDropdown(false);
