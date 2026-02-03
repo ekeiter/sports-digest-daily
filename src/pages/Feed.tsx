@@ -402,9 +402,9 @@ export default function Feed() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-0 md:space-y-2">
             {articles.map((article) => (
-              <Card key={article.article_id} className="overflow-hidden rounded-none md:rounded-lg border-x-0 md:border-x">
+              <Card key={article.article_id} className="overflow-hidden rounded-none md:rounded-lg border-0 md:border border-b md:border-b">
                 <CardContent className="p-0">
                   <button
                     type="button"
