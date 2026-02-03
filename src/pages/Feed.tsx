@@ -388,9 +388,9 @@ export default function Feed() {
         </div>
       </header>
 
-      <main className="container mx-auto px-2 py-2 max-w-3xl">
+      <main className="container mx-auto px-0 md:px-2 py-2 max-w-3xl">
         {articles.length === 0 ? (
-          <Card>
+          <Card className="mx-2 md:mx-0">
             <CardContent className="p-12 text-center">
               <h2 className="text-xl font-semibold mb-2">No articles yet</h2>
               <p className="text-muted-foreground mb-4">
@@ -404,7 +404,7 @@ export default function Feed() {
         ) : (
           <div className="space-y-2">
             {articles.map((article) => (
-              <Card key={article.article_id} className="overflow-hidden">
+              <Card key={article.article_id} className="overflow-hidden rounded-none md:rounded-lg border-x-0 md:border-x">
                 <CardContent className="p-0">
                   <button
                     type="button"
@@ -441,7 +441,6 @@ export default function Feed() {
                 </CardContent>
               </Card>
             ))}
-            
             {articles.length >= 100 && (
               <div className="flex justify-center pt-4">
                 <Button 
