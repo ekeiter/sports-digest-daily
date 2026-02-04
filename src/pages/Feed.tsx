@@ -7,6 +7,7 @@ import { Loader2, RefreshCw, X } from "lucide-react";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import ArticleImage from "@/components/ArticleImage";
 import FeedSkeleton from "@/components/FeedSkeleton";
+import MatchedInterestBadges from "@/components/MatchedInterestBadges";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { openUrl } from "@/hooks/useOpenUrl";
@@ -401,14 +402,13 @@ export default function Feed() {
                         {article.thumbnail_url ? <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" /> : <ArticlePlaceholder />}
                       </div>
                       
-                      <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
+                        <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
                         <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.url_domain || article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
-                          <span>•</span>
-                          <span className="text-muted-foreground/60">{article.article_id}</span>
                         </div>
+                        <MatchedInterestBadges interests={article.matched_interests} />
                         
                         <h3 className="font-semibold text-sm md:text-base line-clamp-3">
                           {article.title}
