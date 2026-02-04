@@ -2158,29 +2158,54 @@ export type Database = {
         Args: { p_sport_id: number }
         Returns: number[]
       }
-      get_subscriber_feed: {
-        Args: {
-          p_cursor_id?: number
-          p_cursor_time?: string
-          p_entity_id?: number
-          p_entity_type?: string
-          p_focus_league_id?: number
-          p_interest_id?: number
-          p_limit?: number
-          p_subscriber_id: string
-        }
-        Returns: {
-          article_id: number
-          domain: string
-          published_at: string
-          published_effective: string
-          thumbnail_url: string
-          title: string
-          updated_at: string
-          url: string
-          url_domain: string
-        }[]
-      }
+      get_subscriber_feed:
+        | {
+            Args: {
+              p_cursor_id?: number
+              p_cursor_time?: string
+              p_entity_id?: number
+              p_entity_type?: string
+              p_focus_league_id?: number
+              p_interest_id?: number
+              p_limit?: number
+              p_subscriber_id: string
+            }
+            Returns: {
+              article_id: number
+              domain: string
+              published_at: string
+              published_effective: string
+              thumbnail_url: string
+              title: string
+              updated_at: string
+              url: string
+              url_domain: string
+            }[]
+          }
+        | {
+            Args: {
+              p_cursor_id?: number
+              p_cursor_time?: string
+              p_entity_id?: number
+              p_entity_type?: string
+              p_focus_league_id?: number
+              p_interest_id?: number
+              p_limit?: number
+              p_subscriber_id: string
+            }
+            Returns: {
+              article_id: number
+              domain: string
+              matched_interests: string[]
+              published_at: string
+              published_effective: string
+              thumbnail_url: string
+              title: string
+              updated_at: string
+              url: string
+              url_domain: string
+            }[]
+          }
       get_trending_people: {
         Args: { p_hours?: number; p_limit?: number }
         Returns: {

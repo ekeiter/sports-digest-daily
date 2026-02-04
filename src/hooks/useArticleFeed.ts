@@ -11,6 +11,7 @@ export type FeedRow = {
   published_effective: string;
   published_at: string | null;
   updated_at: string | null;
+  matched_interests: string[] | null;
 };
 
 async function fetchFeedPage(
