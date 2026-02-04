@@ -207,7 +207,7 @@ export default function OlympicsPreferences() {
               </Button>
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/preferences")}>
                 <ArrowLeft className="h-4 w-4 mr-1" />
-                Back to Selector
+                Back to Topic Manager   
               </Button>
             </div>
           </div>
@@ -290,11 +290,7 @@ export default function OlympicsPreferences() {
                         {pref.country_name || "All Countries"}
                       </span>
                     </div>
-                    <button 
-                      onClick={() => handleRemovePreference(pref.id)} 
-                      className="p-1 hover:scale-110 transition-transform"
-                      aria-label="Remove favorite"
-                    >
+                    <button onClick={() => handleRemovePreference(pref.id)} className="p-1 hover:scale-110 transition-transform" aria-label="Remove favorite">
                       <Heart className="h-5 w-5 text-destructive fill-destructive" />
                     </button>
                   </div>)}
