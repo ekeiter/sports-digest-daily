@@ -143,7 +143,6 @@ export default function TrendingPlayers({
     if (person.team) parts.push(person.team);
     else if (person.school) parts.push(person.school);
     if (person.league) parts.push(person.league);
-    if (person.position) parts.push(person.position);
     return parts.join(" • ");
   };
 
@@ -204,6 +203,9 @@ export default function TrendingPlayers({
                   >
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {person.name}
+                      {person.position && (
+                        <span className="text-muted-foreground font-normal">• {person.position}</span>
+                      )}
                       {person.country_logo_url && (
                         <img
                           src={person.country_logo_url}
