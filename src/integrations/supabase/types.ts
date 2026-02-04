@@ -2173,11 +2173,9 @@ export type Database = {
           article_id: number
           domain: string
           matched_interests: string[]
-          published_at: string
           published_effective: string
           thumbnail_url: string
           title: string
-          updated_at: string
           url: string
           url_domain: string
         }[]
