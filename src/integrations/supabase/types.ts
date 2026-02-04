@@ -2154,6 +2154,10 @@ export type Database = {
       clear_all_focus: { Args: never; Returns: undefined }
       ensure_my_subscriber: { Args: never; Returns: undefined }
       extract_domain: { Args: { url: string }; Returns: string }
+      get_sport_with_children: {
+        Args: { p_sport_id: number }
+        Returns: number[]
+      }
       get_subscriber_feed: {
         Args: {
           p_cursor_id?: number
