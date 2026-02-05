@@ -403,12 +403,12 @@ export default function Feed() {
                       </div>
                       
                         <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
-                        <div className="flex gap-2 text-xs md:text-sm text-muted-foreground mb-0.5">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm text-muted-foreground mb-0.5">
                           <span>{article.url_domain || article.domain || 'Unknown source'}</span>
                           <span>•</span>
                           <span>{formatTimeAgo(article.published_effective)}</span>
+                          <MatchedInterestBadges interests={article.matched_interests} />
                         </div>
-                        <MatchedInterestBadges interests={article.matched_interests} />
                         
                         <h3 className="font-semibold text-sm md:text-base line-clamp-3">
                           {article.title}
