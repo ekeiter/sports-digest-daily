@@ -15,7 +15,7 @@ export default function MatchedInterestBadges({ interests }: MatchedInterestBadg
         <Badge 
           key={index} 
           variant="secondary" 
-          className="text-xs px-1.5 py-0 h-5 font-normal"
+          className="text-xs px-1.5 py-0 h-5 font-normal bg-badge-interest text-badge-interest-foreground border-badge-interest"
         >
           #{interest}
         </Badge>

@@ -68,6 +68,10 @@ export default {
 				link: {
 					DEFAULT: 'hsl(var(--link))',
 					foreground: 'hsl(var(--link-foreground))'
+				},
+				'badge-interest': {
+					DEFAULT: 'hsl(var(--badge-interest))',
+					foreground: 'hsl(var(--badge-interest-foreground))'
 				}
 			},
 			borderRadius: {

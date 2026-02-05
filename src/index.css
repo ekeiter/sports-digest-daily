@@ -39,6 +39,9 @@ All colors MUST be HSL.
     --link: 221.2 83.2% 53.3%;
     --link-foreground: 210 40% 98%;
 
+    --badge-interest: 199 89% 65%;
+    --badge-interest-foreground: 199 89% 20%;
+
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
@@ -89,6 +92,9 @@ All colors MUST be HSL.
     
     --link: 221.2 83.2% 53.3%;
     --link-foreground: 222.2 47.4% 11.2%;
+
+    --badge-interest: 199 89% 55%;
+    --badge-interest-foreground: 199 89% 95%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
