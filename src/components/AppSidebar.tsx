@@ -46,7 +46,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     onClick={() => navigate(item.url)}
                     isActive={isActive(item.url)}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-black"
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
