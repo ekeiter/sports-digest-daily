@@ -164,28 +164,14 @@ export function AppSidebar() {
                   ))}
                   
                   {/* Teams */}
-                  {userPreferences.teams.map(team => {
-                    const domesticLeagues = ['MLS', 'EPL', 'LALIGA', 'SERIEA', 'BUNDESLIGA', 'LIGUE1'];
-                    const continentalLeagues = ['UCL', 'UEL', 'UECL'];
-                    const leaguesArray = team.leagues as unknown as { code: string }[] | { code: string } | null;
-                    let leagueCode: string | undefined;
-                    if (Array.isArray(leaguesArray)) {
-                      leagueCode = leaguesArray.find(l => domesticLeagues.includes(l.code))?.code
-                        || leaguesArray.find(l => continentalLeagues.includes(l.code))?.code;
-                    } else {
-                      leagueCode = leaguesArray?.code;
-                    }
-                    const isSoccer = leagueCode && [...domesticLeagues, ...continentalLeagues].includes(leagueCode);
-                    return (
-                      <FavoriteCard
-                        key={`team-${team.id}`}
-                        logoUrl={team.logo_url}
-                        label={team.nickname || team.display_name}
-                        sublabel={isSoccer ? leagueCode : undefined}
-                        onClick={() => navigate(`/feed?focus=${team.interestId}`)}
-                      />
-                    );
-                  })}
+                  {userPreferences.teams.map(team => (
+                    <FavoriteCard
+                      key={`team-${team.id}`}
+                      logoUrl={team.logo_url}
+                      label={team.display_name}
+                      onClick={() => navigate(`/feed?focus=${team.interestId}`)}
+                    />
+                  ))}
                   
                   {/* Schools */}
                   {userPreferences.schools.map(school => (
@@ -229,20 +215,14 @@ export function AppSidebar() {
                   ))}
                   
                   {/* People */}
-                  {userPreferences.people.map(person => {
-                    const nameParts = person.name.split(' ');
-                    const firstName = nameParts.slice(0, -1).join(' ') || nameParts[0];
-                    const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
-                    return (
-                      <FavoriteCard
-                        key={`person-${person.id}`}
-                        logoUrl={getPersonLogo(person)}
-                        label={firstName}
-                        sublabel={lastName}
-                        onClick={() => navigate(`/feed?focus=${person.interestId}`)}
-                      />
-                    );
-                  })}
+                  {userPreferences.people.map(person => (
+                    <FavoriteCard
+                      key={`person-${person.id}`}
+                      logoUrl={getPersonLogo(person)}
+                      label={person.name}
+                      onClick={() => navigate(`/feed?focus=${person.interestId}`)}
+                    />
+                  ))}
                 </div>
               </ScrollArea>
             </SidebarGroupContent>
