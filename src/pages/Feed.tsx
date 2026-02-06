@@ -339,17 +339,17 @@ export default function Feed() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-0 md:space-y-2">
+            <div className="space-y-0 lg:space-y-2">
               {articles.map(article => (
-                <Card key={article.article_id} className="overflow-hidden rounded-none md:rounded-lg border-0 md:border shadow-none md:shadow-sm">
+                <Card key={article.article_id} className="overflow-hidden rounded-none lg:rounded-lg border-0 lg:border shadow-none lg:shadow-sm">
                   <CardContent className="p-0">
                     <button
                       type="button"
                       onClick={() => openUrl(article.url)}
                       className="block w-full text-left hover:opacity-80 transition-opacity cursor-pointer"
                     >
-                      <div className="flex flex-col md:flex-row">
-                        <div className="w-full md:w-64 md:flex-shrink-0">
+                      <div className="flex flex-col lg:flex-row">
+                        <div className="w-full lg:w-64 lg:flex-shrink-0">
                           {article.thumbnail_url ? (
                             <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" />
                           ) : (
@@ -357,15 +357,15 @@ export default function Feed() {
                           )}
                         </div>
 
-                        <div className="px-3 pt-1.5 pb-2 md:flex md:flex-col md:justify-center">
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm text-muted-foreground mb-0.5">
+                        <div className="px-3 pt-1.5 pb-2 lg:flex lg:flex-col lg:justify-center">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs lg:text-sm text-muted-foreground mb-0.5">
                             <span>{article.url_domain || article.domain || 'Unknown source'}</span>
                             <span>•</span>
                             <span>{formatTimeAgo(article.published_effective)}</span>
                             <MatchedInterestBadges interests={article.matched_interests} />
                           </div>
 
-                          <h3 className="font-semibold text-sm md:text-base line-clamp-3">
+                          <h3 className="font-semibold text-sm lg:text-base line-clamp-3">
                             {article.title}
                           </h3>
                         </div>
