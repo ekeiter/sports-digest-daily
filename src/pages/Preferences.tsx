@@ -19,7 +19,7 @@ import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
-import { AppLayout } from "@/components/AppLayout";
+
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 type School = Database['public']['Tables']['schools']['Row'];
@@ -808,7 +808,7 @@ export default function Preferences() {
   const currentItems = getCurrentMenuItems();
   const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
-  return <AppLayout>
+  return (
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-2">
@@ -1370,5 +1370,5 @@ export default function Preferences() {
         </div>
       </main>
     </div>
-  </AppLayout>;
+  );
 }

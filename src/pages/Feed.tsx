@@ -8,7 +8,7 @@ import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import ArticleImage from "@/components/ArticleImage";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import MatchedInterestBadges from "@/components/MatchedInterestBadges";
-import { AppLayout } from "@/components/AppLayout";
+
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { openUrl } from "@/hooks/useOpenUrl";
@@ -278,37 +278,34 @@ export default function Feed() {
   if (isError) {
     const message = error instanceof Error ? error.message : typeof error === "string" ? error : JSON.stringify(error);
     return (
-      <AppLayout>
-        <div className="min-h-screen">
-          <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-            <div className="container mx-auto px-3 py-2">
-              <div className="flex items-center justify-center gap-2 md:hidden">
-                <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
-                <h1 className="text-lg font-bold text-foreground">Feed Error</h1>
-              </div>
-              <h1 className="hidden md:block text-xl font-bold text-foreground text-center">Feed Error</h1>
+      <div className="min-h-screen">
+        <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
+          <div className="container mx-auto px-3 py-2">
+            <div className="flex items-center justify-center gap-2 md:hidden">
+              <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
+              <h1 className="text-lg font-bold text-foreground">Feed Error</h1>
             </div>
-          </header>
-          <main className="container mx-auto px-2 py-2">
-            <Card>
-              <CardContent className="p-6 space-y-3">
-                <h2 className="text-base font-semibold">Couldn't load articles</h2>
-                <p className="text-sm text-muted-foreground break-words">{message}</p>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button onClick={handleRefresh} disabled={refreshing}>Retry</Button>
-                  <Button variant="outline" onClick={() => navigate("/preferences")}>Check Selections</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </main>
-        </div>
-      </AppLayout>
+            <h1 className="hidden md:block text-xl font-bold text-foreground text-center">Feed Error</h1>
+          </div>
+        </header>
+        <main className="container mx-auto px-2 py-2">
+          <Card>
+            <CardContent className="p-6 space-y-3">
+              <h2 className="text-base font-semibold">Couldn't load articles</h2>
+              <p className="text-sm text-muted-foreground break-words">{message}</p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button onClick={handleRefresh} disabled={refreshing}>Retry</Button>
+                <Button variant="outline" onClick={() => navigate("/preferences")}>Check Selections</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
     );
   }
 
   return (
-    <AppLayout>
-      <div className="min-h-screen">
+    <div className="min-h-screen">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
           <div className="container mx-auto px-3 py-2">
             {/* Mobile: show logo, Desktop: hide logo (it's in sidebar) */}
@@ -391,8 +388,7 @@ export default function Feed() {
               )}
             </div>
           )}
-        </main>
-      </div>
-    </AppLayout>
+      </main>
+    </div>
   );
 }

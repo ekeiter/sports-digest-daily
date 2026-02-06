@@ -6,7 +6,7 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
-import { AppLayout } from "@/components/AppLayout";
+
 import {
   Dialog,
   DialogContent,
@@ -116,7 +116,7 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <AppLayout>
+  return (
     <div className="h-screen overflow-hidden flex flex-col bg-[#D5D5D5] overscroll-none">
       <header className="border-b border-white/20 flex-shrink-0 md:hidden">
         <div className="container mx-auto px-4 py-4">
@@ -180,6 +180,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
     </div>
-  </AppLayout>;
+  );
 };
 export default Index;

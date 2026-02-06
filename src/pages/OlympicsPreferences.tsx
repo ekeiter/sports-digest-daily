@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-import { AppLayout } from "@/components/AppLayout";
+
 
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
@@ -194,7 +194,7 @@ export default function OlympicsPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <AppLayout>
+  return (
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
@@ -301,5 +301,5 @@ export default function OlympicsPreferences() {
         </div>
       </main>
     </div>
-  </AppLayout>;
+  );
 }
