@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Home, Newspaper, Settings, User, HelpCircle, Trash2 } from "lucide-react";
+import { Newspaper, Settings, User, HelpCircle, Trash2, BookOpen } from "lucide-react";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Home", url: "/", icon: Home },
-  { title: "Feed", url: "/feed", icon: Newspaper },
-  { title: "Topic Manager", url: "/preferences", icon: Settings },
-  { title: "Profile", url: "/profile", icon: User },
+  { title: "Combined Sports News Feed", url: "/feed", icon: Newspaper },
+  { title: "Feed Topic Manager", url: "/preferences", icon: Settings },
+  { title: "Instructions", url: "/instructions", icon: BookOpen },
   { title: "Why SportsDig", url: "/why-sportsdig", icon: HelpCircle },
+  { title: "Profile", url: "/profile", icon: User },
 ];
 
 // Helper to properly capitalize sport names
@@ -279,6 +279,19 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
+      
+      {/* Footer */}
+      <div className="mt-auto p-4 border-t border-sidebar-border">
+        <div className="text-xs text-muted-foreground text-center space-y-1">
+          <p className="font-medium">SportsDig™ — Personalized Sports News</p>
+          <p>© 2026 SportsDig. All rights reserved.</p>
+          <p className="pt-1">
+            <a href="mailto:info@sportsdig.com" className="hover:text-foreground transition-colors">
+              info@sportsdig.com
+            </a>
+          </p>
+        </div>
+      </div>
     </Sidebar>
   );
 }
