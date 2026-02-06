@@ -9,7 +9,7 @@ import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
-import { AppLayout } from "@/components/AppLayout";
+
 
 export default function PlayerPreferences() {
   const navigate = useNavigate();
@@ -349,7 +349,7 @@ export default function PlayerPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <AppLayout>
+  return (
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
@@ -477,5 +477,5 @@ export default function PlayerPreferences() {
         </div>
       </div>
     </div>
-  </AppLayout>;
+  );
 }

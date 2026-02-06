@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { BookOpen, MousePointer, Search, Heart, Layers } from "lucide-react";
-import { AppLayout } from "@/components/AppLayout";
+
 
 const Instructions = () => {
   const navigate = useNavigate();
   
   return (
-    <AppLayout>
+    (
       <div className="min-h-screen" style={{ backgroundColor: '#D5D5D5' }}>
         <header className="py-3 md:hidden">
           <div className="container mx-auto px-4">
@@ -97,7 +97,7 @@ const Instructions = () => {
           </div>
         </main>
       </div>
-    </AppLayout>
+    )
   );
 };
 

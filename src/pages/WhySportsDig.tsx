@@ -2,10 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { Target, Smartphone, Newspaper, Trophy, Zap, Globe, Settings } from "lucide-react";
-import { AppLayout } from "@/components/AppLayout";
+
 const WhySportsDig = () => {
   const navigate = useNavigate();
-  return <AppLayout>
+  return (
     <div className="min-h-screen" style={{
     backgroundColor: '#D5D5D5'
   }}>
@@ -142,6 +142,6 @@ const WhySportsDig = () => {
         </div>
       </main>
     </div>
-  </AppLayout>;
+  );
 };
 export default WhySportsDig;

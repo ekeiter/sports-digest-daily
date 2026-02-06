@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { User } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
-import { AppLayout } from "@/components/AppLayout";
+
 interface Subscriber {
   id: string;
   email: string;
@@ -71,7 +71,7 @@ export default function Profile() {
         <p className="text-muted-foreground">Loading...</p>
       </div>;
   }
-  return <AppLayout>
+  return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#D5D5D5' }}>
       <Card className="w-full">
         <CardHeader className="space-y-1">
@@ -110,5 +110,5 @@ export default function Profile() {
           </CardContent>
         </Card>
     </div>
-  </AppLayout>;
+  );
 }

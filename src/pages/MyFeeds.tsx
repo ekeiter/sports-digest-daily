@@ -11,7 +11,7 @@ import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPrefe
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AppLayout } from "@/components/AppLayout";
+
 
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
@@ -164,7 +164,6 @@ export default function MyFeeds() {
   };
 
   return (
-    <AppLayout>
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
@@ -401,6 +400,5 @@ export default function MyFeeds() {
         </div>
       </div>
     </div>
-    </AppLayout>
   );
 }
