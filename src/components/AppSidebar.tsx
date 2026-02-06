@@ -10,10 +10,6 @@ import { toast } from "sonner";
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -145,138 +141,135 @@ export function AppSidebar() {
   );
 
   return (
-    <Sidebar className="border-r-0">
-      <SidebarHeader className="p-4 pb-2">
+    <Sidebar className="border-r-0 flex flex-col h-full">
+      <SidebarHeader className="p-4 pb-2 flex-shrink-0">
         <div className="flex items-center gap-2">
           <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
           <span className="font-bold text-lg text-sidebar-foreground">SportsDig</span>
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    onClick={() => navigate(item.url)}
-                    isActive={isActive(item.url)}
-                    className="cursor-pointer text-black"
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      {/* Fixed Menu Section */}
+      <div className="flex-shrink-0 px-2">
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                onClick={() => navigate(item.url)}
+                isActive={isActive(item.url)}
+                className="cursor-pointer text-black"
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </div>
 
-        {/* Favorites Section */}
-        {hasFavorites && (
-          <SidebarGroup className="mt-1">
-            <SidebarGroupLabel className="text-base font-bold text-black px-4">
-              Favorites
-            </SidebarGroupLabel>
-            <SidebarGroupContent className="max-h-[calc(100vh-320px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-                <div className="flex flex-col gap-1 px-2">
-                  {/* Sports */}
-                  {userPreferences.sports.map(sport => (
-                    <FavoriteCard
-                      key={`sport-${sport.id}`}
-                      logoUrl={sport.logo_url}
-                      label={sport.display_label || toTitleCase(sport.sport)}
-                      onClick={() => navigate(`/feed?focus=${sport.interestId}`)}
-                      onDelete={() => handleDeleteInterest(sport.interestId)}
-                    />
-                  ))}
-                  
-                  {/* Leagues */}
-                  {userPreferences.leagues.map(league => (
-                    <FavoriteCard
-                      key={`league-${league.id}`}
-                      logoUrl={league.logo_url}
-                      label={league.code || league.name}
-                      onClick={() => navigate(`/feed?focus=${league.interestId}`)}
-                      onDelete={() => handleDeleteInterest(league.interestId)}
-                    />
-                  ))}
-                  
-                  {/* Teams */}
-                  {userPreferences.teams.map(team => (
-                    <FavoriteCard
-                      key={`team-${team.id}`}
-                      logoUrl={team.logo_url}
-                      label={team.display_name}
-                      onClick={() => navigate(`/feed?focus=${team.interestId}`)}
-                      onDelete={() => handleDeleteInterest(team.interestId)}
-                    />
-                  ))}
-                  
-                  {/* Schools */}
-                  {userPreferences.schools.map(school => (
-                    <FavoriteCard
-                      key={`school-${school.id}-${school.league_id || 'all'}`}
-                      logoUrl={school.logo_url}
-                      label={`${school.short_name} - ${school.league_code || "All Sports"}`}
-                      onClick={() => {
-                        let url = `/feed?type=school&id=${school.id}`;
-                        if (school.league_id) url += `&leagueId=${school.league_id}`;
-                        navigate(url);
-                      }}
-                      onDelete={() => handleDeleteInterest(school.interestId)}
-                    />
-                  ))}
-                  
-                  {/* Countries */}
-                  {userPreferences.countries.map(country => (
-                    <FavoriteCard
-                      key={`country-${country.id}-${country.league_id || 'all'}`}
-                      logoUrl={country.logo_url}
-                      label={country.name}
-                      sublabel={country.league_code || undefined}
-                      onClick={() => {
-                        let url = `/feed?type=country&id=${country.id}`;
-                        if (country.league_id) url += `&leagueId=${country.league_id}`;
-                        navigate(url);
-                      }}
-                      onDelete={() => handleDeleteInterest(country.interestId)}
-                    />
-                  ))}
-                  
-                  {/* Olympics */}
-                  {userPreferences.olympicsPrefs.map(pref => {
-                    const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
-                    const countryLabel = pref.country_logo ? "" : (pref.country_name || "All Countries");
-                    const displayLabel = `${sportLabel} -${countryLabel ? ` ${countryLabel}` : ""}`;
-                    return (
-                      <FavoriteCard
-                        key={`olympics-${pref.id}`}
-                        logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
-                        label={displayLabel}
-                        countryFlag={pref.country_logo}
-                        onClick={() => navigate(`/feed?focus=${pref.id}`)}
-                        onDelete={() => handleDeleteInterest(pref.id)}
-                      />
-                    );
-                  })}
-                  
-                  {/* People */}
-                  {userPreferences.people.map(person => (
-                    <FavoriteCard
-                      key={`person-${person.id}`}
-                      logoUrl={getPersonLogo(person)}
-                      label={person.name}
-                      onClick={() => navigate(`/feed?focus=${person.interestId}`)}
-                      onDelete={() => handleDeleteInterest(person.interestId)}
-                    />
-                  ))}
-                </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-      </SidebarContent>
+      {/* Scrollable Favorites Section */}
+      {hasFavorites && (
+        <div className="flex-1 min-h-0 mt-1 flex flex-col">
+          <div className="flex-shrink-0 px-4 py-2">
+            <span className="text-base font-bold text-black">Favorites</span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+            <div className="flex flex-col gap-1">
+              {/* Sports */}
+              {userPreferences.sports.map(sport => (
+                <FavoriteCard
+                  key={`sport-${sport.id}`}
+                  logoUrl={sport.logo_url}
+                  label={sport.display_label || toTitleCase(sport.sport)}
+                  onClick={() => navigate(`/feed?focus=${sport.interestId}`)}
+                  onDelete={() => handleDeleteInterest(sport.interestId)}
+                />
+              ))}
+              
+              {/* Leagues */}
+              {userPreferences.leagues.map(league => (
+                <FavoriteCard
+                  key={`league-${league.id}`}
+                  logoUrl={league.logo_url}
+                  label={league.code || league.name}
+                  onClick={() => navigate(`/feed?focus=${league.interestId}`)}
+                  onDelete={() => handleDeleteInterest(league.interestId)}
+                />
+              ))}
+              
+              {/* Teams */}
+              {userPreferences.teams.map(team => (
+                <FavoriteCard
+                  key={`team-${team.id}`}
+                  logoUrl={team.logo_url}
+                  label={team.display_name}
+                  onClick={() => navigate(`/feed?focus=${team.interestId}`)}
+                  onDelete={() => handleDeleteInterest(team.interestId)}
+                />
+              ))}
+              
+              {/* Schools */}
+              {userPreferences.schools.map(school => (
+                <FavoriteCard
+                  key={`school-${school.id}-${school.league_id || 'all'}`}
+                  logoUrl={school.logo_url}
+                  label={`${school.short_name} - ${school.league_code || "All Sports"}`}
+                  onClick={() => {
+                    let url = `/feed?type=school&id=${school.id}`;
+                    if (school.league_id) url += `&leagueId=${school.league_id}`;
+                    navigate(url);
+                  }}
+                  onDelete={() => handleDeleteInterest(school.interestId)}
+                />
+              ))}
+              
+              {/* Countries */}
+              {userPreferences.countries.map(country => (
+                <FavoriteCard
+                  key={`country-${country.id}-${country.league_id || 'all'}`}
+                  logoUrl={country.logo_url}
+                  label={country.name}
+                  sublabel={country.league_code || undefined}
+                  onClick={() => {
+                    let url = `/feed?type=country&id=${country.id}`;
+                    if (country.league_id) url += `&leagueId=${country.league_id}`;
+                    navigate(url);
+                  }}
+                  onDelete={() => handleDeleteInterest(country.interestId)}
+                />
+              ))}
+              
+              {/* Olympics */}
+              {userPreferences.olympicsPrefs.map(pref => {
+                const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
+                const countryLabel = pref.country_logo ? "" : (pref.country_name || "All Countries");
+                const displayLabel = `${sportLabel} -${countryLabel ? ` ${countryLabel}` : ""}`;
+                return (
+                  <FavoriteCard
+                    key={`olympics-${pref.id}`}
+                    logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
+                    label={displayLabel}
+                    countryFlag={pref.country_logo}
+                    onClick={() => navigate(`/feed?focus=${pref.id}`)}
+                    onDelete={() => handleDeleteInterest(pref.id)}
+                  />
+                );
+              })}
+              
+              {/* People */}
+              {userPreferences.people.map(person => (
+                <FavoriteCard
+                  key={`person-${person.id}`}
+                  logoUrl={getPersonLogo(person)}
+                  label={person.name}
+                  onClick={() => navigate(`/feed?focus=${person.interestId}`)}
+                  onDelete={() => handleDeleteInterest(person.interestId)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Footer */}
       <div className="mt-auto p-4 border-t border-sidebar-border">
