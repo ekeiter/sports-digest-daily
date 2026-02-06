@@ -39,10 +39,11 @@ interface FavoriteCardProps {
   logoUrl?: string | null;
   label: string;
   sublabel?: string;
+  countryFlag?: string | null;
   onClick: () => void;
 }
 
-function FavoriteCard({ logoUrl, label, sublabel, onClick }: FavoriteCardProps) {
+function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick }: FavoriteCardProps) {
   return (
     <button
       onClick={onClick}
@@ -59,8 +60,11 @@ function FavoriteCard({ logoUrl, label, sublabel, onClick }: FavoriteCardProps) 
           <div className="w-5 h-5 rounded-full bg-muted" />
         )}
       </div>
-      <div className="flex flex-col min-w-0">
+      <div className="flex items-center gap-1.5 min-w-0 flex-1">
         <span className="text-xs font-semibold text-foreground truncate">{label}</span>
+        {countryFlag && (
+          <img src={countryFlag} alt="" className="w-5 h-4 object-contain flex-shrink-0" />
+        )}
         {sublabel && (
           <span className="text-[10px] text-muted-foreground truncate">{sublabel}</span>
         )}
@@ -178,8 +182,7 @@ export function AppSidebar() {
                     <FavoriteCard
                       key={`school-${school.id}-${school.league_id || 'all'}`}
                       logoUrl={school.logo_url}
-                      label={school.short_name}
-                      sublabel={school.league_code || "All Sports"}
+                      label={`${school.short_name} - ${school.league_code || "All Sports"}`}
                       onClick={() => {
                         let url = `/feed?type=school&id=${school.id}`;
                         if (school.league_id) url += `&leagueId=${school.league_id}`;
@@ -204,15 +207,21 @@ export function AppSidebar() {
                   ))}
                   
                   {/* Olympics */}
-                  {userPreferences.olympicsPrefs.map(pref => (
-                    <FavoriteCard
-                      key={`olympics-${pref.id}`}
-                      logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
-                      label={pref.sport_name ? toTitleCase(pref.sport_name) : "Olympics"}
-                      sublabel={pref.country_name || "All"}
-                      onClick={() => navigate(`/feed?focus=${pref.id}`)}
-                    />
-                  ))}
+                  {userPreferences.olympicsPrefs.map(pref => {
+                    const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
+                    const countryLabel = pref.country_name ? "" : "All Countries";
+                    const displayLabel = `${sportLabel} ${pref.country_logo ? "" : countryLabel}`.trim();
+                    return (
+                      <FavoriteCard
+                        key={`olympics-${pref.id}`}
+                        logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
+                        label={displayLabel}
+                        sublabel={pref.country_logo ? undefined : undefined}
+                        countryFlag={pref.country_logo}
+                        onClick={() => navigate(`/feed?focus=${pref.id}`)}
+                      />
+                    );
+                  })}
                   
                   {/* People */}
                   {userPreferences.people.map(person => (
