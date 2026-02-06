@@ -69,7 +69,7 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick, onDelete
         )}
       </div>
       <div className="flex items-center gap-1.5 min-w-0 flex-1">
-        <span className="text-[11px] font-semibold text-foreground truncate">{label}</span>
+        <span className="text-xs font-semibold text-foreground truncate">{label}</span>
         {countryFlag && (
           <img src={countryFlag} alt="" className="w-4 h-3 object-contain flex-shrink-0" />
         )}
