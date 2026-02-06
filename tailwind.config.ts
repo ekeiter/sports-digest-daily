@@ -72,6 +72,11 @@ export default {
 				'badge-interest': {
 					DEFAULT: 'hsl(var(--badge-interest))',
 					foreground: 'hsl(var(--badge-interest-foreground))'
+				},
+				'favorite-card': {
+					DEFAULT: 'hsl(var(--favorite-card))',
+					hover: 'hsl(var(--favorite-card-hover))',
+					border: 'hsl(var(--favorite-card-border))'
 				}
 			},
 			borderRadius: {
