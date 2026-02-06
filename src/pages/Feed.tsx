@@ -311,34 +311,20 @@ export default function Feed() {
       <div className="min-h-screen">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
           <div className="container mx-auto px-3 py-2">
-            <div className="flex flex-col gap-2">
-              {/* Mobile: show logo, Desktop: hide logo (it's in sidebar) */}
-              <div className="flex items-center justify-center gap-2 md:hidden">
-                <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
-                <h1 className="text-lg font-bold text-foreground">
-                  {(interestId || entityType && entityId) && focusLabel ? (
-                    <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
-                  ) : "My Combined Feed"}
-                </h1>
-              </div>
-              <h1 className="hidden md:block text-xl font-bold text-foreground text-center">
+            {/* Mobile: show logo, Desktop: hide logo (it's in sidebar) */}
+            <div className="flex items-center justify-center gap-2 md:hidden">
+              <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
+              <h1 className="text-lg font-bold text-foreground">
                 {(interestId || entityType && entityId) && focusLabel ? (
                   <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
                 ) : "My Combined Feed"}
               </h1>
-              <div className="flex gap-1.5 justify-center">
-                <Button size="sm" className="h-7 w-28" onClick={() => navigate("/preferences")}>
-                  Topic Manager
-                </Button>
-                <Button size="sm" className="h-7 w-28" onClick={clearFocus} disabled={!interestId && !entityType && !entityId}>
-                  Combined Feed
-                </Button>
-                <Button size="sm" className="h-7 w-28" onClick={handleRefresh} disabled={refreshing}>
-                  {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                  <span className="ml-1">Refresh</span>
-                </Button>
-              </div>
             </div>
+            <h1 className="hidden md:block text-xl font-bold text-foreground text-center">
+              {(interestId || entityType && entityId) && focusLabel ? (
+                <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
+              ) : "My Combined Feed"}
+            </h1>
           </div>
         </header>
 
