@@ -5,7 +5,7 @@ import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { toast } from "sonner";
 
 import {
@@ -175,12 +175,11 @@ export function AppSidebar() {
 
         {/* Favorites Section */}
         {hasFavorites && (
-          <SidebarGroup className="mt-4">
-            <SidebarGroupLabel className="text-sm font-bold text-black px-4">
+          <SidebarGroup className="mt-1">
+            <SidebarGroupLabel className="text-base font-bold text-black px-4">
               Favorites
             </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <ScrollArea className="h-[calc(100vh-320px)]">
+            <SidebarGroupContent className="max-h-[calc(100vh-320px)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
                 <div className="flex flex-col gap-1 px-2">
                   {/* Sports */}
                   {userPreferences.sports.map(sport => (
@@ -274,7 +273,6 @@ export function AppSidebar() {
                     />
                   ))}
                 </div>
-              </ScrollArea>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
