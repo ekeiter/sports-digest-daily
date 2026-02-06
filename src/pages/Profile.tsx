@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { User } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
+import { AppLayout } from "@/components/AppLayout";
 interface Subscriber {
   id: string;
   email: string;
@@ -70,10 +71,11 @@ export default function Profile() {
         <p className="text-muted-foreground">Loading...</p>
       </div>;
   }
-  return <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#D5D5D5' }}>
-      <Card className="w-full max-w-3xl">
+  return <AppLayout>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#D5D5D5' }}>
+      <Card className="w-full">
         <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center mb-2 md:hidden">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
           </div>
           <CardTitle className="text-xl md:text-2xl text-center">Your Profile</CardTitle>
@@ -101,11 +103,12 @@ export default function Profile() {
               <Button onClick={() => navigate('/')} className="flex-1">
                 Dashboard
               </Button>
-              <Button onClick={handleSignOut} variant="outline" className="flex-1">
-                Sign out
-              </Button>
-            </div>
+            <Button onClick={handleSignOut} variant="outline" className="flex-1">
+              Sign out
+            </Button>
+          </div>
           </CardContent>
         </Card>
-    </div>;
+    </div>
+  </AppLayout>;
 }

@@ -9,6 +9,7 @@ import { searchPeople, type PersonSearchResult } from "@/lib/searchPeople";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
+import { AppLayout } from "@/components/AppLayout";
 
 export default function PlayerPreferences() {
   const navigate = useNavigate();
@@ -348,7 +349,8 @@ export default function PlayerPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <div className="min-h-screen bg-[#D5D5D5]">
+  return <AppLayout>
+    <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
@@ -356,7 +358,7 @@ export default function PlayerPreferences() {
               <img 
                 src={sportsdigLogo} 
                 alt="SportsDig Logo" 
-                className="h-16 md:h-20"
+                className="h-16 md:h-20 md:hidden"
               />
               <span className="text-lg md:text-xl font-bold text-black">Player/Coach Selector</span>
             </div>
@@ -474,5 +476,6 @@ export default function PlayerPreferences() {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  </AppLayout>;
 }

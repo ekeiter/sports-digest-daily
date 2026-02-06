@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import { AppLayout } from "@/components/AppLayout";
 
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) => {
@@ -193,13 +194,14 @@ export default function OlympicsPreferences() {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
-  return <div className="min-h-screen bg-[#D5D5D5]">
+  return <AppLayout>
+    <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-2">
-              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 md:h-12" />
-              <span className="text-lg md:text-xl font-bold text-black">- Olympics</span>
+              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 md:h-12 md:hidden" />
+              <span className="text-lg md:text-xl font-bold text-black">Olympics</span>
             </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
@@ -298,5 +300,6 @@ export default function OlympicsPreferences() {
             </div>}
         </div>
       </main>
-    </div>;
+    </div>
+  </AppLayout>;
 }

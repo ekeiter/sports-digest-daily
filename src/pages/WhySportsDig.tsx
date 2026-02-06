@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { Target, Smartphone, Newspaper, Trophy, Zap, Globe, Settings } from "lucide-react";
+import { AppLayout } from "@/components/AppLayout";
 const WhySportsDig = () => {
   const navigate = useNavigate();
-  return <div className="min-h-screen" style={{
+  return <AppLayout>
+    <div className="min-h-screen" style={{
     backgroundColor: '#D5D5D5'
   }}>
-      <header className="py-3">
+      <header className="py-3 md:hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12 md:h-16" />
@@ -15,7 +17,7 @@ const WhySportsDig = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pb-6 max-w-3xl">
+      <main className="container mx-auto px-4 pb-6">
         <div className="bg-white rounded-lg shadow-lg p-5 md:p-6 space-y-6">
           <div className="flex justify-center">
             <Button size="sm" onClick={() => navigate("/")}>
@@ -139,6 +141,7 @@ const WhySportsDig = () => {
           </div>
         </div>
       </main>
-    </div>;
+    </div>
+  </AppLayout>;
 };
 export default WhySportsDig;
