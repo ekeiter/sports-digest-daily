@@ -55,7 +55,7 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick, onDelete
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors text-left"
+      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md bg-favorite-card border border-favorite-card-border hover:bg-favorite-card-hover transition-colors text-left"
     >
       <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
         {logoUrl ? (
