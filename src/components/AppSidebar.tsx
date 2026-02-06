@@ -1,10 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Home, Newspaper, Settings, User, HelpCircle } from "lucide-react";
+import { Home, Newspaper, Settings, User, HelpCircle, Trash2 } from "lucide-react";
 import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { supabase } from "@/integrations/supabase/client";
-import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
+import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
 
 import {
   Sidebar,
@@ -41,15 +43,21 @@ interface FavoriteCardProps {
   sublabel?: string;
   countryFlag?: string | null;
   onClick: () => void;
+  onDelete: () => void;
 }
 
-function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick }: FavoriteCardProps) {
+function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick, onDelete }: FavoriteCardProps) {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 w-full p-2 rounded-md bg-card border border-border hover:bg-accent transition-colors text-left"
+      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors text-left"
     >
-      <div className="w-7 h-7 flex-shrink-0 flex items-center justify-center">
+      <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
         {logoUrl ? (
           <img 
             src={logoUrl} 
@@ -57,17 +65,23 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick }: Favori
             className="max-w-full max-h-full object-contain"
           />
         ) : (
-          <div className="w-5 h-5 rounded-full bg-muted" />
+          <div className="w-4 h-4 rounded-full bg-muted" />
         )}
       </div>
       <div className="flex items-center gap-1.5 min-w-0 flex-1">
-        <span className="text-xs font-semibold text-foreground truncate">{label}</span>
+        <span className="text-[11px] font-semibold text-foreground truncate">{label}</span>
         {countryFlag && (
-          <img src={countryFlag} alt="" className="w-5 h-4 object-contain flex-shrink-0" />
+          <img src={countryFlag} alt="" className="w-4 h-3 object-contain flex-shrink-0" />
         )}
         {sublabel && (
           <span className="text-[10px] text-muted-foreground truncate">{sublabel}</span>
         )}
+      </div>
+      <div 
+        onClick={handleDelete}
+        className="flex-shrink-0 p-0.5 hover:scale-110 transition-transform cursor-pointer"
+      >
+        <Trash2 className="h-3.5 w-3.5 text-destructive" />
       </div>
     </button>
   );
@@ -78,6 +92,8 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
   const [userId, setUserId] = useState<string | null>(null);
+  const invalidatePreferences = useInvalidateUserPreferences();
+  const invalidateFeed = useInvalidateArticleFeed();
 
   useEffect(() => {
     const getUser = async () => {
@@ -97,6 +113,25 @@ export function AppSidebar() {
     if (person.leagues?.logo_url) return person.leagues.logo_url;
     if (person.sports?.logo_url) return person.sports.logo_url;
     return null;
+  };
+
+  const handleDeleteInterest = async (interestId: number) => {
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .delete()
+      .eq("id", interestId);
+    
+    if (error) {
+      console.error("Error deleting interest:", error);
+      toast.error("Failed to remove favorite");
+      return;
+    }
+    
+    toast.success("Favorite removed");
+    if (userId) {
+      invalidatePreferences(userId);
+      invalidateFeed(userId);
+    }
   };
 
   const hasFavorites = userPreferences && (
@@ -154,6 +189,7 @@ export function AppSidebar() {
                       logoUrl={sport.logo_url}
                       label={sport.display_label || toTitleCase(sport.sport)}
                       onClick={() => navigate(`/feed?focus=${sport.interestId}`)}
+                      onDelete={() => handleDeleteInterest(sport.interestId)}
                     />
                   ))}
                   
@@ -164,6 +200,7 @@ export function AppSidebar() {
                       logoUrl={league.logo_url}
                       label={league.code || league.name}
                       onClick={() => navigate(`/feed?focus=${league.interestId}`)}
+                      onDelete={() => handleDeleteInterest(league.interestId)}
                     />
                   ))}
                   
@@ -174,6 +211,7 @@ export function AppSidebar() {
                       logoUrl={team.logo_url}
                       label={team.display_name}
                       onClick={() => navigate(`/feed?focus=${team.interestId}`)}
+                      onDelete={() => handleDeleteInterest(team.interestId)}
                     />
                   ))}
                   
@@ -188,6 +226,7 @@ export function AppSidebar() {
                         if (school.league_id) url += `&leagueId=${school.league_id}`;
                         navigate(url);
                       }}
+                      onDelete={() => handleDeleteInterest(school.interestId)}
                     />
                   ))}
                   
@@ -203,6 +242,7 @@ export function AppSidebar() {
                         if (country.league_id) url += `&leagueId=${country.league_id}`;
                         navigate(url);
                       }}
+                      onDelete={() => handleDeleteInterest(country.interestId)}
                     />
                   ))}
                   
@@ -218,6 +258,7 @@ export function AppSidebar() {
                         label={displayLabel}
                         countryFlag={pref.country_logo}
                         onClick={() => navigate(`/feed?focus=${pref.id}`)}
+                        onDelete={() => handleDeleteInterest(pref.id)}
                       />
                     );
                   })}
@@ -229,6 +270,7 @@ export function AppSidebar() {
                       logoUrl={getPersonLogo(person)}
                       label={person.name}
                       onClick={() => navigate(`/feed?focus=${person.interestId}`)}
+                      onDelete={() => handleDeleteInterest(person.interestId)}
                     />
                   ))}
                 </div>
