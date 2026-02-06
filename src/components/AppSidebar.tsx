@@ -209,14 +209,13 @@ export function AppSidebar() {
                   {/* Olympics */}
                   {userPreferences.olympicsPrefs.map(pref => {
                     const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
-                    const countryLabel = pref.country_name ? "" : "All Countries";
-                    const displayLabel = `${sportLabel} ${pref.country_logo ? "" : countryLabel}`.trim();
+                    const countryLabel = pref.country_logo ? "" : (pref.country_name || "All Countries");
+                    const displayLabel = `${sportLabel} -${countryLabel ? ` ${countryLabel}` : ""}`;
                     return (
                       <FavoriteCard
                         key={`olympics-${pref.id}`}
                         logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
                         label={displayLabel}
-                        sublabel={pref.country_logo ? undefined : undefined}
                         countryFlag={pref.country_logo}
                         onClick={() => navigate(`/feed?focus=${pref.id}`)}
                       />
