@@ -20,6 +20,7 @@ import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
+import { AppLayout } from "@/components/AppLayout";
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
 type School = Database['public']['Tables']['schools']['Row'];
@@ -981,12 +982,13 @@ export default function Preferences() {
   const currentItems = getCurrentMenuItems();
   const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
-  return <div className="min-h-screen bg-[#D5D5D5]">
+  return <AppLayout>
+    <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
-        <div className="container mx-auto px-4 py-2 max-w-3xl">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center gap-3">
-              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-10 md:h-12" />
+              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-10 md:h-12 md:hidden" />
               <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
@@ -1037,7 +1039,7 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pt-0 pb-2 max-w-3xl">
+      <main className="container mx-auto px-4 pt-0 pb-2">
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
             {/* Backdrop blur overlay when dropdown is open - placed outside search container */}
@@ -1552,5 +1554,6 @@ export default function Preferences() {
           </div>
         </div>
       </main>
-    </div>;
+    </div>
+  </AppLayout>;
 }

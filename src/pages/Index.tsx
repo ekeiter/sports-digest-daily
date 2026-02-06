@@ -6,6 +6,7 @@ import { User, Session } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { usePrefetchUserPreferences, prefetchArticleFeed } from "@/hooks/useUserPreferences";
 import { usePrefetchArticleFeed } from "@/hooks/useArticleFeed";
+import { AppLayout } from "@/components/AppLayout";
 import {
   Dialog,
   DialogContent,
@@ -115,8 +116,9 @@ const Index = () => {
         </div>
       </div>;
   }
-  return <div className="h-screen overflow-hidden flex flex-col bg-[#D5D5D5] overscroll-none">
-      <header className="border-b border-white/20 flex-shrink-0">
+  return <AppLayout>
+    <div className="h-screen overflow-hidden flex flex-col bg-[#D5D5D5] overscroll-none">
+      <header className="border-b border-white/20 flex-shrink-0 md:hidden">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-20 md:h-24" />
@@ -124,7 +126,7 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-2 text-gray-950 max-w-3xl">
+      <main className="container mx-auto px-4 py-2 text-gray-950">
         <div className="text-center space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
           
@@ -177,6 +179,7 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>;
+    </div>
+  </AppLayout>;
 };
 export default Index;
