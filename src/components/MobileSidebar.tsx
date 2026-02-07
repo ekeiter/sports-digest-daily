@@ -29,10 +29,8 @@ export function MobileSidebar() {
         className="p-0 w-[280px] bg-[#D5D5D5]"
       >
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-        <SidebarProvider defaultOpen={true}>
-          <div className="h-full w-full">
-            <AppSidebar isMobileOverlay />
-          </div>
+        <SidebarProvider defaultOpen={true} className="h-full">
+          <AppSidebar isMobileOverlay />
         </SidebarProvider>
       </SheetContent>
     </Sheet>
