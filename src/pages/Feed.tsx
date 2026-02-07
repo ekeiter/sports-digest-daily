@@ -318,13 +318,13 @@ export default function Feed() {
               <h1 className="text-lg font-bold text-foreground">
                 {(interestId || entityType && entityId) && focusLabel ? (
                   <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
-                ) : "My Combined Feed"}
+                ) : "My Combined Favorites Feed"}
               </h1>
             </div>
             <h1 className="hidden md:block text-xl font-bold text-foreground text-center">
               {(interestId || entityType && entityId) && focusLabel ? (
                 <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
-              ) : "My Combined Feed"}
+              ) : "My Combined Favorites Feed"}
             </h1>
           </div>
         </header>
