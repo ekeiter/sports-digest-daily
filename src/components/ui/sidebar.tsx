@@ -233,10 +233,10 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            // On PC (lg+), use calculated left offset for centering: (100vw - 54rem) / 2
+            // On PC (lg+), use calculated left offset for centering: (100vw - 54rem) / 2 + 0.5rem for feed padding
             // 54rem = 20rem sidebar + 34rem feed
             side === "left"
-              ? "left-0 lg:left-[calc((100vw-54rem)/2)] group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
+              ? "left-0 lg:left-[calc((100vw-54rem)/2+0.5rem)] group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
             // Adjust the padding for floating and inset variants.
             variant === "floating" || variant === "inset"
