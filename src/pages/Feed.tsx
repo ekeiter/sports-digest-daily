@@ -311,21 +311,31 @@ export default function Feed() {
   return (
     <div className="min-h-screen w-full">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <div className="w-full px-3 py-2">
-            {/* Mobile: show logo, Desktop: hide logo (it's in sidebar) */}
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
-              <h1 className="text-lg font-bold text-foreground">
+          <div className="w-full px-3 py-2 flex items-center justify-between">
+            {/* Mobile: show logo + title */}
+            <div className="flex items-center gap-2 md:hidden flex-1 min-w-0">
+              <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain flex-shrink-0" />
+              <h1 className="text-lg font-bold text-foreground truncate">
                 {(interestId || entityType && entityId) && focusLabel ? (
                   <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
                 ) : "My Combined Favorites Feed"}
               </h1>
             </div>
-            <h1 className="hidden md:block text-xl font-bold text-foreground text-center">
+            {/* Desktop: centered title */}
+            <h1 className="hidden md:block text-xl font-bold text-foreground text-center flex-1">
               {(interestId || entityType && entityId) && focusLabel ? (
                 <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
               ) : "My Combined Favorites Feed"}
             </h1>
+            {/* Refresh button - all layouts */}
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+              aria-label="Refresh feed"
+            >
+              <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
           </div>
         </header>
 
