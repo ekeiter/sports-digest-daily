@@ -10,15 +10,15 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
       {/* Outer wrapper: centers the inner block on lg+ */}
-      <div className="min-h-screen w-full flex lg:justify-center lg:[--sidebar-left:calc((100vw-63rem)/2)]">
+      <div className="min-h-screen w-full flex lg:justify-center lg:[--sidebar-left:calc((100vw-55rem)/2)]">
         {/* Inner block: sidebar + feed with fixed combined width on lg+ */}
-        <div className="flex w-full lg:max-w-[63rem]">
+        <div className="flex w-full lg:max-w-[55rem]">
           {/* Sidebar only visible on md+ screens */}
           <div className="hidden md:block flex-shrink-0">
             <AppSidebar />
           </div>
           
-          <SidebarInset className="flex-1 lg:max-w-3xl overflow-hidden">
+          <SidebarInset className="flex-1 lg:flex-none lg:w-[34rem] overflow-hidden">
             <div className="w-full h-full overflow-auto">
               {children}
             </div>
