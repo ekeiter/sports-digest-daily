@@ -37,13 +37,14 @@ interface FavoriteCardProps {
   logoUrl?: string | null;
   label: string;
   sublabel?: string;
-  countryFlag?: string | null;
+  rightIcon?: string | null;
+  rightLabel?: string | null;
   isActive?: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-function FavoriteCard({ logoUrl, label, sublabel, countryFlag, isActive, onClick, onDelete }: FavoriteCardProps) {
+function FavoriteCard({ logoUrl, label, sublabel, rightIcon, rightLabel, isActive, onClick, onDelete }: FavoriteCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete();
@@ -67,8 +68,11 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, isActive, onClick
       </div>
       <div className="flex items-center gap-1.5 min-w-0 flex-1">
         <span className="text-xs font-semibold text-foreground truncate">{label}</span>
-        {countryFlag && (
-          <img src={countryFlag} alt="" className="w-4 h-3 object-contain flex-shrink-0" />
+        {rightIcon && (
+          <img src={rightIcon} alt="" className="w-5 h-4 object-contain flex-shrink-0" />
+        )}
+        {rightLabel && (
+          <span className="text-[10px] font-medium text-muted-foreground flex-shrink-0">{rightLabel}</span>
         )}
         {sublabel && (
           <span className="text-[10px] text-muted-foreground truncate">{sublabel}</span>
@@ -83,6 +87,16 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, isActive, onClick
     </button>
   );
 }
+
+// Helper to get M/W indicator for gendered college leagues
+const getGenderIndicator = (leagueCode: string | null): string | null => {
+  if (!leagueCode) return null;
+  const maleLeagues = ['NCAAB', 'NCAAM', 'NCAAMH', 'NCAAMSOC'];
+  const femaleLeagues = ['NCAAW', 'NCAAWH', 'NCAAWSOC', 'NCAASB'];
+  if (maleLeagues.includes(leagueCode)) return 'M';
+  if (femaleLeagues.includes(leagueCode)) return 'W';
+  return null;
+};
 
 export function AppSidebar() {
   const location = useLocation();
@@ -233,11 +247,15 @@ export function AppSidebar() {
               {userPreferences.schools.map(school => {
                 const schoolActive = typeParam === 'school' && idParam === String(school.id) && 
                   (school.league_id ? leagueIdParam === String(school.league_id) : !leagueIdParam);
+                const genderIndicator = getGenderIndicator(school.league_code);
                 return (
                   <FavoriteCard
                     key={`school-${school.id}-${school.league_id || 'all'}`}
                     logoUrl={school.logo_url}
-                    label={`${school.short_name} - ${school.league_code || "All Sports"}`}
+                    label={school.short_name}
+                    rightIcon={school.league_logo_url}
+                    rightLabel={genderIndicator}
+                    sublabel={!school.league_id ? "All Sports" : undefined}
                     isActive={schoolActive}
                     onClick={() => {
                       let url = `/feed?type=school&id=${school.id}`;
@@ -258,7 +276,7 @@ export function AppSidebar() {
                     key={`country-${country.id}-${country.league_id || 'all'}`}
                     logoUrl={country.league_logo_url || undefined}
                     label={country.league_name || country.name}
-                    countryFlag={country.logo_url}
+                    rightIcon={country.logo_url}
                     isActive={countryActive}
                     onClick={() => {
                       let url = `/feed?type=country&id=${country.id}`;
@@ -280,7 +298,7 @@ export function AppSidebar() {
                     key={`olympics-${pref.id}`}
                     logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
                     label={displayLabel}
-                    countryFlag={pref.country_logo}
+                    rightIcon={pref.country_logo}
                     isActive={focusParam === String(pref.id)}
                     onClick={() => navigate(`/feed?focus=${pref.id}`)}
                     onDelete={() => handleDeleteInterest(pref.id)}

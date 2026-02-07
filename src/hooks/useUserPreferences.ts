@@ -29,6 +29,7 @@ export interface TeamWithInterest extends Team {
 export interface SchoolWithInterest extends School {
   interestId: number;
   league_id?: number | null;
+  league_logo_url?: string | null;
 }
 
 export interface CountryWithInterest {
@@ -244,11 +245,11 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     schoolIds.length > 0
       ? supabase.from("schools").select("*").in("id", schoolIds)
       : Promise.resolve({ data: [], error: null }),
-    // Fetch league codes for schools that have league_id
+    // Fetch league codes and logos for schools that have league_id
     (() => {
       const leagueIdsForSchools = [...new Set([...schoolLeagueMap.values()].filter((id): id is number => id !== null))];
       return leagueIdsForSchools.length > 0
-        ? supabase.from("leagues").select("id, code").in("id", leagueIdsForSchools)
+        ? supabase.from("leagues").select("id, code, logo_url").in("id", leagueIdsForSchools)
         : Promise.resolve({ data: [], error: null });
     })(),
     olympicsSportIds.length > 0
@@ -404,17 +405,19 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
   
-  // Build league code lookup for schools
-  const schoolLeagueCodeMap = new Map((leaguesForSchoolsResult.data || []).map(l => [l.id, l.code]));
+  // Build league code and logo lookup for schools
+  const schoolLeagueDataMap = new Map((leaguesForSchoolsResult.data || []).map((l: any) => [l.id, { code: l.code, logo_url: l.logo_url }]));
   
-  // Enrich schools with their league_code and interestId
+  // Enrich schools with their league_code, league_logo_url, and interestId
   const schools: SchoolWithInterest[] = ((schoolsResult.data || []) as School[]).map(school => {
     const leagueId = schoolLeagueMap.get(school.id);
+    const leagueData = leagueId ? schoolLeagueDataMap.get(leagueId) : null;
     return {
       ...school,
       interestId: schoolInterestMap.get(school.id) || 0,
-      league_code: leagueId ? schoolLeagueCodeMap.get(leagueId) : null,
+      league_code: leagueData?.code || null,
       league_id: leagueId || null,
+      league_logo_url: leagueData?.logo_url || null,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
