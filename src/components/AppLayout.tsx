@@ -9,17 +9,20 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        {/* Sidebar only visible on md+ screens */}
-        <div className="hidden md:block">
-          <AppSidebar />
-        </div>
-        
-        <SidebarInset className="flex-1 overflow-hidden max-w-2xl">
-          <div className="w-full h-full overflow-auto">
-            {children}
+      <div className="min-h-screen w-full flex justify-center">
+        {/* Centered container for sidebar + content */}
+        <div className="flex w-full md:w-auto">
+          {/* Sidebar only visible on md+ screens */}
+          <div className="hidden md:block flex-shrink-0">
+            <AppSidebar />
           </div>
-        </SidebarInset>
+          
+          <SidebarInset className="flex-1 md:flex-none md:w-[42rem] overflow-hidden">
+            <div className="w-full h-full overflow-auto">
+              {children}
+            </div>
+          </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );
