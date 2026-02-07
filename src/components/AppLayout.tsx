@@ -9,7 +9,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full justify-center">
+      <div className="min-h-screen flex w-full">
         {/* Sidebar only visible on md+ screens */}
         <div className="hidden md:block">
           <AppSidebar />
