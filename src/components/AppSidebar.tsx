@@ -98,7 +98,11 @@ const getGenderIndicator = (leagueCode: string | null): string | null => {
   return null;
 };
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  isMobileOverlay?: boolean;
+}
+
+export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -173,7 +177,7 @@ export function AppSidebar() {
   );
 
   return (
-    <Sidebar className="border-r-0 flex flex-col h-full">
+    <Sidebar className="border-r-0 flex flex-col h-full" collapsible={isMobileOverlay ? "none" : "offcanvas"}>
       <SidebarHeader className="p-4 pb-2 flex-shrink-0">
         <div className="flex items-center justify-center gap-2">
           <img src={blimpLogo} alt="SportsDig" className="h-10 object-contain" />
