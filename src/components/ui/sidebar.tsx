@@ -219,10 +219,10 @@ const Sidebar = React.forwardRef<
         data-variant={variant}
         data-side={side}
       >
-        {/* This is what handles the sidebar gap on desktop - hidden on lg+ since we use relative positioning there */}
+        {/* Spacer div that takes up space in document flow */}
         <div
           className={cn(
-            "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear lg:hidden",
+            "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
             "group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
             variant === "floating" || variant === "inset"
@@ -232,11 +232,11 @@ const Sidebar = React.forwardRef<
         />
         <div
           className={cn(
-            "duration-200 inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            // Fixed on tablet (md), relative on PC (lg+) so it centers with feed
-            "fixed lg:relative",
+            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
+            // On PC (lg+), use calculated left offset for centering: (100vw - 54rem) / 2
+            // 54rem = 20rem sidebar + 34rem feed
             side === "left"
-              ? "left-0 lg:left-auto group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] lg:group-data-[collapsible=offcanvas]:left-auto"
+              ? "left-0 lg:left-[calc((100vw-54rem)/2)] group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
             // Adjust the padding for floating and inset variants.
             variant === "floating" || variant === "inset"
