@@ -305,6 +305,7 @@ export function AppSidebar() {
           <p className="font-medium">SportsDig™ — Personalized Sports News</p>
           <p>© 2026 SportsDig. All rights reserved.</p>
           <p className="pt-1">
+            email:{" "}
             <a href="mailto:info@sportsdig.com" className="hover:text-foreground transition-colors">
               info@sportsdig.com
             </a>
