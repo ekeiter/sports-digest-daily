@@ -117,7 +117,7 @@ All colors MUST be HSL.
 /* Make sidebar wider on large desktop screens (PC) */
 @media (min-width: 1024px) {
   .group\/sidebar-wrapper {
-    --sidebar-width: 20rem;
+    --sidebar-width-desktop: 20rem;
   }
 }
 
