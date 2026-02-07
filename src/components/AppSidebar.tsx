@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Combined Favs Feed", url: "/feed", icon: Newspaper },
+  { title: "Combined Favorites Feed", url: "/feed", icon: Newspaper },
   { title: "Feed Topic Manager", url: "/preferences", icon: Settings },
   { title: "Instructions", url: "/instructions", icon: BookOpen },
   { title: "Why SportsDig", url: "/why-sportsdig", icon: HelpCircle },
