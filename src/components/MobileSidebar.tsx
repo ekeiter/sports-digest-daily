@@ -1,6 +1,7 @@
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -28,9 +29,11 @@ export function MobileSidebar() {
         className="p-0 w-[280px] bg-[#D5D5D5]"
       >
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-        <div className="h-full">
-          <AppSidebar />
-        </div>
+        <SidebarProvider defaultOpen={true}>
+          <div className="h-full w-full">
+            <AppSidebar />
+          </div>
+        </SidebarProvider>
       </SheetContent>
     </Sheet>
   );
