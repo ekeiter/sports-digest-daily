@@ -210,7 +210,7 @@ export function AppSidebar() {
                 <FavoriteCard
                   key={`league-${league.id}`}
                   logoUrl={league.logo_url}
-                  label={league.code || league.name}
+                  label={league.display_label || league.name || league.code}
                   isActive={focusParam === String(league.interestId)}
                   onClick={() => navigate(`/feed?focus=${league.interestId}`)}
                   onDelete={() => handleDeleteInterest(league.interestId)}
