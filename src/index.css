@@ -43,7 +43,7 @@ All colors MUST be HSL.
     --badge-interest-foreground: 199 89% 20%;
 
     --favorite-card: 0 0% 83.5%;
-    --favorite-card-hover: 0 0% 78%;
+    --favorite-card-hover: 0 0% 100%;
     --favorite-card-border: 0 0% 75%;
 
     --radius: 0.5rem;
