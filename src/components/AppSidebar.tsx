@@ -205,7 +205,7 @@ export function AppSidebar() {
           <div className="flex-shrink-0 px-4 py-2 text-center">
             <span className="text-base font-bold text-black">Favorites</span>
           </div>
-          <div className="flex-1 overflow-y-auto px-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
             <div className="flex flex-col gap-1">
               {/* Sports */}
               {userPreferences.sports.map(sport => (
