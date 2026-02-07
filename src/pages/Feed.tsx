@@ -311,7 +311,7 @@ export default function Feed() {
   return (
     <div className="min-h-screen w-full">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <div className="max-w-3xl mx-auto px-3 py-2">
+          <div className="max-w-3xl px-3 py-2">
             {/* Mobile: show logo, Desktop: hide logo (it's in sidebar) */}
             <div className="flex items-center justify-center gap-2 md:hidden">
               <img src={blimpLogo} alt="SportsDig" className="h-8 object-contain" />
@@ -329,7 +329,7 @@ export default function Feed() {
           </div>
         </header>
 
-        <main className="max-w-3xl mx-auto px-0 md:px-2 py-2">
+        <main className="max-w-3xl px-0 md:px-2 py-2">
           {articles.length === 0 ? (
             <Card className="mx-2 md:mx-0">
               <CardContent className="p-12 text-center">
