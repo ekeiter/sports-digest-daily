@@ -273,7 +273,7 @@ export function AppSidebar() {
       
       {/* Footer */}
       <div className="mt-auto p-4 border-t border-sidebar-border">
-        <div className="text-xs text-muted-foreground text-center space-y-1">
+        <div className="text-xs text-black text-center space-y-1">
           <p className="font-medium">SportsDig™ — Personalized Sports News</p>
           <p>© 2026 SportsDig. All rights reserved.</p>
           <p className="pt-1">
