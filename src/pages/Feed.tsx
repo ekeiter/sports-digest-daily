@@ -61,8 +61,12 @@ export default function Feed() {
 
   useEffect(() => {
     checkUser();
-    window.scrollTo(0, 0);
   }, []);
+
+  // Scroll to top when feed focus changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [interestId, entityType, entityId, focusLeagueId]);
 
   // Preload all thumbnail images in the background once articles load
   useEffect(() => {
