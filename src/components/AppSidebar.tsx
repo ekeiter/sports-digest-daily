@@ -141,6 +141,11 @@ export function AppSidebar() {
       invalidatePreferences(userId);
       invalidateFeed(userId);
     }
+    
+    // If the deleted favorite was the currently focused feed, navigate to combined feed
+    if (focusParam === String(interestId)) {
+      navigate('/feed');
+    }
   };
 
   const hasFavorites = userPreferences && (
