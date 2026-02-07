@@ -39,6 +39,8 @@ export interface CountryWithInterest {
   interestId: number;
   league_id?: number | null;
   league_code?: string | null;
+  league_name?: string | null;
+  league_logo_url?: string | null;
 }
 
 export interface Person {
@@ -270,9 +272,9 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     nonOlympicsCountryIds.length > 0
       ? supabase.from("countries").select("id, name, code, logo_url").in("id", nonOlympicsCountryIds)
       : Promise.resolve({ data: [], error: null }),
-    // Fetch league codes for countries that have league_id
+    // Fetch league details for countries that have league_id
     countryLeagueIds.length > 0
-      ? supabase.from("leagues").select("id, code").in("id", countryLeagueIds)
+      ? supabase.from("leagues").select("id, code, name, display_label, logo_url").in("id", countryLeagueIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -416,11 +418,12 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
   const countryDetailsMap = new Map(
     (nonOlympicsCountriesResult.data || []).map((c: any) => [c.id, { name: c.name, code: c.code, logo_url: c.logo_url }])
   );
-  const countryLeagueCodeMap = new Map((countryLeaguesResult.data || []).map(l => [l.id, l.code]));
+  const countryLeagueMap = new Map((countryLeaguesResult.data || []).map((l: any) => [l.id, { code: l.code, name: l.display_label || l.name, logo_url: l.logo_url }]));
   
-  // Enrich countries with their league_code and interestId
+  // Enrich countries with their league details and interestId
   const countries: CountryWithInterest[] = countryInterests.map(ci => {
     const details = countryDetailsMap.get(ci.country_id);
+    const leagueDetails = ci.league_id ? countryLeagueMap.get(ci.league_id) : null;
     const key = `${ci.country_id}-${ci.league_id || 'null'}`;
     return {
       id: ci.country_id,
@@ -429,7 +432,9 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
       logo_url: details?.logo_url || null,
       interestId: countryInterestMap.get(key) || ci.id,
       league_id: ci.league_id,
-      league_code: ci.league_id ? countryLeagueCodeMap.get(ci.league_id) : null,
+      league_code: leagueDetails?.code || null,
+      league_name: leagueDetails?.name || null,
+      league_logo_url: leagueDetails?.logo_url || null,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
