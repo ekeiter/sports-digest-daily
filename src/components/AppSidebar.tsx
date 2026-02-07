@@ -38,11 +38,12 @@ interface FavoriteCardProps {
   label: string;
   sublabel?: string;
   countryFlag?: string | null;
+  isActive?: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick, onDelete }: FavoriteCardProps) {
+function FavoriteCard({ logoUrl, label, sublabel, countryFlag, isActive, onClick, onDelete }: FavoriteCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete();
@@ -51,7 +52,7 @@ function FavoriteCard({ logoUrl, label, sublabel, countryFlag, onClick, onDelete
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md bg-favorite-card border border-favorite-card-border hover:bg-favorite-card-hover transition-colors text-left"
+      className={`flex items-center gap-2 w-full px-2 py-1.5 rounded-md border border-favorite-card-border hover:bg-favorite-card-hover transition-colors text-left ${isActive ? 'bg-white' : 'bg-favorite-card'}`}
     >
       <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
         {logoUrl ? (
@@ -87,6 +88,12 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+  const searchParams = new URLSearchParams(location.search);
+  const focusParam = searchParams.get('focus');
+  const typeParam = searchParams.get('type');
+  const idParam = searchParams.get('id');
+  const leagueIdParam = searchParams.get('leagueId');
+  
   const [userId, setUserId] = useState<string | null>(null);
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
@@ -101,7 +108,13 @@ export function AppSidebar() {
 
   const { data: userPreferences } = useUserPreferences(userId);
 
-  const isActive = (path: string) => currentPath === path;
+  // Combined feed is only active when on /feed with no focus/type params
+  const isCombinedFeedActive = currentPath === '/feed' && !focusParam && !typeParam;
+  
+  const isActive = (path: string) => {
+    if (path === '/feed') return isCombinedFeedActive;
+    return currentPath === path;
+  };
 
   const getPersonLogo = (person: any) => {
     if (person.teams?.logo_url) return person.teams.logo_url;
@@ -181,6 +194,7 @@ export function AppSidebar() {
                   key={`sport-${sport.id}`}
                   logoUrl={sport.logo_url}
                   label={sport.display_label || toTitleCase(sport.sport)}
+                  isActive={focusParam === String(sport.interestId)}
                   onClick={() => navigate(`/feed?focus=${sport.interestId}`)}
                   onDelete={() => handleDeleteInterest(sport.interestId)}
                 />
@@ -192,6 +206,7 @@ export function AppSidebar() {
                   key={`league-${league.id}`}
                   logoUrl={league.logo_url}
                   label={league.code || league.name}
+                  isActive={focusParam === String(league.interestId)}
                   onClick={() => navigate(`/feed?focus=${league.interestId}`)}
                   onDelete={() => handleDeleteInterest(league.interestId)}
                 />
@@ -203,41 +218,52 @@ export function AppSidebar() {
                   key={`team-${team.id}`}
                   logoUrl={team.logo_url}
                   label={team.display_name}
+                  isActive={focusParam === String(team.interestId)}
                   onClick={() => navigate(`/feed?focus=${team.interestId}`)}
                   onDelete={() => handleDeleteInterest(team.interestId)}
                 />
               ))}
               
               {/* Schools */}
-              {userPreferences.schools.map(school => (
-                <FavoriteCard
-                  key={`school-${school.id}-${school.league_id || 'all'}`}
-                  logoUrl={school.logo_url}
-                  label={`${school.short_name} - ${school.league_code || "All Sports"}`}
-                  onClick={() => {
-                    let url = `/feed?type=school&id=${school.id}`;
-                    if (school.league_id) url += `&leagueId=${school.league_id}`;
-                    navigate(url);
-                  }}
-                  onDelete={() => handleDeleteInterest(school.interestId)}
-                />
-              ))}
+              {userPreferences.schools.map(school => {
+                const schoolActive = typeParam === 'school' && idParam === String(school.id) && 
+                  (school.league_id ? leagueIdParam === String(school.league_id) : !leagueIdParam);
+                return (
+                  <FavoriteCard
+                    key={`school-${school.id}-${school.league_id || 'all'}`}
+                    logoUrl={school.logo_url}
+                    label={`${school.short_name} - ${school.league_code || "All Sports"}`}
+                    isActive={schoolActive}
+                    onClick={() => {
+                      let url = `/feed?type=school&id=${school.id}`;
+                      if (school.league_id) url += `&leagueId=${school.league_id}`;
+                      navigate(url);
+                    }}
+                    onDelete={() => handleDeleteInterest(school.interestId)}
+                  />
+                );
+              })}
               
               {/* Countries */}
-              {userPreferences.countries.map(country => (
-                <FavoriteCard
-                  key={`country-${country.id}-${country.league_id || 'all'}`}
-                  logoUrl={country.logo_url}
-                  label={country.name}
-                  sublabel={country.league_code || undefined}
-                  onClick={() => {
-                    let url = `/feed?type=country&id=${country.id}`;
-                    if (country.league_id) url += `&leagueId=${country.league_id}`;
-                    navigate(url);
-                  }}
-                  onDelete={() => handleDeleteInterest(country.interestId)}
-                />
-              ))}
+              {userPreferences.countries.map(country => {
+                const countryActive = typeParam === 'country' && idParam === String(country.id) &&
+                  (country.league_id ? leagueIdParam === String(country.league_id) : !leagueIdParam);
+                return (
+                  <FavoriteCard
+                    key={`country-${country.id}-${country.league_id || 'all'}`}
+                    logoUrl={country.logo_url}
+                    label={country.name}
+                    sublabel={country.league_code || undefined}
+                    isActive={countryActive}
+                    onClick={() => {
+                      let url = `/feed?type=country&id=${country.id}`;
+                      if (country.league_id) url += `&leagueId=${country.league_id}`;
+                      navigate(url);
+                    }}
+                    onDelete={() => handleDeleteInterest(country.interestId)}
+                  />
+                );
+              })}
               
               {/* Olympics */}
               {userPreferences.olympicsPrefs.map(pref => {
@@ -250,6 +276,7 @@ export function AppSidebar() {
                     logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
                     label={displayLabel}
                     countryFlag={pref.country_logo}
+                    isActive={focusParam === String(pref.id)}
                     onClick={() => navigate(`/feed?focus=${pref.id}`)}
                     onDelete={() => handleDeleteInterest(pref.id)}
                   />
@@ -262,6 +289,7 @@ export function AppSidebar() {
                   key={`person-${person.id}`}
                   logoUrl={getPersonLogo(person)}
                   label={person.name}
+                  isActive={focusParam === String(person.interestId)}
                   onClick={() => navigate(`/feed?focus=${person.interestId}`)}
                   onDelete={() => handleDeleteInterest(person.interestId)}
                 />
