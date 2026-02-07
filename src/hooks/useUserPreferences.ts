@@ -197,7 +197,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   });
 
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult, nonOlympicsCountriesResult, countryLeaguesResult, countryLeagueMenuLogosResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, schoolLeagueMenuLogosResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult, nonOlympicsCountriesResult, countryLeaguesResult, countryLeagueMenuLogosResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -250,6 +250,13 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
       const leagueIdsForSchools = [...new Set([...schoolLeagueMap.values()].filter((id): id is number => id !== null))];
       return leagueIdsForSchools.length > 0
         ? supabase.from("leagues").select("id, code, logo_url").in("id", leagueIdsForSchools)
+        : Promise.resolve({ data: [], error: null });
+    })(),
+    // Fetch logos from preference_menu_items for school leagues (fallback)
+    (() => {
+      const leagueIdsForSchools = [...new Set([...schoolLeagueMap.values()].filter((id): id is number => id !== null))];
+      return leagueIdsForSchools.length > 0
+        ? supabase.from("preference_menu_items").select("entity_id, label, logo_url").eq("entity_type", "league").in("entity_id", leagueIdsForSchools)
         : Promise.resolve({ data: [], error: null });
     })(),
     olympicsSportIds.length > 0
@@ -405,8 +412,12 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
   
-  // Build league code and logo lookup for schools
-  const schoolLeagueDataMap = new Map((leaguesForSchoolsResult.data || []).map((l: any) => [l.id, { code: l.code, logo_url: l.logo_url }]));
+  // Build league code and logo lookup for schools (with fallback to preference_menu_items)
+  const schoolLeagueMenuMap = new Map((schoolLeagueMenuLogosResult.data || []).map((l: any) => [l.entity_id, l.logo_url]));
+  const schoolLeagueDataMap = new Map((leaguesForSchoolsResult.data || []).map((l: any) => {
+    const menuLogo = schoolLeagueMenuMap.get(l.id);
+    return [l.id, { code: l.code, logo_url: l.logo_url || menuLogo || null }];
+  }));
   
   // Enrich schools with their league_code, league_logo_url, and interestId
   const schools: SchoolWithInterest[] = ((schoolsResult.data || []) as School[]).map(school => {
