@@ -170,7 +170,7 @@ export function AppSidebar() {
       {/* Scrollable Favorites Section */}
       {hasFavorites && (
         <div className="flex-1 min-h-0 mt-1 flex flex-col">
-          <div className="flex-shrink-0 px-4 py-2">
+          <div className="flex-shrink-0 px-4 py-2 text-center">
             <span className="text-base font-bold text-black">Favorites</span>
           </div>
           <div className="flex-1 overflow-y-auto px-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
