@@ -69,7 +69,7 @@ function FavoriteCard({ logoUrl, label, sublabel, rightIcon, rightLabel, isActiv
       <div className="flex items-center gap-1.5 min-w-0 flex-1">
         <span className="text-xs font-semibold text-foreground truncate">{label}</span>
         {rightIcon && (
-          <img src={rightIcon} alt="" className="w-5 h-4 object-contain flex-shrink-0" />
+          <img src={rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
         )}
         {rightLabel && (
           <span className="text-xs font-semibold text-foreground flex-shrink-0">{rightLabel}</span>
