@@ -9,15 +9,16 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
+      {/* Outer wrapper: centers the inner block on lg+ */}
       <div className="min-h-screen w-full flex lg:justify-center">
-        {/* Centered container for sidebar + content on PC only */}
-        <div className="flex w-full lg:w-auto">
+        {/* Inner block: sidebar + feed with fixed combined width on lg+ */}
+        <div className="flex w-full lg:max-w-[63rem]">
           {/* Sidebar only visible on md+ screens */}
           <div className="hidden md:block flex-shrink-0">
             <AppSidebar />
           </div>
           
-          <SidebarInset className="flex-1 lg:flex-none lg:w-[42rem] overflow-hidden">
+          <SidebarInset className="flex-1 overflow-hidden">
             <div className="w-full h-full overflow-auto">
               {children}
             </div>
