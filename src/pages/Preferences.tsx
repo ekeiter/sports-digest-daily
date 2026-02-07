@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
+import { MobileSidebar } from "@/components/MobileSidebar";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
@@ -814,7 +814,9 @@ export default function Preferences() {
         <div className="container mx-auto px-4 py-2">
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center gap-3">
-              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-10 md:h-12 md:hidden" />
+              <div className="md:hidden">
+                <MobileSidebar />
+              </div>
               <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
