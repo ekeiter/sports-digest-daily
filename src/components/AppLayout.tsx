@@ -10,7 +10,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
       {/* Outer wrapper: centers the inner block on lg+ */}
-      <div className="min-h-screen w-full flex lg:justify-center">
+      <div className="min-h-screen w-full flex lg:justify-center lg:[--sidebar-left:calc((100vw-63rem)/2)]">
         {/* Inner block: sidebar + feed with fixed combined width on lg+ */}
         <div className="flex w-full lg:max-w-[63rem]">
           {/* Sidebar only visible on md+ screens */}
