@@ -256,9 +256,9 @@ export function AppSidebar() {
                 return (
                   <FavoriteCard
                     key={`country-${country.id}-${country.league_id || 'all'}`}
-                    logoUrl={country.logo_url}
-                    label={country.name}
-                    sublabel={country.league_code || undefined}
+                    logoUrl={country.league_logo_url || undefined}
+                    label={country.league_name || country.name}
+                    countryFlag={country.logo_url}
                     isActive={countryActive}
                     onClick={() => {
                       let url = `/feed?type=country&id=${country.id}`;
