@@ -1067,7 +1067,7 @@ export default function Preferences() {
                 <h2 className="text-2xl font-bold text-center">Schools</h2>
                 {loadingSchools ? <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                  </div> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {schools.map(school => {
                 // In the Schools browser (All Sports context), selected if any interest exists
                 const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
@@ -1101,7 +1101,7 @@ export default function Preferences() {
                 </h2>
                 {loadingTeams ? <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                  </div> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {getExpandedLeagueTeams().map(item => {
                 // For schools: selected if "All Sports" is selected OR this specific combo exists
                 // For countries: check selectedCountries
