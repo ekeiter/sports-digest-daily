@@ -114,6 +114,13 @@ All colors MUST be HSL.
   }
 }
 
+/* Make sidebar wider on large desktop screens (PC) */
+@media (min-width: 1024px) {
+  .group\/sidebar-wrapper {
+    --sidebar-width: 21rem;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
