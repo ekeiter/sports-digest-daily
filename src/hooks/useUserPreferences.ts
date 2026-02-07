@@ -196,7 +196,7 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     }
   });
 
-  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult, nonOlympicsCountriesResult, countryLeaguesResult] = await Promise.all([
+  const [sportsResult, leaguesResult, teamsResult, peopleResult, schoolsResult, leaguesForSchoolsResult, olympicsSportsResult, olympicsCountriesResult, olympicsSportLogosResult, sportMenuLogosResult, leagueMenuLogosResult, nonOlympicsCountriesResult, countryLeaguesResult, countryLeagueMenuLogosResult] = await Promise.all([
     sportIds.length > 0
       ? supabase.from("sports").select("*").in("id", sportIds)
       : Promise.resolve({ data: [], error: null }),
@@ -275,6 +275,10 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     // Fetch league details for countries that have league_id
     countryLeagueIds.length > 0
       ? supabase.from("leagues").select("id, code, name, display_label, logo_url").in("id", countryLeagueIds)
+      : Promise.resolve({ data: [], error: null }),
+    // Fetch logos from preference_menu_items for country leagues (fallback)
+    countryLeagueIds.length > 0
+      ? supabase.from("preference_menu_items").select("entity_id, label, logo_url").eq("entity_type", "league").in("entity_id", countryLeagueIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -414,11 +418,19 @@ async function fetchUserPreferences(userId: string): Promise<UserPreferences> {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
-  // Build country lookup and league code lookup for countries
+  // Build country lookup and league lookup for countries
+  const countryLeagueMenuMap = new Map((countryLeagueMenuLogosResult.data || []).map((l: any) => [l.entity_id, { label: l.label, logo_url: l.logo_url }]));
   const countryDetailsMap = new Map(
     (nonOlympicsCountriesResult.data || []).map((c: any) => [c.id, { name: c.name, code: c.code, logo_url: c.logo_url }])
   );
-  const countryLeagueMap = new Map((countryLeaguesResult.data || []).map((l: any) => [l.id, { code: l.code, name: l.display_label || l.name, logo_url: l.logo_url }]));
+  const countryLeagueMap = new Map((countryLeaguesResult.data || []).map((l: any) => {
+    const menuData = countryLeagueMenuMap.get(l.id);
+    return [l.id, { 
+      code: l.code, 
+      name: menuData?.label || l.display_label || l.name, 
+      logo_url: l.logo_url || menuData?.logo_url || null 
+    }];
+  }));
   
   // Enrich countries with their league details and interestId
   const countries: CountryWithInterest[] = countryInterests.map(ci => {
