@@ -5,6 +5,7 @@ import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import { cn } from "@/lib/utils";
 
 import { toast } from "sonner";
 
@@ -177,7 +178,7 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
   );
 
   return (
-    <Sidebar className="border-r-0 flex flex-col h-full" collapsible={isMobileOverlay ? "none" : "offcanvas"}>
+    <Sidebar className={cn("border-r-0 flex flex-col h-full", isMobileOverlay && "w-full")} collapsible={isMobileOverlay ? "none" : "offcanvas"}>
       <SidebarHeader className="p-4 pb-2 flex-shrink-0">
         <div className="flex items-center justify-center gap-2">
           <img src={blimpLogo} alt="SportsDig" className="h-10 object-contain" />
