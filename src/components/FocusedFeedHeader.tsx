@@ -155,7 +155,7 @@ export function FocusedFeedHeader({
       <div className="flex items-center justify-center gap-2">
         <Newspaper className="h-5 w-5 text-primary flex-shrink-0" />
         <span className="text-lg md:text-xl font-bold text-foreground truncate">
-          My Combined Favorites Feed
+          Combined Favorites Feed
         </span>
       </div>
     );
