@@ -8,6 +8,7 @@ import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import ArticleImage from "@/components/ArticleImage";
 import FeedSkeleton from "@/components/FeedSkeleton";
 import MatchedInterestBadges from "@/components/MatchedInterestBadges";
+import { FocusedFeedHeader } from "@/components/FocusedFeedHeader";
 
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import { openUrl } from "@/hooks/useOpenUrl";
@@ -31,7 +32,6 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
-  const [focusLabel, setFocusLabel] = useState<string | null>(null);
 
   // Parse focus parameters - supports both old interestId format and new type+id format
   const focusParam = searchParams.get("focus");
@@ -75,119 +75,6 @@ export default function Feed() {
       preloadImages(thumbnailUrls);
     }
   }, [initialArticles, extraArticles]);
-
-  // Fetch the label for the focused item
-  useEffect(() => {
-    if ((interestId || entityType && entityId) && user?.id) {
-      fetchFocusLabel();
-    } else {
-      setFocusLabel(null);
-    }
-  }, [interestId, entityType, entityId, focusLeagueId, user?.id]);
-
-  const fetchFocusLabel = async () => {
-    if (!user?.id) return;
-    try {
-      let label = "";
-
-      // Handle new type + id format first
-      if (entityType && entityId) {
-        if (entityType === 'team') {
-          const { data } = await supabase.from("teams").select("display_name").eq("id", entityId).single();
-          label = data?.display_name || "Team";
-        } else if (entityType === 'person') {
-          const { data } = await supabase.from("people").select("name").eq("id", entityId).single();
-          label = data?.name || "Player";
-        } else if (entityType === 'school') {
-          const { data: school } = await supabase.from("schools").select("short_name, name").eq("id", entityId).single();
-          const schoolName = school?.short_name || school?.name || "School";
-          if (focusLeagueId) {
-            const { data: league } = await supabase.from("leagues").select("code").eq("id", focusLeagueId).single();
-            label = league?.code ? `${schoolName} (${league.code})` : schoolName;
-          } else {
-            label = `${schoolName} (All Sports)`;
-          }
-        } else if (entityType === 'country') {
-          const { data: country } = await supabase.from("countries").select("name").eq("id", entityId).single();
-          const countryName = country?.name || "Country";
-          if (focusLeagueId) {
-            const { data: league } = await supabase.from("leagues").select("code, name").eq("id", focusLeagueId).single();
-            label = league?.code ? `${league.code} - ${countryName}` : countryName;
-          } else {
-            label = countryName;
-          }
-        } else if (entityType === 'league') {
-          const { data } = await supabase.from("leagues").select("code, name").eq("id", entityId).single();
-          label = data?.code || data?.name || "League";
-        } else if (entityType === 'sport') {
-          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", entityId).single();
-          label = data?.display_label || data?.sport || "Sport";
-        }
-        setFocusLabel(label);
-        return;
-      }
-
-      // Handle old interestId format for backward compatibility
-      if (!interestId) {
-        setFocusLabel(null);
-        return;
-      }
-
-      const { data: interest, error } = await supabase
-        .from("subscriber_interests")
-        .select("team_id, league_id, sport_id, person_id, school_id, country_id, is_olympics")
-        .eq("id", interestId)
-        .eq("subscriber_id", user.id)
-        .single();
-
-      if (error || !interest) {
-        setFocusLabel(null);
-        return;
-      }
-
-      if (interest.team_id) {
-        const { data } = await supabase.from("teams").select("display_name").eq("id", interest.team_id).single();
-        label = data?.display_name || "Team";
-      } else if (interest.person_id) {
-        const { data } = await supabase.from("people").select("name").eq("id", interest.person_id).single();
-        label = data?.name || "Player";
-      } else if (interest.is_olympics) {
-        let parts = ["Olympics"];
-        if (interest.sport_id) {
-          const { data } = await supabase.from("sports").select("display_label, sport").eq("id", interest.sport_id).single();
-          parts.push(data?.display_label || data?.sport || "");
-        }
-        if (interest.country_id) {
-          const { data } = await supabase.from("countries").select("name").eq("id", interest.country_id).single();
-          parts.push(data?.name || "");
-        }
-        label = parts.filter(Boolean).join(" - ");
-      } else if (interest.school_id) {
-        const { data: school } = await supabase.from("schools").select("short_name, name").eq("id", interest.school_id).single();
-        let schoolName = school?.short_name || school?.name || "School";
-        if (interest.league_id) {
-          const { data: league } = await supabase.from("leagues").select("code").eq("id", interest.league_id).single();
-          label = `${schoolName} (${league?.code || ""})`;
-        } else {
-          label = schoolName;
-        }
-      } else if (interest.country_id && interest.league_id) {
-        const { data: country } = await supabase.from("countries").select("name").eq("id", interest.country_id).single();
-        const { data: league } = await supabase.from("leagues").select("code, name").eq("id", interest.league_id).single();
-        label = `${league?.code || league?.name || ""} - ${country?.name || ""}`;
-      } else if (interest.league_id) {
-        const { data } = await supabase.from("leagues").select("code, name").eq("id", interest.league_id).single();
-        label = data?.code || data?.name || "League";
-      } else if (interest.sport_id) {
-        const { data } = await supabase.from("sports").select("display_label, sport").eq("id", interest.sport_id).single();
-        label = data?.display_label || data?.sport || "Sport";
-      }
-      setFocusLabel(label);
-    } catch (error) {
-      console.error("Error fetching focus label:", error);
-      setFocusLabel(null);
-    }
-  };
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -315,18 +202,24 @@ export default function Feed() {
             {/* Mobile: hamburger + title */}
             <div className="flex items-center gap-2 md:hidden flex-1 min-w-0">
               <MobileSidebar />
-              <h1 className="text-lg font-bold text-foreground truncate">
-                {(interestId || entityType && entityId) && focusLabel ? (
-                  <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
-                ) : "My Combined Favorites Feed"}
-              </h1>
+              <FocusedFeedHeader 
+                userId={user?.id}
+                focusParam={focusParam}
+                entityType={entityType}
+                entityId={entityId}
+                focusLeagueId={focusLeagueId}
+              />
             </div>
             {/* Desktop: centered title */}
-            <h1 className="hidden md:block text-xl font-bold text-foreground text-center flex-1">
-              {(interestId || entityType && entityId) && focusLabel ? (
-                <>Focused Feed - <span className="text-primary">{focusLabel}</span></>
-              ) : "My Combined Favorites Feed"}
-            </h1>
+            <div className="hidden md:flex flex-1 justify-center">
+              <FocusedFeedHeader 
+                userId={user?.id}
+                focusParam={focusParam}
+                entityType={entityType}
+                entityId={entityId}
+                focusLeagueId={focusLeagueId}
+              />
+            </div>
             {/* Refresh button - all layouts */}
             <button
               onClick={handleRefresh}
