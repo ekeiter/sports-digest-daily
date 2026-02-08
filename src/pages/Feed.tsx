@@ -198,10 +198,13 @@ export default function Feed() {
   return (
     <div className="min-h-screen w-full">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <div className="w-full px-3 py-2 flex items-center justify-between">
-            {/* Mobile: hamburger + title */}
-            <div className="flex items-center gap-2 md:hidden flex-1 min-w-0">
+          <div className="w-full px-1 md:px-3 py-2 flex items-center justify-between">
+            {/* Mobile: hamburger on far left */}
+            <div className="md:hidden flex-shrink-0">
               <MobileSidebar />
+            </div>
+            {/* Mobile: title centered with overflow handling */}
+            <div className="md:hidden flex-1 min-w-0 mx-1 overflow-hidden">
               <FocusedFeedHeader 
                 userId={user?.id}
                 focusParam={focusParam}
@@ -220,11 +223,11 @@ export default function Feed() {
                 focusLeagueId={focusLeagueId}
               />
             </div>
-            {/* Refresh button - all layouts */}
+            {/* Refresh button - all layouts, far right */}
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+              className="p-1 md:p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
               aria-label="Refresh feed"
             >
               <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
