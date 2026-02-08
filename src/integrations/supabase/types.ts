@@ -1260,6 +1260,7 @@ export type Database = {
       }
       people: {
         Row: {
+          aliases: string[] | null
           api_id: string | null
           api_source: string | null
           country_code: string | null
@@ -1278,6 +1279,7 @@ export type Database = {
           team_id: number | null
         }
         Insert: {
+          aliases?: string[] | null
           api_id?: string | null
           api_source?: string | null
           country_code?: string | null
@@ -1296,6 +1298,7 @@ export type Database = {
           team_id?: number | null
         }
         Update: {
+          aliases?: string[] | null
           api_id?: string | null
           api_source?: string | null
           country_code?: string | null
@@ -1462,6 +1465,7 @@ export type Database = {
           request_headers: Json | null
           requires_season: boolean | null
           roster_url_pattern: string
+          skip_coach_sync: boolean | null
           sport_id: number | null
           sync_priority: number | null
           teams_url: string | null
@@ -1485,6 +1489,7 @@ export type Database = {
           request_headers?: Json | null
           requires_season?: boolean | null
           roster_url_pattern: string
+          skip_coach_sync?: boolean | null
           sport_id?: number | null
           sync_priority?: number | null
           teams_url?: string | null
@@ -1508,6 +1513,7 @@ export type Database = {
           request_headers?: Json | null
           requires_season?: boolean | null
           roster_url_pattern?: string
+          skip_coach_sync?: boolean | null
           sport_id?: number | null
           sync_priority?: number | null
           teams_url?: string | null
@@ -1902,6 +1908,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tmp_extracted_people: {
+        Row: {
+          article_id: number | null
+          created_at: string | null
+          normalized_name: string | null
+          original_name: string | null
+        }
+        Insert: {
+          article_id?: number | null
+          created_at?: string | null
+          normalized_name?: string | null
+          original_name?: string | null
+        }
+        Update: {
+          article_id?: number | null
+          created_at?: string | null
+          normalized_name?: string | null
+          original_name?: string | null
+        }
+        Relationships: []
       }
       transition_queue: {
         Row: {
