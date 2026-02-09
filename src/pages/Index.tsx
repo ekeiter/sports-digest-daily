@@ -47,13 +47,13 @@ const Index = () => {
   // Landing page for unauthenticated users
   return (
     <div className="min-h-screen flex flex-col bg-[#D5D5D5]">
-      <main className="flex-1 flex items-center justify-center px-4">
+      <main className="flex-1 flex items-center md:items-start md:pt-16 lg:items-center lg:pt-0 justify-center px-4">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">
             A Smarter Way to Follow the Sports You Care About
           </h1>
           <div className="flex justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16 md:h-32" />
           </div>
           <h2 className="text-base md:text-lg font-bold text-gray-800">
             Your Personalized Sports News Feed
@@ -69,11 +69,11 @@ const Index = () => {
             We find the stories — so you don't have to.
           </p>
 
-          <div className="pt-4 flex flex-col md:flex-row gap-4 justify-center w-full">
-            <Button className="w-full md:w-48" size="lg" onClick={() => navigate('/auth')}>
+          <div className="pt-4 flex flex-row gap-4 justify-center w-full">
+            <Button className="flex-1 md:flex-none md:w-48" size="lg" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
-            <Button className="w-full md:w-48" size="lg" variant="outline" onClick={() => navigate('/auth?mode=signup')}>
+            <Button className="flex-1 md:flex-none md:w-48" size="lg" variant="outline" onClick={() => navigate('/auth?mode=signup')}>
               Register
             </Button>
           </div>
