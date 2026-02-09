@@ -332,12 +332,10 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
         <div className="text-xs text-black text-center space-y-1">
           <p className="font-medium">SportsDig™ — Personalized Sports News</p>
           <p>© 2026 SportsDig. All rights reserved.</p>
-          <p className="pt-1">
-            email:{" "}
-            <a href="mailto:info@sportsdig.com" className="hover:text-foreground transition-colors">
-              info@sportsdig.com
-            </a>
-          </p>
+          <div className="flex justify-center gap-4 pt-1">
+            <span className="underline cursor-pointer hover:text-foreground transition-colors" onClick={() => navigate('/contact')}>Contact</span>
+            <span className="underline cursor-pointer hover:text-foreground transition-colors" onClick={() => navigate('/privacy')}>Privacy Policy</span>
+          </div>
         </div>
       </div>
     </Sidebar>
