@@ -59,11 +59,11 @@ const Index = () => {
             Your Personalized Sports News Feed
           </h2>
           <ul className="text-sm md:text-base text-gray-700 space-y-2 text-left max-w-lg mx-auto">
-            <li>• <strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</li>
-            <li>• <strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</li>
-            <li>• <strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</li>
-            <li>• <strong>Built for serious fans</strong>, fantasy players, and sports bettors</li>
-            <li>• A smarter alternative to algorithm-driven social media feeds</li>
+            <li>✔ <strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</li>
+            <li>✔ <strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</li>
+            <li>✔ <strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</li>
+            <li><strong>✔ Built for serious fans, fantasy players, and sports bettors</strong></li>
+            <li><strong>✔ A smarter alternative to algorithm-driven social media feeds</strong></li>
           </ul>
           <p className="text-sm italic text-gray-600">
             We find the stories — so you don't have to.
