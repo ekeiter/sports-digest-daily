@@ -33,22 +33,10 @@ export default function Contact() {
           </p>
           <p>
             <span className="font-semibold">Email: </span>
-            <a href="mailto:contact@sportsdig.com" className="text-primary underline">
-              contact@sportsdig.com
+            <a href="mailto:info@sportsdig.com" className="text-primary underline">
+              info@sportsdig.com
             </a>
           </p>
-        </div>
-
-        <div className="flex justify-start mt-4 mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="gap-1"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
         </div>
       </div>
     </div>
