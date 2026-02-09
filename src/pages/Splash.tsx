@@ -12,8 +12,8 @@ const Splash = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
-          // Not logged in, go to dashboard
-          navigate("/", { replace: true });
+          // Not logged in, go to auth
+          navigate("/auth", { replace: true });
           return;
         }
 
@@ -25,7 +25,7 @@ const Splash = () => {
 
         if (error) {
           console.error("Error checking favorites:", error);
-          navigate("/", { replace: true });
+          navigate("/preferences", { replace: true });
           return;
         }
 
@@ -33,11 +33,11 @@ const Splash = () => {
         if (count && count > 0) {
           navigate("/feed", { replace: true });
         } else {
-          navigate("/", { replace: true });
+          navigate("/preferences", { replace: true });
         }
       } catch (error) {
         console.error("Splash redirect error:", error);
-        navigate("/", { replace: true });
+        navigate("/preferences", { replace: true });
       } finally {
         setChecking(false);
       }
