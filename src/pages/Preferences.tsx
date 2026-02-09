@@ -925,7 +925,7 @@ export default function Preferences() {
                     onFocus={() => {
                       if (teamSearchTerm) setShowSearchDropdown(true);
                     }} 
-                    className="pr-8 bg-white text-base md:text-sm placeholder:text-base md:placeholder:text-sm" 
+                    className="pr-8 bg-white text-base md:text-sm placeholder:text-sm" 
                   />
                   {teamSearchTerm && <button type="button" onClick={() => {
                   setTeamSearchTerm("");
