@@ -1066,7 +1066,7 @@ export default function Preferences() {
 
             {/* Schools view */}
             {showSchoolsView ? <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-center">Schools</h2>
+                <h2 className="text-lg font-bold text-center">Schools</h2>
                 {loadingSchools ? <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin" />
                   </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1098,7 +1098,7 @@ export default function Preferences() {
                   </div>}
               </div> : expandedLeagueId !== null ? (/* Teams/Schools/Countries view when league is expanded */
           <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-center">
+                <h2 className="text-lg font-bold text-center">
                   {expandedLeague?.label} {expandedLeagueType === 'school' ? 'Schools' : expandedLeagueType === 'country' ? 'Countries' : 'Teams'}
                 </h2>
                 {loadingTeams ? <div className="flex items-center justify-center py-4">
