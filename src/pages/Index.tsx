@@ -63,7 +63,7 @@ const Index = () => {
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Built for serious fans, fantasy players, and sports bettors</strong></span></li>
-            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>A smarter alternative to algorithm-driven social media feeds</strong></span></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>An ideal alternative to algorithm-driven social media feeds</strong></span></li>
           </ul>
           <p className="text-base md:text-lg italic text-gray-900 font-medium">
             We find the stories — so you don't have to.
