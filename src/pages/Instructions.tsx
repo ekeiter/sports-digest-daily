@@ -8,9 +8,10 @@ const Instructions = () => {
       {/* Mobile header with hamburger menu and logo */}
       <header className="py-2 md:hidden">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-between">
             <MobileSidebar />
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 absolute left-1/2 -translate-x-1/2" />
+            <div className="w-10" /> {/* Spacer for balance */}
           </div>
         </div>
       </header>
