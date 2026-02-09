@@ -1358,6 +1358,7 @@ export type Database = {
           last_seen_at: string | null
           name: string
           normalized_name: string
+          status: string | null
           times_seen: number | null
         }
         Insert: {
@@ -1370,6 +1371,7 @@ export type Database = {
           last_seen_at?: string | null
           name: string
           normalized_name: string
+          status?: string | null
           times_seen?: number | null
         }
         Update: {
@@ -1382,6 +1384,7 @@ export type Database = {
           last_seen_at?: string | null
           name?: string
           normalized_name?: string
+          status?: string | null
           times_seen?: number | null
         }
         Relationships: [
