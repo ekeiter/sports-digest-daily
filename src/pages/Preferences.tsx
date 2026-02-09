@@ -812,22 +812,12 @@ export default function Preferences() {
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-2">
-          {/* Mobile header: menu left, title centered */}
+          {/* Mobile header: menu left, title centered, back button right */}
           <div className="flex items-center md:hidden">
             <div className="w-10 flex justify-start">
               <MobileSidebar />
             </div>
             <div className="flex-1 flex items-center justify-center gap-2">
-              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
-                <button
-                  onClick={handleBack}
-                  className="p-1 bg-black rounded transition-transform hover:scale-110"
-                  aria-label="Go back"
-                  title="Go back"
-                >
-                  <ArrowLeft className="h-5 w-5 text-white" />
-                </button>
-              )}
               <span className="text-lg font-bold text-black">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
@@ -838,12 +828,7 @@ export default function Preferences() {
                 <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
               </button>
             </div>
-            <div className="w-10" />
-          </div>
-          
-          {/* Desktop/Tablet header: centered title */}
-          <div className="hidden md:flex flex-col items-center gap-2">
-            <div className="flex items-center gap-3">
+            <div className="w-10 flex justify-end">
               {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
                 <button
                   onClick={handleBack}
@@ -854,6 +839,13 @@ export default function Preferences() {
                   <ArrowLeft className="h-5 w-5 text-white" />
                 </button>
               )}
+            </div>
+          </div>
+          
+          {/* Desktop/Tablet header: centered title, back button right */}
+          <div className="hidden md:flex items-center">
+            <div className="w-10" />
+            <div className="flex-1 flex items-center justify-center gap-3">
               <span className="text-xl font-bold text-black">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
@@ -863,6 +855,18 @@ export default function Preferences() {
               >
                 <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
               </button>
+            </div>
+            <div className="w-10 flex justify-end">
+              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
+                <button
+                  onClick={handleBack}
+                  className="p-1 bg-black rounded transition-transform hover:scale-110"
+                  aria-label="Go back"
+                  title="Go back"
+                >
+                  <ArrowLeft className="h-5 w-5 text-white" />
+                </button>
+              )}
             </div>
           </div>
 
