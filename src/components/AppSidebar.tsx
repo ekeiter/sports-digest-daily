@@ -188,12 +188,13 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
 
       {/* Fixed Menu Section */}
       <div className="flex-shrink-0 px-2">
-        <SidebarMenu>
+        <SidebarMenu className="gap-0.5">
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 onClick={() => navigate(item.url)}
                 isActive={isActive(item.url)}
+                size="sm"
                 className="cursor-pointer text-black"
               >
                 <item.icon className="h-4 w-4" />
