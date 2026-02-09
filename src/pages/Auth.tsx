@@ -146,7 +146,7 @@ export default function Auth() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 bg-[#D5D5D5]"
+      className="min-h-screen flex items-start justify-center pt-4 md:pt-8 lg:pt-12 p-4 bg-[#D5D5D5]"
     >
       {showConfirmation ? (
         <Card className="w-full max-w-md mx-4">
@@ -207,18 +207,18 @@ export default function Auth() {
         </Card>
       ) : (
         <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <div className="flex justify-center mb-2">
-              <img src={blimpLogo} alt="SportsDig" className="h-16 w-auto" />
+          <CardHeader className="space-y-1 pb-2 md:pb-4">
+            <div className="flex justify-center mb-1 md:mb-2">
+              <img src={blimpLogo} alt="SportsDig" className="h-10 md:h-16 w-auto" />
             </div>
-            <CardTitle className="text-2xl text-center">
+            <CardTitle className="text-xl md:text-2xl text-center">
               {isSignUp ? (
-                <>Create a <span className="font-racing text-3xl">SportsDig</span> Account</>
+                <>Create a <span className="font-racing text-2xl md:text-3xl">SportsDig</span> Account</>
               ) : (
-                <>Sign in to <span className="font-racing text-3xl">SportsDig</span></>
+                <>Sign in to <span className="font-racing text-2xl md:text-3xl">SportsDig</span></>
               )}
             </CardTitle>
-            <CardDescription className="text-center">
+            <CardDescription className="text-center text-xs md:text-sm">
               {isSignUp 
                 ? "Enter your email and password to create your account"
                 : "Enter your email and password to sign in"
@@ -226,7 +226,7 @@ export default function Auth() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 md:space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-base">Email</Label>
                 <Input
