@@ -20,6 +20,7 @@ import Index from "./pages/Index";
 import Splash from "./pages/Splash";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/splash" element={<Splash />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
