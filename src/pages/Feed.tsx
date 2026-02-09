@@ -196,9 +196,9 @@ export default function Feed() {
   }
 
   return (
-    <div className="min-h-screen w-full">
-        <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <div className="w-full px-1 md:px-3 py-2 flex items-center justify-between">
+    <div className="h-screen flex flex-col w-full overflow-hidden">
+        <header className="border-b bg-background/80 backdrop-blur-sm z-10 flex-shrink-0">
+          <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
             {/* Mobile: hamburger on far left */}
             <div className="md:hidden flex-shrink-0">
               <MobileSidebar />
@@ -227,7 +227,7 @@ export default function Feed() {
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="p-1 md:p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+              className="p-1 md:p-1.5 hover:bg-muted rounded-full transition-colors flex-shrink-0"
               aria-label="Refresh feed"
             >
               <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -235,7 +235,7 @@ export default function Feed() {
           </div>
         </header>
 
-        <main className="w-full px-0 md:px-2 py-2">
+        <main className="flex-1 overflow-y-auto w-full px-0 md:px-2 py-2">
           {articles.length === 0 ? (
             <Card className="mx-2 md:mx-0">
               <CardContent className="p-12 text-center">
