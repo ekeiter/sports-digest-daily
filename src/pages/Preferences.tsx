@@ -809,8 +809,8 @@ export default function Preferences() {
   const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
   return (
-    <div className="min-h-screen bg-[#D5D5D5]">
-      <header className="bg-transparent">
+    <div className="h-screen flex flex-col bg-[#D5D5D5] overflow-hidden">
+      <header className="bg-[#D5D5D5] flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
           {/* Mobile header: menu left, title centered, back button right */}
           <div className="flex items-center md:hidden">
@@ -892,7 +892,7 @@ export default function Preferences() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pt-0 pb-2">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 pt-0 pb-2">
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
             {/* Backdrop blur overlay when dropdown is open - placed outside search container */}
