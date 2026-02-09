@@ -17,19 +17,18 @@ export const NativeAdBanner = ({ adUnitId, position = 'inline' }: NativeAdBanner
 
     const showBanner = async () => {
       try {
-        // Use test ad unit IDs in development, real IDs from environment in production
-        const testAdUnitId = isIOS 
-          ? 'ca-app-pub-3940256099942544/2934735716' // iOS test banner
-          : 'ca-app-pub-3940256099942544/6300978111'; // Android test banner
+        const defaultAdUnitId = isIOS 
+          ? 'ca-app-pub-3940256099942544/2934735716' // iOS test banner (replace with real iOS ID later)
+          : 'ca-app-pub-7244243129030275/4442271177'; // Android production banner
         
         const options: BannerAdOptions = {
-          adId: adUnitId || testAdUnitId,
+          adId: adUnitId || defaultAdUnitId,
           adSize: BannerAdSize.ADAPTIVE_BANNER,
           position: position === 'top' 
             ? BannerAdPosition.TOP_CENTER 
             : BannerAdPosition.BOTTOM_CENTER,
           margin: 0,
-          isTesting: !adUnitId, // Use test mode if no real ad unit provided
+          isTesting: false,
         };
 
         await AdMob.showBanner(options);
