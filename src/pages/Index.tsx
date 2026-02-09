@@ -82,7 +82,7 @@ const Index = () => {
             <p>SportsDig™ — Personalized Sports News</p>
             <p>© 2026 SportsDig. All rights reserved.</p>
             <div className="flex justify-center gap-4 pt-1">
-              <a href="mailto:info@sportsdig.com" className="underline hover:text-gray-700">Contact</a>
+              <a href="/contact" className="underline hover:text-gray-700">Contact</a>
               <a href="/privacy" className="underline hover:text-gray-700">Privacy Policy</a>
             </div>
           </div>
