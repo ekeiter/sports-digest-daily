@@ -172,6 +172,16 @@ export default function Feed() {
 
   if (isError) {
     const message = error instanceof Error ? error.message : typeof error === "string" ? error : JSON.stringify(error);
+    // If the error is auth-related (session expired, unauthorized), redirect to login
+    const isAuthError = message.toLowerCase().includes('not authenticated') ||
+      message.toLowerCase().includes('no active session') ||
+      message.toLowerCase().includes('session not found') ||
+      message.toLowerCase().includes('non-2xx status code') ||
+      message.toLowerCase().includes('unauthorized');
+    if (isAuthError) {
+      supabase.auth.signOut().then(() => navigate("/auth"));
+      return <FeedSkeleton />;
+    }
     return (
       <div className="min-h-screen">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
