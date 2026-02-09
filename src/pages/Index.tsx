@@ -59,13 +59,13 @@ const Index = () => {
             Your Personalized Sports News Feed
           </h2>
           <ul className="text-sm md:text-base text-gray-700 space-y-2 text-left max-w-lg mx-auto">
-            <li>✔ <strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</li>
-            <li>✔ <strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</li>
-            <li>✔ <strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</li>
-            <li><strong>✔ Built for serious fans, fantasy players, and sports bettors</strong></li>
-            <li><strong>✔ A smarter alternative to algorithm-driven social media feeds</strong></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</span></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</span></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</span></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Built for serious fans, fantasy players, and sports bettors</strong></span></li>
+            <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>A smarter alternative to algorithm-driven social media feeds</strong></span></li>
           </ul>
-          <p className="text-sm italic text-gray-600">
+          <p className="text-base md:text-lg italic text-gray-900 font-medium">
             We find the stories — so you don't have to.
           </p>
 
@@ -80,7 +80,7 @@ const Index = () => {
         </div>
       </main>
 
-      <footer className="py-4 text-center text-xs text-gray-500 space-y-1">
+      <footer className="py-4 text-center text-xs text-gray-900 space-y-1">
         <p>SportsDig™ — Personalized Sports News</p>
         <p>© 2026 SportsDig. All rights reserved.</p>
         <div className="flex justify-center gap-4 pt-1">
