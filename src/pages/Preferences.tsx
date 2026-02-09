@@ -812,12 +812,11 @@ export default function Preferences() {
     <div className="min-h-screen bg-[#D5D5D5]">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-3">
-              <div className="md:hidden">
-                <MobileSidebar />
-              </div>
-              <span className="text-lg md:text-xl font-bold text-black">Feed Topic Manager</span>
+          {/* Mobile header: menu left, title centered */}
+          <div className="flex items-center justify-between md:hidden">
+            <MobileSidebar />
+            <div className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+              <span className="text-lg font-bold text-black">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
                 className="p-1 rounded-full hover:bg-black/10 transition-colors"
@@ -827,25 +826,22 @@ export default function Preferences() {
                 <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
               </button>
             </div>
-
-            {/* Help Dialog */}
-            <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
-              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
-                  <DialogDescription className="sr-only">
-                    Instructions for using the Feed Topic Manager
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3 text-sm text-muted-foreground">
-                  <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking any item opens a focused news feed for that topic. Select any menu button to drill down into more specific categories including teams, schools, etc.</p>
-                  <p><span className="font-bold text-foreground">Searching</span> - Use the search box to find any topic quickly. Search includes teams, players, coaches, schools, and leagues. Click any search result to view its focused news feed.</p>
-                  <p><span className="font-bold text-foreground">Favoriting Topics</span> - Click the heart icon to favorite any topic. Favorites appear at the top of the screen for quick access. Click any favorite to see its focused news feed.</p>
-                  <p><span className="font-bold text-foreground">Removing Favorites</span> - Click the heart again to remove from favorites. Mobile/Tablet: Press and hold a favorite card, then tap the X. Desktop: Click the X button on the favorite card.</p>
-                  <p><span className="font-bold text-foreground">Combined Feed</span> - Click "Combined Feed" button to see a news feed from all of your favorite topics. Your feed can include any mix of players, teams, leagues, and more.</p>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <div className="w-10" /> {/* Spacer for balance */}
+          </div>
+          
+          {/* Desktop/Tablet header: centered title */}
+          <div className="hidden md:flex flex-col items-center gap-2">
+            <div className="flex items-center gap-3">
+              <span className="text-xl font-bold text-black">Feed Topic Manager</span>
+              <button
+                onClick={() => setShowHelpDialog(true)}
+                className="p-1 rounded-full hover:bg-black/10 transition-colors"
+                aria-label="Help"
+                title="How to use"
+              >
+                <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
+              </button>
+            </div>
             {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && <div className="flex gap-1.5 justify-center">
               <Button size="sm" className="h-7 w-28" onClick={handleBack}>
                   <ArrowLeft className="h-4 w-4 mr-1" />
@@ -853,6 +849,35 @@ export default function Preferences() {
                 </Button>
             </div>}
           </div>
+
+          {/* Help Dialog */}
+          <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+            <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
+                <DialogDescription className="sr-only">
+                  Instructions for using the Feed Topic Manager
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking any item opens a focused news feed for that topic. Select any menu button to drill down into more specific categories including teams, schools, etc.</p>
+                <p><span className="font-bold text-foreground">Searching</span> - Use the search box to find any topic quickly. Search includes teams, players, coaches, schools, and leagues. Click any search result to view its focused news feed.</p>
+                <p><span className="font-bold text-foreground">Favoriting Topics</span> - Click the heart icon to favorite any topic. Favorites appear at the top of the screen for quick access. Click any favorite to see its focused news feed.</p>
+                <p><span className="font-bold text-foreground">Removing Favorites</span> - Click the heart again to remove from favorites. Mobile/Tablet: Press and hold a favorite card, then tap the X. Desktop: Click the X button on the favorite card.</p>
+                <p><span className="font-bold text-foreground">Combined Feed</span> - Click "Combined Feed" button to see a news feed from all of your favorite topics. Your feed can include any mix of players, teams, leagues, and more.</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Mobile back button */}
+          {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
+            <div className="flex gap-1.5 justify-center mt-2 md:hidden">
+              <Button size="sm" className="h-7 w-28" onClick={handleBack}>
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 
