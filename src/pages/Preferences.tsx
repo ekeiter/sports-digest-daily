@@ -1078,7 +1078,7 @@ export default function Preferences() {
                             {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                 <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
-                            <span className="text-sm font-medium truncate flex-1 min-w-0">
+                            <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
                               {school.name}
                             </span>
                           </div>
@@ -1131,7 +1131,7 @@ export default function Preferences() {
                             {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
                                 <img src={item.logo_url} alt={item.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
-                            <span className="text-sm font-medium truncate flex-1 min-w-0">
+                            <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
                               {item.display_name}
                             </span>
                           </div>
