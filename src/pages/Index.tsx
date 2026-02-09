@@ -49,12 +49,12 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-[#D5D5D5]">
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
-          <div className="flex justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
-          </div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">
             A Smarter Way to Follow the Sports You Care About
           </h1>
+          <div className="flex justify-center">
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
+          </div>
           <h2 className="text-base md:text-lg font-bold text-gray-800">
             Your Personalized Sports News Feed
           </h2>
