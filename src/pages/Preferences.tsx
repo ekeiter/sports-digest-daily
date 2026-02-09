@@ -814,7 +814,9 @@ export default function Preferences() {
         <div className="container mx-auto px-4 py-2">
           {/* Mobile header: menu left, title centered */}
           <div className="flex items-center md:hidden">
-            <MobileSidebar />
+            <div className="w-10 flex justify-start">
+              <MobileSidebar />
+            </div>
             <div className="flex-1 flex items-center justify-center gap-2">
               <span className="text-lg font-bold text-black">Feed Topic Manager</span>
               <button
@@ -826,7 +828,7 @@ export default function Preferences() {
                 <HelpCircle className="h-6 w-6 text-[#1e3a5f]" />
               </button>
             </div>
-            <div className="w-10" /> {/* Spacer for balance */}
+            <div className="w-10" />
           </div>
           
           {/* Desktop/Tablet header: centered title */}
