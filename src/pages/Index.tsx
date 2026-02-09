@@ -50,17 +50,24 @@ const Index = () => {
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="text-center space-y-6 p-4 md:p-8 max-w-3xl w-full">
           <div className="flex justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-32 md:h-40" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-24 md:h-32" />
           </div>
-          <p className="text-lg md:text-xl text-gray-800 font-medium">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            A Smarter Way to Follow the Sports You Care About
+          </h1>
+          <h2 className="text-base md:text-lg font-bold text-gray-800">
             Your Personalized Sports News Feed
-          </p>
-          <ul className="text-sm md:text-base text-gray-700 space-y-2 text-left max-w-md mx-auto">
-            <li>✔ Follow your favorite teams, players &amp; leagues</li>
-            <li>✔ One combined feed from 100+ trusted sources</li>
-            <li>✔ NFL, NBA, MLB, NHL, MLS, NCAA &amp; more</li>
-            <li>✔ Free to use — no ads in your way</li>
+          </h2>
+          <ul className="text-sm md:text-base text-gray-700 space-y-2 text-left max-w-lg mx-auto">
+            <li>• <strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</li>
+            <li>• <strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</li>
+            <li>• <strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</li>
+            <li>• <strong>Built for serious fans</strong>, fantasy players, and sports bettors</li>
+            <li>• A smarter alternative to algorithm-driven social media feeds</li>
           </ul>
+          <p className="text-sm italic text-gray-600">
+            We find the stories — so you don't have to.
+          </p>
 
           <div className="pt-4 flex flex-col md:flex-row gap-4 justify-center w-full">
             <Button className="w-full md:w-48" size="lg" onClick={() => navigate('/auth')}>
