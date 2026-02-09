@@ -130,6 +130,18 @@ export default function Privacy() {
             </p>
           </section>
         </div>
+
+        <div className="flex justify-start mt-4 mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="gap-1"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </div>
       </div>
     </div>
   );
