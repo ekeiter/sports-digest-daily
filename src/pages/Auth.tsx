@@ -92,6 +92,7 @@ export default function Auth() {
         toast({
           title: "Success",
           description: "Signed in successfully.",
+          duration: 5000,
         });
       }
     } catch (error: any) {
