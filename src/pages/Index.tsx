@@ -77,17 +77,17 @@ const Index = () => {
               Register
             </Button>
           </div>
+
+          <div className="pt-4 text-center text-xs text-gray-900 space-y-1">
+            <p>SportsDig™ — Personalized Sports News</p>
+            <p>© 2026 SportsDig. All rights reserved.</p>
+            <div className="flex justify-center gap-4 pt-1">
+              <a href="mailto:info@sportsdig.com" className="underline hover:text-gray-700">Contact</a>
+              <a href="/privacy" className="underline hover:text-gray-700">Privacy Policy</a>
+            </div>
+          </div>
         </div>
       </main>
-
-      <footer className="py-4 text-center text-xs text-gray-900 space-y-1">
-        <p>SportsDig™ — Personalized Sports News</p>
-        <p>© 2026 SportsDig. All rights reserved.</p>
-        <div className="flex justify-center gap-4 pt-1">
-          <a href="mailto:info@sportsdig.com" className="underline hover:text-gray-700">Contact</a>
-          <a href="/privacy" className="underline hover:text-gray-700">Privacy Policy</a>
-        </div>
-      </footer>
     </div>
   );
 };
