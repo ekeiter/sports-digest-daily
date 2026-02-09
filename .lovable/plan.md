@@ -1,69 +1,45 @@
+# Full Plan: Ad Integration + App Store Publishing (v2)
 
+Updated to address native ad limitations, build-time config, consent, and signing.
 
-# Full Plan: Ad Integration + App Store Publishing
+---
 
-This plan covers everything needed to monetize SportsDig with ads and publish to iOS App Store and Google Play Store, while maintaining the web version.
+## Key Decision: Native Advanced Ads Not Supported by Plugin
+
+**Finding:** `@capacitor-community/admob` supports **Banner, Interstitial, and Rewarded** ads only. It does **NOT** support Native Advanced ads (GitHub issue #110, closed without implementation).
+
+**Options:**
+
+| Option | Effort | Result |
+|--------|--------|--------|
+| A) Use **Banner ads** in feed via `@capacitor-community/admob` | Low | Works now, less seamless look |
+| B) Use **`capacitor-admob-ads`** (3rd party, claims Native support) | Medium | Android only, less maintained |
+| C) Write **custom native code** (Swift/Kotlin) for Native Advanced | High | Best UX, full control |
+
+**Recommendation:** Start with **Option A (Banner)** to get ads running quickly. Migrate to **Option C** later if you want true native-blended ads. The web side uses AdSense regardless.
 
 ---
 
 ## Overview
 
-You'll have three distribution channels, each with its own ad system:
-
-| Platform | Ad System | How Users Get Updates |
-|----------|-----------|----------------------|
-| Web (sportsdig.lovable.app) | Google AdSense | Instant (you publish, they see it) |
-| iOS App (App Store) | Google AdMob | App Store update (Apple review 1-3 days) |
-| Android App (Play Store) | Google AdMob | Play Store update (Google review 1-2 days) |
+| Platform | Ad System | Ad Format | How Users Get Updates |
+|----------|-----------|-----------|----------------------|
+| Web | Google AdSense | Responsive display | Instant (publish) |
+| iOS App | Google AdMob | Banner (upgrade to Native later) | App Store update |
+| Android App | Google AdMob | Banner (upgrade to Native later) | Play Store update |
 
 ---
 
-## Phase 1: Ad Integration in Code
+## Phase 1: Ad Integration in Code ✅ DONE
 
-### 1.1 Install AdMob Plugin
-
-Add the Capacitor AdMob community plugin for native ads:
-
-```bash
-npm install @capacitor-community/admob
-```
-
-### 1.2 Create Platform Detection Hook
-
-Create a new hook `src/hooks/usePlatform.ts` that detects whether the app is running on web, iOS, or Android. This will be used to show the right type of ad.
-
-### 1.3 Create Ad Components
-
-**Native Ad Component** (`src/components/ads/NativeAdBanner.tsx`)
-- Uses `@capacitor-community/admob` for iOS/Android
-- Shows banner ads that blend into the feed
-- Only renders on native platforms
-
-**Web Ad Component** (`src/components/ads/WebAdBanner.tsx`)
-- Loads Google AdSense script
-- Shows responsive ad units
-- Only renders on web
-
-**Unified Ad Component** (`src/components/ads/FeedAd.tsx`)
-- Detects platform automatically
-- Renders either NativeAdBanner or WebAdBanner
-- Single component you place in the feed
-
-### 1.4 Insert Ads in Feed
-
-Modify `src/pages/Feed.tsx` to insert ad components every N articles (e.g., after every 5th article). The feed will look like:
-
-```text
-Article 1
-Article 2
-Article 3
-Article 4
-Article 5
-[AD]
-Article 6
-Article 7
-...
-```
+- ✅ Installed `@capacitor-community/admob`
+- ✅ Created `src/hooks/usePlatform.ts` (platform detection)
+- ✅ Created `src/components/ads/NativeAdBanner.tsx` (AdMob Banner)
+- ✅ Created `src/components/ads/WebAdBanner.tsx` (AdSense)
+- ✅ Created `src/components/ads/FeedAd.tsx` (unified component)
+- ✅ Modified `src/pages/Feed.tsx` (ads every 5 articles)
+- ✅ Created `src/lib/adInit.ts` (AdMob initialization)
+- ✅ Integrated initialization in `src/App.tsx`
 
 ---
 
@@ -71,13 +47,12 @@ Article 7
 
 ### 2.1 Google AdMob Setup (for Native Apps)
 
-From your AdMob account (apps.admob.com), you'll need to:
+From your AdMob account (apps.admob.com):
 
 1. Create two apps: one for iOS, one for Android
 2. Get your **App IDs** (format: `ca-app-pub-XXXXXXXX~YYYYYYYY`)
-3. Create ad units (Banner recommended for feed) and get **Ad Unit IDs**
-
-These will be stored as Supabase secrets so they're not in the code.
+3. Create **Banner** ad units and get **Ad Unit IDs**
+   - Note: You created a "Native Advanced" unit — you'll need a **Banner** unit instead (or keep both for future use)
 
 ### 2.2 Google AdSense Setup (for Web)
 
@@ -87,18 +62,20 @@ From your AdSense account:
 2. Create ad units for the feed
 3. Get the ad unit code snippet
 
-### 2.3 Store Ad IDs as Secrets
+### 2.3 Where IDs are stored
 
-I'll set up the following secrets in your Supabase/Cloud configuration:
+**⚠️ IMPORTANT: AdMob App IDs are NOT secrets — they must be baked into native config at build time.**
 
-| Secret Name | Purpose |
-|-------------|---------|
-| `ADMOB_APP_ID_IOS` | iOS app identifier |
-| `ADMOB_APP_ID_ANDROID` | Android app identifier |
-| `ADMOB_BANNER_ID_IOS` | iOS banner ad unit |
-| `ADMOB_BANNER_ID_ANDROID` | Android banner ad unit |
-| `ADSENSE_PUBLISHER_ID` | Web publisher ID |
-| `ADSENSE_AD_SLOT` | Web ad unit slot |
+| ID | Where it goes | Why |
+|----|---------------|-----|
+| `ADMOB_APP_ID_IOS` | `ios/App/App/Info.plist` → `GADApplicationIdentifier` | Required at app launch by Google SDK |
+| `ADMOB_APP_ID_ANDROID` | `android/app/src/main/AndroidManifest.xml` → `com.google.android.gms.ads.APPLICATION_ID` | Required at app launch by Google SDK |
+| `ADMOB_BANNER_ID_IOS` | Hardcoded in app or fetched via remote config | Not a secret (ad unit IDs are safe to embed) |
+| `ADMOB_BANNER_ID_ANDROID` | Hardcoded in app or fetched via remote config | Not a secret (ad unit IDs are safe to embed) |
+| `ADSENSE_PUBLISHER_ID` | `index.html` script tag (publishable) | Public by nature |
+| `ADSENSE_AD_SLOT` | Component prop (publishable) | Public by nature |
+
+**Ad unit IDs** are not sensitive — Google explicitly says they can be in your source code. They only identify *where* revenue goes, not authentication.
 
 ---
 
@@ -106,55 +83,94 @@ I'll set up the following secrets in your Supabase/Cloud configuration:
 
 ### 3.1 iOS Configuration
 
-Update `ios/App/App/Info.plist` (after you run `npx cap add ios`) to include:
+After running `npx cap add ios`, update `ios/App/App/Info.plist`:
 
 ```xml
 <key>GADApplicationIdentifier</key>
-<string>YOUR_ADMOB_IOS_APP_ID</string>
+<string>ca-app-pub-XXXXXXXX~YYYYYYYY</string>
 <key>SKAdNetworkItems</key>
-<!-- Required network identifiers for ad attribution -->
+<array>
+  <dict>
+    <key>SKAdNetworkIdentifier</key>
+    <string>cstr6suwn9.skadnetwork</string>
+  </dict>
+</array>
 ```
 
 ### 3.2 Android Configuration
 
-Update `android/app/src/main/AndroidManifest.xml` to include:
+After running `npx cap add android`, update `android/app/src/main/AndroidManifest.xml`:
 
 ```xml
-<meta-data
-    android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="YOUR_ADMOB_ANDROID_APP_ID"/>
+<application>
+  <meta-data
+      android:name="com.google.android.gms.ads.APPLICATION_ID"
+      android:value="ca-app-pub-XXXXXXXX~YYYYYYYY"/>
+</application>
 ```
 
-### 3.3 Initialize AdMob on App Start
+### 3.3 Initialize AdMob on App Start ✅ DONE
 
-Create an initialization function in `src/lib/adInit.ts` that runs when the app starts on native platforms:
-
-```typescript
-import { AdMob } from '@capacitor-community/admob';
-
-export const initializeAds = async () => {
-  if (Capacitor.isNativePlatform()) {
-    await AdMob.initialize();
-  }
-};
-```
-
-Call this from `src/main.tsx` or `src/App.tsx`.
+Already handled in `src/lib/adInit.ts`, called from `src/App.tsx`.
 
 ---
 
-## Phase 4: App Store Assets
+## Phase 4: Consent & Privacy (NEW)
 
-### 4.1 Required Assets
+### 4.1 Google UMP (User Messaging Platform)
 
-You'll need to prepare these outside of Lovable:
+Required for GDPR/EEA compliance with AdMob:
+
+- `@capacitor-community/admob` has built-in UMP support
+- Call consent flow before showing ads
+- Configure GDPR message in AdMob console → Privacy & messaging
+
+```typescript
+// Already supported by the plugin:
+import { AdMob } from '@capacitor-community/admob';
+
+// Show consent form if required (call before showing ads)
+const consentInfo = await AdMob.requestConsentInfo();
+if (consentInfo.isConsentFormAvailable) {
+  await AdMob.showConsentForm();
+}
+```
+
+### 4.2 App Tracking Transparency (iOS)
+
+For iOS 14+, if using personalized ads:
+
+- Add `NSUserTrackingUsageDescription` to Info.plist
+- The AdMob plugin handles the ATT prompt via `requestTrackingAuthorization`
+- Alternative: Run with "non-personalized ads only" initially (no ATT prompt needed)
+
+### 4.3 Privacy Policy
+
+**Required for both app stores.** Must disclose:
+
+- Ad networks used (Google AdMob, AdSense)
+- Data collection for ad personalization
+- How to opt out
+- Host at a public URL (e.g., `sportsdig.lovable.app/privacy`)
+
+### 4.4 App Store Privacy Disclosures
+
+- **Apple:** App Privacy "nutrition labels" in App Store Connect
+- **Google:** Data safety section in Play Console
+- Both require declaring what data AdMob collects (device ID, usage data, etc.)
+
+---
+
+## Phase 5: App Store Assets
+
+### 5.1 Required Assets (prepare outside Lovable)
 
 **App Icons:**
-- iOS: 1024x1024px (App Store), plus various sizes for the app
+- iOS: 1024x1024px (App Store), plus various sizes
 - Android: 512x512px (Play Store), plus adaptive icon layers
 
 **Screenshots:**
-- iOS: Various sizes for different devices (iPhone, iPad)
+- iOS: Various device sizes (iPhone, iPad)
 - Android: Phone and tablet sizes
 
 **App Store Metadata:**
@@ -165,129 +181,82 @@ You'll need to prepare these outside of Lovable:
 - Privacy policy URL (required)
 - Support URL
 
-### 4.2 Splash Screen
+### 5.2 Splash Screen
 
-Update `capacitor.config.ts` to configure the splash screen with your branding.
+Update `capacitor.config.ts` to configure splash screen branding.
 
 ---
 
-## Phase 5: Build and Submit
+## Phase 6: Build and Submit
 
-### 5.1 Prepare Capacitor Config
+### 6.1 Prepare Capacitor Config
 
-Update `capacitor.config.ts`:
+Update `capacitor.config.ts` for production (remove dev server URL if present):
 
 ```typescript
 const config: CapacitorConfig = {
-  appId: 'com.sportsdig.app', // Use your own bundle ID
+  appId: 'com.sportsdig.app',
   appName: 'SportsDig',
   webDir: 'dist',
-  // Remove hot-reload server config for production
 };
 ```
 
-### 5.2 Local Build Process
-
-After exporting to GitHub and pulling locally:
+### 6.2 Local Build Process
 
 ```bash
-# Install dependencies
 npm install
-
-# Build the web app
 npm run build
-
-# Sync to native platforms
 npx cap sync
-
-# Open in IDE
 npx cap open ios     # Opens Xcode
 npx cap open android # Opens Android Studio
 ```
 
-### 5.3 iOS Submission
+### 6.3 iOS Submission
 
 1. In Xcode: Set version/build number, signing team
-2. Archive the app (Product > Archive)
+2. Archive the app (Product → Archive)
 3. Upload to App Store Connect
-4. Fill in metadata, add screenshots
+4. Fill in metadata, screenshots, privacy disclosures
 5. Submit for review (1-3 days typically)
 
-### 5.4 Android Submission
+### 6.4 Android Submission
 
-1. In Android Studio: Generate signed AAB (already configured in your capacitor.config.ts)
-2. Upload to Google Play Console
-3. Fill in store listing, add screenshots
-4. Submit for review (typically faster than iOS)
+1. In Android Studio: Configure Gradle signing (keystore + signing config in `build.gradle`)
+   - **Note:** Capacitor config does NOT handle signing. Use Android Studio's built-in signing or Gradle `signingConfigs`.
+   - Enroll in **Play App Signing** (recommended by Google)
+2. Generate signed AAB via Build → Generate Signed Bundle
+3. Upload to Google Play Console
+4. Fill in store listing, screenshots, data safety section
+5. Submit for review
 
 ---
 
-## Phase 6: Ongoing Updates
+## Phase 7: Ongoing Updates
 
-### Your Workflow Going Forward
+### Your Workflow
 
-1. **Make changes in Lovable** - continue developing as normal
-2. **Web updates** - click Publish, users see changes immediately
-3. **Native updates** - when you need to push a native update:
-   - Pull latest from GitHub
-   - Run `npm run build && npx cap sync`
-   - Bump version numbers
-   - Archive and upload to stores
-   - Users update through their app store
+1. **Make changes in Lovable** — develop as normal
+2. **Web updates** — click Publish, users see changes immediately
+3. **Native updates** — pull from GitHub, `npm run build && npx cap sync`, bump versions, submit to stores
 
 ### When You MUST Submit Store Updates
 
-- Changes to native plugins (adding new Capacitor features)
+- Changes to native plugins (new Capacitor features)
 - Changes to app icons or splash screens
 - Critical bug fixes in native-specific code
 
-### When You DON'T Need Store Updates
+### When Store Updates Are Usually NOT Needed
 
 - UI changes, new features, content updates
-- These load from your web server and update automatically
+- These load from your web server automatically
+- **Caveat:** Apple reviews Capacitor/webview apps more carefully. Major feature changes that alter core app behavior *could* trigger review concerns. Keep web updates focused on content/UI refinements rather than fundamental behavior changes.
 
 ---
 
-## Technical Summary
+## Stack Reference
 
-### New Files to Create
-
-| File | Purpose |
-|------|---------|
-| `src/hooks/usePlatform.ts` | Platform detection utility |
-| `src/lib/adInit.ts` | AdMob initialization for native |
-| `src/components/ads/NativeAdBanner.tsx` | AdMob banner for iOS/Android |
-| `src/components/ads/WebAdBanner.tsx` | AdSense banner for web |
-| `src/components/ads/FeedAd.tsx` | Unified ad component |
-
-### Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/pages/Feed.tsx` | Insert FeedAd components between articles |
-| `src/App.tsx` or `src/main.tsx` | Initialize ads on app start |
-| `capacitor.config.ts` | Production configuration |
-| `index.html` | Add AdSense script tag |
-
-### Dependencies to Add
-
-```bash
-npm install @capacitor-community/admob
-```
-
----
-
-## Next Steps After Approval
-
-1. I'll set up the secrets storage for your ad IDs
-2. Create the ad components and platform detection
-3. Integrate ads into the feed
-4. Update configurations for production
-
-You'll then need to:
-- Provide your AdMob App IDs and Ad Unit IDs
-- Provide your AdSense Publisher ID
-- Prepare app icons and screenshots
-- Create a privacy policy page
-- Export to GitHub and build locally for store submission
-
+- **Capacitor:** v7.4.3
+- **Framework:** React 18 + Vite + TypeScript
+- **AdMob Plugin:** `@capacitor-community/admob` v8.0.0
+- **Ad Formats Supported:** Banner, Interstitial, Rewarded (NOT Native Advanced)
+- **Web Ads:** Google AdSense (responsive display units)
