@@ -13,6 +13,10 @@ import { FocusedFeedHeader } from "@/components/FocusedFeedHeader";
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import { openUrl } from "@/hooks/useOpenUrl";
 import { MobileSidebar } from "@/components/MobileSidebar";
+import { FeedAd } from "@/components/ads/FeedAd";
+
+// How many articles between ads
+const AD_FREQUENCY = 5;
 
 // Preload images in the background
 const preloadImages = (urls: string[]) => {
@@ -250,39 +254,46 @@ export default function Feed() {
             </Card>
           ) : (
             <div className="space-y-0">
-              {articles.map(article => (
-                <Card key={article.article_id} className="overflow-hidden rounded-none border-0 shadow-none">
-                  <CardContent className="p-0">
-                    <button
-                      type="button"
-                      onClick={() => openUrl(article.url)}
-                      className="block w-full text-left hover:opacity-80 transition-opacity cursor-pointer"
-                    >
-                      <div className="flex flex-col">
-                        <div className="w-full">
-                          {article.thumbnail_url ? (
-                            <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" />
-                          ) : (
-                            <ArticlePlaceholder />
-                          )}
-                        </div>
-
-                        <div className="px-3 pt-1.5 pb-2">
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-0.5">
-                            <span>{article.url_domain || article.domain || 'Unknown source'}</span>
-                            <span>•</span>
-                            <span>{formatTimeAgo(article.published_effective)}</span>
-                            <MatchedInterestBadges interests={article.matched_interests} />
+              {articles.map((article, index) => (
+                <div key={article.article_id}>
+                  <Card className="overflow-hidden rounded-none border-0 shadow-none">
+                    <CardContent className="p-0">
+                      <button
+                        type="button"
+                        onClick={() => openUrl(article.url)}
+                        className="block w-full text-left hover:opacity-80 transition-opacity cursor-pointer"
+                      >
+                        <div className="flex flex-col">
+                          <div className="w-full">
+                            {article.thumbnail_url ? (
+                              <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" />
+                            ) : (
+                              <ArticlePlaceholder />
+                            )}
                           </div>
 
-                          <h3 className="font-semibold text-sm line-clamp-3">
-                            {article.title}
-                          </h3>
+                          <div className="px-3 pt-1.5 pb-2">
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-0.5">
+                              <span>{article.url_domain || article.domain || 'Unknown source'}</span>
+                              <span>•</span>
+                              <span>{formatTimeAgo(article.published_effective)}</span>
+                              <MatchedInterestBadges interests={article.matched_interests} />
+                            </div>
+
+                            <h3 className="font-semibold text-sm line-clamp-3">
+                              {article.title}
+                            </h3>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  </CardContent>
-                </Card>
+                      </button>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Insert ad after every AD_FREQUENCY articles */}
+                  {(index + 1) % AD_FREQUENCY === 0 && (
+                    <FeedAd key={`ad-${index}`} />
+                  )}
+                </div>
               ))}
               {articles.length >= 100 && (
                 <div className="flex justify-center pt-4">
