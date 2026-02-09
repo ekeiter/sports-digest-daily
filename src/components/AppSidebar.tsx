@@ -194,7 +194,6 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
               <SidebarMenuButton
                 onClick={() => navigate(item.url)}
                 isActive={isActive(item.url)}
-                size="sm"
                 className="cursor-pointer text-black"
               >
                 <item.icon className="h-4 w-4" />
