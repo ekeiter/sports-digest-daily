@@ -7,7 +7,7 @@ export default function BrandedLoader() {
         <img
           src={blimpLogo}
           alt="SportsDig"
-          className="h-28 md:h-36 w-auto absolute top-1/2 -translate-y-1/2 animate-blimp-fly"
+          className="h-28 md:h-36 w-auto absolute top-1/2 animate-blimp-fly"
         />
       </div>
       <h1 className="font-racing text-4xl md:text-5xl text-black animate-pulse">
