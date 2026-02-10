@@ -10,9 +10,9 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if this is a password recovery redirect (hash contains type=recovery)
+    // Check if this is an auth redirect (hash contains access_token from confirmation or recovery)
     const hash = window.location.hash;
-    if (hash && hash.includes('type=recovery')) {
+    if (hash && (hash.includes('type=recovery') || hash.includes('type=signup') || hash.includes('type=email'))) {
       // Forward the entire hash to the callback page
       navigate('/auth/callback' + hash, { replace: true });
       return;
