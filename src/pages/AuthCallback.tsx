@@ -8,28 +8,28 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 
+// Capture the URL hash at MODULE LOAD TIME - this runs synchronously
+// before Supabase's async token processing can clear the hash
+const capturedHash = window.location.hash || "";
+const isRecoveryFromUrl = capturedHash.includes("type=recovery");
+console.log("[AuthCallback] Module-level hash capture:", { capturedHash: capturedHash.substring(0, 80), isRecoveryFromUrl });
+
 export default function AuthCallback() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(isRecoveryFromUrl);
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isRecoveryRef = useRef(false);
-
-  // Check URL hash immediately on mount - this catches the recovery type
-  // before Supabase processes the tokens
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes('type=recovery')) {
-      isRecoveryRef.current = true;
-      setShowPasswordReset(true);
-    }
-  }, []);
+  const isRecoveryRef = useRef(isRecoveryFromUrl);
 
   useEffect(() => {
+    console.log("[AuthCallback] Component mounted, isRecoveryFromUrl:", isRecoveryFromUrl, "current hash:", window.location.hash?.substring(0, 80));
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("[AuthCallback] Auth event:", event, "isRecoveryRef:", isRecoveryRef.current);
+        
         if (event === 'PASSWORD_RECOVERY') {
           isRecoveryRef.current = true;
           setShowPasswordReset(true);
