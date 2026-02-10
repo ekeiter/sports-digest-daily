@@ -17,46 +17,32 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check URL hash for recovery type FIRST
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const type = hashParams.get('type');
-    
-    if (type === 'recovery') {
-      setShowPasswordReset(true);
-      return; // Don't run the normal callback
-    }
-
-    // Normal email confirmation flow
-    const handleCallback = async () => {
-      try {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        
-        if (error) throw error;
-
-        if (user) {
-          // Ensure subscriber record exists after email confirmation
-          await supabase.rpc("ensure_my_subscriber");
-          
-          toast({
-            title: "Email Confirmed",
-            description: "Your email has been successfully confirmed.",
-          });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          // User clicked a password reset link
+          setShowPasswordReset(true);
+          return;
         }
-        
-        navigate("/splash");
-      } catch (error: any) {
-        console.error("Callback error:", error);
-        toast({
-          title: "Confirmation Error",
-          description: error.message || "Failed to confirm email. The link may be expired or already used.",
-          variant: "destructive",
-        });
-        navigate("/auth");
-      }
-    };
 
-    handleCallback();
-  }, [navigate, toast]);
+        if (event === 'SIGNED_IN' && session && !showPasswordReset) {
+          // Normal email confirmation flow
+          try {
+            await supabase.rpc("ensure_my_subscriber");
+            toast({
+              title: "Email Confirmed",
+              description: "Your email has been successfully confirmed.",
+            });
+          } catch (error: any) {
+            console.error("Subscriber ensure error:", error);
+          }
+          navigate("/feed");
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate, toast, showPasswordReset]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
