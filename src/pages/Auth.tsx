@@ -66,7 +66,7 @@ export default function Auth() {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
           options: {
@@ -75,6 +75,18 @@ export default function Auth() {
         });
 
         if (error) throw error;
+
+        // Supabase returns a user with empty identities for existing emails (security measure)
+        if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+          toast({
+            title: "Account Already Exists",
+            description: "An account with this email already exists. Please sign in instead.",
+            variant: "destructive",
+          });
+          setIsSignUp(false);
+          reset();
+          return;
+        }
 
         // Show confirmation message - user needs to check email
         setShowConfirmation(true);
