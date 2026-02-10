@@ -1811,6 +1811,7 @@ export type Database = {
           subscription_tier: string | null
           time_zone: string | null
           updated_at: string | null
+          welcome_email_sent: boolean
         }
         Insert: {
           created_at?: string | null
@@ -1823,6 +1824,7 @@ export type Database = {
           subscription_tier?: string | null
           time_zone?: string | null
           updated_at?: string | null
+          welcome_email_sent?: boolean
         }
         Update: {
           created_at?: string | null
@@ -1835,6 +1837,7 @@ export type Database = {
           subscription_tier?: string | null
           time_zone?: string | null
           updated_at?: string | null
+          welcome_email_sent?: boolean
         }
         Relationships: []
       }
