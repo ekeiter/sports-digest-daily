@@ -27,12 +27,12 @@ const Index = () => {
       }
 
       // Authenticated — redirect based on favorites
-      const { count } = await supabase
+      const { count, error } = await supabase
         .from("subscriber_interests")
         .select("id", { count: "exact", head: true })
         .eq("subscriber_id", user.id);
 
-      if (count && count > 0) {
+      if (!error && count && count > 0) {
         navigate("/feed", { replace: true });
       } else {
         navigate("/preferences", { replace: true });
