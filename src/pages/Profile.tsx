@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail } from "lucide-react";
+
 
 interface Subscriber {
   id: string;
@@ -145,7 +145,7 @@ export default function Profile() {
       <main className="container mx-auto px-4 pb-6">
         <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl md:text-2xl text-center">Your Profile</CardTitle>
+            <CardTitle className="text-lg md:text-2xl text-center">Your Profile</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {needsConfirm && (
@@ -157,29 +157,20 @@ export default function Profile() {
             )}
 
             <div className="space-y-3">
-              <div className="text-base flex items-center gap-2">
+              <div className="text-sm md:text-base">
                 <span className="font-medium">Email:</span> {subscriber?.email}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  onClick={() => setShowEmailDialog(true)}
-                >
-                  <Mail className="h-3 w-3 mr-1" />
-                  Change
-                </Button>
               </div>
-              <div className="text-base">
+              <div className="text-sm md:text-base">
                 <span className="font-medium">Subscription:</span> {subscriber?.subscription_tier || 'free'}
-              </div>
-              <div className="text-base">
-                <span className="font-medium">Notifications:</span> {subscriber?.notification_frequency || 'daily'}
               </div>
             </div>
 
-            <div className="flex justify-center pt-2">
-              <Button onClick={handleSignOut} className="bg-black hover:bg-black/80 text-white px-8">
-                Sign out
+            <div className="flex justify-center gap-3 pt-2">
+              <Button onClick={() => setShowEmailDialog(true)} variant="outline" className="px-6 text-sm md:text-base">
+                Change Email
+              </Button>
+              <Button onClick={handleSignOut} className="bg-black hover:bg-black/80 text-white px-6 text-sm md:text-base">
+                Sign Out
               </Button>
             </div>
           </CardContent>
