@@ -227,12 +227,13 @@ export default function Auth() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 md:space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-base">Email</Label>
+              <div className="space-y-1.5 md:space-y-2">
+                <Label htmlFor="email" className="text-sm md:text-base">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="name@example.com"
+                  className="h-9 md:h-10 text-base md:text-sm"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -246,13 +247,14 @@ export default function Auth() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-base">Password</Label>
+              <div className="space-y-1.5 md:space-y-2">
+                <Label htmlFor="password" className="text-sm md:text-base">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    className="h-9 md:h-10 text-base md:text-sm"
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
