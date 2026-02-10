@@ -112,28 +112,23 @@ export default {
 			'blimp-fly': {
 				'0%': {
 					left: '-20%',
-					top: '40%',
-					transform: 'translateY(-50%) scaleX(1)'
+					transform: 'scaleX(1)'
 				},
 				'45%': {
 					left: '110%',
-					top: '30%',
-					transform: 'translateY(-50%) scaleX(1)'
+					transform: 'scaleX(1)'
 				},
 				'50%': {
 					left: '110%',
-					top: '30%',
-					transform: 'translateY(-50%) scaleX(-1)'
+					transform: 'scaleX(-1)'
 				},
 				'95%': {
 					left: '-20%',
-					top: '40%',
-					transform: 'translateY(-50%) scaleX(-1)'
+					transform: 'scaleX(-1)'
 				},
 				'100%': {
 					left: '-20%',
-					top: '40%',
-					transform: 'translateY(-50%) scaleX(1)'
+					transform: 'scaleX(1)'
 				}
 			}
 			},
