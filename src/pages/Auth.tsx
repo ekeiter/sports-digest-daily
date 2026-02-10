@@ -43,7 +43,7 @@ export default function Auth() {
         setUser(session?.user ?? null);
         
         if (session && event === 'SIGNED_IN') {
-          navigate('/feed');
+          navigate('/', { replace: true });
         }
       }
     );
@@ -53,7 +53,7 @@ export default function Auth() {
       setUser(session?.user ?? null);
       
       if (session) {
-        navigate('/feed');
+        navigate('/', { replace: true });
       }
     });
 
