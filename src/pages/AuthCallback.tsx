@@ -189,7 +189,7 @@ export default function AuthCallback() {
             </div>
             <AlertDialogTitle className="text-center">Email Confirmed!</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              Your email has been successfully confirmed. Please sign in to continue.
+              Your email has been successfully confirmed. Please check your inbox for a Welcome Email! Sign in to continue.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
