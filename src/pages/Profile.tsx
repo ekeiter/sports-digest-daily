@@ -53,7 +53,7 @@ export default function Profile() {
       setNewEmail("");
       toast({
         title: "Confirmation Sent",
-        description: "Check both your old and new email inboxes to confirm the change.",
+        description: "Check your new email inbox to confirm the change.",
       });
     } catch (error: any) {
       toast({

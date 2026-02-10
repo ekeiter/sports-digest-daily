@@ -21,7 +21,8 @@ import {
 // before Supabase's async token processing can clear the hash
 const capturedHash = window.location.hash || "";
 const isRecoveryFromUrl = capturedHash.includes("type=recovery");
-console.log("[AuthCallback] Module-level hash capture:", { capturedHash: capturedHash.substring(0, 80), isRecoveryFromUrl });
+const isEmailChangeFromUrl = capturedHash.includes("type=email_change");
+console.log("[AuthCallback] Module-level hash capture:", { capturedHash: capturedHash.substring(0, 80), isRecoveryFromUrl, isEmailChangeFromUrl });
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showEmailChangeDialog, setShowEmailChangeDialog] = useState(false);
   const isRecoveryRef = useRef(isRecoveryFromUrl);
 
   useEffect(() => {
@@ -48,22 +50,28 @@ export default function AuthCallback() {
         }
 
         if (event === 'SIGNED_IN' && session && !isRecoveryRef.current) {
-          // Email confirmation flow — ensure subscriber, send welcome email, then sign out
-          try {
-            await supabase.rpc("ensure_my_subscriber");
-          } catch (error: any) {
-            console.error("Subscriber ensure error:", error);
-          }
+          if (isEmailChangeFromUrl) {
+            // Email change confirmation — just sign out and show simple confirmation
+            await supabase.auth.signOut();
+            setShowEmailChangeDialog(true);
+          } else {
+            // New signup confirmation — ensure subscriber, send welcome email, then sign out
+            try {
+              await supabase.rpc("ensure_my_subscriber");
+            } catch (error: any) {
+              console.error("Subscriber ensure error:", error);
+            }
 
-          // Fire-and-forget welcome email
-          try {
-            await supabase.functions.invoke("send-welcome-email");
-          } catch (error: any) {
-            console.error("Welcome email error:", error);
-          }
+            // Fire-and-forget welcome email
+            try {
+              await supabase.functions.invoke("send-welcome-email");
+            } catch (error: any) {
+              console.error("Welcome email error:", error);
+            }
 
-          await supabase.auth.signOut();
-          setShowConfirmDialog(true);
+            await supabase.auth.signOut();
+            setShowConfirmDialog(true);
+          }
         }
       }
     );
@@ -190,6 +198,25 @@ export default function AuthCallback() {
             <AlertDialogTitle className="text-center">Email Confirmed!</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               Your email has been successfully confirmed. Please check your inbox for a Welcome Email! Sign in to continue.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogAction onClick={() => navigate("/auth")}>
+              Sign In
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showEmailChangeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex justify-center mb-4">
+              <CheckCircle className="h-12 w-12 text-green-500" />
+            </div>
+            <AlertDialogTitle className="text-center">Email Address Updated!</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Your email address has been successfully changed. Please sign in with your new email.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
