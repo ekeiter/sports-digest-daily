@@ -17,6 +17,16 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(false);
   const isRecoveryRef = useRef(false);
 
+  // Check URL hash immediately on mount - this catches the recovery type
+  // before Supabase processes the tokens
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      isRecoveryRef.current = true;
+      setShowPasswordReset(true);
+    }
+  }, []);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
