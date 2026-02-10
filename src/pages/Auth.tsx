@@ -225,9 +225,9 @@ export default function Auth() {
             </div>
             <CardTitle className="text-xl md:text-2xl text-center">
               {isSignUp ? (
-                <>Create a <span className="font-racing text-2xl md:text-3xl">SportsDig</span> Account</>
+              <>Create a <span className="font-montserrat-xbold italic text-2xl md:text-3xl">SportsDig</span> Account</>
               ) : (
-                <>Sign in to <span className="font-racing text-2xl md:text-3xl">SportsDig</span></>
+                <>Sign in to <span className="font-montserrat-xbold italic text-2xl md:text-3xl">SportsDig</span></>
               )}
             </CardTitle>
             <CardDescription className="text-center text-xs md:text-sm">

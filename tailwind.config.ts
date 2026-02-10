@@ -11,7 +11,8 @@ export default {
 	prefix: "",
 	theme: {
 		fontFamily: {
-			'racing': ['"Racing Sans One"', 'cursive'],
+		'racing': ['"Racing Sans One"', 'cursive'],
+		'montserrat-xbold': ['"Montserrat"', 'sans-serif'],
 		},
 		container: {
 			center: true,
