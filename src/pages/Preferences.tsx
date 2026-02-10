@@ -1201,7 +1201,15 @@ export default function Preferences() {
                     userId={userId}
                     followedPersonIds={followedPersonIds}
                     onPersonFollowed={(personId) => {
-                      setFollowedPersonIds(prev => new Set([...prev, personId]));
+                      setFollowedPersonIds(prev => {
+                        const next = new Set(prev);
+                        if (next.has(personId)) {
+                          next.delete(personId);
+                        } else {
+                          next.add(personId);
+                        }
+                        return next;
+                      });
                     }}
                   />
                 )}
