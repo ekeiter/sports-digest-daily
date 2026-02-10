@@ -31,6 +31,7 @@ export default function AuthCallback() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const isRecoveryRef = useRef(isRecoveryFromUrl);
 
   useEffect(() => {
@@ -47,17 +48,14 @@ export default function AuthCallback() {
         }
 
         if (event === 'SIGNED_IN' && session && !isRecoveryRef.current) {
-          // Normal email confirmation flow
+          // Email confirmation flow — sign out and prompt login
           try {
             await supabase.rpc("ensure_my_subscriber");
-            toast({
-              title: "Email Confirmed",
-              description: "Your email has been successfully confirmed.",
-            });
           } catch (error: any) {
             console.error("Subscriber ensure error:", error);
           }
-          navigate("/feed");
+          await supabase.auth.signOut();
+          setShowConfirmDialog(true);
         }
       }
     );
@@ -174,6 +172,25 @@ export default function AuthCallback() {
         <h2 className="text-2xl font-semibold mb-2">Confirming your email...</h2>
         <p className="text-muted-foreground">Please wait a moment.</p>
       </div>
+
+      <AlertDialog open={showConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex justify-center mb-4">
+              <CheckCircle className="h-12 w-12 text-green-500" />
+            </div>
+            <AlertDialogTitle className="text-center">Email Confirmed!</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Your email has been successfully confirmed. Please sign in to continue.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogAction onClick={() => navigate("/auth")}>
+              Sign In
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
