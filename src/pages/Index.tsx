@@ -10,6 +10,14 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if this is a password recovery redirect (hash contains type=recovery)
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      // Forward the entire hash to the callback page
+      navigate('/auth/callback' + hash, { replace: true });
+      return;
+    }
+
     const checkAuthAndRedirect = async () => {
       const { data: { user } } = await supabase.auth.getUser();
 
