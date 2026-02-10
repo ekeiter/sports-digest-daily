@@ -112,23 +112,11 @@ export default {
 			'blimp-fly': {
 				'0%': {
 					left: '-20%',
-					transform: 'translateY(-50%) scaleX(1)'
-				},
-				'45%': {
-					left: '110%',
-					transform: 'translateY(-50%) scaleX(1)'
-				},
-				'50%': {
-					left: '110%',
-					transform: 'translateY(-50%) scaleX(-1)'
-				},
-				'95%': {
-					left: '-20%',
-					transform: 'translateY(-50%) scaleX(-1)'
+					transform: 'translateY(-50%)'
 				},
 				'100%': {
-					left: '-20%',
-					transform: 'translateY(-50%) scaleX(1)'
+					left: '110%',
+					transform: 'translateY(-50%)'
 				}
 			}
 			},
@@ -136,7 +124,7 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			'wiggle': 'wiggle 0.15s ease-in-out infinite',
-			'blimp-fly': 'blimp-fly 10s ease-in-out infinite'
+			'blimp-fly': 'blimp-fly 5s linear infinite'
 			}
 		}
 	},
