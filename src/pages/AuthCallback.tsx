@@ -48,12 +48,20 @@ export default function AuthCallback() {
         }
 
         if (event === 'SIGNED_IN' && session && !isRecoveryRef.current) {
-          // Email confirmation flow — sign out and prompt login
+          // Email confirmation flow — ensure subscriber, send welcome email, then sign out
           try {
             await supabase.rpc("ensure_my_subscriber");
           } catch (error: any) {
             console.error("Subscriber ensure error:", error);
           }
+
+          // Fire-and-forget welcome email
+          try {
+            await supabase.functions.invoke("send-welcome-email");
+          } catch (error: any) {
+            console.error("Welcome email error:", error);
+          }
+
           await supabase.auth.signOut();
           setShowConfirmDialog(true);
         }
