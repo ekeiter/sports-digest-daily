@@ -880,11 +880,10 @@ export default function Preferences() {
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3 text-sm text-muted-foreground">
-                <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking any item opens a focused news feed for that topic. Select any menu button to drill down into more specific categories including teams, schools, etc.</p>
-                <p><span className="font-bold text-foreground">Searching</span> - Use the search box to find any topic quickly. Search includes teams, players, coaches, schools, and leagues. Click any search result to view its focused news feed.</p>
-                <p><span className="font-bold text-foreground">Favoriting Topics</span> - Click the heart icon to favorite any topic. Favorites appear at the top of the screen for quick access. Click any favorite to see its focused news feed.</p>
-                <p><span className="font-bold text-foreground">Removing Favorites</span> - Click the heart again to remove from favorites. Mobile/Tablet: Press and hold a favorite card, then tap the X. Desktop: Click the X button on the favorite card.</p>
-                <p><span className="font-bold text-foreground">Combined Feed</span> - Click "Combined Feed" button to see a news feed from all of your favorite topics. Your feed can include any mix of players, teams, leagues, and more.</p>
+                <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking on any topic in the feed manager (e.g., sport, league, team, college, person) will take you directly to a focused news feed for that topic. Using the menu buttons lets you drill down to explore what's available within that category.</p>
+                <p><span className="font-bold text-foreground">Searching</span> - Use the search bar to find specific teams, colleges, players, coaches, etc. Clickable results appear as you type, making it easy to locate exactly what you're looking for.</p>
+                <p><span className="font-bold text-foreground">Adding Favorites</span> - Tap the heart icon next to any topic to add it to your favorites. Your favorites appear in the sidebar for quick access. To remove a favorite: Click the trash icon next to any favorite in the sidebar, or simply toggle the heart icon off.</p>
+                <p><span className="font-bold text-foreground">Combined Feed</span> - The Combined Sports News Feed shows articles from all your favorites in one unified stream, sorted by recency. This is your personalized sports news hub.</p>
               </div>
             </DialogContent>
           </Dialog>

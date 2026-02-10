@@ -44,10 +44,10 @@ const Instructions = () => {
               </h2>
             </div>
             <p className="text-sm text-foreground">
-              <span className="font-semibold">Clicking</span> on any topic (sport, league, team, etc.) will take you directly to a focused news feed for that topic.
+              <span className="font-semibold">Clicking</span> on any topic in the feed manager (e.g., sport, league, team, college, person) will take you directly to a focused news feed for that topic.
             </p>
             <p className="text-sm text-foreground">
-              <span className="font-semibold">Using the menu buttons</span> (like "Teams" or "Players") lets you drill down to explore what's available within that category.
+              <span className="font-semibold">Using the menu buttons</span> lets you drill down to explore what's available within that category.
             </p>
           </section>
 
@@ -59,7 +59,7 @@ const Instructions = () => {
               </h2>
             </div>
             <p className="text-sm text-foreground">
-              Use the search bar to find specific teams, players, coaches, or schools. Results appear as you type, making it easy to locate exactly what you're looking for.
+              Use the search bar to find specific teams, colleges, players, coaches, etc. Clickable results appear as you type, making it easy to locate exactly what you're looking for.
             </p>
           </section>
 
@@ -74,7 +74,7 @@ const Instructions = () => {
               Tap the <span className="font-semibold">heart icon</span> next to any topic to add it to your favorites. Your favorites appear in the sidebar for quick access.
             </p>
             <p className="text-sm text-foreground">
-              <span className="font-semibold">To remove a favorite:</span> Click the trash icon next to any favorite in the sidebar, or toggle the heart icon off in the Topic Manager.
+              <span className="font-semibold">To remove a favorite:</span> Click the trash icon next to any favorite in the sidebar, or simply toggle the heart icon off.
             </p>
           </section>
 
