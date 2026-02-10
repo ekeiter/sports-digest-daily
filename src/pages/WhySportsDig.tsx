@@ -4,11 +4,9 @@ import { MobileSidebar } from "@/components/MobileSidebar";
 
 const WhySportsDig = () => {
   return (
-    <div className="min-h-screen" style={{
-    backgroundColor: '#D5D5D5'
-  }}>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#D5D5D5' }}>
       {/* Mobile header: menu left, logo centered */}
-      <header className="py-2 md:hidden">
+      <header className="py-2 md:hidden flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center">
             <div className="w-10 flex justify-start">
@@ -23,7 +21,7 @@ const WhySportsDig = () => {
       </header>
 
       {/* PC/Tablet header with logo */}
-      <header className="hidden md:block py-3">
+      <header className="hidden md:block py-3 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12" />
@@ -31,7 +29,7 @@ const WhySportsDig = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pb-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6">
         <div className="bg-white rounded-lg shadow-lg p-5 md:p-6 space-y-6">
           <section className="space-y-3">
             <div className="flex items-center gap-3">
