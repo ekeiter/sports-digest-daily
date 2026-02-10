@@ -8,6 +8,17 @@ import { useToast } from "@/hooks/use-toast";
 import { User } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { MobileSidebar } from "@/components/MobileSidebar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Mail } from "lucide-react";
 
 interface Subscriber {
   id: string;
@@ -23,8 +34,37 @@ export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleChangeEmail = async () => {
+    if (!newEmail.trim()) return;
+    setEmailLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser(
+        { email: newEmail.trim() },
+        { emailRedirectTo: window.location.origin + "/auth/callback" }
+      );
+      if (error) throw error;
+      setShowEmailDialog(false);
+      setNewEmail("");
+      toast({
+        title: "Confirmation Sent",
+        description: "Check both your old and new email inboxes to confirm the change.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setEmailLoading(false);
+    }
+  };
 
   useEffect(() => {
     checkUser();
@@ -117,8 +157,17 @@ export default function Profile() {
             )}
 
             <div className="space-y-3">
-              <div className="text-base">
+              <div className="text-base flex items-center gap-2">
                 <span className="font-medium">Email:</span> {subscriber?.email}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => setShowEmailDialog(true)}
+                >
+                  <Mail className="h-3 w-3 mr-1" />
+                  Change
+                </Button>
               </div>
               <div className="text-base">
                 <span className="font-medium">Subscription:</span> {subscriber?.subscription_tier || 'free'}
@@ -136,6 +185,36 @@ export default function Profile() {
           </CardContent>
         </Card>
       </main>
+
+      <Dialog open={showEmailDialog} onOpenChange={setShowEmailDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Email Address</DialogTitle>
+            <DialogDescription>
+              Enter your new email address. You'll receive confirmation emails at both your old and new addresses.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="new-email">New Email</Label>
+            <Input
+              id="new-email"
+              type="email"
+              placeholder="Enter new email address"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleChangeEmail()}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEmailDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleChangeEmail} disabled={emailLoading || !newEmail.trim()}>
+              {emailLoading ? "Sending..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
