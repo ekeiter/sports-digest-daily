@@ -101,19 +101,47 @@ export default {
 						height: '0'
 					}
 				},
-				'wiggle': {
-					'0%, 100%': {
-						transform: 'rotate(-1.5deg)'
-					},
-					'50%': {
-						transform: 'rotate(1.5deg)'
-					}
+			'wiggle': {
+				'0%, 100%': {
+					transform: 'rotate(-1.5deg)'
+				},
+				'50%': {
+					transform: 'rotate(1.5deg)'
 				}
+			},
+			'blimp-fly': {
+				'0%': {
+					left: '-20%',
+					top: '40%',
+					transform: 'translateY(-50%) scaleX(1)'
+				},
+				'45%': {
+					left: '110%',
+					top: '30%',
+					transform: 'translateY(-50%) scaleX(1)'
+				},
+				'50%': {
+					left: '110%',
+					top: '30%',
+					transform: 'translateY(-50%) scaleX(-1)'
+				},
+				'95%': {
+					left: '-20%',
+					top: '40%',
+					transform: 'translateY(-50%) scaleX(-1)'
+				},
+				'100%': {
+					left: '-20%',
+					top: '40%',
+					transform: 'translateY(-50%) scaleX(1)'
+				}
+			}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'wiggle': 'wiggle 0.15s ease-in-out infinite'
+			'wiggle': 'wiggle 0.15s ease-in-out infinite',
+			'blimp-fly': 'blimp-fly 4s ease-in-out infinite'
 			}
 		}
 	},

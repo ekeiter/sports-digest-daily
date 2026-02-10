@@ -17,7 +17,7 @@ import PlayerPreferences from "./pages/PlayerPreferences";
 import WhySportsDig from "./pages/WhySportsDig";
 import Instructions from "./pages/Instructions";
 import Index from "./pages/Index";
-import Splash from "./pages/Splash";
+
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
@@ -60,7 +60,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/splash" element={<Splash />} />
+            {/* /splash now redirects to /feed since the branded loader is built-in */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />

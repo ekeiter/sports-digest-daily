@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import ArticleImage from "@/components/ArticleImage";
-import FeedSkeleton from "@/components/FeedSkeleton";
+import BrandedLoader from "@/components/BrandedLoader";
 import MatchedInterestBadges from "@/components/MatchedInterestBadges";
 import { FocusedFeedHeader } from "@/components/FocusedFeedHeader";
 
@@ -167,7 +167,7 @@ export default function Feed() {
   };
 
   if (checkingAuth || isLoading) {
-    return <FeedSkeleton />;
+    return <BrandedLoader />;
   }
 
   if (isError) {
@@ -180,7 +180,7 @@ export default function Feed() {
       message.toLowerCase().includes('unauthorized');
     if (isAuthError) {
       supabase.auth.signOut().then(() => navigate("/auth"));
-      return <FeedSkeleton />;
+      return <BrandedLoader />;
     }
     return (
       <div className="min-h-screen">
