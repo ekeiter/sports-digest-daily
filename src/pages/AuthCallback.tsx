@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,17 +15,18 @@ export default function AuthCallback() {
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isRecoveryRef = useRef(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
-          // User clicked a password reset link
+          isRecoveryRef.current = true;
           setShowPasswordReset(true);
           return;
         }
 
-        if (event === 'SIGNED_IN' && session && !showPasswordReset) {
+        if (event === 'SIGNED_IN' && session && !isRecoveryRef.current) {
           // Normal email confirmation flow
           try {
             await supabase.rpc("ensure_my_subscriber");
@@ -42,7 +43,7 @@ export default function AuthCallback() {
     );
 
     return () => subscription.unsubscribe();
-  }, [navigate, toast, showPasswordReset]);
+  }, [navigate, toast]);
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
