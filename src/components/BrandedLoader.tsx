@@ -3,7 +3,7 @@ import blimpLogo from "@/assets/sportsdig-blimp-logo.png";
 export default function BrandedLoader() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#D5D5D5]">
-      <div className="relative w-full overflow-hidden h-32 mb-4">
+      <div className="relative w-full overflow-hidden h-36 md:h-44 mb-4">
         <img
           src={blimpLogo}
           alt="SportsDig"
