@@ -77,10 +77,11 @@ export default function AuthCallback() {
 
       toast({
         title: "Password Updated",
-        description: "Your password has been successfully reset.",
+        description: "Your password has been successfully reset. Please sign in with your new password.",
       });
       
-      navigate("/splash");
+      await supabase.auth.signOut();
+      navigate("/auth");
     } catch (error: any) {
       console.error("Password reset error:", error);
       toast({
@@ -95,7 +96,7 @@ export default function AuthCallback() {
 
   if (showPasswordReset) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="min-h-screen flex items-start justify-center pt-8 md:pt-16 bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Reset Your Password</CardTitle>
