@@ -6,7 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Capture the URL hash at MODULE LOAD TIME - this runs synchronously
 // before Supabase's async token processing can clear the hash
@@ -21,6 +30,7 @@ export default function AuthCallback() {
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const isRecoveryRef = useRef(isRecoveryFromUrl);
 
   useEffect(() => {
@@ -75,13 +85,8 @@ export default function AuthCallback() {
 
       if (error) throw error;
 
-      toast({
-        title: "Password Updated",
-        description: "Your password has been successfully reset. Please sign in with your new password.",
-      });
-      
       await supabase.auth.signOut();
-      navigate("/auth");
+      setShowSuccessDialog(true);
     } catch (error: any) {
       console.error("Password reset error:", error);
       toast({
@@ -140,6 +145,25 @@ export default function AuthCallback() {
             </form>
           </CardContent>
         </Card>
+
+        <AlertDialog open={showSuccessDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex justify-center mb-4">
+                <CheckCircle className="h-12 w-12 text-green-500" />
+              </div>
+              <AlertDialogTitle className="text-center">Password Reset Successfully</AlertDialogTitle>
+              <AlertDialogDescription className="text-center">
+                Your password has been updated. Please sign in with your new password.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="sm:justify-center">
+              <AlertDialogAction onClick={() => navigate("/auth")}>
+                Sign In
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
