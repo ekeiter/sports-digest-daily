@@ -134,6 +134,26 @@ export default function TrendingPlayers({
     invalidateFeed(userId);
   };
 
+  const handleUnfollow = async (person: TrendingPerson) => {
+    if (!userId) return;
+    
+    const { error } = await supabase
+      .from("subscriber_interests")
+      .delete()
+      .eq("subscriber_id", userId)
+      .eq("person_id", person.id);
+    
+    if (error) {
+      toast.error("Failed to unfollow");
+      return;
+    }
+    
+    toast.success(`Unfollowed ${person.name}`);
+    onPersonFollowed?.(person.id);
+    invalidatePreferences(userId);
+    invalidateFeed(userId);
+  };
+
   const handleNavigateToFocus = (personId: number) => {
     navigate(`/feed?type=person&id=${personId}`);
   };
@@ -228,13 +248,14 @@ export default function TrendingPlayers({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!isFollowed) {
+                      if (isFollowed) {
+                        handleUnfollow(person);
+                      } else {
                         handleFollow(person);
                       }
                     }}
                     className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
-                    title={isFollowed ? "Already following" : "Add to favorites"}
-                    disabled={isFollowed}
+                    title={isFollowed ? "Unfollow" : "Add to favorites"}
                   >
                     <Heart
                       className={`h-5 w-5 ${
