@@ -270,10 +270,18 @@ export function FocusedFeedHeader({
           logoUrl = school?.logo_url || null;
         }
         if (!logoUrl && data.league_id) {
-          logoUrl = await resolveLogoUrl('league', data.league_id, null);
+          const { data: league } = await supabase.from('leagues').select('logo_url').eq('id', data.league_id).single();
+          logoUrl = league?.logo_url || null;
+          if (!logoUrl) {
+            logoUrl = await resolveLogoUrl('league', data.league_id, null);
+          }
         }
         if (!logoUrl && data.sport_id) {
-          logoUrl = await resolveLogoUrl('sport', data.sport_id, null);
+          const { data: sport } = await supabase.from('sports').select('logo_url').eq('id', data.sport_id).single();
+          logoUrl = sport?.logo_url || null;
+          if (!logoUrl) {
+            logoUrl = await resolveLogoUrl('sport', data.sport_id, null);
+          }
         }
         return { label: data.name, logoUrl };
       };
