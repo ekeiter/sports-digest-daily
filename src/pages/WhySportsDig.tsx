@@ -127,13 +127,13 @@ const WhySportsDig = () => {
               </h2>
             </div>
             <div className="text-sm text-foreground space-y-1">
-              <p><span className="font-semibold">2,500+</span> trusted news sources</p>
-              <p><span className="font-semibold">18,000+</span> articles processed daily—filtered down to what matters to you</p>
+              <p><span className="font-semibold">2,500+</span>3,000+</p>
+              <p><span className="font-semibold">18,000+</span>20,000+</p>
               <p><span className="font-semibold">90+</span> sports covered, from the NFL to the Olympics</p>
               <p><span className="font-semibold">160+</span> leagues worldwide</p>
               <p><span className="font-semibold">900+</span> teams</p>
-              <p><span className="font-semibold">360+</span> NCAA schools</p>
-              <p><span className="font-semibold">80,000+</span> athletes and coaches</p>
+              <p><span className="font-semibold">360+</span>380+</p>
+              <p><span className="font-semibold">80,000+</span>90,000+</p>
             </div>
             <p className="text-sm text-foreground font-semibold italic">
               We find the stories—so you don't have to.
@@ -141,7 +141,7 @@ const WhySportsDig = () => {
           </section>
         </div>
       </main>
-    </div>
-  );
+    </div>);
+
 };
 export default WhySportsDig;
