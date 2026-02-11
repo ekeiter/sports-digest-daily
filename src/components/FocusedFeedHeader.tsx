@@ -110,6 +110,47 @@ export function FocusedFeedHeader({
       }
     }
 
+    // Check entity type+id based focus (no interestId needed)
+    if (entityType === 'sport' && entityId) {
+      const sport = userPreferences.sports.find(s => s.id === entityId);
+      if (sport) {
+        return {
+          logoUrl: sport.logo_url,
+          label: sport.display_label || toTitleCase(sport.sport),
+        };
+      }
+    }
+
+    if (entityType === 'league' && entityId) {
+      const league = userPreferences.leagues.find(l => l.id === entityId);
+      if (league) {
+        return {
+          logoUrl: league.logo_url,
+          label: league.display_label || league.name || league.code,
+        };
+      }
+    }
+
+    if (entityType === 'team' && entityId) {
+      const team = userPreferences.teams.find(t => t.id === entityId);
+      if (team) {
+        return {
+          logoUrl: team.logo_url,
+          label: team.display_name,
+        };
+      }
+    }
+
+    if (entityType === 'person' && entityId) {
+      const person = userPreferences.people.find(p => p.id === entityId);
+      if (person) {
+        return {
+          logoUrl: getPersonLogo(person),
+          label: person.name,
+        };
+      }
+    }
+
     // Check schools (type+id based)
     if (entityType === 'school' && entityId) {
       const school = userPreferences.schools.find(s => 
