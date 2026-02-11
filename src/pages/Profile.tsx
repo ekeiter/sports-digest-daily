@@ -11,7 +11,7 @@ import { MobileSidebar } from "@/components/MobileSidebar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Sun, Moon, Monitor } from "lucide-react";
+
 import { useTheme } from "next-themes";
 import {
   Dialog,
@@ -173,10 +173,10 @@ export default function Profile() {
               <span className="font-medium text-sm md:text-base">Appearance</span>
               <div className="flex gap-2">
                 {[
-                  { value: 'light', label: 'Light', icon: Sun },
-                  { value: 'dark', label: 'Dark', icon: Moon },
-                  { value: 'system', label: 'System', icon: Monitor },
-                ].map(({ value, label, icon: Icon }) => (
+                  { value: 'light', label: 'Light', emoji: '☀️' },
+                  { value: 'dark', label: 'Dark', emoji: '🌙' },
+                  { value: 'system', label: 'System', emoji: '🖥️' },
+                ].map(({ value, label, emoji }) => (
                   <button
                     key={value}
                     onClick={() => setTheme(value)}
@@ -186,7 +186,7 @@ export default function Profile() {
                         : 'border-border bg-card text-foreground hover:bg-accent'
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <span className="text-base">{emoji}</span>
                     {label}
                   </button>
                 ))}
