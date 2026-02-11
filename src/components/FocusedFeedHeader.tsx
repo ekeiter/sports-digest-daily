@@ -223,12 +223,13 @@ export function FocusedFeedHeader({
       // Helper: resolve logo from entity table + preference_menu_items fallback
       const resolveLogoUrl = async (entityType: string, entityId: number, primaryLogo: string | null): Promise<string | null> => {
         if (primaryLogo) return primaryLogo;
-        const { data: menuItem } = await supabase
+        const { data: menuItems } = await supabase
           .from('preference_menu_items')
           .select('logo_url')
           .eq('entity_type', entityType.toLowerCase())
           .eq('entity_id', entityId)
-          .maybeSingle();
+          .limit(1);
+        const menuItem = menuItems?.[0] ?? null;
         return menuItem?.logo_url || null;
       };
 
