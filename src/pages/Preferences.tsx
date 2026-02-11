@@ -1143,7 +1143,7 @@ export default function Preferences() {
                 // For schools: selected if "All Sports" is selected OR this specific combo exists
                 // For countries: check selectedCountries
                 // For teams: check selectedTeams
-                const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || selectedSchools.includes(item.id) : expandedLeagueType === 'country' ? selectedCountries.includes(item.id) : selectedTeams.includes(item.id);
+                const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || selectedSchools.includes(item.id) : expandedLeagueType === 'country' ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id)) : selectedTeams.includes(item.id);
                 return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
                           <div
                             onClick={() =>

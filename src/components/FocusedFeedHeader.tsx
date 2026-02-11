@@ -282,13 +282,45 @@ export function FocusedFeedHeader({
       const resolveSchool = async (schoolId: number): Promise<HeaderContent | null> => {
         const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', schoolId).single();
         if (!data) return null;
-        return { label: data.short_name, logoUrl: data.logo_url };
+        // If we have a league context, show school logo + league logo + gender indicator (matching favorite display)
+        if (focusLeagueId) {
+          const { data: league } = await supabase.from('leagues').select('code, logo_url').eq('id', focusLeagueId).single();
+          let leagueLogo = league?.logo_url || null;
+          if (!leagueLogo) {
+            const { data: menuItem } = await supabase
+              .from('preference_menu_items')
+              .select('logo_url')
+              .eq('entity_type', 'league')
+              .eq('entity_id', focusLeagueId)
+              .maybeSingle();
+            leagueLogo = menuItem?.logo_url || null;
+          }
+          const genderIndicator = getGenderIndicator(league?.code || null);
+          return {
+            logoUrl: data.logo_url,
+            label: data.short_name,
+            rightIcon: leagueLogo,
+            rightLabel: genderIndicator,
+          };
+        }
+        return { label: data.short_name, logoUrl: data.logo_url, sublabel: 'All Sports' };
       };
 
       // Resolve a country by id
       const resolveCountry = async (countryId: number): Promise<HeaderContent | null> => {
         const { data } = await supabase.from('countries').select('name, logo_url').eq('id', countryId).single();
         if (!data) return null;
+        // If we have a league context, show league name + country flag (matching favorite display)
+        if (focusLeagueId) {
+          const leagueContent = await resolveLeague(focusLeagueId);
+          if (leagueContent) {
+            return {
+              logoUrl: leagueContent.logoUrl,
+              label: leagueContent.label,
+              rightIcon: data.logo_url,
+            };
+          }
+        }
         return { label: data.name, logoUrl: data.logo_url };
       };
 
