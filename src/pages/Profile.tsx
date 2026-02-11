@@ -11,7 +11,7 @@ import { MobileSidebar } from "@/components/MobileSidebar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Dialog,
@@ -169,16 +169,28 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t">
-              <div className="flex items-center gap-2 text-sm md:text-base">
-                <Sun className="h-4 w-4" />
-                <span className="font-medium">Dark Mode</span>
-                <Moon className="h-4 w-4" />
+            <div className="pt-2 border-t space-y-1.5">
+              <span className="font-medium text-sm md:text-base">Appearance</span>
+              <div className="flex gap-2">
+                {[
+                  { value: 'light', label: 'Light', icon: Sun },
+                  { value: 'dark', label: 'Dark', icon: Moon },
+                  { value: 'system', label: 'System', icon: Monitor },
+                ].map(({ value, label, icon: Icon }) => (
+                  <button
+                    key={value}
+                    onClick={() => setTheme(value)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                      theme === value
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-foreground hover:bg-accent'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                ))}
               </div>
-              <Switch
-                checked={theme === 'dark'}
-                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-              />
             </div>
 
             <div className="flex justify-center gap-3 pt-2">
