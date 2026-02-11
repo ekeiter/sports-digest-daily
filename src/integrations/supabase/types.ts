@@ -684,6 +684,7 @@ export type Database = {
           extras: Json | null
           hours_back: number
           id: number
+          is_syndicator: boolean
           kind: Database["public"]["Enums"]["rule_kind"] | null
           notes: string | null
           per_section_max_items: number | null
@@ -705,6 +706,7 @@ export type Database = {
           extras?: Json | null
           hours_back?: number
           id?: number
+          is_syndicator?: boolean
           kind?: Database["public"]["Enums"]["rule_kind"] | null
           notes?: string | null
           per_section_max_items?: number | null
@@ -726,6 +728,7 @@ export type Database = {
           extras?: Json | null
           hours_back?: number
           id?: number
+          is_syndicator?: boolean
           kind?: Database["public"]["Enums"]["rule_kind"] | null
           notes?: string | null
           per_section_max_items?: number | null
