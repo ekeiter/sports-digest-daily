@@ -220,6 +220,78 @@ export function FocusedFeedHeader({
   const { data: fallbackContent } = useQuery({
     queryKey: ['focusedEntityFallback', focusParam, entityType, entityId, focusLeagueId],
     queryFn: async (): Promise<HeaderContent | null> => {
+      // Helper: resolve logo from entity table + preference_menu_items fallback
+      const resolveLogoUrl = async (entityType: string, entityId: number, primaryLogo: string | null): Promise<string | null> => {
+        if (primaryLogo) return primaryLogo;
+        const { data: menuItem } = await supabase
+          .from('preference_menu_items')
+          .select('logo_url')
+          .eq('entity_type', entityType.toLowerCase())
+          .eq('entity_id', entityId)
+          .maybeSingle();
+        return menuItem?.logo_url || null;
+      };
+
+      // Resolve a sport by id
+      const resolveSport = async (sportId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('sports').select('sport, display_label, logo_url').eq('id', sportId).single();
+        if (!data) return null;
+        const logoUrl = await resolveLogoUrl('sport', sportId, data.logo_url);
+        return { label: data.display_label || toTitleCase(data.sport), logoUrl };
+      };
+
+      // Resolve a league by id
+      const resolveLeague = async (leagueId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('leagues').select('code, name, display_label, logo_url').eq('id', leagueId).single();
+        if (!data) return null;
+        const logoUrl = await resolveLogoUrl('league', leagueId, data.logo_url);
+        return { label: data.display_label || data.name || data.code, logoUrl };
+      };
+
+      // Resolve a team by id
+      const resolveTeam = async (teamId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('teams').select('display_name, logo_url').eq('id', teamId).single();
+        if (!data) return null;
+        return { label: data.display_name, logoUrl: data.logo_url };
+      };
+
+      // Resolve a person by id
+      const resolvePerson = async (personId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('people').select('name, team_id, school_id, league_id, sport_id').eq('id', personId).single();
+        if (!data) return null;
+        // Try to get a logo from their team/school/league/sport
+        let logoUrl: string | null = null;
+        if (data.team_id) {
+          const { data: team } = await supabase.from('teams').select('logo_url').eq('id', data.team_id).single();
+          logoUrl = team?.logo_url || null;
+        }
+        if (!logoUrl && data.school_id) {
+          const { data: school } = await supabase.from('schools').select('logo_url').eq('id', data.school_id).single();
+          logoUrl = school?.logo_url || null;
+        }
+        if (!logoUrl && data.league_id) {
+          logoUrl = await resolveLogoUrl('league', data.league_id, null);
+        }
+        if (!logoUrl && data.sport_id) {
+          logoUrl = await resolveLogoUrl('sport', data.sport_id, null);
+        }
+        return { label: data.name, logoUrl };
+      };
+
+      // Resolve a school by id
+      const resolveSchool = async (schoolId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', schoolId).single();
+        if (!data) return null;
+        return { label: data.short_name, logoUrl: data.logo_url };
+      };
+
+      // Resolve a country by id
+      const resolveCountry = async (countryId: number): Promise<HeaderContent | null> => {
+        const { data } = await supabase.from('countries').select('name, logo_url').eq('id', countryId).single();
+        if (!data) return null;
+        return { label: data.name, logoUrl: data.logo_url };
+      };
+
       // For interestId-based focus, look up the subscriber_interest first
       if (focusParam) {
         const id = parseInt(focusParam);
@@ -230,58 +302,22 @@ export function FocusedFeedHeader({
           .single();
         if (!interest) return null;
 
-        if (interest.sport_id) {
-          const { data } = await supabase.from('sports').select('sport, display_label, logo_url').eq('id', interest.sport_id).single();
-          if (data) return { label: data.display_label || toTitleCase(data.sport), logoUrl: data.logo_url };
-        }
-        if (interest.league_id && !interest.team_id && !interest.school_id && !interest.country_id) {
-          const { data } = await supabase.from('leagues').select('code, name, display_label, logo_url').eq('id', interest.league_id).single();
-          if (data) return { label: data.display_label || data.name || data.code, logoUrl: data.logo_url };
-        }
-        if (interest.team_id) {
-          const { data } = await supabase.from('teams').select('display_name, logo_url').eq('id', interest.team_id).single();
-          if (data) return { label: data.display_name, logoUrl: data.logo_url };
-        }
-        if (interest.person_id) {
-          const { data } = await supabase.from('people').select('name').eq('id', interest.person_id).single();
-          if (data) return { label: data.name, logoUrl: null };
-        }
-        if (interest.school_id) {
-          const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', interest.school_id).single();
-          if (data) return { label: data.short_name, logoUrl: data.logo_url };
-        }
-        if (interest.country_id) {
-          const { data } = await supabase.from('countries').select('name, logo_url').eq('id', interest.country_id).single();
-          if (data) return { label: data.name, logoUrl: data.logo_url };
-        }
+        if (interest.sport_id) return resolveSport(interest.sport_id);
+        if (interest.league_id && !interest.team_id && !interest.school_id && !interest.country_id) return resolveLeague(interest.league_id);
+        if (interest.team_id) return resolveTeam(interest.team_id);
+        if (interest.person_id) return resolvePerson(interest.person_id);
+        if (interest.school_id) return resolveSchool(interest.school_id);
+        if (interest.country_id) return resolveCountry(interest.country_id);
         return null;
       }
 
       // For type+id based focus, query the entity directly
-      if (entityType === 'sport' && entityId) {
-        const { data } = await supabase.from('sports').select('sport, display_label, logo_url').eq('id', entityId).single();
-        if (data) return { label: data.display_label || toTitleCase(data.sport), logoUrl: data.logo_url };
-      }
-      if (entityType === 'league' && entityId) {
-        const { data } = await supabase.from('leagues').select('code, name, display_label, logo_url').eq('id', entityId).single();
-        if (data) return { label: data.display_label || data.name || data.code, logoUrl: data.logo_url };
-      }
-      if (entityType === 'team' && entityId) {
-        const { data } = await supabase.from('teams').select('display_name, logo_url').eq('id', entityId).single();
-        if (data) return { label: data.display_name, logoUrl: data.logo_url };
-      }
-      if (entityType === 'person' && entityId) {
-        const { data } = await supabase.from('people').select('name').eq('id', entityId).single();
-        if (data) return { label: data.name, logoUrl: null };
-      }
-      if (entityType === 'school' && entityId) {
-        const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', entityId).single();
-        if (data) return { label: data.short_name, logoUrl: data.logo_url };
-      }
-      if (entityType === 'country' && entityId) {
-        const { data } = await supabase.from('countries').select('name, logo_url').eq('id', entityId).single();
-        if (data) return { label: data.name, logoUrl: data.logo_url };
-      }
+      if (entityType === 'sport' && entityId) return resolveSport(entityId);
+      if (entityType === 'league' && entityId) return resolveLeague(entityId);
+      if (entityType === 'team' && entityId) return resolveTeam(entityId);
+      if (entityType === 'person' && entityId) return resolvePerson(entityId);
+      if (entityType === 'school' && entityId) return resolveSchool(entityId);
+      if (entityType === 'country' && entityId) return resolveCountry(entityId);
       return null;
     },
     enabled: !!needsFallback,
