@@ -1,4 +1,6 @@
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Newspaper } from "lucide-react";
 
 // Helper to properly capitalize sport names
@@ -43,7 +45,7 @@ export function FocusedFeedHeader({
   entityId, 
   focusLeagueId 
 }: FocusedFeedHeaderProps) {
-  const { data: userPreferences } = useUserPreferences(userId);
+  const { data: userPreferences, isLoading: prefsLoading } = useUserPreferences(userId);
 
   const getPersonLogo = (person: any) => {
     if (person.teams?.logo_url) return person.teams.logo_url;
@@ -106,6 +108,29 @@ export function FocusedFeedHeader({
         return {
           logoUrl: getPersonLogo(person),
           label: person.name,
+        };
+      }
+
+      // Check schools by interestId too
+      const school = userPreferences.schools.find(s => s.interestId === interestId);
+      if (school) {
+        const genderIndicator = getGenderIndicator(school.league_code || null);
+        return {
+          logoUrl: school.logo_url,
+          label: school.short_name,
+          rightIcon: school.league_logo_url,
+          rightLabel: genderIndicator,
+          sublabel: !school.league_id ? "All Sports" : undefined,
+        };
+      }
+
+      // Check countries by interestId too
+      const country = userPreferences.countries.find(c => c.interestId === interestId);
+      if (country) {
+        return {
+          logoUrl: country.league_logo_url || undefined,
+          label: country.league_name || country.name,
+          rightIcon: country.logo_url,
         };
       }
     }
@@ -190,6 +215,81 @@ export function FocusedFeedHeader({
   const headerContent = getHeaderContent();
   const isFocused = focusParam || (entityType && entityId);
 
+  // Fallback: fetch entity info directly from DB when not found in preferences
+  const needsFallback = isFocused && !headerContent && !prefsLoading;
+  const { data: fallbackContent } = useQuery({
+    queryKey: ['focusedEntityFallback', focusParam, entityType, entityId, focusLeagueId],
+    queryFn: async (): Promise<HeaderContent | null> => {
+      // For interestId-based focus, look up the subscriber_interest first
+      if (focusParam) {
+        const id = parseInt(focusParam);
+        const { data: interest } = await supabase
+          .from('subscriber_interests')
+          .select('sport_id, league_id, team_id, person_id, school_id, country_id')
+          .eq('id', id)
+          .single();
+        if (!interest) return null;
+
+        if (interest.sport_id) {
+          const { data } = await supabase.from('sports').select('sport, display_label, logo_url').eq('id', interest.sport_id).single();
+          if (data) return { label: data.display_label || toTitleCase(data.sport), logoUrl: data.logo_url };
+        }
+        if (interest.league_id && !interest.team_id && !interest.school_id && !interest.country_id) {
+          const { data } = await supabase.from('leagues').select('code, name, display_label, logo_url').eq('id', interest.league_id).single();
+          if (data) return { label: data.display_label || data.name || data.code, logoUrl: data.logo_url };
+        }
+        if (interest.team_id) {
+          const { data } = await supabase.from('teams').select('display_name, logo_url').eq('id', interest.team_id).single();
+          if (data) return { label: data.display_name, logoUrl: data.logo_url };
+        }
+        if (interest.person_id) {
+          const { data } = await supabase.from('people').select('name').eq('id', interest.person_id).single();
+          if (data) return { label: data.name, logoUrl: null };
+        }
+        if (interest.school_id) {
+          const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', interest.school_id).single();
+          if (data) return { label: data.short_name, logoUrl: data.logo_url };
+        }
+        if (interest.country_id) {
+          const { data } = await supabase.from('countries').select('name, logo_url').eq('id', interest.country_id).single();
+          if (data) return { label: data.name, logoUrl: data.logo_url };
+        }
+        return null;
+      }
+
+      // For type+id based focus, query the entity directly
+      if (entityType === 'sport' && entityId) {
+        const { data } = await supabase.from('sports').select('sport, display_label, logo_url').eq('id', entityId).single();
+        if (data) return { label: data.display_label || toTitleCase(data.sport), logoUrl: data.logo_url };
+      }
+      if (entityType === 'league' && entityId) {
+        const { data } = await supabase.from('leagues').select('code, name, display_label, logo_url').eq('id', entityId).single();
+        if (data) return { label: data.display_label || data.name || data.code, logoUrl: data.logo_url };
+      }
+      if (entityType === 'team' && entityId) {
+        const { data } = await supabase.from('teams').select('display_name, logo_url').eq('id', entityId).single();
+        if (data) return { label: data.display_name, logoUrl: data.logo_url };
+      }
+      if (entityType === 'person' && entityId) {
+        const { data } = await supabase.from('people').select('name').eq('id', entityId).single();
+        if (data) return { label: data.name, logoUrl: null };
+      }
+      if (entityType === 'school' && entityId) {
+        const { data } = await supabase.from('schools').select('short_name, logo_url').eq('id', entityId).single();
+        if (data) return { label: data.short_name, logoUrl: data.logo_url };
+      }
+      if (entityType === 'country' && entityId) {
+        const { data } = await supabase.from('countries').select('name, logo_url').eq('id', entityId).single();
+        if (data) return { label: data.name, logoUrl: data.logo_url };
+      }
+      return null;
+    },
+    enabled: !!needsFallback,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const displayContent = headerContent || fallbackContent;
+
   // Combined Feed header (no focus)
   if (!isFocused) {
     return (
@@ -202,14 +302,14 @@ export function FocusedFeedHeader({
     );
   }
 
-  // Focused Feed with matching favorite display
-  if (headerContent) {
+  // Focused Feed with matching entity display
+  if (displayContent) {
     return (
       <div className="flex items-center justify-center gap-2">
         <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-          {headerContent.logoUrl ? (
+          {displayContent.logoUrl ? (
             <img 
-              src={headerContent.logoUrl} 
+              src={displayContent.logoUrl} 
               alt="" 
               className="max-w-full max-h-full object-contain"
             />
@@ -219,19 +319,19 @@ export function FocusedFeedHeader({
         </div>
         <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-lg md:text-xl font-bold text-foreground truncate">
-            {headerContent.label}
+            {displayContent.label}
           </span>
-          {headerContent.rightIcon && (
-            <img src={headerContent.rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
+          {displayContent.rightIcon && (
+            <img src={displayContent.rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
           )}
-          {headerContent.rightLabel && (
+          {displayContent.rightLabel && (
             <span className="text-lg md:text-xl font-bold text-foreground flex-shrink-0">
-              {headerContent.rightLabel}
+              {displayContent.rightLabel}
             </span>
           )}
-          {headerContent.sublabel && (
+          {displayContent.sublabel && (
             <span className="text-lg md:text-xl font-bold text-foreground truncate">
-              {headerContent.sublabel}
+              {displayContent.sublabel}
             </span>
           )}
           <span className="text-lg md:text-xl font-bold text-foreground flex-shrink-0">
@@ -242,11 +342,11 @@ export function FocusedFeedHeader({
     );
   }
 
-  // Fallback for focused feed without matching favorite (still loading or not found)
+  // Loading state while fetching entity info
   return (
     <div className="flex items-center justify-center gap-2">
       <span className="text-lg md:text-xl font-bold text-foreground truncate">
-        Focused Feed
+        Loading...
       </span>
     </div>
   );
