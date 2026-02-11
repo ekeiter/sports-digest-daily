@@ -54,9 +54,9 @@ function FavoriteCard({ logoUrl, label, sublabel, rightIcon, rightLabel, isActiv
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 w-full px-2 py-1.5 rounded-md border border-favorite-card-border hover:bg-favorite-card-hover transition-colors text-left ${isActive ? 'bg-white' : 'bg-favorite-card'}`}
+      className={`flex items-center gap-2 w-full px-2 py-1.5 rounded-md border border-favorite-card-border hover:bg-favorite-card-hover transition-colors text-left ${isActive ? 'bg-sidebar-accent' : 'bg-favorite-card'}`}
     >
-      <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
+      <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5">
         {logoUrl ? (
           <img 
             src={logoUrl} 
@@ -194,7 +194,7 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
               <SidebarMenuButton
                 onClick={() => navigate(item.url)}
                 isActive={isActive(item.url)}
-                className="cursor-pointer text-black"
+                className="cursor-pointer text-sidebar-foreground"
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
@@ -208,7 +208,7 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
       {hasFavorites && (
         <div className="flex-1 min-h-0 mt-1 flex flex-col">
           <div className="flex-shrink-0 px-4 py-2 text-center">
-            <span className="text-base font-bold text-black">Favorites</span>
+            <span className="text-base font-bold text-sidebar-foreground">Favorites</span>
           </div>
           <div className="flex-1 overflow-y-auto overscroll-contain px-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
             <div className="flex flex-col gap-1">
@@ -329,7 +329,7 @@ export function AppSidebar({ isMobileOverlay = false }: AppSidebarProps) {
       
       {/* Footer */}
       <div className="mt-auto p-4 border-t border-sidebar-border">
-        <div className="text-xs text-black text-center space-y-1">
+        <div className="text-xs text-sidebar-foreground text-center space-y-1">
           <p className="font-medium">SportsDig™ — Personalized Sports News</p>
           <p>© 2026 SportsDig. All rights reserved.</p>
           <div className="flex justify-center gap-4 pt-1">

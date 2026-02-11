@@ -164,13 +164,13 @@ export default function MyFeeds() {
   };
 
   return (
-    <div className="min-h-screen bg-[#D5D5D5]">
+    <div className="min-h-screen bg-page-bg">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-4">
               <img src={sportsdigLogo} alt="SportsDig Logo" className="h-16 md:h-20 md:hidden" />
-              <span className="text-lg md:text-xl font-bold text-black">My Feed Selections</span>
+              <span className="text-lg md:text-xl font-bold text-foreground">My Feed Selections</span>
             </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>

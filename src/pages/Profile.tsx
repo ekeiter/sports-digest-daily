@@ -10,6 +10,9 @@ import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +42,7 @@ export default function Profile() {
   const [emailLoading, setEmailLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   const handleChangeEmail = async () => {
     if (!newEmail.trim()) return;
@@ -110,14 +114,14 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ backgroundColor: '#D5D5D5' }}>
+      <div className="h-screen flex items-center justify-center bg-page-bg">
         <p className="text-muted-foreground">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#D5D5D5' }}>
+    <div className="h-screen flex flex-col overflow-hidden bg-page-bg">
       {/* Mobile header: menu left, logo centered */}
       <header className="py-2 md:hidden flex-shrink-0">
         <div className="container mx-auto px-4">
@@ -165,11 +169,23 @@ export default function Profile() {
               </div>
             </div>
 
+            <div className="flex items-center justify-between pt-2 border-t">
+              <div className="flex items-center gap-2 text-sm md:text-base">
+                <Sun className="h-4 w-4" />
+                <span className="font-medium">Dark Mode</span>
+                <Moon className="h-4 w-4" />
+              </div>
+              <Switch
+                checked={theme === 'dark'}
+                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              />
+            </div>
+
             <div className="flex justify-center gap-3 pt-2">
               <Button onClick={() => setShowEmailDialog(true)} variant="outline" className="px-6 text-sm md:text-base">
                 Change Email
               </Button>
-              <Button onClick={handleSignOut} className="bg-black hover:bg-black/80 text-white px-6 text-sm md:text-base">
+              <Button onClick={handleSignOut} className="bg-primary text-primary-foreground hover:bg-primary/80 px-6 text-sm md:text-base">
                 Sign Out
               </Button>
             </div>

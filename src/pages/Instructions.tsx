@@ -4,7 +4,7 @@ import { MobileSidebar } from "@/components/MobileSidebar";
 
 const Instructions = () => {
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#D5D5D5' }}>
+    <div className="h-screen flex flex-col overflow-hidden bg-page-bg">
       {/* Mobile header with hamburger menu and logo */}
       <header className="py-2 md:hidden flex-shrink-0">
         <div className="container mx-auto px-4">
@@ -26,7 +26,7 @@ const Instructions = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6">
-        <div className="bg-white rounded-lg shadow-lg p-5 md:p-6 space-y-6">
+        <div className="bg-card text-card-foreground rounded-lg shadow-lg p-5 md:p-6 space-y-6">
           <section className="space-y-3">
             <div className="flex items-center gap-3">
               <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />

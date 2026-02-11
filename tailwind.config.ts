@@ -78,7 +78,8 @@ export default {
 					DEFAULT: 'hsl(var(--favorite-card))',
 					hover: 'hsl(var(--favorite-card-hover))',
 					border: 'hsl(var(--favorite-card-border))'
-				}
+				},
+				'page-bg': 'hsl(var(--page-bg))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

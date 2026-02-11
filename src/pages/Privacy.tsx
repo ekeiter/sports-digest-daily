@@ -7,7 +7,7 @@ export default function Privacy() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#D5D5D5]">
+    <div className="min-h-screen bg-page-bg">
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -25,8 +25,8 @@ export default function Privacy() {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow p-6 space-y-6 text-sm text-gray-800">
-          <h1 className="text-2xl font-bold text-gray-900 text-center">Privacy Policy</h1>
+        <div className="bg-card text-card-foreground rounded-lg shadow p-6 space-y-6 text-sm">
+          <h1 className="text-2xl font-bold text-foreground text-center">Privacy Policy</h1>
           <p className="text-center text-muted-foreground">Last updated: February 9, 2026</p>
 
           <section className="space-y-2">

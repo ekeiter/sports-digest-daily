@@ -158,7 +158,7 @@ export default function Auth() {
 
   return (
     <div 
-      className="min-h-screen flex items-start justify-center pt-4 md:pt-8 lg:pt-12 p-4 bg-[#D5D5D5]"
+      className="min-h-screen flex items-start justify-center pt-4 md:pt-8 lg:pt-12 p-4 bg-page-bg"
     >
       {showConfirmation ? (
         <Card className="w-full max-w-md mx-4">
