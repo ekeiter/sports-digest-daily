@@ -27,10 +27,12 @@ const parseBadge = (raw: string): ParsedBadge => {
     // parts: [ShortName, LEAGUE_CODE, league_logo_url]
     const schoolName = parts[0] || '';
     const leagueCode = parts[1] || '';
-    const logoUrl = parts[2] || '';
+    const logoUrl = parts.slice(2).join(':') || ''; // rejoin in case URL has colons
     const gender = getGenderIndicator(leagueCode);
+    // If no league code, this is "All Sports" → show "SchoolName - All"
+    const label = leagueCode ? schoolName : `${schoolName} - All`;
     return {
-      label: schoolName,
+      label,
       logoUrl: logoUrl || undefined,
       gender,
       type: 'school',
@@ -38,9 +40,9 @@ const parseBadge = (raw: string): ParsedBadge => {
   }
   if (raw.startsWith('country:')) {
     const parts = raw.substring(8).split(':');
-    // parts: [LeagueName - CountryName, flag_url]
+    // parts: [LeagueName, flag_url]
     const label = parts[0] || '';
-    const flagUrl = parts[1] || '';
+    const flagUrl = parts.slice(1).join(':') || ''; // rejoin in case URL has colons
     return {
       label,
       logoUrl: flagUrl || undefined,
