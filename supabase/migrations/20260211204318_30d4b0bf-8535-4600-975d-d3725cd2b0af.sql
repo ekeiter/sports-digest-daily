@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.get_subscriber_feed(uuid, integer, integer, timestamptz, integer, text, integer, integer);
