@@ -53,9 +53,9 @@ const Splash = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-[#D5D5D5]"
+      className="min-h-screen flex items-center justify-center bg-page-bg"
     >
-      <h1 className="font-racing text-5xl md:text-7xl text-black animate-fade-in">
+      <h1 className="font-racing text-5xl md:text-7xl text-foreground animate-fade-in">
         SportsDig
       </h1>
     </div>

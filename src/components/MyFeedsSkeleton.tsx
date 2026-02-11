@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 export default function MyFeedsSkeleton() {
   return (
     <div 
-      className="min-h-screen bg-[#D5D5D5]"
+      className="min-h-screen bg-page-bg"
     >
       {/* Header skeleton */}
       <header className="border-b">

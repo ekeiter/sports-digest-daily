@@ -809,8 +809,8 @@ export default function Preferences() {
   const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
   return (
-    <div className="h-screen flex flex-col bg-[#D5D5D5] overflow-hidden">
-      <header className="bg-[#D5D5D5] flex-shrink-0 sticky top-0 z-10">
+    <div className="h-screen flex flex-col bg-page-bg overflow-hidden">
+      <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
           {/* Mobile header: menu left, title centered, back button right */}
           <div className="flex items-center md:hidden">
@@ -818,7 +818,7 @@ export default function Preferences() {
               <MobileSidebar />
             </div>
             <div className="flex-1 flex items-center justify-center gap-2">
-              <span className="text-lg font-bold text-black">Feed Topic Manager</span>
+              <span className="text-lg font-bold text-foreground">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
                 className="p-1 rounded-full hover:bg-black/10 transition-colors"
@@ -846,7 +846,7 @@ export default function Preferences() {
           <div className="hidden md:flex items-center">
             <div className="w-10" />
             <div className="flex-1 flex items-center justify-center gap-3">
-              <span className="text-xl font-bold text-black">Feed Topic Manager</span>
+              <span className="text-xl font-bold text-foreground">Feed Topic Manager</span>
               <button
                 onClick={() => setShowHelpDialog(true)}
                 className="p-1 rounded-full hover:bg-black/10 transition-colors"
@@ -950,7 +950,7 @@ export default function Preferences() {
                           {getFilteredSportsAndLeagues().sports.slice(0, 10).map(item => {
                     const isSelected = item.entity_id ? selectedSports.includes(item.entity_id) : false;
                     return <div key={`sport-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                     <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -978,7 +978,7 @@ export default function Preferences() {
                           {getFilteredSportsAndLeagues().leagues.slice(0, 10).map(item => {
                     const isSelected = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
                     return <div key={`league-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                     <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -1006,7 +1006,7 @@ export default function Preferences() {
                           {getFilteredTeams().slice(0, 15).map(team => {
                     const isSelected = selectedTeams.includes(Number(team.id));
                     return <div key={`team-${team.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                     <img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -1037,7 +1037,7 @@ export default function Preferences() {
                     const isSelected = isAllSportsSelected || isLeagueSpecificSelected;
                     
                     return <div key={`school-${result.school_id}-${result.league_id ?? 'all'}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                     <img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -1067,7 +1067,7 @@ export default function Preferences() {
                     const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
                     const isFollowed = followedPersonIds.has(person.id);
                     return <div key={`person-${person.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                       <img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                     </div>}
                                   <div onClick={() => {
@@ -1110,7 +1110,7 @@ export default function Preferences() {
                 const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
                 return <div key={school.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
                           <div onClick={() => handleNavigateToFocus('school', school.id)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                 <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
@@ -1163,7 +1163,7 @@ export default function Preferences() {
                             }
                             className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                           >
-                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                 <img src={item.logo_url} alt={item.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
@@ -1233,7 +1233,7 @@ export default function Preferences() {
                 return <div key={item.id}>
                         {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
                         <div className="pt-1 pb-0.5">
-                          <h3 className="text-lg font-bold text-black select-none">
+                          <h3 className="text-lg font-bold text-foreground select-none">
                             {item.label}
                           </h3>
                         </div>
@@ -1248,7 +1248,7 @@ export default function Preferences() {
                     if (!item.entity_id && !hasCustomRoute) return;
                     handleItemClick(item);
                   }} className={`flex items-center gap-1.5 flex-1 min-w-0 ${!item.entity_id && !(item.display_options && (item.display_options as any).route) ? '' : 'cursor-pointer'}`}>
-                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                               <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                             </div>}
                           <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
@@ -1276,7 +1276,7 @@ export default function Preferences() {
                         {isAccordionParent && <Button variant="outline" size="sm" onClick={e => {
                     e.stopPropagation();
                     toggleAccordion(item.id);
-                  }} className={`shrink-0 transition-colors w-20 justify-center h-7 ${isAccordionExpanded ? 'bg-black text-white border-black hover:bg-black hover:text-white' : 'text-black'}`}>
+                  }} className={`shrink-0 transition-colors w-20 justify-center h-7 ${isAccordionExpanded ? 'bg-primary text-primary-foreground border-primary hover:bg-primary hover:text-primary-foreground' : 'text-foreground'}`}>
                             {isAccordionExpanded ? 'Close' : 'Menu'}
                           </Button>}
                         
@@ -1284,7 +1284,7 @@ export default function Preferences() {
                         {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && <Button variant="outline" size="sm" onClick={e => {
                     e.stopPropagation();
                     loadTeamsForLeague(item.entity_id!);
-                  }} className="shrink-0 transition-colors w-20 justify-center text-black h-7">
+                  }} className="shrink-0 transition-colors w-20 justify-center text-foreground h-7">
                             Teams
                             {(() => {
                       const count = getSelectedTeamCountForLeague(item.entity_id!);
@@ -1296,7 +1296,7 @@ export default function Preferences() {
                         {isSchools && <Button variant="outline" size="sm" onClick={e => {
                     e.stopPropagation();
                     loadAllSchools();
-                  }} className="shrink-0 transition-colors w-20 justify-center text-black h-7">
+                  }} className="shrink-0 transition-colors w-20 justify-center text-foreground h-7">
                             Schools
                             {selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
                           </Button>}
@@ -1315,7 +1315,7 @@ export default function Preferences() {
                     return <div key={child.id}>
                                 <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                   <div onClick={() => !childIsHeadingWithMenu && handleItemClick(child)} className={`flex items-center gap-1.5 flex-1 min-w-0 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
-                                    {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                    {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                         <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                       </div>}
                                     <span className={`text-xs md:text-sm font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
@@ -1342,7 +1342,7 @@ export default function Preferences() {
                                   {childHasChildren && <Button variant="outline" size="sm" onClick={e => {
                           e.stopPropagation();
                           toggleAccordion(child.id);
-                        }} className={`shrink-0 transition-colors w-20 justify-center h-7 ${childIsAccordionExpanded ? 'bg-black text-white border-black hover:bg-black hover:text-white' : 'text-black'}`}>
+                        }} className={`shrink-0 transition-colors w-20 justify-center h-7 ${childIsAccordionExpanded ? 'bg-primary text-primary-foreground border-primary hover:bg-primary hover:text-primary-foreground' : 'text-foreground'}`}>
                                       {childIsAccordionExpanded ? 'Close' : 'Menu'}
                                     </Button>}
                                   
@@ -1350,7 +1350,7 @@ export default function Preferences() {
                                   {childIsLeague && child.entity_id && leagueKinds[child.entity_id] === 'league' && <Button variant="outline" size="sm" onClick={e => {
                           e.stopPropagation();
                           loadTeamsForLeague(child.entity_id!);
-                        }} className="shrink-0 transition-colors w-20 justify-center text-black h-7">
+                        }} className="shrink-0 transition-colors w-20 justify-center text-foreground h-7">
                                       Teams
                                       {(() => {
                             const count = getSelectedTeamCountForLeague(child.entity_id!);
@@ -1366,7 +1366,7 @@ export default function Preferences() {
                           const grandchildIsLeague = grandchild.entity_type === 'league';
                           return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30">
                                           <div onClick={() => handleItemClick(grandchild)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                               </div>}
                                             <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
@@ -1393,7 +1393,7 @@ export default function Preferences() {
                                           {grandchildIsLeague && grandchild.entity_id && leagueKinds[grandchild.entity_id] === 'league' && <Button variant="outline" size="sm" onClick={e => {
                               e.stopPropagation();
                               loadTeamsForLeague(grandchild.entity_id!);
-                            }} className="shrink-0 transition-colors w-20 justify-center text-black h-7">
+                            }} className="shrink-0 transition-colors w-20 justify-center text-foreground h-7">
                                               Teams
                                               {(() => {
                                 const count = getSelectedTeamCountForLeague(grandchild.entity_id!);

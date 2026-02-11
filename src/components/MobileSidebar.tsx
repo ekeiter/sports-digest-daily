@@ -26,7 +26,7 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent 
         side="left" 
-        className="p-0 w-[280px] bg-[#D5D5D5]"
+        className="p-0 w-[280px] bg-page-bg"
       >
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <SidebarProvider defaultOpen={true} className="h-full">

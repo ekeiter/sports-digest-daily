@@ -350,7 +350,7 @@ export default function PlayerPreferences() {
       </div>;
   }
   return (
-    <div className="min-h-screen bg-[#D5D5D5]">
+    <div className="min-h-screen bg-page-bg">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
@@ -360,7 +360,7 @@ export default function PlayerPreferences() {
                 alt="SportsDig Logo" 
                 className="h-16 md:h-20 md:hidden"
               />
-              <span className="text-lg md:text-xl font-bold text-black">Player/Coach Selector</span>
+              <span className="text-lg md:text-xl font-bold text-foreground">Player/Coach Selector</span>
             </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
@@ -380,7 +380,7 @@ export default function PlayerPreferences() {
           {/* Search Section */}
           <div className="bg-transparent border-none shadow-none">
             <div className="py-1">
-              <p className="flex items-center gap-2 text-black font-bold text-base">
+              <p className="flex items-center gap-2 text-foreground font-bold text-base">
                 <Search className="h-4 w-4" />
                 Search Players & Coaches
               </p>
@@ -440,7 +440,7 @@ export default function PlayerPreferences() {
           {/* Followed People Section */}
           <div className="bg-transparent border-none shadow-none">
             <div className="py-1">
-              <p className="text-black font-bold text-base">Your Player and Coach Selections ({followedPeople.length})</p>
+              <p className="text-foreground font-bold text-base">Your Player and Coach Selections ({followedPeople.length})</p>
             </div>
             <div className="px-0">
               {followedPeople.length === 0 ? <p className="text-sm text-muted-foreground">No players or coaches followed yet. Search above to get started!</p> : <div className="space-y-1">

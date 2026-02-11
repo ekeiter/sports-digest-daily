@@ -44,8 +44,8 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#D5D5D5]">
-        <h1 className="font-racing text-5xl md:text-7xl text-black animate-fade-in">
+      <div className="min-h-screen flex items-center justify-center bg-page-bg">
+        <h1 className="font-racing text-5xl md:text-7xl text-foreground animate-fade-in">
           SportsDig
         </h1>
       </div>
@@ -54,26 +54,26 @@ const Index = () => {
 
   // Landing page for unauthenticated users
   return (
-    <div className="min-h-screen flex flex-col bg-[#D5D5D5] overscroll-none">
+    <div className="min-h-screen flex flex-col bg-page-bg overscroll-none">
       <main className="flex-1 flex items-start pt-4 md:items-start md:pt-16 lg:items-center lg:pt-0 justify-center px-4">
         <div className="text-center space-y-3 md:space-y-6 p-2 md:p-8 max-w-3xl w-full">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">
             A Smarter Way to Follow the Sports You Care About
           </h1>
           <div className="flex justify-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-14 md:h-32" />
           </div>
-          <h2 className="text-base md:text-lg font-bold text-gray-800">
+          <h2 className="text-base md:text-lg font-bold text-foreground">
             Your Personalized Sports News Feed
           </h2>
-          <ul className="text-sm md:text-base text-gray-700 space-y-1.5 md:space-y-2 text-left max-w-lg mx-auto">
+          <ul className="text-sm md:text-base text-muted-foreground space-y-1.5 md:space-y-2 text-left max-w-lg mx-auto">
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Built for serious fans, fantasy players, and sports bettors</strong></span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>An ideal alternative to algorithm-driven social media feeds</strong></span></li>
           </ul>
-          <p className="text-base md:text-lg italic text-gray-900 font-medium">
+          <p className="text-base md:text-lg italic text-foreground font-medium">
             We find the stories — so you don't have to.
           </p>
 
@@ -86,12 +86,12 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="pt-1 md:pt-4 text-center text-xs text-gray-900 space-y-1">
+          <div className="pt-1 md:pt-4 text-center text-xs text-foreground space-y-1">
             <p>SportsDig™ — Personalized Sports News</p>
             <p>© 2026 SportsDig. All rights reserved.</p>
             <div className="flex justify-center gap-4 pt-1">
-              <a href="/contact" className="underline hover:text-gray-700">Contact</a>
-              <a href="/privacy" className="underline hover:text-gray-700">Privacy Policy</a>
+              <a href="/contact" className="underline hover:text-muted-foreground">Contact</a>
+              <a href="/privacy" className="underline hover:text-muted-foreground">Privacy Policy</a>
             </div>
           </div>
         </div>

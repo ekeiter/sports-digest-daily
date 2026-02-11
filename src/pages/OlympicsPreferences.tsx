@@ -190,18 +190,18 @@ export default function OlympicsPreferences() {
   // Always allow add - blank means "all"
   const canAdd = true;
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen bg-[#D5D5D5]">
+    return <div className="flex items-center justify-center min-h-screen bg-page-bg">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>;
   }
   return (
-    <div className="min-h-screen bg-[#D5D5D5]">
+    <div className="min-h-screen bg-page-bg">
       <header className="bg-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-2">
               <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 md:h-12 md:hidden" />
-              <span className="text-lg md:text-xl font-bold text-black">Olympics</span>
+              <span className="text-lg md:text-xl font-bold text-foreground">Olympics</span>
             </div>
             <div className="flex gap-1.5 md:gap-2">
               <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
@@ -217,13 +217,13 @@ export default function OlympicsPreferences() {
       </header>
 
       <main className="container mx-auto px-4 py-2 max-w-3xl">
-        <div className="bg-white/90 rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-black mb-4">Winter Olympics Selector</h2>
+        <div className="bg-card/90 rounded-lg p-6 shadow-lg">
+          <h2 className="text-xl font-bold text-foreground mb-4">Winter Olympics Selector</h2>
           
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-black mb-1">Select Sport (leave blank for all)</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Select Sport (leave blank for all)</label>
                 <div className="flex gap-2">
                   <Select value={selectedSport} onValueChange={setSelectedSport}>
                     <SelectTrigger className="flex-1 bg-white">
@@ -245,7 +245,7 @@ export default function OlympicsPreferences() {
               </div>
               
               <div className="flex-1">
-                <label className="block text-sm font-medium text-black mb-1">Select Country (leave blank for all)</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Select Country (leave blank for all)</label>
                 <div className="flex gap-2">
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                     <SelectTrigger className="flex-1 bg-white">
@@ -276,11 +276,11 @@ export default function OlympicsPreferences() {
 
           {/* Existing Preferences */}
           {existingPrefs.length > 0 && <div className="mt-6">
-              <h3 className="text-lg font-semibold text-black mb-3">Your Olympics Favorites</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Your Olympics Favorites</h3>
               <div className="space-y-2">
                 {existingPrefs.map(pref => <div key={pref.id} className="flex items-center justify-between gap-2 px-3 py-2 bg-white border rounded-md">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-black">OLY</span>
+                      <span className="font-medium text-foreground">OLY</span>
                       <span className="text-muted-foreground">-</span>
                       {pref.sport_logo && <img src={pref.sport_logo} alt="" className="w-5 h-5 object-contain" />}
                       <span className="text-sm">
