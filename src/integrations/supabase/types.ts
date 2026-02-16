@@ -1662,6 +1662,7 @@ export type Database = {
       }
       sports: {
         Row: {
+          aliases: string[] | null
           app_order_id: number | null
           created_at: string | null
           display_label: string | null
@@ -1674,6 +1675,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          aliases?: string[] | null
           app_order_id?: number | null
           created_at?: string | null
           display_label?: string | null
@@ -1686,6 +1688,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          aliases?: string[] | null
           app_order_id?: number | null
           created_at?: string | null
           display_label?: string | null
@@ -1920,27 +1923,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      tmp_extracted_people: {
-        Row: {
-          article_id: number | null
-          created_at: string | null
-          normalized_name: string | null
-          original_name: string | null
-        }
-        Insert: {
-          article_id?: number | null
-          created_at?: string | null
-          normalized_name?: string | null
-          original_name?: string | null
-        }
-        Update: {
-          article_id?: number | null
-          created_at?: string | null
-          normalized_name?: string | null
-          original_name?: string | null
-        }
-        Relationships: []
       }
       transition_queue: {
         Row: {
