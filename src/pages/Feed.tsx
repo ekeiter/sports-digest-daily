@@ -149,8 +149,10 @@ export default function Feed() {
     try {
       const publishedDate = new Date(dateString);
       const now = new Date();
-      const minutesAgo = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
-      if (minutesAgo < 120) {
+      const minutesAgo = Math.max(0, Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60)));
+      if (minutesAgo < 1) {
+        return 'now';
+      } else if (minutesAgo < 120) {
         return `${minutesAgo}m`;
       } else {
         const hoursAgo = Math.floor(minutesAgo / 60);
