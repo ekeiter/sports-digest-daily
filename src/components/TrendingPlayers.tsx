@@ -25,12 +25,16 @@ interface TrendingPlayersProps {
   userId: string | null;
   followedPersonIds: Set<number>;
   onPersonFollowed?: (personId: number) => void;
+  hours?: number;
+  label?: string;
 }
 
 export default function TrendingPlayers({ 
   userId, 
   followedPersonIds,
-  onPersonFollowed 
+  onPersonFollowed,
+  hours = 2,
+  label,
 }: TrendingPlayersProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -50,7 +54,7 @@ export default function TrendingPlayers({
     try {
       // Use server-side RPC for accurate aggregation
       const { data, error } = await supabase.rpc('get_trending_people', {
-        p_hours: 2,
+        p_hours: hours,
         p_limit: 20
       });
       
@@ -176,7 +180,7 @@ export default function TrendingPlayers({
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-500" />
           <span className="text-sm font-bold">Trending Players</span>
-          <span className="text-[11px] font-bold text-foreground leading-tight text-left ml-4">(article mentions<br />in last 2 hours)</span>
+          <span className="text-[11px] font-bold text-foreground leading-tight text-left ml-4">(article mentions<br />{label || `in last ${hours} hours`})</span>
         </div>
         {expanded ? (
           <ChevronUp className="h-5 w-5 text-muted-foreground" />
@@ -194,7 +198,7 @@ export default function TrendingPlayers({
             </div>
           ) : trendingPeople.length === 0 ? (
             <p className="text-sm text-muted-foreground py-2 px-2">
-              No trending players in the last 2 hours
+              No trending players in the last {hours} hours
             </p>
           ) : (
             trendingPeople.map((person) => {
