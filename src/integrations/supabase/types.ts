@@ -413,6 +413,7 @@ export type Database = {
           ai_model: string | null
           ai_people: string[] | null
           ai_processed: boolean | null
+          ai_retry_count: number
           ai_schools: string[] | null
           ai_sports: string[] | null
           ai_teams: string[] | null
@@ -424,6 +425,7 @@ export type Database = {
           domain: string
           duplicate_of_id: number | null
           duration_seconds: number | null
+          endpoint_school: string | null
           excerpt: string | null
           excerpt_hash: string | null
           fetched_at: string | null
@@ -471,6 +473,7 @@ export type Database = {
           ai_model?: string | null
           ai_people?: string[] | null
           ai_processed?: boolean | null
+          ai_retry_count?: number
           ai_schools?: string[] | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
@@ -482,6 +485,7 @@ export type Database = {
           domain: string
           duplicate_of_id?: number | null
           duration_seconds?: number | null
+          endpoint_school?: string | null
           excerpt?: string | null
           excerpt_hash?: string | null
           fetched_at?: string | null
@@ -529,6 +533,7 @@ export type Database = {
           ai_model?: string | null
           ai_people?: string[] | null
           ai_processed?: boolean | null
+          ai_retry_count?: number
           ai_schools?: string[] | null
           ai_sports?: string[] | null
           ai_teams?: string[] | null
@@ -540,6 +545,7 @@ export type Database = {
           domain?: string
           duplicate_of_id?: number | null
           duration_seconds?: number | null
+          endpoint_school?: string | null
           excerpt?: string | null
           excerpt_hash?: string | null
           fetched_at?: string | null
@@ -682,6 +688,7 @@ export type Database = {
           domain: string | null
           exclude_url_regex: string | null
           extras: Json | null
+          fetch_strategy: string | null
           hours_back: number
           id: number
           is_paywalled: boolean
@@ -689,6 +696,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["rule_kind"] | null
           notes: string | null
           per_section_max_items: number | null
+          proxy: string
           rules_enabled: boolean
           title_min_len: number | null
           title_must_contain: string | null
@@ -705,6 +713,7 @@ export type Database = {
           domain?: string | null
           exclude_url_regex?: string | null
           extras?: Json | null
+          fetch_strategy?: string | null
           hours_back?: number
           id?: number
           is_paywalled?: boolean
@@ -712,6 +721,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["rule_kind"] | null
           notes?: string | null
           per_section_max_items?: number | null
+          proxy?: string
           rules_enabled?: boolean
           title_min_len?: number | null
           title_must_contain?: string | null
@@ -728,6 +738,7 @@ export type Database = {
           domain?: string | null
           exclude_url_regex?: string | null
           extras?: Json | null
+          fetch_strategy?: string | null
           hours_back?: number
           id?: number
           is_paywalled?: boolean
@@ -735,6 +746,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["rule_kind"] | null
           notes?: string | null
           per_section_max_items?: number | null
+          proxy?: string
           rules_enabled?: boolean
           title_min_len?: number | null
           title_must_contain?: string | null
@@ -763,6 +775,7 @@ export type Database = {
           league: string | null
           notes: string | null
           priority: number
+          school: string | null
           sport: string | null
           status_code: number | null
           team: string | null
@@ -785,6 +798,7 @@ export type Database = {
           league?: string | null
           notes?: string | null
           priority?: number
+          school?: string | null
           sport?: string | null
           status_code?: number | null
           team?: string | null
@@ -807,6 +821,7 @@ export type Database = {
           league?: string | null
           notes?: string | null
           priority?: number
+          school?: string | null
           sport?: string | null
           status_code?: number | null
           team?: string | null
@@ -840,6 +855,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "subscriber_interests_view"
             referencedColumns: ["sport_name"]
+          },
+          {
+            foreignKeyName: "fk_endpoints_school"
+            columns: ["school"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["short_name"]
           },
         ]
       }
@@ -2115,6 +2137,7 @@ export type Database = {
           ai_model: string | null
           ai_people: string[] | null
           ai_processed: boolean | null
+          ai_retry_count: number
           ai_schools: string[] | null
           ai_sports: string[] | null
           ai_teams: string[] | null
@@ -2126,6 +2149,7 @@ export type Database = {
           domain: string
           duplicate_of_id: number | null
           duration_seconds: number | null
+          endpoint_school: string | null
           excerpt: string | null
           excerpt_hash: string | null
           fetched_at: string | null
@@ -2284,7 +2308,7 @@ export type Database = {
       extract_level: "full" | "league_only" | "sport_only"
       extract_level_league: "league" | "teams"
       media_type: "article" | "video"
-      rule_kind: "html" | "rss" | "both"
+      rule_kind: "html" | "rss" | "both" | "article"
       team_type_enum: "team" | "school" | "country"
       topic_kind: "league" | "topic"
       validation_mode: "none" | "by_meta" | "by_words"
@@ -2418,7 +2442,7 @@ export const Constants = {
       extract_level: ["full", "league_only", "sport_only"],
       extract_level_league: ["league", "teams"],
       media_type: ["article", "video"],
-      rule_kind: ["html", "rss", "both"],
+      rule_kind: ["html", "rss", "both", "article"],
       team_type_enum: ["team", "school", "country"],
       topic_kind: ["league", "topic"],
       validation_mode: ["none", "by_meta", "by_words"],
