@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
+import ExampleFeed from "@/components/ExampleFeed";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -94,6 +95,8 @@ const Index = () => {
               <a href="/privacy" className="underline hover:text-muted-foreground">Privacy Policy</a>
             </div>
           </div>
+
+          <ExampleFeed />
         </div>
       </main>
     </div>
