@@ -40,6 +40,8 @@ export default function ExampleFeed() {
 
   useEffect(() => {
     fetchExampleArticles();
+    const interval = setInterval(fetchExampleArticles, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   async function fetchExampleArticles() {
@@ -111,6 +113,12 @@ export default function ExampleFeed() {
         round++;
       }
 
+      // Sort by published_at descending
+      result.sort((a, b) => {
+        const da = a.published_at ? new Date(a.published_at).getTime() : 0;
+        const db = b.published_at ? new Date(b.published_at).getTime() : 0;
+        return db - da;
+      });
       setArticles(result);
     } catch (err) {
       console.error("Example feed fetch failed:", err);
@@ -158,9 +166,6 @@ export default function ExampleFeed() {
                       <span>{article.url_domain || "Unknown source"}</span>
                       <span>•</span>
                       <span>{formatTimeAgo(article.published_at)}</span>
-                      <span className="bg-muted text-muted-foreground px-1.5 py-0.5 rounded text-[10px] font-semibold">
-                        {article.league_code}
-                      </span>
                     </div>
                     <h3 className="font-semibold text-sm line-clamp-3">
                       {article.title}
