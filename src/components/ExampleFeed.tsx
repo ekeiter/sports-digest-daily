@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import ArticleImage from "@/components/ArticleImage";
-import ArticlePlaceholder from "@/components/ArticlePlaceholder";
 import { openUrl } from "@/hooks/useOpenUrl";
 
 type ExampleArticle = {
@@ -65,6 +64,7 @@ export default function ExampleFeed() {
         .in("league_id", LEAGUE_IDS)
         .eq("articles.is_duplicate", false)
         .not("articles.title", "is", null)
+        .not("articles.thumbnail_url", "is", null)
         .order("article_id", { ascending: false })
         .limit(100);
 
@@ -155,11 +155,7 @@ export default function ExampleFeed() {
               >
                 <div className="flex flex-col">
                   <div className="w-full">
-                    {article.thumbnail_url ? (
-                      <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" />
-                    ) : (
-                      <ArticlePlaceholder />
-                    )}
+                    <ArticleImage src={article.thumbnail_url!} className="w-full aspect-video object-cover" />
                   </div>
                   <div className="px-3 pt-1.5 pb-2">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-0.5">
