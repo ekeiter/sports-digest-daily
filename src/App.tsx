@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AppLayout } from "@/components/AppLayout";
+import { MainLayout } from "@/components/MainLayout";
 import { initializeAds } from "@/lib/adInit";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
@@ -59,6 +60,7 @@ const App = () => {
               </Route>
               
               {/* Routes without sidebar */}
+              <Route path="/main" element={<MainLayout><Feed /></MainLayout>} />
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
