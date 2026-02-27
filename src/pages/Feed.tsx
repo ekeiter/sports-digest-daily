@@ -14,6 +14,7 @@ import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useAr
 import { openUrl } from "@/hooks/useOpenUrl";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import { FeedAd } from "@/components/ads/FeedAd";
+import { BottomNavBar } from "@/components/BottomNavBar";
 
 // How many articles between ads
 const AD_FREQUENCY = 5;
@@ -322,6 +323,7 @@ export default function Feed() {
             </div>
           )}
       </main>
+      <BottomNavBar />
     </div>
   );
 }
