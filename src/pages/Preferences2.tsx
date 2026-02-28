@@ -502,7 +502,7 @@ export default function Preferences2() {
     return (
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         <div
-          className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl bg-background shadow-[0_4px_14px_rgba(0,0,0,0.15),0_1px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.2),0_2px_6px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[100px]"
+          className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[100px]"
           onClick={() => {
             if (isAccordionParent) { toggleAccordion(item.id); return; }
             const hasRoute = item.display_options && (item.display_options as any).route;
@@ -583,7 +583,7 @@ export default function Preferences2() {
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-background shadow-[0_4px_14px_rgba(0,0,0,0.15),0_1px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.2),0_2px_6px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
+        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
