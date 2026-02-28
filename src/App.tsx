@@ -16,6 +16,7 @@ import OlympicsPreferences from "./pages/OlympicsPreferences";
 import Feed from "./pages/Feed";
 import MyFeeds from "./pages/MyFeeds";
 import PlayerPreferences from "./pages/PlayerPreferences";
+import Preferences2 from "./pages/Preferences2";
 import WhySportsDig from "./pages/WhySportsDig";
 import Instructions from "./pages/Instructions";
 import Index from "./pages/Index";
@@ -55,6 +56,7 @@ const App = () => {
                 <Route path="/olympics-preferences" element={<OlympicsPreferences />} />
                 <Route path="/my-feeds" element={<MyFeeds />} />
                 <Route path="/player-preferences" element={<PlayerPreferences />} />
+                <Route path="/preferences2" element={<Preferences2 />} />
                 <Route path="/why-sportsdig" element={<WhySportsDig />} />
                 <Route path="/instructions" element={<Instructions />} />
               </Route>
