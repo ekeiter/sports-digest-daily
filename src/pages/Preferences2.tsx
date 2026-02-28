@@ -544,18 +544,18 @@ export default function Preferences2() {
           {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
             <button
               onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
             >
               Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
             </button>
           )}
           {isAccordionParent && (
-            <span className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm font-medium">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
+            <span className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm font-medium">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
           )}
           {isSchools && (
             <button
               onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
             >
               Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
             </button>
