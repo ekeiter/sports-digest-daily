@@ -584,29 +584,33 @@ export default function Preferences2() {
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1 px-2 pb-2 pt-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[100px]"
+        className="flex flex-col items-center gap-1 px-2 pb-2 pt-2 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[110px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
           (entityType === 'school' || entityType === 'country') ? expandedLeagueId : undefined
         )}
       >
-        <button
-          onClick={e => {
-            e.stopPropagation();
-            if (entityType === 'school') handleSchoolToggle(item.id, expandedLeagueId);
-            else if (entityType === 'country') handleCountryToggle(item.id, expandedLeagueId);
-            else handleTeamToggle(item.id);
-          }}
-          className="absolute top-1.5 right-1.5 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative"
-          title={isSelected ? "Remove from favorites" : "Add to favorites"}
-        >
-          <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-          {entityType === 'school' && allSportsSchools.has(item.id) && (
-            <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
-          )}
-        </button>
+        {/* Heart in top-right */}
+        <div className="w-full flex justify-end">
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              if (entityType === 'school') handleSchoolToggle(item.id, expandedLeagueId);
+              else if (entityType === 'country') handleCountryToggle(item.id, expandedLeagueId);
+              else handleTeamToggle(item.id);
+            }}
+            className="p-0.5 rounded-full hover:bg-muted/50 transition-colors relative"
+            title={isSelected ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+            {entityType === 'school' && allSportsSchools.has(item.id) && (
+              <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
+            )}
+          </button>
+        </div>
 
+        {/* Logo + name centered */}
         {item.logo_url ? (
           <div className="flex items-center justify-center w-11 h-11 dark:bg-white dark:rounded-md dark:p-0.5">
             <img src={item.logo_url} alt={item.display_name} className="h-10 w-10 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
