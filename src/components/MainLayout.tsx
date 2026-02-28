@@ -49,24 +49,24 @@ function LeagueCardMenu() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-2 p-2 overflow-y-auto h-full w-24 flex-shrink-0 border-r bg-muted/30">
+    <div className="flex flex-col gap-1.5 p-1.5 overflow-y-auto h-full w-20 flex-shrink-0 border-r bg-muted/30">
       {leagues.map((league) => (
         <button
           key={league.id}
-          className="flex flex-col items-center justify-center gap-1 rounded-lg border bg-card p-2 aspect-square hover:bg-accent/50 transition-colors shadow-sm"
+          className="flex flex-col items-center justify-center gap-0.5 rounded-lg border bg-card p-1.5 aspect-square hover:bg-accent/50 transition-colors shadow-sm"
         >
           {league.logoUrl ? (
             <img
               src={league.logoUrl}
               alt={league.label}
-              className="w-10 h-10 object-contain"
+              className="w-8 h-8 object-contain"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground">
               {league.code.slice(0, 3)}
             </div>
           )}
-          <span className="text-[9px] leading-tight text-center font-medium text-foreground line-clamp-2">
+          <span className="text-[8px] leading-tight text-center font-medium text-foreground line-clamp-2">
             {league.label}
           </span>
         </button>
@@ -81,9 +81,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen w-full flex">
+    <div className="h-screen w-full flex overflow-hidden">
       <LeagueCardMenu />
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-y-auto">
         {children}
       </div>
     </div>
