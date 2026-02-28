@@ -52,7 +52,7 @@ const App = () => {
               <Route element={<PersistentLayout />}>
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/preferences" element={<Preferences />} />
+                <Route path="/preferences" element={<Preferences2 />} />
                 <Route path="/olympics-preferences" element={<OlympicsPreferences />} />
                 <Route path="/my-feeds" element={<MyFeeds />} />
                 <Route path="/player-preferences" element={<PlayerPreferences />} />
