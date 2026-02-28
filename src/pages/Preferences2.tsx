@@ -584,7 +584,7 @@ export default function Preferences2() {
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1.5 p-2 pt-5 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
+        className="flex flex-col items-center justify-center gap-1 px-2 pb-2 pt-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[100px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
