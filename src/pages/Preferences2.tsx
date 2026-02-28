@@ -818,24 +818,11 @@ export default function Preferences2() {
                 {loadingSchools ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {schools.map(school => {
-                      const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
-                      return (
-                        <div
-                          key={school.id}
-                          className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[80px]"
-                          onClick={() => handleNavigateToFocus('school', school.id)}
-                        >
-                          <button onClick={e => { e.stopPropagation(); handleSchoolToggle(school.id); }} className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative" title={isSelected ? "Remove from favorites" : "Add to favorites"}>
-                            <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-                            {allSportsSchools.has(school.id) && <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>}
-                          </button>
-                          {school.logo_url && <div className="flex items-center justify-center w-8 h-8 dark:bg-white dark:rounded-md dark:p-0.5"><img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
-                          <span className="text-[10px] font-medium text-center leading-tight line-clamp-2">{school.name}</span>
-                        </div>
-                      );
-                    })}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {schools.map(school => renderEntityCard(
+                      { id: school.id, display_name: school.name, nickname: school.short_name, logo_url: school.logo_url },
+                      'school'
+                    ))}
                   </div>
                 )}
               </div>
