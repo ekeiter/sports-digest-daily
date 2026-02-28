@@ -491,12 +491,9 @@ export default function Preferences2() {
     const isAccordionExpanded = expandedAccordionIds.includes(item.id);
 
     // Headings span the full width
+    // Headings are now rendered as section titles, skip them here
     if (isHeading) {
-      return (
-        <div key={item.id} className="col-span-3 pt-2 pb-0.5">
-          <h3 className="text-lg font-bold text-foreground select-none">{item.label}</h3>
-        </div>
-      );
+      return null;
     }
 
     return (
@@ -864,14 +861,42 @@ export default function Preferences2() {
                 </>
               )}
 
-              {/* Card grid inside cohesive container */}
-              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
-                {currentLabel && <h2 className="text-xl font-bold text-center mb-3">{currentLabel}</h2>}
-                <div className="grid grid-cols-3 gap-2">
-                  {currentItems.map(item => renderItemCard(item))}
-                </div>
-                {currentItems.length === 0 && <p className="text-center text-muted-foreground py-8">No items to display</p>}
-              </div>
+              {/* Card grid grouped by sections */}
+              {currentLabel && <h2 className="text-xl font-bold text-center mb-3">{currentLabel}</h2>}
+              {(() => {
+                // Group items into sections by headings
+                const sections: { heading: string | null; items: MenuItem[] }[] = [];
+                let currentSection: { heading: string | null; items: MenuItem[] } = { heading: null, items: [] };
+
+                currentItems.forEach(item => {
+                  const displayOptions = item.display_options as { route?: string } | null;
+                  const hasCustomRoute = !!displayOptions?.route;
+                  const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item) && !hasCustomRoute;
+
+                  if (isHeading) {
+                    // Push previous section if it has items
+                    if (currentSection.items.length > 0) sections.push(currentSection);
+                    currentSection = { heading: item.label, items: [] };
+                  } else {
+                    currentSection.items.push(item);
+                  }
+                });
+                // Push last section
+                if (currentSection.items.length > 0) sections.push(currentSection);
+
+                if (sections.length === 0) {
+                  return <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3"><p className="text-center text-muted-foreground py-8">No items to display</p></div>;
+                }
+
+                return sections.map((section, idx) => (
+                  <div key={idx} className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
+                    {section.heading && <h3 className="text-lg font-bold text-foreground mb-2">{section.heading}</h3>}
+                    <div className="grid grid-cols-3 gap-2">
+                      {section.items.map(item => renderItemCard(item))}
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
           )}
         </div>
