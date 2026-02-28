@@ -302,10 +302,10 @@ export default function Feed() {
                     </CardContent>
                   </Card>
                   
-                  {/* Insert ad after every AD_FREQUENCY articles */}
-                  {(index + 1) % AD_FREQUENCY === 0 && (
+                  {/* Ad slot: uncomment when ready */}
+                  {/* {(index + 1) % AD_FREQUENCY === 0 && (
                     <FeedAd key={`ad-${index}`} />
-                  )}
+                  )} */}
                 </div>
               ))}
               {articles.length >= 100 && (
