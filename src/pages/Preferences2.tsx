@@ -502,7 +502,7 @@ export default function Preferences2() {
     return (
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         <div
-          className="flex flex-col items-center justify-between gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[110px]"
+          className="flex flex-col items-center gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[120px]"
           onClick={() => {
             if (isAccordionParent) { toggleAccordion(item.id); return; }
             const hasRoute = item.display_options && (item.display_options as any).route;
@@ -537,7 +537,10 @@ export default function Preferences2() {
           )}
 
           {/* Label */}
-          <span className="text-xs font-medium text-center leading-tight line-clamp-2">{item.label}</span>
+          <span className="text-xs font-medium text-center leading-tight line-clamp-2 h-[2lh]">{item.label}</span>
+
+          {/* Button slot - fixed height to keep layout consistent */}
+          <div className="h-5 flex items-center justify-center mt-auto">
 
           {/* Sub-indicators */}
           {isSubmenu && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
@@ -560,6 +563,7 @@ export default function Preferences2() {
               Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
             </button>
           )}
+          </div>
         </div>
 
         {/* Accordion children in a sub-grid */}
