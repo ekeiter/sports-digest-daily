@@ -584,7 +584,7 @@ export default function Preferences2() {
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
+        className="flex flex-col items-center justify-center gap-1.5 p-2 pt-5 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
@@ -598,7 +598,7 @@ export default function Preferences2() {
             else if (entityType === 'country') handleCountryToggle(item.id, expandedLeagueId);
             else handleTeamToggle(item.id);
           }}
-          className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative"
+          className="absolute top-1.5 right-1.5 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative"
           title={isSelected ? "Remove from favorites" : "Add to favorites"}
         >
           <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
@@ -608,15 +608,15 @@ export default function Preferences2() {
         </button>
 
         {item.logo_url ? (
-          <div className="flex items-center justify-center w-9 h-9 dark:bg-white dark:rounded-md dark:p-0.5">
-            <img src={item.logo_url} alt={item.display_name} className="h-8 w-8 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+          <div className="flex items-center justify-center w-11 h-11 dark:bg-white dark:rounded-md dark:p-0.5">
+            <img src={item.logo_url} alt={item.display_name} className="h-10 w-10 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+          <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
             {item.display_name.slice(0, 2)}
           </div>
         )}
-        <span className="text-[10px] font-medium text-center leading-tight line-clamp-2">{item.display_name}</span>
+        <span className="text-xs font-medium text-center leading-tight line-clamp-2">{item.display_name}</span>
       </div>
     );
   };
@@ -838,14 +838,14 @@ export default function Preferences2() {
             </div>
           ) : expandedLeagueId !== null ? (
             <div className="space-y-3">
-              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
-                <h2 className="text-lg font-bold text-center mb-3">
+              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-2">
+                <h2 className="text-lg font-bold text-center mb-2">
                   {expandedLeague?.label} {expandedLeagueType === 'school' ? 'Schools' : expandedLeagueType === 'country' ? 'Countries' : 'Teams'}
                 </h2>
                 {loadingTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {getExpandedLeagueTeams().map(item => renderEntityCard(item, expandedLeagueType))}
                   </div>
                 )}
