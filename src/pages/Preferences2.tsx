@@ -502,7 +502,7 @@ export default function Preferences2() {
     return (
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         <div
-          className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-2xl bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer select-none relative min-h-[100px]"
+          className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl bg-background shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[100px]"
           onClick={() => {
             if (isAccordionParent) { toggleAccordion(item.id); return; }
             const hasRoute = item.display_options && (item.display_options as any).route;
@@ -583,7 +583,7 @@ export default function Preferences2() {
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer select-none relative min-h-[90px]"
+        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-background shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[90px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
@@ -808,48 +808,50 @@ export default function Preferences2() {
           {/* ─── Main content as CARD GRID ─── */}
           {showSchoolsView ? (
             <div className="space-y-3">
-              <h2 className="text-lg font-bold text-center">Schools</h2>
-              {loadingSchools ? (
-                <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {schools.map(school => {
-                    const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
-                    return (
-                      <div
-                        key={school.id}
-                        className="flex flex-col items-center justify-center gap-1 p-3 rounded-2xl bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer select-none relative min-h-[80px]"
-                        onClick={() => handleNavigateToFocus('school', school.id)}
-                      >
-                        <button onClick={e => { e.stopPropagation(); handleSchoolToggle(school.id); }} className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative" title={isSelected ? "Remove from favorites" : "Add to favorites"}>
-                          <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-                          {allSportsSchools.has(school.id) && <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>}
-                        </button>
-                        {school.logo_url && <div className="flex items-center justify-center w-8 h-8 dark:bg-white dark:rounded-md dark:p-0.5"><img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
-                        <span className="text-[10px] font-medium text-center leading-tight line-clamp-2">{school.name}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
+                <h2 className="text-lg font-bold text-center mb-3">Schools</h2>
+                {loadingSchools ? (
+                  <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {schools.map(school => {
+                      const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
+                      return (
+                        <div
+                          key={school.id}
+                          className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition-shadow cursor-pointer select-none relative min-h-[80px]"
+                          onClick={() => handleNavigateToFocus('school', school.id)}
+                        >
+                          <button onClick={e => { e.stopPropagation(); handleSchoolToggle(school.id); }} className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors relative" title={isSelected ? "Remove from favorites" : "Add to favorites"}>
+                            <Heart className={`h-4 w-4 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+                            {allSportsSchools.has(school.id) && <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>}
+                          </button>
+                          {school.logo_url && <div className="flex items-center justify-center w-8 h-8 dark:bg-white dark:rounded-md dark:p-0.5"><img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                          <span className="text-[10px] font-medium text-center leading-tight line-clamp-2">{school.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           ) : expandedLeagueId !== null ? (
             <div className="space-y-3">
-              <h2 className="text-lg font-bold text-center">
-                {expandedLeague?.label} {expandedLeagueType === 'school' ? 'Schools' : expandedLeagueType === 'country' ? 'Countries' : 'Teams'}
-              </h2>
-              {loadingTeams ? (
-                <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {getExpandedLeagueTeams().map(item => renderEntityCard(item, expandedLeagueType))}
-                </div>
-              )}
+              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
+                <h2 className="text-lg font-bold text-center mb-3">
+                  {expandedLeague?.label} {expandedLeagueType === 'school' ? 'Schools' : expandedLeagueType === 'country' ? 'Countries' : 'Teams'}
+                </h2>
+                {loadingTeams ? (
+                  <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {getExpandedLeagueTeams().map(item => renderEntityCard(item, expandedLeagueType))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className="space-y-3">
-              {currentLabel && <h2 className="text-xl font-bold text-center mb-4">{currentLabel}</h2>}
-
               {/* Trending Players at root */}
               {currentParentId === null && (
                 <>
@@ -858,12 +860,14 @@ export default function Preferences2() {
                 </>
               )}
 
-              {/* Card grid - 3 columns */}
-              <div className="grid grid-cols-3 gap-2">
-                {currentItems.map(item => renderItemCard(item))}
+              {/* Card grid inside cohesive container */}
+              <div className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
+                {currentLabel && <h2 className="text-xl font-bold text-center mb-3">{currentLabel}</h2>}
+                <div className="grid grid-cols-3 gap-2">
+                  {currentItems.map(item => renderItemCard(item))}
+                </div>
+                {currentItems.length === 0 && <p className="text-center text-muted-foreground py-8">No items to display</p>}
               </div>
-
-              {currentItems.length === 0 && <p className="text-center text-muted-foreground py-8">No items to display</p>}
             </div>
           )}
         </div>
