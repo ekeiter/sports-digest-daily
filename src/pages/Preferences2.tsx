@@ -502,7 +502,7 @@ export default function Preferences2() {
     return (
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         <div
-          className="flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative min-h-[100px]"
+          className="flex flex-col items-center justify-between gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[110px]"
           onClick={() => {
             if (isAccordionParent) { toggleAccordion(item.id); return; }
             const hasRoute = item.display_options && (item.display_options as any).route;
@@ -544,18 +544,18 @@ export default function Preferences2() {
           {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
             <button
               onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-              className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
             >
               Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
             </button>
           )}
           {isAccordionParent && (
-            <span className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
+            <span className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm font-medium">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
           )}
           {isSchools && (
             <button
               onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-              className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-background text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
             >
               Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
             </button>
@@ -669,7 +669,7 @@ export default function Preferences2() {
 
       {/* ─── Content ─── */}
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-3 py-3 max-w-lg">
+        <div className="container mx-auto px-1.5 py-3 max-w-lg">
           {/* Search bar - same as original */}
           <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
             <div className="flex gap-2">
