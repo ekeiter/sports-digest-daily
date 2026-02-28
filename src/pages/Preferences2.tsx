@@ -544,18 +544,18 @@ export default function Preferences2() {
           {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
             <button
               onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+              className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
             </button>
           )}
           {isAccordionParent && (
-            <span className="text-[10px] text-muted-foreground">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
           )}
           {isSchools && (
             <button
               onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+              className="text-[10px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
             </button>
