@@ -881,7 +881,7 @@ export default function Preferences2() {
 
                 return sections.map((section, idx) => (
                   <div key={idx} className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
-                    {section.heading && <h3 className="text-lg font-bold text-foreground mb-2">{section.heading}</h3>}
+                    {section.heading && <h3 className="text-lg font-bold text-foreground mb-2 text-center">{section.heading}</h3>}
                     <div className="grid grid-cols-3 gap-2">
                       {section.items.map(item => renderItemCard(item))}
                     </div>
