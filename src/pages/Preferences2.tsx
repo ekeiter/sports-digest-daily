@@ -681,35 +681,34 @@ export default function Preferences2() {
         <div className="container mx-auto px-1.5 py-3 max-w-lg">
           {/* Search bar - same as original */}
           <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Search teams, players, colleges, sports, leagues..."
-                  value={teamSearchTerm}
-                  onChange={e => {
-                    const newValue = e.target.value;
-                    const wasEmpty = !teamSearchTerm;
-                    setTeamSearchTerm(newValue);
-                    setShowSearchDropdown(true);
-                    if (newValue && (!allTeamsLoaded || !allSchoolsLoaded)) loadAllTeamsAndSchools();
-                    if (wasEmpty && newValue && window.innerWidth < 1024) {
-                      setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
-                    }
-                  }}
-                  onFocus={() => { if (teamSearchTerm) setShowSearchDropdown(true); }}
-                  className="pr-8 bg-white text-base md:text-sm placeholder:text-sm"
-                />
-                {teamSearchTerm && (
-                  <button type="button" onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); setSchoolSearchResults([]); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              <Button disabled={loadingAllTeams || searchingSchools || searchingPeople}>
-                {loadingAllTeams || searchingSchools || searchingPeople ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              </Button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              {(loadingAllTeams || searchingSchools || searchingPeople) && (
+                <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+              )}
+              <Input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search teams, players, colleges, sports, leagues..."
+                value={teamSearchTerm}
+                onChange={e => {
+                  const newValue = e.target.value;
+                  const wasEmpty = !teamSearchTerm;
+                  setTeamSearchTerm(newValue);
+                  setShowSearchDropdown(true);
+                  if (newValue && (!allTeamsLoaded || !allSchoolsLoaded)) loadAllTeamsAndSchools();
+                  if (wasEmpty && newValue && window.innerWidth < 1024) {
+                    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+                  }
+                }}
+                onFocus={() => { if (teamSearchTerm) setShowSearchDropdown(true); }}
+                className="pl-9 pr-8 h-12 rounded-2xl bg-white text-base md:text-sm placeholder:text-sm"
+              />
+              {teamSearchTerm && (
+                <button type="button" onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); setSchoolSearchResults([]); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
             {/* Search dropdown - keep as list for usability */}
             {showSearchDropdown && teamSearchTerm && (
