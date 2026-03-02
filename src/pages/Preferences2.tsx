@@ -498,78 +498,80 @@ export default function Preferences2() {
 
     return (
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
-        <div
-          className="flex flex-col items-center gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
-          onClick={() => {
-            // If this card has an entity_id or a custom route, navigate to it
-            const hasRoute = item.display_options && (item.display_options as any).route;
-            if (item.entity_id || hasRoute) { handleItemClick(item); return; }
-            // Otherwise, if it's an accordion parent with no entity, toggle expand
-            if (isAccordionParent) { toggleAccordion(item.id); return; }
-          }}
-        >
-          {/* Heart in top-right corner */}
-          {(item.entity_type?.toLowerCase() === 'sport' || item.entity_type?.toLowerCase() === 'league') && item.entity_id && (
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                if (item.entity_type?.toLowerCase() === 'sport') handleSportToggle(item.entity_id!, item.label);
-                else if (item.entity_type?.toLowerCase() === 'league') handleLeagueToggle(item.entity_id!, item.label);
-              }}
-              className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
-              title={isSelected ? "Remove from favorites" : "Add to favorites"}
-            >
-              <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-            </button>
-          )}
+        {!(isAccordionParent && isAccordionExpanded) && (
+          <div
+            className="flex flex-col items-center gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
+            onClick={() => {
+              // If this card has an entity_id or a custom route, navigate to it
+              const hasRoute = item.display_options && (item.display_options as any).route;
+              if (item.entity_id || hasRoute) { handleItemClick(item); return; }
+              // Otherwise, if it's an accordion parent with no entity, toggle expand
+              if (isAccordionParent) { toggleAccordion(item.id); return; }
+            }}
+          >
+            {/* Heart in top-right corner */}
+            {(item.entity_type?.toLowerCase() === 'sport' || item.entity_type?.toLowerCase() === 'league') && item.entity_id && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  if (item.entity_type?.toLowerCase() === 'sport') handleSportToggle(item.entity_id!, item.label);
+                  else if (item.entity_type?.toLowerCase() === 'league') handleLeagueToggle(item.entity_id!, item.label);
+                }}
+                className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
+                title={isSelected ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+              </button>
+            )}
 
-          {/* Logo */}
-          {item.logo_url ? (
-            <div className="flex items-center justify-center w-10 h-10 dark:bg-white dark:rounded-md dark:p-0.5">
-              <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+            {/* Logo */}
+            {item.logo_url ? (
+              <div className="flex items-center justify-center w-10 h-10 dark:bg-white dark:rounded-md dark:p-0.5">
+                <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+              </div>
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                {item.label.slice(0, 2)}
+              </div>
+            )}
+
+            {/* Label */}
+            <span className="text-xs font-medium text-center leading-tight line-clamp-2 h-[2lh]">{item.label}</span>
+
+            {/* Button slot - fixed height to keep layout consistent */}
+            <div className="h-5 flex items-center justify-center mt-auto pt-1">
+
+            {/* Sub-indicators */}
+            {isSubmenu && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
+            {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
+              <button
+                onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+              >
+                Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
+              </button>
+            )}
+            {isAccordionParent && (
+              <button
+                onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+              >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
+            )}
+            {isSchools && (
+              <button
+                onClick={e => { e.stopPropagation(); loadAllSchools(); }}
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+              >
+                Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
+              </button>
+            )}
             </div>
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-              {item.label.slice(0, 2)}
-            </div>
-          )}
-
-          {/* Label */}
-          <span className="text-xs font-medium text-center leading-tight line-clamp-2 h-[2lh]">{item.label}</span>
-
-          {/* Button slot - fixed height to keep layout consistent */}
-          <div className="h-5 flex items-center justify-center mt-auto pt-1">
-
-          {/* Sub-indicators */}
-          {isSubmenu && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
-          {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
-            <button
-              onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-            >
-              Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
-            </button>
-          )}
-          {isAccordionParent && (
-            <button
-              onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-            >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
-          )}
-          {isSchools && (
-            <button
-              onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-            >
-              Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
-            </button>
-          )}
           </div>
-        </div>
+        )}
 
         {/* Accordion children in a container with header */}
         {isAccordionParent && isAccordionExpanded && (
-          <div className="mt-2 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
+          <div className="rounded-xl border border-muted-foreground/30 bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] overflow-hidden">
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
