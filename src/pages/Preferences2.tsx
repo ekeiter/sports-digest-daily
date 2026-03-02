@@ -501,10 +501,11 @@ export default function Preferences2() {
         <div
           className="flex flex-col items-center gap-1 p-3 pt-4 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
           onClick={() => {
-            if (isAccordionParent) { toggleAccordion(item.id); return; }
+            // If this card has an entity_id or a custom route, navigate to it
             const hasRoute = item.display_options && (item.display_options as any).route;
-            if (!item.entity_id && !hasRoute) return;
-            handleItemClick(item);
+            if (item.entity_id || hasRoute) { handleItemClick(item); return; }
+            // Otherwise, if it's an accordion parent with no entity, toggle expand
+            if (isAccordionParent) { toggleAccordion(item.id); return; }
           }}
         >
           {/* Heart in top-right corner */}
@@ -550,7 +551,10 @@ export default function Preferences2() {
             </button>
           )}
           {isAccordionParent && (
-            <span className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm font-medium">{isAccordionExpanded ? 'Close' : 'Menu'}</span>
+            <button
+              onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
+              className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+            >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
           )}
           {isSchools && (
             <button
