@@ -126,15 +126,12 @@ const WhySportsDig = () => {
                 Massive Coverage (and Growing Daily)
               </h2>
             </div>
-            <div className="text-sm text-foreground space-y-1">
-              <p><span className="font-semibold">2,500+</span>3,000+</p>
-              <p><span className="font-semibold">18,000+</span>20,000+</p>
-              <p><span className="font-semibold">90+</span> sports covered, from the NFL to the Olympics</p>
-              <p><span className="font-semibold">160+</span> leagues worldwide</p>
-              <p><span className="font-semibold">900+</span> teams</p>
-              <p><span className="font-semibold">360+</span>380+</p>
-              <p><span className="font-semibold">80,000+</span>90,000+</p>
-            </div>
+            <p className="text-sm text-foreground">
+              <span className="font-semibold">20,000+</span> articles processed daily from <span className="font-semibold">3,000+</span> trusted news sources—filtered down to what matters to you.
+            </p>
+            <p className="text-sm text-foreground">
+              Choose from <span className="font-semibold">90+</span> sports, <span className="font-semibold">160+</span> leagues worldwide, <span className="font-semibold">900+</span> teams, <span className="font-semibold">380+</span> NCAA schools and <span className="font-semibold">100,000+</span> athletes and coaches.
+            </p>
             <p className="text-sm text-foreground font-semibold italic">
               We find the stories—so you don't have to.
             </p>
