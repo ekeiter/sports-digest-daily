@@ -137,8 +137,8 @@ export default function TrendingPlayers({
 
   return (
     <div className="space-y-1">
-      {/* Header row */}
-      <div className="flex items-center justify-between py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30">
+      {/* Header box */}
+      <div className="py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30 space-y-1.5">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-500" />
           <span className="text-sm font-bold">Trending Players</span>
@@ -147,13 +147,13 @@ export default function TrendingPlayers({
         <div className="flex gap-1.5">
           <button
             onClick={() => handleToggle(2)}
-            className={`${btnBase} ${activeWindow === 2 ? btnActive : btnInactive}`}
+            className={`${btnBase} flex-1 ${activeWindow === 2 ? btnActive : btnInactive}`}
           >
             2 Hours
           </button>
           <button
             onClick={() => handleToggle(24)}
-            className={`${btnBase} ${activeWindow === 24 ? btnActive : btnInactive}`}
+            className={`${btnBase} flex-1 ${activeWindow === 24 ? btnActive : btnInactive}`}
           >
             24 Hours
           </button>
