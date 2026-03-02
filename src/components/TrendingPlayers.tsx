@@ -133,7 +133,7 @@ export default function TrendingPlayers({
 
   const btnBase = "px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors";
   const btnActive = "bg-foreground text-background";
-  const btnInactive = "bg-[#F4F4F4] text-muted-foreground hover:bg-muted";
+  const btnInactive = "bg-[#F4F4F4] text-foreground hover:bg-muted";
 
   return (
     <div className="space-y-1">
@@ -142,7 +142,7 @@ export default function TrendingPlayers({
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-500" />
           <span className="text-sm font-bold">Trending Players</span>
-          <span className="text-[11px] text-muted-foreground">— Article Mentions</span>
+          <span className="text-sm font-bold">— Article Mentions</span>
         </div>
         <div className="flex gap-1.5">
           <button
