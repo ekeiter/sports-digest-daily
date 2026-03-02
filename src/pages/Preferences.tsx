@@ -1195,40 +1195,20 @@ export default function Preferences() {
                 {currentLabel && <h2 className="text-xl font-bold text-center mb-4">{currentLabel}</h2>}
                 
                 {/* Trending Players - only show at root level */}
-                {currentParentId === null && (<>
+                {currentParentId === null && (
                   <TrendingPlayers
                     userId={userId}
                     followedPersonIds={followedPersonIds}
-                    hours={2}
                     onPersonFollowed={(personId) => {
                       setFollowedPersonIds(prev => {
                         const next = new Set(prev);
-                        if (next.has(personId)) {
-                          next.delete(personId);
-                        } else {
-                          next.add(personId);
-                        }
+                        if (next.has(personId)) next.delete(personId);
+                        else next.add(personId);
                         return next;
                       });
                     }}
                   />
-                  <TrendingPlayers
-                    userId={userId}
-                    followedPersonIds={followedPersonIds}
-                    hours={24}
-                    onPersonFollowed={(personId) => {
-                      setFollowedPersonIds(prev => {
-                        const next = new Set(prev);
-                        if (next.has(personId)) {
-                          next.delete(personId);
-                        } else {
-                          next.add(personId);
-                        }
-                        return next;
-                      });
-                    }}
-                  />
-                </>)}
+                )}
                 
                 {currentItems.map(item => {
               const isSelected = isItemSelected(item);
