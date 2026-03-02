@@ -567,10 +567,25 @@ export default function Preferences2() {
           </div>
         </div>
 
-        {/* Accordion children in a sub-grid */}
+        {/* Accordion children in a container with header */}
         {isAccordionParent && isAccordionExpanded && (
-          <div className="grid grid-cols-3 gap-2 mt-2 ml-2 mb-2">
-            {getChildItems(item.id).map(child => renderItemCard(child))}
+          <div className="mt-2 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
+            {/* Container header with logo and title */}
+            <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
+              {item.logo_url && (
+                <div className="flex items-center justify-center w-10 h-10 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                  <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                </div>
+              )}
+              <span className="text-sm font-bold text-foreground">{item.label}</span>
+              <button
+                onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium mt-1"
+              >Close</button>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2">
+              {getChildItems(item.id).map(child => renderItemCard(child))}
+            </div>
           </div>
         )}
       </div>
