@@ -1,27 +1,38 @@
-import { Newspaper, Users, Star, UserCircle } from "lucide-react";
+import { Newspaper, Settings, Star, UserCircle } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const navItems = [
-  { label: "League News", icon: Newspaper },
-  { label: "People News", icon: Users },
-  { label: "Favorites", icon: Star },
-  { label: "Profile", icon: UserCircle },
+  { label: "News", icon: Newspaper, path: "/feed" },
+  { label: "Feed Manager", icon: Settings, path: "/preferences" },
+  { label: "Favorites", icon: Star, path: "/my-feeds" },
+  { label: "Profile", icon: UserCircle, path: "/profile" },
 ];
 
 export function BottomNavBar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <nav className="border-t bg-background flex-shrink-0 md:hidden">
       <div className="flex justify-around items-center h-14">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            type="button"
-            disabled
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-muted-foreground opacity-60"
-          >
-            <item.icon className="h-5 w-5" />
-            <span className="text-[10px] leading-tight">{item.label}</span>
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 transition-colors ${
+                isActive
+                  ? "text-primary"
+                  : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className="h-5 w-5" />
+              <span className="text-[10px] leading-tight">{item.label}</span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );
