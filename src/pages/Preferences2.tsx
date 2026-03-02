@@ -850,8 +850,7 @@ export default function Preferences2() {
               {/* Trending Players at root */}
               {currentParentId === null && (
                 <>
-                  <TrendingPlayers userId={userId} followedPersonIds={followedPersonIds} hours={2} onPersonFollowed={(personId) => { setFollowedPersonIds(prev => { const next = new Set(prev); if (next.has(personId)) next.delete(personId); else next.add(personId); return next; }); }} />
-                  <TrendingPlayers userId={userId} followedPersonIds={followedPersonIds} hours={24} onPersonFollowed={(personId) => { setFollowedPersonIds(prev => { const next = new Set(prev); if (next.has(personId)) next.delete(personId); else next.add(personId); return next; }); }} />
+                  <TrendingPlayers userId={userId} followedPersonIds={followedPersonIds} onPersonFollowed={(personId) => { setFollowedPersonIds(prev => { const next = new Set(prev); if (next.has(personId)) next.delete(personId); else next.add(personId); return next; }); }} />
                 </>
               )}
 

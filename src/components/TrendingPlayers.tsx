@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, TrendingUp, ChevronDown, ChevronUp, Heart } from "lucide-react";
+import { Loader2, TrendingUp, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
@@ -25,72 +25,41 @@ interface TrendingPlayersProps {
   userId: string | null;
   followedPersonIds: Set<number>;
   onPersonFollowed?: (personId: number) => void;
-  hours?: number;
-  label?: string;
 }
+
+type TimeWindow = 2 | 24;
 
 export default function TrendingPlayers({ 
   userId, 
   followedPersonIds,
   onPersonFollowed,
-  hours = 2,
-  label,
 }: TrendingPlayersProps) {
   const navigate = useNavigate();
+  const [activeWindow, setActiveWindow] = useState<TimeWindow | null>(null);
   const [loading, setLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const [trendingPeople, setTrendingPeople] = useState<TrendingPerson[]>([]);
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
 
-  useEffect(() => {
-    if (expanded) {
-      loadTrendingPeople();
-    }
-  }, [expanded]);
-
-  const loadTrendingPeople = async () => {
+  const loadTrendingPeople = useCallback(async (hours: TimeWindow) => {
     setLoading(true);
     try {
-      // Use server-side RPC for accurate aggregation
       const { data, error } = await supabase.rpc('get_trending_people', {
         p_hours: hours,
         p_limit: 20
       });
-      
       if (error) throw error;
-      
       if (!data || data.length === 0) {
         setTrendingPeople([]);
         setLoading(false);
         return;
       }
-      
-      // Map RPC result to component format
-      const result: TrendingPerson[] = data.map((row: {
-        person_id: number;
-        person_name: string;
-        article_count: number;
-        person_role: string | null;
-        person_position: string | null;
-        sport_name: string | null;
-        sport_logo_url: string | null;
-        league_code: string | null;
-        league_logo_url: string | null;
-        team_name: string | null;
-        team_logo_url: string | null;
-        school_short_name: string | null;
-        school_logo_url: string | null;
-        person_country_code: string | null;
-        country_logo_url: string | null;
-      }) => {
-        // Get logo priority: team > school > league > sport
+      const result: TrendingPerson[] = data.map((row: any) => {
         let logo_url: string | null = null;
         if (row.team_logo_url) logo_url = row.team_logo_url;
         else if (row.school_logo_url) logo_url = row.school_logo_url;
         else if (row.league_logo_url) logo_url = row.league_logo_url;
         else if (row.sport_logo_url) logo_url = row.sport_logo_url;
-        
         return {
           id: row.person_id,
           name: row.person_name,
@@ -105,7 +74,6 @@ export default function TrendingPlayers({
           country_logo_url: row.country_logo_url,
         };
       });
-      
       setTrendingPeople(result);
     } catch (error) {
       console.error("Error loading trending people:", error);
@@ -113,25 +81,24 @@ export default function TrendingPlayers({
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const handleToggle = (window: TimeWindow) => {
+    if (activeWindow === window) {
+      setActiveWindow(null);
+      setTrendingPeople([]);
+    } else {
+      setActiveWindow(window);
+      loadTrendingPeople(window);
+    }
   };
 
   const handleFollow = async (person: TrendingPerson) => {
     if (!userId) return;
-    
     const { error } = await supabase
       .from("subscriber_interests")
-      .insert({
-        subscriber_id: userId,
-        person_id: person.id,
-        notification_enabled: true,
-        priority: 1
-      });
-    
-    if (error) {
-      toast.error("Failed to follow");
-      return;
-    }
-    
+      .insert({ subscriber_id: userId, person_id: person.id, notification_enabled: true, priority: 1 });
+    if (error) { toast.error("Failed to follow"); return; }
     toast.success(`Now following ${person.name}`);
     onPersonFollowed?.(person.id);
     invalidatePreferences(userId);
@@ -140,18 +107,12 @@ export default function TrendingPlayers({
 
   const handleUnfollow = async (person: TrendingPerson) => {
     if (!userId) return;
-    
     const { error } = await supabase
       .from("subscriber_interests")
       .delete()
       .eq("subscriber_id", userId)
       .eq("person_id", person.id);
-    
-    if (error) {
-      toast.error("Failed to unfollow");
-      return;
-    }
-    
+    if (error) { toast.error("Failed to unfollow"); return; }
     toast.success(`Unfollowed ${person.name}`);
     onPersonFollowed?.(person.id);
     invalidatePreferences(userId);
@@ -170,27 +131,37 @@ export default function TrendingPlayers({
     return parts.join(" • ");
   };
 
+  const btnBase = "px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors";
+  const btnActive = "bg-foreground text-background";
+  const btnInactive = "bg-[#F4F4F4] text-muted-foreground hover:bg-muted";
+
   return (
     <div className="space-y-1">
-      {/* Collapsible header */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30 hover:bg-accent transition-colors select-none"
-      >
+      {/* Header row */}
+      <div className="flex items-center justify-between py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-500" />
           <span className="text-sm font-bold">Trending Players</span>
-          <span className="text-[11px] font-bold text-foreground leading-tight text-left ml-4">(article mentions<br />{label || `in last ${hours} hours`})</span>
+          <span className="text-[11px] text-muted-foreground">— Article Mentions</span>
         </div>
-        {expanded ? (
-          <ChevronUp className="h-5 w-5 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-        )}
-      </button>
+        <div className="flex gap-1.5">
+          <button
+            onClick={() => handleToggle(2)}
+            className={`${btnBase} ${activeWindow === 2 ? btnActive : btnInactive}`}
+          >
+            2 Hours
+          </button>
+          <button
+            onClick={() => handleToggle(24)}
+            className={`${btnBase} ${activeWindow === 24 ? btnActive : btnInactive}`}
+          >
+            24 Hours
+          </button>
+        </div>
+      </div>
 
       {/* Expanded content */}
-      {expanded && (
+      {activeWindow !== null && (
         <div className="ml-2 border-l-2 border-muted-foreground/20 pl-2 space-y-1">
           {loading ? (
             <div className="flex items-center justify-center py-4">
@@ -198,7 +169,7 @@ export default function TrendingPlayers({
             </div>
           ) : trendingPeople.length === 0 ? (
             <p className="text-sm text-muted-foreground py-2 px-2">
-              No trending players in the last {hours} hours
+              No trending players in the last {activeWindow} hours
             </p>
           ) : (
             trendingPeople.map((person) => {
@@ -208,80 +179,33 @@ export default function TrendingPlayers({
                   key={person.id}
                   className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card border-muted-foreground/30 select-none"
                 >
-                  {/* Logo */}
                   {person.logo_url && (
                     <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                      <img
-                        src={person.logo_url}
-                        alt=""
-                        className="h-7 w-7 object-contain"
-                        onError={(e) => (e.currentTarget.style.display = 'none')}
-                      />
+                      <img src={person.logo_url} alt="" className="h-7 w-7 object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                     </div>
                   )}
-                  
-                  {/* Name and context - clickable for navigation */}
-                  <div
-                    onClick={() => handleNavigateToFocus(person.id)}
-                    className="flex flex-col min-w-0 flex-1 cursor-pointer"
-                  >
+                  <div onClick={() => handleNavigateToFocus(person.id)} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {person.name}
-                      {person.position && (
-                        <span className="text-muted-foreground font-normal">• {person.position}</span>
-                      )}
-                      {person.country_logo_url && (
-                        <img
-                          src={person.country_logo_url}
-                          alt=""
-                          className="h-3.5 w-5 object-contain flex-shrink-0"
-                        />
-                      )}
+                      {person.position && <span className="text-muted-foreground font-normal">• {person.position}</span>}
+                      {person.country_logo_url && <img src={person.country_logo_url} alt="" className="h-3.5 w-5 object-contain flex-shrink-0" />}
                     </span>
-                    <span className="text-xs text-muted-foreground truncate">
-                      {getContextDisplay(person)}
-                    </span>
+                    <span className="text-xs text-muted-foreground truncate">{getContextDisplay(person)}</span>
                   </div>
-                  
-                  {/* Article count badge */}
-                  <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">
-                    {person.article_count}
-                  </span>
-                  
-                  {/* Heart toggle */}
+                  <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isFollowed) {
-                        handleUnfollow(person);
-                      } else {
-                        handleFollow(person);
-                      }
-                    }}
+                    onClick={(e) => { e.stopPropagation(); isFollowed ? handleUnfollow(person) : handleFollow(person); }}
                     className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
                     title={isFollowed ? "Unfollow" : "Add to favorites"}
                   >
-                    <Heart
-                      className={`h-5 w-5 ${
-                        isFollowed
-                          ? 'fill-red-500 text-red-500'
-                          : 'text-muted-foreground hover:text-red-500'
-                      }`}
-                    />
+                    <Heart className={`h-5 w-5 ${isFollowed ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} />
                   </button>
                 </div>
               );
             })
           )}
-          
-          {/* Refresh button */}
           {!loading && trendingPeople.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={loadTrendingPeople}
-              className="w-full text-xs text-muted-foreground"
-            >
+            <Button variant="ghost" size="sm" onClick={() => loadTrendingPeople(activeWindow)} className="w-full text-xs text-muted-foreground">
               Refresh
             </Button>
           )}
