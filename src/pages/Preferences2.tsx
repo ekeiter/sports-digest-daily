@@ -484,8 +484,9 @@ export default function Preferences2() {
     const isLeague = item.entity_type === 'league';
     const isSchools = item.entity_type === 'schools';
     const isSubmenu = item.is_submenu && hasChildren(item);
-    const displayOptions = item.display_options as { divider_above?: boolean; route?: string } | null;
+    const displayOptions = item.display_options as { divider_above?: boolean; route?: string; logo_only?: boolean } | null;
     const hasCustomRoute = !!displayOptions?.route;
+    const isLogoOnly = !!displayOptions?.logo_only;
     const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item) && !hasCustomRoute;
     const isAccordionParent = !item.is_submenu && hasChildren(item);
     const isAccordionExpanded = expandedAccordionIds.includes(item.id);
@@ -526,8 +527,8 @@ export default function Preferences2() {
 
             {/* Logo */}
             {item.logo_url ? (
-              <div className="flex items-center justify-center w-10 h-10 dark:bg-white dark:rounded-md dark:p-0.5">
-                <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+              <div className={`flex items-center justify-center dark:bg-white dark:rounded-md dark:p-0.5 ${isLogoOnly ? 'w-16 h-16' : 'w-10 h-10'}`}>
+                <img src={item.logo_url} alt={item.label} className={`object-contain ${isLogoOnly ? 'h-14 w-14' : 'h-9 w-9'}`} onError={e => e.currentTarget.style.display = 'none'} />
               </div>
             ) : (
               <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
@@ -536,7 +537,9 @@ export default function Preferences2() {
             )}
 
             {/* Label */}
-            <span className="text-xs font-medium text-center leading-tight line-clamp-2 h-[2lh]">{item.label}</span>
+            {!isLogoOnly && (
+              <span className="text-xs font-medium text-center leading-tight line-clamp-2 h-[2lh]">{item.label}</span>
+            )}
 
             {/* Button slot - fixed height to keep layout consistent */}
             <div className="h-5 flex items-center justify-center mt-auto pt-1">
