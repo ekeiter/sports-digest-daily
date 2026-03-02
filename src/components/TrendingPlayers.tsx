@@ -139,10 +139,9 @@ export default function TrendingPlayers({
     <div className="space-y-1">
       {/* Header box */}
       <div className="py-1.5 px-2 rounded-lg border bg-card border-muted-foreground/30 space-y-1.5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-500" />
-          <span className="text-sm font-bold">Trending Players</span>
-          <span className="text-sm font-bold">— Article Mentions</span>
+          <span className="text-sm font-bold">Trending Players — Article Mentions</span>
         </div>
         <div className="flex gap-1.5">
           <button
