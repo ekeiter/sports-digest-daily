@@ -1300,7 +1300,15 @@ export default function Preferences() {
                       </div>
                       
                       {/* Accordion children */}
-                      {isAccordionParent && isAccordionExpanded && <div className="ml-4 mt-1 space-y-1 border-l-2 border-muted-foreground/20 pl-2">
+                      {isAccordionParent && isAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
+                          {/* Container header with logo and title */}
+                          <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
+                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                              </div>}
+                            <span className="text-sm font-bold text-foreground">{item.label}</span>
+                          </div>
+                          <div className="p-2 space-y-1">
                           {getChildItems(item.id).map(child => {
                     const childIsSelected = isItemSelected(child);
                     const childIsLeague = child.entity_type === 'league';
@@ -1357,7 +1365,15 @@ export default function Preferences() {
                                 </div>
                                 
                                 {/* Nested accordion children (level 2) */}
-                                {childHasChildren && childIsAccordionExpanded && <div className="ml-4 mt-1 space-y-1 border-l-2 border-muted-foreground/20 pl-2">
+                                {childHasChildren && childIsAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
+                                    {/* Container header with logo and title */}
+                                    <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
+                                      {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                          <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                                        </div>}
+                                      <span className="text-sm font-bold text-foreground">{child.label}</span>
+                                    </div>
+                                    <div className="p-2 space-y-1">
                                     {getChildItems(child.id).map(grandchild => {
                           const grandchildIsSelected = isItemSelected(grandchild);
                           const grandchildIsLeague = grandchild.entity_type === 'league';
@@ -1399,10 +1415,10 @@ export default function Preferences() {
                                             </Button>}
                                         </div>;
                         })}
-                                  </div>}
+                                    </div></div>}
                               </div>;
                   })}
-                        </div>}
+                        </div></div>}
                     </div>;
             })}
                 
