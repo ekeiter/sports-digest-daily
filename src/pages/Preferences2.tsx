@@ -260,13 +260,25 @@ export default function Preferences2() {
     const expandedItem = expandedLeagueItems.find(i => i.id === schoolId);
     const schoolItem = schools.find(s => s.id === schoolId);
     const label = expandedItem?.display_name || schoolItem?.name || 'school';
-    const isCurrentlySelected = selectedSchools.includes(schoolId);
+    const isCurrentlySelected = leagueId
+      ? (selectedSchoolsByLeague[leagueId] || []).includes(schoolId)
+      : allSportsSchools.has(schoolId) || selectedSchools.includes(schoolId);
     try {
       if (isCurrentlySelected) {
-        const { error } = await supabase.from("subscriber_interests").delete().eq("subscriber_id", userId).eq("school_id", schoolId);
+        let query = supabase.from("subscriber_interests").delete().eq("subscriber_id", userId).eq("school_id", schoolId);
+        if (leagueId) query = query.eq("league_id", leagueId);
+        const { error } = await query;
         if (error) throw error;
-        setSelectedSchools(prev => prev.filter(id => id !== schoolId));
-        if (leagueId) { setSelectedSchoolsByLeague(prev => ({ ...prev, [leagueId]: (prev[leagueId] || []).filter(id => id !== schoolId) })); }
+        if (leagueId) {
+          setSelectedSchoolsByLeague(prev => ({ ...prev, [leagueId]: (prev[leagueId] || []).filter(id => id !== schoolId) }));
+          const remainingLeagues = Object.entries(selectedSchoolsByLeague).filter(([lid, ids]) => Number(lid) !== leagueId && ids.includes(schoolId));
+          if (remainingLeagues.length === 0 && !allSportsSchools.has(schoolId)) {
+            setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+          }
+        } else {
+          setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+          setAllSportsSchools(prev => { const next = new Set(prev); next.delete(schoolId); return next; });
+        }
         toast(`Unfollowed ${label}`);
       } else {
         const insertData: { subscriber_id: string | null; school_id: number; league_id?: number } = { subscriber_id: userId, school_id: schoolId };
@@ -275,6 +287,7 @@ export default function Preferences2() {
         if (error) throw error;
         setSelectedSchools(prev => [...prev, schoolId]);
         if (leagueId) { setSelectedSchoolsByLeague(prev => ({ ...prev, [leagueId]: [...(prev[leagueId] || []), schoolId] })); }
+        else { setAllSportsSchools(prev => new Set(prev).add(schoolId)); }
         toast.success(`Followed ${label}`);
       }
       if (userId) { invalidatePreferences(userId); invalidateFeed(userId); }
@@ -600,7 +613,7 @@ export default function Preferences2() {
   // ─── Card for team/school/country items in expanded league view ───
   const renderEntityCard = (item: { id: number; display_name: string; nickname?: string; logo_url?: string | null }, entityType: 'team' | 'school' | 'country') => {
     const isSelected = entityType === 'school'
-      ? allSportsSchools.has(item.id) || selectedSchools.includes(item.id)
+      ? allSportsSchools.has(item.id) || (expandedLeagueId ? (selectedSchoolsByLeague[expandedLeagueId] || []).includes(item.id) : selectedSchools.includes(item.id))
       : entityType === 'country'
         ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id))
         : selectedTeams.includes(item.id);
