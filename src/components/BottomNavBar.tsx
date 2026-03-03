@@ -22,9 +22,9 @@ export function BottomNavBar() {
               key={item.label}
               type="button"
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 transition-colors ${
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 rounded-lg transition-colors ${
                 isActive
-                  ? "text-primary"
+                  ? "bg-blue-100 dark:bg-blue-900/30 text-primary"
                   : "text-muted-foreground"
               }`}
             >
