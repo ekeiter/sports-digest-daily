@@ -59,12 +59,17 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
         )}
       </div>
 
-      {/* Label row */}
-      <div className="flex items-center justify-center gap-1 min-w-0 w-full">
-        <span className="text-xs md:text-sm font-medium line-clamp-2">{label}</span>
-        {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain flex-shrink-0" />}
-        {secondaryLabel && <span className="text-xs md:text-sm font-medium text-foreground flex-shrink-0">{secondaryLabel}</span>}
-      </div>
+      {/* Label */}
+      <span className="text-xs md:text-sm font-medium line-clamp-2 w-full">{label}</span>
+
+      {/* Secondary icon row (league logo / country flag) */}
+      {(secondaryIcon || secondaryLabel) && (
+        <div className="flex items-center justify-center gap-1">
+          {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain" />}
+          {secondaryLabel && <span className="text-xs font-medium text-foreground">{secondaryLabel}</span>}
+        </div>
+      )}
+
       {sublabel && (
         <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2 w-full">{sublabel}</span>
       )}
