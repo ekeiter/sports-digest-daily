@@ -809,7 +809,7 @@ export default function Preferences() {
   const currentLabel = menuStack.length > 0 ? menuStack[menuStack.length - 1].label : null;
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
   return (
-    <div className="h-screen flex flex-col bg-page-bg overflow-hidden">
+    <div className="h-full flex flex-col bg-page-bg overflow-hidden">
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
           {/* Mobile header: menu left, title centered, back button right */}
