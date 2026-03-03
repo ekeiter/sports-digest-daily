@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { User } from '@supabase/supabase-js';
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
-import { MobileSidebar } from "@/components/MobileSidebar";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -123,26 +123,10 @@ export default function Profile() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden bg-page-bg">
-      {/* Mobile header: menu left, logo centered */}
-      <header className="py-2 md:hidden flex-shrink-0">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center">
-            <div className="w-10 flex justify-start">
-              <MobileSidebar />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
-            </div>
-            <div className="w-10" />
-          </div>
-        </div>
-      </header>
-
-      {/* PC/Tablet header with logo */}
-      <header className="hidden md:block py-3 flex-shrink-0">
+      <header className="py-2 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
           </div>
         </div>
       </header>

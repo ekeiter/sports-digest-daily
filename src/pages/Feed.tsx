@@ -12,7 +12,7 @@ import { FocusedFeedHeader } from "@/components/FocusedFeedHeader";
 
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import { openUrl } from "@/hooks/useOpenUrl";
-import { MobileSidebar } from "@/components/MobileSidebar";
+
 import { FeedAd } from "@/components/ads/FeedAd";
 
 
@@ -189,11 +189,7 @@ export default function Feed() {
       <div className="min-h-screen">
         <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
           <div className="container mx-auto px-3 py-2">
-            <div className="flex items-center gap-2 md:hidden">
-              <MobileSidebar />
-              <h1 className="text-lg font-bold text-foreground">Feed Error</h1>
-            </div>
-            <h1 className="hidden md:block text-xl font-bold text-foreground text-center">Feed Error</h1>
+            <h1 className="text-lg font-bold text-foreground text-center">Feed Error</h1>
           </div>
         </header>
         <main className="container mx-auto px-2 py-2">
@@ -216,22 +212,10 @@ export default function Feed() {
     <div className="h-full flex flex-col w-full overflow-hidden">
         <header className="border-b bg-background/80 backdrop-blur-sm z-10 flex-shrink-0">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
-            {/* Mobile: hamburger on far left */}
-            <div className="md:hidden flex-shrink-0">
-              <MobileSidebar />
-            </div>
-            {/* Mobile: title centered with overflow handling */}
-            <div className="md:hidden flex-1 min-w-0 mx-1 overflow-hidden">
-              <FocusedFeedHeader 
-                userId={user?.id}
-                focusParam={focusParam}
-                entityType={entityType}
-                entityId={entityId}
-                focusLeagueId={focusLeagueId}
-              />
-            </div>
-            {/* Desktop: centered title */}
-            <div className="hidden md:flex flex-1 justify-center">
+            {/* Spacer for balance */}
+            <div className="w-8 flex-shrink-0" />
+            {/* Centered title */}
+            <div className="flex-1 min-w-0 mx-1 overflow-hidden flex justify-center">
               <FocusedFeedHeader 
                 userId={user?.id}
                 focusParam={focusParam}

@@ -13,7 +13,7 @@ export function BottomNavBar() {
   const location = useLocation();
 
   return (
-    <nav className="border-t bg-background flex-shrink-0 md:hidden">
+    <nav className="border-t bg-background flex-shrink-0">
       <div className="flex justify-around items-center h-14">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
