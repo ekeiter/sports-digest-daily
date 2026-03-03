@@ -1,404 +1,248 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import MyFeedsSkeleton from "@/components/MyFeedsSkeleton";
-import SwipeableFeedItem from "@/components/SwipeableFeedItem";
-import { useUserPreferences, useInvalidateUserPreferences, Person, OlympicsPreference } from "@/hooks/useUserPreferences";
+import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
+import { MobileSidebar } from "@/components/MobileSidebar";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
-import { useIsMobile } from "@/hooks/use-mobile";
-
+import { Loader2 } from "lucide-react";
 
 // Helper to properly capitalize sport names
-const toTitleCase = (str: string) => {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
+const toTitleCase = (str: string) =>
+  str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-const COLLEGE_LEAGUES = ['NCAAF', 'NCAAM', 'NCAAW'];
-const COUNTRY_TEAM_LEAGUES = ['World Cup', 'World Baseball Classic'];
-const LEAGUE_CODE_DISPLAY: Record<string, string> = { 'World Baseball Classic': 'WBC' };
-
-const getPersonLogo = (person: Person) => {
-  // Priority: Team → School → League → Sport (country flag shown inline)
-  if (person.teams?.logo_url) {
-    return {
-      url: person.teams.logo_url,
-      alt: person.teams.display_name || 'Team'
-    };
-  }
-  if (person.schools?.logo_url) {
-    return {
-      url: person.schools.logo_url,
-      alt: person.schools.short_name || 'School'
-    };
-  }
-  if (person.leagues?.logo_url) {
-    return {
-      url: person.leagues.logo_url,
-      alt: person.leagues.name || 'League'
-    };
-  }
-  if (person.sports?.logo_url) {
-    return {
-      url: person.sports.logo_url,
-      alt: person.sports.display_label || person.sports.sport || 'Sport'
-    };
-  }
+// Helper to get M/W indicator for gendered college leagues
+const getGenderIndicator = (leagueCode: string | null): string | null => {
+  if (!leagueCode) return null;
+  const male = ['NCAAB', 'NCAAM', 'NCAAMH', 'NCAAMSOC'];
+  const female = ['NCAAW', 'NCAAWH', 'NCAAWSOC', 'NCAASB'];
+  if (male.includes(leagueCode)) return 'M';
+  if (female.includes(leagueCode)) return 'W';
   return null;
 };
 
-const getContextDisplay = (person: Person) => {
-  const parts: string[] = [];
-  if (person.teams?.display_name) parts.push(person.teams.display_name);
-  else if (person.schools?.short_name) parts.push(person.schools.short_name);
-  if (person.leagues?.code) parts.push(person.leagues.code);
-  if (person.position) parts.push(person.position);
-  return parts.join(" • ");
-};
+interface FavoriteRowProps {
+  logoUrl?: string | null;
+  label: string;
+  sublabel?: string;
+  rightIcon?: string | null;
+  rightLabel?: string | null;
+  onClick: () => void;
+  onDelete: () => void;
+}
+
+function FavoriteRow({ logoUrl, label, sublabel, rightIcon, rightLabel, onClick, onDelete }: FavoriteRowProps) {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-left shadow-sm"
+    >
+      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5">
+        {logoUrl ? (
+          <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
+        ) : (
+          <div className="w-6 h-6 rounded-full bg-muted" />
+        )}
+      </div>
+      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+        <span className="text-sm font-semibold text-foreground truncate">{label}</span>
+        {rightIcon && <img src={rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />}
+        {rightLabel && <span className="text-sm font-semibold text-foreground flex-shrink-0">{rightLabel}</span>}
+        {sublabel && <span className="text-sm font-semibold text-muted-foreground truncate">{sublabel}</span>}
+      </div>
+      <div onClick={handleDelete} className="flex-shrink-0 p-1 hover:scale-110 transition-transform cursor-pointer">
+        <Trash2 className="h-4 w-4 text-destructive" />
+      </div>
+    </button>
+  );
+}
 
 export default function MyFeeds() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
-  const isMobile = useIsMobile();
-  
-  // Local state for optimistic updates after deletion
-  const [deletedItems, setDeletedItems] = useState<Set<string>>(new Set());
-
-  const { data: preferences, isLoading, error } = useUserPreferences(userId);
   const invalidatePreferences = useInvalidateUserPreferences();
   const invalidateFeed = useInvalidateArticleFeed();
 
+  const { data: prefs, isLoading } = useUserPreferences(userId);
 
   useEffect(() => {
-    checkUser();
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { navigate("/auth"); return; }
+      setUserId(user.id);
+    };
+    getUser();
   }, []);
 
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    setUserId(user.id);
-  };
-
-  const handleDeleteItem = async (kind: 'sport' | 'league' | 'team' | 'person' | 'school', id: number) => {
-    if (!userId) return;
-    
-    try {
-      const columnName = `${kind}_id` as 'sport_id' | 'league_id' | 'team_id' | 'person_id' | 'school_id';
-      const { error } = await supabase
-        .from("subscriber_interests")
-        .delete()
-        .eq("subscriber_id", userId)
-        .eq(columnName, id);
-      
-      if (error) throw error;
-      
-      const key = `${kind}-${id}`;
-      setDeletedItems(prev => new Set([...prev, key]));
-      
-      if (userId) {
-        invalidatePreferences(userId);
-        invalidateFeed(userId);
-      }
-      
-      toast.success("Removed from feed");
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      toast.error("Failed to remove item");
-    }
-  };
-
-  if (isLoading || !userId) {
-    return <MyFeedsSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-destructive">Failed to load your preferences</p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Filter out deleted items for display
-  const selectedSports = (preferences?.sports || []).filter(s => !deletedItems.has(`sport-${s.id}`));
-  const selectedLeagues = (preferences?.leagues || []).filter(l => !deletedItems.has(`league-${l.id}`));
-  const selectedTeams = (preferences?.teams || []).filter(t => !deletedItems.has(`team-${t.id}`));
-  const selectedPeople = (preferences?.people || []).filter(p => !deletedItems.has(`person-${p.id}`));
-  const selectedSchools = (preferences?.schools || []).filter(s => !deletedItems.has(`school-${s.id}`));
-  const olympicsPrefs = (preferences?.olympicsPrefs || []).filter(o => !deletedItems.has(`olympics-${o.id}`));
-
-  const hasSportsLeaguesTeams = selectedSports.length > 0 || selectedLeagues.length > 0 || selectedTeams.length > 0 || selectedSchools.length > 0 || olympicsPrefs.length > 0;
-
-  const handleDeleteOlympics = async (prefId: number) => {
+  const handleDelete = async (interestId: number) => {
     const { error } = await supabase
       .from("subscriber_interests")
       .delete()
-      .eq("id", prefId);
-
-    if (error) {
-      console.error("Error removing olympics preference:", error);
-      toast.error("Failed to remove preference");
-      return;
-    }
-
-    setDeletedItems(prev => new Set([...prev, `olympics-${prefId}`]));
-    if (userId) {
-      invalidatePreferences(userId);
-      invalidateFeed(userId);
-    }
-    toast.success("Olympics preference removed");
+      .eq("id", interestId);
+    if (error) { toast.error("Failed to remove favorite"); return; }
+    toast.success("Favorite removed");
+    if (userId) { invalidatePreferences(userId); invalidateFeed(userId); }
   };
 
+  const getPersonLogo = (person: any) => {
+    if (person.teams?.logo_url) return person.teams.logo_url;
+    if (person.schools?.logo_url) return person.schools.logo_url;
+    if (person.leagues?.logo_url) return person.leagues.logo_url;
+    if (person.sports?.logo_url) return person.sports.logo_url;
+    return null;
+  };
+
+  const hasFavorites = prefs && (
+    prefs.sports.length > 0 || prefs.leagues.length > 0 || prefs.teams.length > 0 ||
+    prefs.schools.length > 0 || prefs.countries.length > 0 || prefs.people.length > 0 ||
+    prefs.olympicsPrefs.length > 0
+  );
+
   return (
-    <div className="min-h-screen bg-page-bg">
-      <header className="bg-transparent">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center gap-4">
-              <img src={sportsdigLogo} alt="SportsDig Logo" className="h-16 md:h-20 md:hidden" />
-              <span className="text-lg md:text-xl font-bold text-foreground">My Feed Selections</span>
+    <div className="h-full flex flex-col overflow-hidden bg-page-bg">
+      {/* Header */}
+      <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center md:hidden">
+            <div className="w-10 flex justify-start"><MobileSidebar /></div>
+            <div className="flex-1 flex items-center justify-center gap-2">
+              <span className="text-lg font-bold text-foreground">Favorites</span>
             </div>
-            <div className="flex gap-1.5 md:gap-2">
-              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/")}>
-                Dashboard
-              </Button>
-              <Button className="text-sm px-3 md:px-4" onClick={() => navigate("/feed")}>
-                Go To Sports Feed
-              </Button>
-            </div>
-            {/* Instruction hint - different text for mobile vs desktop/tablet */}
-            <p className="text-xs text-foreground text-center mt-1">
-              {isMobile 
-                ? "Swipe right on any item to focus your feed"
-                : "Click on button on any item to focus your feed"
-              }
-            </p>
+            <div className="w-10" />
+          </div>
+          <div className="hidden md:flex items-center justify-center gap-3 py-1">
+            <img src={sportsdigLogo} alt="SportsDig" className="h-10 object-contain" />
+            <span className="text-lg font-bold text-foreground">Favorites</span>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 pt-2 pb-4 max-w-3xl">
-        <div className="space-y-4">
-          {/* Sports/Leagues/Teams Section */}
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="py-0 pb-2">
-              <div className="flex items-center justify-center gap-2">
-                <CardTitle className="text-base w-48 text-center">Sports / Teams / Colleges</CardTitle>
-                <Button size="sm" className="w-20" onClick={() => navigate("/preferences")}>
-                  Manage
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2 pt-0">
-              {!hasSportsLeaguesTeams ? (
-                <p className="text-muted-foreground text-sm">No sports, leagues, or teams selected</p>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  
-                  {/* Sports */}
-                  {selectedSports.map(sport => (
-                    <SwipeableFeedItem
-                      key={`sport-${sport.id}`}
-                      interestId={sport.interestId}
-                      deleteButton={
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                          onClick={() => handleDeleteItem('sport', sport.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      }
-                    >
-                      {sport.logo_url && <img src={sport.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                      <span className="text-sm font-medium flex-1">{sport.display_label || sport.sport}</span>
-                    </SwipeableFeedItem>
-                  ))}
-                  
-                  {/* Leagues */}
-                  {selectedLeagues.map(league => (
-                    <SwipeableFeedItem
-                      key={`league-${league.id}`}
-                      interestId={league.interestId}
-                      deleteButton={
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                          onClick={() => handleDeleteItem('league', league.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      }
-                    >
-                      {league.logo_url && <img src={league.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                      <span className="text-sm font-medium flex-1">{league.code || league.name}</span>
-                    </SwipeableFeedItem>
-                  ))}
-                  
-                  {/* Teams */}
-                  {selectedTeams.map(team => (
-                    <SwipeableFeedItem
-                      key={`team-${team.id}`}
-                      interestId={team.interestId}
-                      deleteButton={
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                          onClick={() => handleDeleteItem('team', Number(team.id))}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      }
-                    >
-                      {team.logo_url && <img src={team.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                      <span className="text-sm font-medium flex-1">
-                        {team.display_name}
-                        {team.leagues?.code && (COLLEGE_LEAGUES.includes(team.leagues.code) || COUNTRY_TEAM_LEAGUES.includes(team.leagues.code)) && (
-                          <span className="text-muted-foreground"> ({LEAGUE_CODE_DISPLAY[team.leagues.code] || team.leagues.code})</span>
-                        )}
-                      </span>
-                    </SwipeableFeedItem>
-                  ))}
-                  
-                  {/* Schools */}
-                  {selectedSchools.map(school => {
-                    const suffix = school.league_code ? `(${school.league_code})` : "(all sports)";
-                    return (
-                      <SwipeableFeedItem
-                        key={`school-${school.id}`}
-                        interestId={school.interestId}
-                        deleteButton={
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                            onClick={() => handleDeleteItem('school', school.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        }
-                      >
-                        {school.logo_url && <img src={school.logo_url} alt="" className="h-5 w-5 object-contain flex-shrink-0" />}
-                        <span className="text-sm font-medium flex-1">
-                          {school.name} <span className="text-muted-foreground">{suffix}</span>
-                        </span>
-                      </SwipeableFeedItem>
-                    );
-                  })}
-                  
-                  {/* Olympics */}
-                  {olympicsPrefs.map(pref => (
-                    <SwipeableFeedItem
-                      key={`olympics-${pref.id}`}
-                      interestId={pref.id}
-                      deleteButton={
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                          onClick={() => handleDeleteOlympics(pref.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      }
-                    >
-                      {pref.sport_logo && (
-                        <img src={pref.sport_logo} alt="" className="h-5 w-5 object-contain flex-shrink-0" />
-                      )}
-                      {!pref.sport_logo && pref.country_logo && (
-                        <img src={pref.country_logo} alt="" className="h-5 w-4 object-contain flex-shrink-0" />
-                      )}
-                      <span className="text-sm font-medium flex-1">
-                        OLY - {pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports"} - {pref.country_name || "All Countries"}
-                      </span>
-                    </SwipeableFeedItem>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+      {/* Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-3 py-3 max-w-lg">
+          {isLoading || !userId ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : !hasFavorites ? (
+            <div className="text-center py-16 space-y-3">
+              <p className="text-muted-foreground">No favorites yet</p>
+              <button
+                onClick={() => navigate("/preferences")}
+                className="text-sm font-medium text-primary underline"
+              >
+                Go to Feed Manager to add some
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              {/* Sports */}
+              {prefs.sports.map(sport => (
+                <FavoriteRow
+                  key={`sport-${sport.id}`}
+                  logoUrl={sport.logo_url}
+                  label={sport.display_label || toTitleCase(sport.sport)}
+                  onClick={() => navigate(`/feed?focus=${sport.interestId}`)}
+                  onDelete={() => handleDelete(sport.interestId)}
+                />
+              ))}
 
-          {/* People Section */}
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="py-0 pb-2">
-              <div className="flex items-center justify-center gap-2">
-                <CardTitle className="text-base w-48 text-center">Players & Coaches</CardTitle>
-                <Button size="sm" className="w-20" onClick={() => navigate("/player-preferences")}>
-                  Manage
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2 pt-0">
-              {selectedPeople.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No players or coaches selected</p>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  
-                  {selectedPeople.map(person => {
-                    const context = getContextDisplay(person);
-                    return (
-                      <SwipeableFeedItem
-                        key={`person-${person.id}`}
-                        interestId={person.interestId}
-                        deleteButton={
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 w-7 p-0 flex-shrink-0 text-destructive hover:text-destructive"
-                            onClick={() => handleDeleteItem('person', person.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        }
-                      >
-                        {(() => {
-                          const logo = getPersonLogo(person);
-                          return logo ? <img src={logo.url} alt={logo.alt} className="h-6 w-6 object-contain flex-shrink-0" /> : null;
-                        })()}
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold flex items-center gap-2 text-sm whitespace-nowrap">
-                            {person.name}
-                            {person.role === 'coach' && <span className="text-xs bg-muted px-2 py-0.5 rounded">Coach</span>}
-                          </div>
-                          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
-                            <span>{context}</span>
-                            {person.countries?.logo_url && (
-                              <img 
-                                src={person.countries.logo_url} 
-                                alt={person.countries.name || ''} 
-                                className="h-3.5 w-5 object-contain"
-                                title={person.countries.name}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </SwipeableFeedItem>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              {/* Leagues */}
+              {prefs.leagues.map(league => (
+                <FavoriteRow
+                  key={`league-${league.id}`}
+                  logoUrl={league.logo_url}
+                  label={league.display_label || league.name || league.code}
+                  onClick={() => navigate(`/feed?focus=${league.interestId}`)}
+                  onDelete={() => handleDelete(league.interestId)}
+                />
+              ))}
 
+              {/* Teams */}
+              {prefs.teams.map(team => (
+                <FavoriteRow
+                  key={`team-${team.id}`}
+                  logoUrl={team.logo_url}
+                  label={team.display_name}
+                  onClick={() => navigate(`/feed?focus=${team.interestId}`)}
+                  onDelete={() => handleDelete(team.interestId)}
+                />
+              ))}
+
+              {/* Schools */}
+              {prefs.schools.map(school => {
+                const genderIndicator = getGenderIndicator(school.league_code);
+                return (
+                  <FavoriteRow
+                    key={`school-${school.id}-${school.league_id || 'all'}`}
+                    logoUrl={school.logo_url}
+                    label={school.short_name}
+                    rightIcon={school.league_logo_url}
+                    rightLabel={genderIndicator}
+                    sublabel={!school.league_id ? "All Sports" : undefined}
+                    onClick={() => {
+                      let url = `/feed?type=school&id=${school.id}`;
+                      if (school.league_id) url += `&leagueId=${school.league_id}`;
+                      navigate(url);
+                    }}
+                    onDelete={() => handleDelete(school.interestId)}
+                  />
+                );
+              })}
+
+              {/* Countries */}
+              {prefs.countries.map(country => (
+                <FavoriteRow
+                  key={`country-${country.id}-${country.league_id || 'all'}`}
+                  logoUrl={country.league_logo_url || undefined}
+                  label={country.league_name || country.name}
+                  rightIcon={country.logo_url}
+                  onClick={() => {
+                    let url = `/feed?type=country&id=${country.id}`;
+                    if (country.league_id) url += `&leagueId=${country.league_id}`;
+                    navigate(url);
+                  }}
+                  onDelete={() => handleDelete(country.interestId)}
+                />
+              ))}
+
+              {/* Olympics */}
+              {prefs.olympicsPrefs.map(pref => {
+                const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
+                const countryLabel = pref.country_logo ? "" : (pref.country_name || "All Countries");
+                return (
+                  <FavoriteRow
+                    key={`olympics-${pref.id}`}
+                    logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
+                    label={`${sportLabel} -${countryLabel ? ` ${countryLabel}` : ""}`}
+                    rightIcon={pref.country_logo}
+                    onClick={() => navigate(`/feed?focus=${pref.id}`)}
+                    onDelete={() => handleDelete(pref.id)}
+                  />
+                );
+              })}
+
+              {/* People */}
+              {prefs.people.map(person => (
+                <FavoriteRow
+                  key={`person-${person.id}`}
+                  logoUrl={getPersonLogo(person)}
+                  label={person.name}
+                  onClick={() => navigate(`/feed?focus=${person.interestId}`)}
+                  onDelete={() => handleDelete(person.interestId)}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
