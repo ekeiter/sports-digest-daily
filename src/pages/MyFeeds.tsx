@@ -52,11 +52,11 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       </div>
 
       {/* Logo */}
-      <div className="w-10 h-10 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5">
+      <div className="w-8 h-8 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5 flex-shrink-0">
         {logoUrl ? (
           <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" onError={e => e.currentTarget.style.display = 'none'} />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-muted" />
+          <div className="w-6 h-6 rounded-full bg-muted" />
         )}
       </div>
 
@@ -67,7 +67,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
         {secondaryLabel && <span className="text-xs md:text-sm font-medium text-foreground flex-shrink-0">{secondaryLabel}</span>}
       </div>
       {sublabel && (
-        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-1 w-full">{sublabel}</span>
+        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2 w-full">{sublabel}</span>
       )}
     </button>
   );
