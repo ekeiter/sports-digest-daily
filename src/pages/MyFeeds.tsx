@@ -122,7 +122,7 @@ export default function MyFeeds() {
     <div className="h-full flex flex-col overflow-hidden bg-[hsl(210_14%_89%)]">
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-2">
+        <div className="container mx-auto px-4 py-1">
           <div className="flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center">
@@ -135,7 +135,7 @@ export default function MyFeeds() {
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-3 py-3 max-w-lg">
+        <div className="container mx-auto px-3 py-1.5 max-w-lg">
           {isLoading || !userId ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

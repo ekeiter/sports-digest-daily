@@ -828,7 +828,7 @@ export default function Preferences() {
   return (
     <div className="h-full flex flex-col bg-page-bg overflow-hidden">
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-2">
+        <div className="container mx-auto px-4 py-1">
           <div className="flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center gap-2">
