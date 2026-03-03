@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
@@ -151,6 +151,16 @@ export default function MyFeeds() {
               </button>
             </div>
           ) : (
+            <div className="space-y-3">
+              {/* Combined Favorites Feed button */}
+              <button
+                onClick={() => navigate("/feed")}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] hover:bg-primary/90 transition-colors"
+              >
+                <Newspaper className="h-5 w-5" />
+                Combined Favorites Feed
+              </button>
+
             <div className="grid grid-cols-3 gap-2">
               {/* Sports */}
               {prefs.sports.map(sport => (
@@ -249,6 +259,7 @@ export default function MyFeeds() {
                   onDelete={() => handleDelete(person.interestId)}
                 />
               ))}
+            </div>
             </div>
           )}
         </div>
