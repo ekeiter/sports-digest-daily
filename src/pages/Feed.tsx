@@ -214,7 +214,7 @@ export default function Feed() {
         <header className="border-b bg-background/80 backdrop-blur-sm z-10 flex-shrink-0">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
             {/* Logo left */}
-            <img src={sportsdigLogo} alt="SportsDig" className="h-9 w-9 object-contain flex-shrink-0" />
+            <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             {/* Centered title */}
             <div className="flex-1 min-w-0 mx-1 overflow-hidden flex justify-center">
               <FocusedFeedHeader 

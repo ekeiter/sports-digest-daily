@@ -669,7 +669,7 @@ export default function Preferences2() {
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center">
-            <img src={sportsdigLogo} alt="SportsDig" className="h-9 w-9 object-contain flex-shrink-0" />
+            <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center gap-2">
               <span className="text-lg font-bold text-foreground">Feed Topic Manager</span>
               <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f]" /></button>
