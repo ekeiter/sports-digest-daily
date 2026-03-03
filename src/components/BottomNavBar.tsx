@@ -1,10 +1,10 @@
-import { Newspaper, Settings, Star, UserCircle } from "lucide-react";
+import { Newspaper, Settings, Heart, UserCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const navItems = [
   { label: "News", icon: Newspaper, path: "/feed" },
   { label: "Feed Manager", icon: Settings, path: "/preferences" },
-  { label: "Favorites", icon: Star, path: "/my-feeds" },
+  { label: "Favorites", icon: Heart, path: "/my-feeds" },
   { label: "Profile", icon: UserCircle, path: "/profile" },
 ];
 
