@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { BottomNavBar } from "@/components/BottomNavBar";
 
 interface LeagueCard {
   id: number;
@@ -81,11 +82,14 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="h-screen w-full flex overflow-hidden">
-      <LeagueCardMenu />
-      <div className="flex-1 overflow-y-auto">
-        {children}
+    <div className="h-screen w-full flex flex-col overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <LeagueCardMenu />
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
       </div>
+      <BottomNavBar />
     </div>
   );
 }
