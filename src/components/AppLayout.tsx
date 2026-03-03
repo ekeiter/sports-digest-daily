@@ -21,7 +21,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           
           {/* Feed content - full width on mobile/tablet, fixed width on PC */}
           <SidebarInset className="flex-1 lg:flex-none lg:w-[34rem] min-h-0 overflow-hidden flex flex-col">
-            <div className="w-full flex-1 min-h-0 overflow-auto">
+            <div className="w-full flex-1 min-h-0">
               {children}
             </div>
             <BottomNavBar />

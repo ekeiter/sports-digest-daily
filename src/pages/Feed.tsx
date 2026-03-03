@@ -213,7 +213,7 @@ export default function Feed() {
   }
 
   return (
-    <div className="h-screen flex flex-col w-full overflow-hidden">
+    <div className="h-full flex flex-col w-full overflow-hidden">
         <header className="border-b bg-background/80 backdrop-blur-sm z-10 flex-shrink-0">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
             {/* Mobile: hamburger on far left */}

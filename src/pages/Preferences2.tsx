@@ -650,7 +650,7 @@ export default function Preferences2() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-page-bg overflow-hidden">
+    <div className="h-full flex flex-col bg-page-bg overflow-hidden">
       {/* ─── Header (same as Preferences) ─── */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
