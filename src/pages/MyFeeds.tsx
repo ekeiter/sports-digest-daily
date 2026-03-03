@@ -41,7 +41,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center gap-1.5 w-full p-3 pt-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-center shadow-sm select-none"
+      className="relative flex flex-col items-center gap-1.5 w-full p-3 pt-4 rounded-xl bg-white dark:bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] select-none h-[116px]"
     >
       {/* Delete icon - upper right */}
       <div
@@ -115,7 +115,7 @@ export default function MyFeeds() {
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-page-bg">
+    <div className="h-full flex flex-col overflow-hidden bg-[hsl(210_14%_89%)]">
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
