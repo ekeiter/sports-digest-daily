@@ -67,7 +67,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
         {secondaryLabel && <span className="text-xs md:text-sm font-medium text-foreground flex-shrink-0">{secondaryLabel}</span>}
       </div>
       {sublabel && (
-        <span className="text-xs text-muted-foreground truncate">{sublabel}</span>
+        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-1 w-full">{sublabel}</span>
       )}
     </button>
   );
@@ -250,15 +250,23 @@ export default function MyFeeds() {
               })}
 
               {/* People */}
-              {prefs.people.map(person => (
-                <FavoriteCard
-                  key={`person-${person.id}`}
-                  logoUrl={getPersonLogo(person)}
-                  label={person.name}
-                  onClick={() => navigate(`/feed?focus=${person.interestId}`)}
-                  onDelete={() => handleDelete(person.interestId)}
-                />
-              ))}
+              {prefs.people.map(person => {
+                const details: string[] = [];
+                if (person.position) details.push(person.position);
+                if (person.teams?.display_name) details.push(person.teams.display_name);
+                else if (person.schools?.short_name) details.push(person.schools.short_name);
+                if (person.leagues?.code) details.push(person.leagues.code);
+                return (
+                  <FavoriteCard
+                    key={`person-${person.id}`}
+                    logoUrl={getPersonLogo(person)}
+                    label={person.name}
+                    sublabel={details.length > 0 ? details.join(' · ') : undefined}
+                    onClick={() => navigate(`/feed?focus=${person.interestId}`)}
+                    onDelete={() => handleDelete(person.interestId)}
+                  />
+                );
+              })}
             </div>
             </div>
           )}
