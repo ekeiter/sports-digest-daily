@@ -12,6 +12,7 @@ import { FocusedFeedHeader } from "@/components/FocusedFeedHeader";
 
 import { useArticleFeed, useInvalidateArticleFeed, FeedRow } from "@/hooks/useArticleFeed";
 import { openUrl } from "@/hooks/useOpenUrl";
+import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 
 import { FeedAd } from "@/components/ads/FeedAd";
 
@@ -212,8 +213,8 @@ export default function Feed() {
     <div className="h-full flex flex-col w-full overflow-hidden">
         <header className="border-b bg-background/80 backdrop-blur-sm z-10 flex-shrink-0">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
-            {/* Spacer for balance */}
-            <div className="w-8 flex-shrink-0" />
+            {/* Logo left */}
+            <img src={sportsdigLogo} alt="SportsDig" className="h-7 w-7 object-contain flex-shrink-0" />
             {/* Centered title */}
             <div className="flex-1 min-w-0 mx-1 overflow-hidden flex justify-center">
               <FocusedFeedHeader 
