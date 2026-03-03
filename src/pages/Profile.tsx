@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BookOpen, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -201,8 +202,26 @@ export default function Profile() {
                 Sign Out
               </Button>
             </div>
+
+            <div className="pt-4 border-t space-y-2">
+              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => navigate('/instructions')}>
+                <BookOpen className="h-4 w-4 mr-2" /> Instructions
+              </Button>
+              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => navigate('/why-sportsdig')}>
+                <HelpCircle className="h-4 w-4 mr-2" /> Why SportsDig
+              </Button>
+            </div>
           </CardContent>
         </Card>
+
+        <div className="text-xs text-muted-foreground text-center space-y-1 pt-4 pb-2">
+          <p className="font-medium">SportsDig™ — Personalized Sports News</p>
+          <p>© 2026 SportsDig. All rights reserved.</p>
+          <div className="flex justify-center gap-4 pt-1">
+            <span className="underline cursor-pointer hover:text-foreground transition-colors" onClick={() => navigate('/contact')}>Contact</span>
+            <span className="underline cursor-pointer hover:text-foreground transition-colors" onClick={() => navigate('/privacy')}>Privacy Policy</span>
+          </div>
+        </div>
       </main>
 
       <Dialog open={showEmailDialog} onOpenChange={setShowEmailDialog}>
