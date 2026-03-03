@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart, HelpCircle } from "lucide-react";
+import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import {
   Dialog,
   DialogContent,
@@ -829,7 +830,7 @@ export default function Preferences() {
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center">
-            <div className="w-10" />
+            <img src={sportsdigLogo} alt="SportsDig" className="h-7 w-7 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center gap-2">
               <span className="text-lg font-bold text-foreground">Feed Topic Manager</span>
               <button

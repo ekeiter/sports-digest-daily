@@ -125,8 +125,12 @@ export default function Profile() {
     <div className="h-full flex flex-col overflow-hidden bg-page-bg">
       <header className="py-2 flex-shrink-0">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
+          <div className="flex items-center">
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-7 w-7 object-contain flex-shrink-0" />
+            <div className="flex-1 flex items-center justify-center">
+              <span className="text-lg font-bold text-foreground">Profile</span>
+            </div>
+            <div className="w-7 flex-shrink-0" />
           </div>
         </div>
       </header>
