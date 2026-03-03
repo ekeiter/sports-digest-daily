@@ -73,11 +73,11 @@ export default function MatchedInterestBadges({ interests, className = "" }: Mat
             className="text-xs px-1.5 py-0 h-5 font-normal bg-badge-interest text-badge-interest-foreground border-badge-interest gap-1"
           >
             <span>#{badge.label}</span>
-            {badge.type === 'school' && badge.logoUrl && (
-              <img src={badge.logoUrl} alt="" className="h-3.5 w-3.5 object-contain" />
-            )}
             {badge.type === 'school' && badge.gender && (
               <span className="font-semibold">{badge.gender}</span>
+            )}
+            {badge.type === 'school' && badge.logoUrl && (
+              <img src={badge.logoUrl} alt="" className="h-3.5 w-3.5 object-contain" />
             )}
             {badge.type === 'country' && badge.logoUrl && (
               <img src={badge.logoUrl} alt="" className="h-3 w-4 object-contain" />

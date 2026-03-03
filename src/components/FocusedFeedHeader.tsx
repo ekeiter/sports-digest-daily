@@ -398,13 +398,13 @@ export function FocusedFeedHeader({
           <span className="text-lg md:text-xl font-bold text-foreground truncate">
             {displayContent.label}
           </span>
-          {displayContent.rightIcon && (
-            <img src={displayContent.rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
-          )}
           {displayContent.rightLabel && (
             <span className="text-lg md:text-xl font-bold text-foreground flex-shrink-0">
               {displayContent.rightLabel}
             </span>
+          )}
+          {displayContent.rightIcon && (
+            <img src={displayContent.rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
           )}
           {displayContent.sublabel && (
             <span className="text-lg md:text-xl font-bold text-foreground truncate">

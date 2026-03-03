@@ -65,8 +65,8 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       {/* Secondary icon row (league logo / country flag) */}
       {(secondaryIcon || secondaryLabel) && (
         <div className="flex items-center justify-center gap-1">
-          {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain" />}
           {secondaryLabel && <span className="text-xs font-medium text-foreground">{secondaryLabel}</span>}
+          {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain" />}
         </div>
       )}
 
