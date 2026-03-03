@@ -407,20 +407,34 @@ export default function Preferences() {
     const expandedItem = expandedLeagueItems.find(i => i.id === schoolId);
     const schoolItem = schools.find(s => s.id === schoolId);
     const label = expandedItem?.display_name || schoolItem?.name || 'school';
-    const isCurrentlySelected = selectedSchools.includes(schoolId);
+    // Check selection based on league context: league-specific check if leagueId provided
+    const isCurrentlySelected = leagueId
+      ? (selectedSchoolsByLeague[leagueId] || []).includes(schoolId)
+      : allSportsSchools.has(schoolId) || selectedSchools.includes(schoolId);
     try {
       if (isCurrentlySelected) {
-        const {
-          error
-        } = await supabase.from("subscriber_interests").delete().eq("subscriber_id", userId).eq("school_id", schoolId);
+        // Delete only the specific school+league combo (or all if no leagueId)
+        let query = supabase.from("subscriber_interests").delete().eq("subscriber_id", userId).eq("school_id", schoolId);
+        if (leagueId) {
+          query = query.eq("league_id", leagueId);
+        }
+        const { error } = await query;
         if (error) throw error;
-        setSelectedSchools(prev => prev.filter(id => id !== schoolId));
-        // Also remove from selectedSchoolsByLeague if it was in a league context
         if (leagueId) {
           setSelectedSchoolsByLeague(prev => ({
             ...prev,
             [leagueId]: (prev[leagueId] || []).filter(id => id !== schoolId)
           }));
+          // Only remove from flat selectedSchools if no other league combos remain
+          const remainingLeagues = Object.entries(selectedSchoolsByLeague).filter(
+            ([lid, ids]) => Number(lid) !== leagueId && ids.includes(schoolId)
+          );
+          if (remainingLeagues.length === 0 && !allSportsSchools.has(schoolId)) {
+            setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+          }
+        } else {
+          setSelectedSchools(prev => prev.filter(id => id !== schoolId));
+          setAllSportsSchools(prev => { const next = new Set(prev); next.delete(schoolId); return next; });
         }
         toast(`Unfollowed ${label}`);
       } else {
@@ -447,6 +461,8 @@ export default function Preferences() {
             ...prev,
             [leagueId]: [...(prev[leagueId] || []), schoolId]
           }));
+        } else {
+          setAllSportsSchools(prev => new Set(prev).add(schoolId));
         }
         toast.success(`Followed ${label}`);
       }
@@ -1143,7 +1159,7 @@ export default function Preferences() {
                 // For schools: selected if "All Sports" is selected OR this specific combo exists
                 // For countries: check selectedCountries
                 // For teams: check selectedTeams
-                const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || selectedSchools.includes(item.id) : expandedLeagueType === 'country' ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id)) : selectedTeams.includes(item.id);
+                const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || (expandedLeagueId ? (selectedSchoolsByLeague[expandedLeagueId] || []).includes(item.id) : selectedSchools.includes(item.id)) : expandedLeagueType === 'country' ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id)) : selectedTeams.includes(item.id);
                 return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
                           <div
                             onClick={() =>
