@@ -5,7 +5,6 @@ import { Trash2, Loader2, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-import { MobileSidebar } from "@/components/MobileSidebar";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 
 // Helper to properly capitalize sport names
@@ -119,15 +118,7 @@ export default function MyFeeds() {
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center md:hidden">
-            <div className="w-10 flex justify-start"><MobileSidebar /></div>
-            <div className="flex-1 flex items-center justify-center gap-2">
-              <span className="text-lg font-bold text-foreground">Favorites</span>
-            </div>
-            <div className="w-10" />
-          </div>
-          <div className="hidden md:flex items-center justify-center gap-3 py-1">
-            <img src={sportsdigLogo} alt="SportsDig" className="h-10 object-contain" />
+          <div className="flex items-center justify-center gap-2">
             <span className="text-lg font-bold text-foreground">Favorites</span>
           </div>
         </div>

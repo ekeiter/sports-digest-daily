@@ -27,7 +27,7 @@ import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
-// Layout wrapper that persists the sidebar
+// Layout wrapper with bottom nav
 const PersistentLayout = () => (
   <AppLayout>
     <Outlet />

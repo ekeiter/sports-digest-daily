@@ -1,26 +1,14 @@
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { BookOpen, MousePointer, Search, Heart, Layers } from "lucide-react";
-import { MobileSidebar } from "@/components/MobileSidebar";
+
 
 const Instructions = () => {
   return (
     <div className="h-full flex flex-col overflow-hidden bg-page-bg">
-      {/* Mobile header with hamburger menu and logo */}
-      <header className="py-2 md:hidden flex-shrink-0">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <MobileSidebar />
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10 absolute left-1/2 -translate-x-1/2" />
-            <div className="w-10" /> {/* Spacer for balance */}
-          </div>
-        </div>
-      </header>
-
-      {/* PC/Tablet header with logo */}
-      <header className="hidden md:block py-3 flex-shrink-0">
+      <header className="py-2 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-12" />
+            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
           </div>
         </div>
       </header>

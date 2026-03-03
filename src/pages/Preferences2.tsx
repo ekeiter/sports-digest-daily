@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
-import { MobileSidebar } from "@/components/MobileSidebar";
+
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
@@ -667,22 +667,10 @@ export default function Preferences2() {
       {/* ─── Header (same as Preferences) ─── */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center md:hidden">
-            <div className="w-10 flex justify-start"><MobileSidebar /></div>
+          <div className="flex items-center">
+            <div className="w-10" />
             <div className="flex-1 flex items-center justify-center gap-2">
               <span className="text-lg font-bold text-foreground">Feed Topic Manager</span>
-              <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f]" /></button>
-            </div>
-            <div className="w-10 flex justify-end">
-              {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
-                <button onClick={handleBack} className="p-1 bg-black rounded transition-transform hover:scale-110" aria-label="Go back"><ArrowLeft className="h-5 w-5 text-white" /></button>
-              )}
-            </div>
-          </div>
-          <div className="hidden md:flex items-center">
-            <div className="w-10" />
-            <div className="flex-1 flex items-center justify-center gap-3">
-              <span className="text-xl font-bold text-foreground">Feed Topic Manager</span>
               <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f]" /></button>
             </div>
             <div className="w-10 flex justify-end">
