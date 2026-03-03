@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
-import { Loader2 } from "lucide-react";
 
 // Helper to properly capitalize sport names
 const toTitleCase = (str: string) =>
@@ -23,17 +22,17 @@ const getGenderIndicator = (leagueCode: string | null): string | null => {
   return null;
 };
 
-interface FavoriteRowProps {
+interface FavoriteCardProps {
   logoUrl?: string | null;
   label: string;
   sublabel?: string;
-  rightIcon?: string | null;
-  rightLabel?: string | null;
+  secondaryIcon?: string | null;
+  secondaryLabel?: string | null;
   onClick: () => void;
   onDelete: () => void;
 }
 
-function FavoriteRow({ logoUrl, label, sublabel, rightIcon, rightLabel, onClick, onDelete }: FavoriteRowProps) {
+function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel, onClick, onDelete }: FavoriteCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete();
@@ -42,24 +41,34 @@ function FavoriteRow({ logoUrl, label, sublabel, rightIcon, rightLabel, onClick,
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-left shadow-sm"
+      className="relative flex flex-col items-center gap-1.5 w-full p-3 pt-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-center shadow-sm select-none"
     >
-      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5">
-        {logoUrl ? (
-          <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
-        ) : (
-          <div className="w-6 h-6 rounded-full bg-muted" />
-        )}
-      </div>
-      <div className="flex items-center gap-1.5 min-w-0 flex-1">
-        <span className="text-sm font-semibold text-foreground truncate">{label}</span>
-        {rightIcon && <img src={rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />}
-        {rightLabel && <span className="text-sm font-semibold text-foreground flex-shrink-0">{rightLabel}</span>}
-        {sublabel && <span className="text-sm font-semibold text-muted-foreground truncate">{sublabel}</span>}
-      </div>
-      <div onClick={handleDelete} className="flex-shrink-0 p-1 hover:scale-110 transition-transform cursor-pointer">
+      {/* Delete icon - upper right */}
+      <div
+        onClick={handleDelete}
+        className="absolute top-1.5 right-1.5 p-1 hover:scale-110 transition-transform cursor-pointer"
+      >
         <Trash2 className="h-4 w-4 text-destructive" />
       </div>
+
+      {/* Logo */}
+      <div className="w-10 h-10 flex items-center justify-center dark:bg-white dark:rounded dark:p-0.5">
+        {logoUrl ? (
+          <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-muted" />
+        )}
+      </div>
+
+      {/* Label row */}
+      <div className="flex items-center justify-center gap-1 min-w-0 w-full">
+        <span className="text-xs md:text-sm font-medium truncate">{label}</span>
+        {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain flex-shrink-0" />}
+        {secondaryLabel && <span className="text-xs md:text-sm font-medium text-foreground flex-shrink-0">{secondaryLabel}</span>}
+      </div>
+      {sublabel && (
+        <span className="text-xs text-muted-foreground truncate">{sublabel}</span>
+      )}
     </button>
   );
 }
@@ -142,10 +151,10 @@ export default function MyFeeds() {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col gap-1.5">
+            <div className="grid grid-cols-3 gap-2">
               {/* Sports */}
               {prefs.sports.map(sport => (
-                <FavoriteRow
+                <FavoriteCard
                   key={`sport-${sport.id}`}
                   logoUrl={sport.logo_url}
                   label={sport.display_label || toTitleCase(sport.sport)}
@@ -156,7 +165,7 @@ export default function MyFeeds() {
 
               {/* Leagues */}
               {prefs.leagues.map(league => (
-                <FavoriteRow
+                <FavoriteCard
                   key={`league-${league.id}`}
                   logoUrl={league.logo_url}
                   label={league.display_label || league.name || league.code}
@@ -167,7 +176,7 @@ export default function MyFeeds() {
 
               {/* Teams */}
               {prefs.teams.map(team => (
-                <FavoriteRow
+                <FavoriteCard
                   key={`team-${team.id}`}
                   logoUrl={team.logo_url}
                   label={team.display_name}
@@ -180,12 +189,12 @@ export default function MyFeeds() {
               {prefs.schools.map(school => {
                 const genderIndicator = getGenderIndicator(school.league_code);
                 return (
-                  <FavoriteRow
+                  <FavoriteCard
                     key={`school-${school.id}-${school.league_id || 'all'}`}
                     logoUrl={school.logo_url}
                     label={school.short_name}
-                    rightIcon={school.league_logo_url}
-                    rightLabel={genderIndicator}
+                    secondaryIcon={school.league_logo_url}
+                    secondaryLabel={genderIndicator}
                     sublabel={!school.league_id ? "All Sports" : undefined}
                     onClick={() => {
                       let url = `/feed?type=school&id=${school.id}`;
@@ -199,11 +208,11 @@ export default function MyFeeds() {
 
               {/* Countries */}
               {prefs.countries.map(country => (
-                <FavoriteRow
+                <FavoriteCard
                   key={`country-${country.id}-${country.league_id || 'all'}`}
                   logoUrl={country.league_logo_url || undefined}
                   label={country.league_name || country.name}
-                  rightIcon={country.logo_url}
+                  secondaryIcon={country.logo_url}
                   onClick={() => {
                     let url = `/feed?type=country&id=${country.id}`;
                     if (country.league_id) url += `&leagueId=${country.league_id}`;
@@ -218,11 +227,12 @@ export default function MyFeeds() {
                 const sportLabel = pref.sport_name ? toTitleCase(pref.sport_name) : "All Sports";
                 const countryLabel = pref.country_logo ? "" : (pref.country_name || "All Countries");
                 return (
-                  <FavoriteRow
+                  <FavoriteCard
                     key={`olympics-${pref.id}`}
                     logoUrl="https://upload.wikimedia.org/wikipedia/commons/5/5c/Olympic_rings_without_rims.svg"
-                    label={`${sportLabel} -${countryLabel ? ` ${countryLabel}` : ""}`}
-                    rightIcon={pref.country_logo}
+                    label={`${sportLabel}`}
+                    sublabel={countryLabel || undefined}
+                    secondaryIcon={pref.country_logo}
                     onClick={() => navigate(`/feed?focus=${pref.id}`)}
                     onDelete={() => handleDelete(pref.id)}
                   />
@@ -231,7 +241,7 @@ export default function MyFeeds() {
 
               {/* People */}
               {prefs.people.map(person => (
-                <FavoriteRow
+                <FavoriteCard
                   key={`person-${person.id}`}
                   logoUrl={getPersonLogo(person)}
                   label={person.name}
