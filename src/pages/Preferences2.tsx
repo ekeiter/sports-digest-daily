@@ -678,7 +678,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
           <div className="flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center gap-2">
-              <span className="text-lg font-bold text-foreground">Feed Topic Manager</span>
+              <span className="text-lg font-bold text-foreground">Feed Manager</span>
               <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f]" /></button>
             </div>
             <div className="w-10 flex justify-end">
@@ -691,8 +691,8 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
           <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
             <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>How to Use the Feed Topic Manager</DialogTitle>
-                <DialogDescription className="sr-only">Instructions for using the Feed Topic Manager</DialogDescription>
+                <DialogTitle>How to Use the Feed Manager</DialogTitle>
+                <DialogDescription className="sr-only">Instructions for using the Feed Manager</DialogDescription>
               </DialogHeader>
               <div className="space-y-3 text-sm text-muted-foreground">
                 <p><span className="font-bold text-foreground">Browsing Topics</span> - Clicking on any topic will take you to a focused news feed for that topic.</p>
