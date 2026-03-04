@@ -73,7 +73,8 @@ export default function Preferences2() {
   const [leagueSchoolMap, setLeagueSchoolMap] = useState<Record<number, number[]>>({});
   const [selectedSchoolsByLeague, setSelectedSchoolsByLeague] = useState<Record<number, number[]>>({});
   const [allSportsSchools, setAllSportsSchools] = useState<Set<number>>(new Set());
-  const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
+const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
+  const [leagueTeamTypes, setLeagueTeamTypes] = useState<Record<number, string>>({});
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -179,11 +180,13 @@ export default function Preferences2() {
         allMappings.forEach(m => { if (!mapping[m.league_id]) mapping[m.league_id] = []; mapping[m.league_id].push(m.team_id); });
         setLeagueTeamMap(mapping);
       }
-      const { data: leaguesData } = await supabase.from("leagues").select("id, kind");
+      const { data: leaguesData } = await supabase.from("leagues").select("id, kind, team_type");
       if (leaguesData) {
         const kindsMap: Record<number, string> = {};
-        leaguesData.forEach(l => { kindsMap[l.id] = l.kind; });
+        const teamTypesMap: Record<number, string> = {};
+        leaguesData.forEach(l => { kindsMap[l.id] = l.kind; if (l.team_type) teamTypesMap[l.id] = l.team_type; });
         setLeagueKinds(kindsMap);
+        setLeagueTeamTypes(teamTypesMap);
       }
       if (teamIds.length > 0) {
         const { data: selectedTeamsData } = await supabase.from("teams").select("*").in("id", teamIds);
@@ -570,7 +573,7 @@ export default function Preferences2() {
                     onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
                     className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
                   >
-                    Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
+                    {leagueTeamTypes[item.entity_id!] === 'school' ? 'Schools' : leagueTeamTypes[item.entity_id!] === 'country' ? 'Countries' : 'Teams'}{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
                   </button>
                 )}
                 {showMenuButton && (
