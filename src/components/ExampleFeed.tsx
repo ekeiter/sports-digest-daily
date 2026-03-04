@@ -127,6 +127,16 @@ export default function ExampleFeed() {
     }
   }
 
+  // Preload thumbnails so images are cached before the user scrolls
+  useEffect(() => {
+    articles.forEach((a) => {
+      if (a.thumbnail_url) {
+        const img = new Image();
+        img.src = a.thumbnail_url;
+      }
+    });
+  }, [articles]);
+
   if (loading) {
     return (
       <div className="w-full max-w-lg mx-auto space-y-3 pt-4">
