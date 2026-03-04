@@ -629,24 +629,22 @@ export default function Preferences2() {
           (entityType === 'school' || entityType === 'country') ? expandedLeagueId : undefined
         )}
       >
-        {/* Heart in top-right */}
-        <div className="w-full flex justify-end">
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              if (entityType === 'school') handleSchoolToggle(item.id, expandedLeagueId);
-              else if (entityType === 'country') handleCountryToggle(item.id, expandedLeagueId);
-              else handleTeamToggle(item.id);
-            }}
-            className="p-0.5 rounded-full hover:bg-muted/50 transition-colors relative"
-            title={isSelected ? "Remove from favorites" : "Add to favorites"}
-          >
-            <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-            {entityType === 'school' && allSportsSchools.has(item.id) && (
-              <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
-            )}
-          </button>
-        </div>
+        {/* Heart in top-right - absolute so it doesn't affect centering */}
+        <button
+          onClick={e => {
+            e.stopPropagation();
+            if (entityType === 'school') handleSchoolToggle(item.id, expandedLeagueId);
+            else if (entityType === 'country') handleCountryToggle(item.id, expandedLeagueId);
+            else handleTeamToggle(item.id);
+          }}
+          className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
+          title={isSelected ? "Remove from favorites" : "Add to favorites"}
+        >
+          <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+          {entityType === 'school' && allSportsSchools.has(item.id) && (
+            <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
+          )}
+        </button>
 
         {/* Logo + name centered */}
         {item.logo_url ? (
