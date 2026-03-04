@@ -35,6 +35,8 @@ export default function Preferences2() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [currentParentId, setCurrentParentId] = useState<number | null>(null);
   const [menuStack, setMenuStack] = useState<{ id: number | null; label: string }[]>([]);
+  const mainScrollRef = useRef<HTMLDivElement>(null);
+  const savedScrollPosition = useRef<number>(0);
 
   // Teams (for expanded leagues)
   const [teams, setTeams] = useState<Team[]>([]);
@@ -248,6 +250,8 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       itemsData.sort((a, b) => a.display_name.localeCompare(b.display_name));
       setExpandedLeagueItems(itemsData); setExpandedLeagueType(resolvedType);
       setExpandedLeagueTeamIds(itemsData.map(t => t.id)); setExpandedLeagueId(leagueId);
+      savedScrollPosition.current = mainScrollRef.current?.scrollTop ?? 0;
+      requestAnimationFrame(() => mainScrollRef.current?.scrollTo({ top: 0 }));
     } catch (error) { console.error("Error loading teams:", error); toast.error("Failed to load teams"); } finally { setLoadingTeams(false); }
   };
 
@@ -257,6 +261,8 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       const { data: schoolsData, error } = await supabase.from("schools").select("*").order("name", { ascending: true });
       if (error) throw error;
       setSchools(schoolsData || []); setShowSchoolsView(true);
+      savedScrollPosition.current = mainScrollRef.current?.scrollTop ?? 0;
+      requestAnimationFrame(() => mainScrollRef.current?.scrollTo({ top: 0 }));
     } catch (error) { console.error("Error loading schools:", error); toast.error("Failed to load schools"); } finally { setLoadingSchools(false); }
   };
 
@@ -340,18 +346,22 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
     }
     if (item.entity_type === 'schools') { loadAllSchools(); return; }
     if (item.is_submenu) {
+      savedScrollPosition.current = mainScrollRef.current?.scrollTop ?? 0;
       setMenuStack(prev => [...prev, { id: currentParentId, label: item.label }]);
       setCurrentParentId(item.id); setExpandedLeagueId(null); setShowSchoolsView(false);
+      requestAnimationFrame(() => mainScrollRef.current?.scrollTo({ top: 0 }));
       return;
     }
   };
 
   const handleBack = () => {
-    if (expandedLeagueId !== null) { setExpandedLeagueId(null); return; }
-    if (showSchoolsView) { setShowSchoolsView(false); return; }
+    const restoreScroll = () => requestAnimationFrame(() => mainScrollRef.current?.scrollTo({ top: savedScrollPosition.current }));
+    if (expandedLeagueId !== null) { setExpandedLeagueId(null); restoreScroll(); return; }
+    if (showSchoolsView) { setShowSchoolsView(false); restoreScroll(); return; }
     if (menuStack.length > 0) {
       const prev = menuStack[menuStack.length - 1];
       setMenuStack(s => s.slice(0, -1)); setCurrentParentId(prev.id);
+      restoreScroll();
     }
   };
 
@@ -706,7 +716,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       </header>
 
       {/* ─── Content ─── */}
-      <main className="flex-1 overflow-y-auto">
+      <main ref={mainScrollRef} className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-1.5 py-3 max-w-lg">
           {/* Search bar - same as original */}
           <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
