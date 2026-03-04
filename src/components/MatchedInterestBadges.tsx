@@ -70,7 +70,7 @@ export default function MatchedInterestBadges({ interests, className = "" }: Mat
           <Badge 
             key={index} 
             variant="secondary" 
-            className="text-xs px-1.5 py-0 h-5 font-normal bg-badge-interest text-badge-interest-foreground border-badge-interest gap-1"
+            className="text-[10px] px-1.5 py-0 h-5 font-medium bg-black/60 text-white border-transparent backdrop-blur-sm gap-1 shadow-sm"
           >
             <span>#{badge.label}</span>
             {badge.type === 'school' && badge.gender && (

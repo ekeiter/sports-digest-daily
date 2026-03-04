@@ -262,11 +262,16 @@ export default function Feed() {
                         className="block w-full text-left hover:opacity-80 transition-opacity cursor-pointer"
                       >
                         <div className="flex flex-col">
-                          <div className="w-full">
+                          <div className="w-full relative">
                             {article.thumbnail_url ? (
                               <ArticleImage src={article.thumbnail_url} className="w-full aspect-video object-cover" />
                             ) : (
                               <ArticlePlaceholder />
+                            )}
+                            {article.matched_interests && article.matched_interests.length > 0 && (
+                              <div className="absolute top-2 left-2">
+                                <MatchedInterestBadges interests={article.matched_interests} />
+                              </div>
                             )}
                           </div>
 
@@ -275,7 +280,6 @@ export default function Feed() {
                               <span>{article.url_domain || article.domain || 'Unknown source'}</span>
                               <span>•</span>
                               <span>{formatTimeAgo(article.published_effective)}</span>
-                              <MatchedInterestBadges interests={article.matched_interests} />
                             </div>
 
                             <h3 className="font-semibold text-sm line-clamp-3">
