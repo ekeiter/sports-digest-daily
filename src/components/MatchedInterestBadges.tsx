@@ -63,7 +63,7 @@ export default function MatchedInterestBadges({ interests, className = "" }: Mat
   }
 
   return (
-    <div className={`flex flex-wrap gap-1 ${className}`}>
+    <div className={`flex flex-col items-start gap-1 ${className}`}>
       {interests.map((interest, index) => {
         const badge = parseBadge(interest);
         return (
