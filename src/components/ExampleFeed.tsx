@@ -35,7 +35,18 @@ function formatTimeAgo(dateString: string | null) {
 
 export default function ExampleFeed() {
   const [articles, setArticles] = useState<ExampleArticle[]>([]);
+  const [failedIds, setFailedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
+
+  const handleImageError = (id: number) => {
+    setFailedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
+
+  const visibleArticles = articles.filter((a) => !failedIds.has(a.id));
 
   useEffect(() => {
     fetchExampleArticles();
@@ -147,7 +158,7 @@ export default function ExampleFeed() {
     );
   }
 
-  if (articles.length === 0) return null;
+  if (visibleArticles.length === 0) return null;
 
   return (
     <div className="w-full max-w-lg mx-auto pt-2 md:pt-3">
@@ -158,7 +169,7 @@ export default function ExampleFeed() {
         SportsDig tracks sports coverage from thousands of major sports publishers and regional outlets across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day. Register to personalize your feed and explore the full capabilities of the app.
       </p>
       <div className="space-y-0">
-        {articles.map((article) => (
+        {visibleArticles.map((article) => (
           <Card key={article.id} className="overflow-hidden rounded-none border-0 shadow-none border-b">
             <CardContent className="p-0">
               <button
@@ -168,7 +179,7 @@ export default function ExampleFeed() {
               >
                 <div className="flex flex-col">
                   <div className="w-full">
-                    <ArticleImage src={article.thumbnail_url!} className="w-full aspect-video object-cover" />
+                    <ArticleImage src={article.thumbnail_url!} className="w-full aspect-video object-cover" onError={() => handleImageError(article.id)} />
                   </div>
                   <div className="px-3 pt-1.5 pb-2">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-0.5">
