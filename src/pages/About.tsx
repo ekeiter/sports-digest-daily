@@ -9,19 +9,17 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-page-bg">
-      <div className="container mx-auto px-4 max-w-3xl pt-3">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="gap-1.5 px-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
-        </div>
+      <div className="container mx-auto px-4 max-w-3xl pt-3 relative flex items-center justify-center">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="gap-1.5 px-2 absolute left-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
       </div>
       <div className="flex-1">
         <WhySportsDig showHeader={false} />
