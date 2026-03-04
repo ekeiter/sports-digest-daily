@@ -4,13 +4,14 @@ import ArticlePlaceholder from "./ArticlePlaceholder";
 interface ArticleImageProps {
   src: string;
   className?: string;
+  onError?: () => void;
 }
 
 /**
  * Article thumbnail image with automatic fallback to placeholder
  * when the image fails to load (e.g., hotlink protection, 404, etc.)
  */
-export default function ArticleImage({ src, className = "" }: ArticleImageProps) {
+export default function ArticleImage({ src, className = "", onError }: ArticleImageProps) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -24,7 +25,10 @@ export default function ArticleImage({ src, className = "" }: ArticleImageProps)
       className={className}
       loading="lazy"
       referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
+      onError={() => {
+        setFailed(true);
+        onError?.();
+      }}
     />
   );
 }
