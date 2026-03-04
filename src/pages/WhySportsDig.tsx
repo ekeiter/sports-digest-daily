@@ -1,17 +1,22 @@
 import sportsDigBlimpLogo from "@/assets/sportsdig-blimp-logo.png";
 import { Target, Smartphone, Newspaper, Trophy, Zap, Globe, Settings } from "lucide-react";
 
+interface WhySportsDigProps {
+  showHeader?: boolean;
+}
 
-const WhySportsDig = () => {
+const WhySportsDig = ({ showHeader = true }: WhySportsDigProps) => {
   return (
     <div className="h-full flex flex-col overflow-hidden bg-page-bg">
-      <header className="py-2 flex-shrink-0">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
-            <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-10" />
+      {showHeader && (
+        <header className="py-2 flex-shrink-0">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="flex items-center justify-center">
+              <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6 max-w-3xl">
         <div className="bg-card text-card-foreground rounded-lg shadow-lg p-5 md:p-6 space-y-6">
