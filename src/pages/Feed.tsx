@@ -268,7 +268,7 @@ export default function Feed() {
                             ) : (
                               <ArticlePlaceholder />
                             )}
-                            {article.matched_interests && article.matched_interests.length > 0 && (
+                            {!focusParam && !entityType && article.matched_interests && article.matched_interests.length > 0 && (
                               <div className="absolute top-2 left-2">
                                 <MatchedInterestBadges interests={article.matched_interests} />
                               </div>
