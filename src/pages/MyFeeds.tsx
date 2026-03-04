@@ -40,7 +40,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center gap-1.5 w-full p-3 pt-4 rounded-xl bg-white dark:bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] select-none h-[132px]"
+      className="relative flex flex-col items-center gap-1 w-full p-2 pt-3 rounded-xl bg-white dark:bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] select-none h-[132px]"
     >
       {/* Delete icon - upper right */}
       <div
@@ -161,7 +161,7 @@ export default function MyFeeds() {
                 Combined Favorites Feed
               </button>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               {/* Sports */}
               {prefs.sports.map(sport => (
                 <FavoriteCard
