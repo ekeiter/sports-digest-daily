@@ -504,6 +504,11 @@ export default function Preferences2() {
     const isHeading = !item.entity_type && !item.is_submenu && !hasChildren(item) && !hasCustomRoute;
     const isAccordionParent = !item.is_submenu && hasChildren(item);
     const isAccordionExpanded = expandedAccordionIds.includes(item.id);
+    const showChevron = isSubmenu;
+    const showTeamsButton = isLeague && !!item.entity_id && leagueKinds[item.entity_id] === 'league';
+    const showMenuButton = isAccordionParent;
+    const showSchoolsButton = isSchools;
+    const hasFooterControl = showChevron || showTeamsButton || showMenuButton || showSchoolsButton;
 
     // Headings span the full width
     // Headings are now rendered as section titles, skip them here
@@ -556,33 +561,34 @@ export default function Preferences2() {
             )}
 
             {/* Button slot - fixed height to keep layout consistent */}
-            <div className="h-5 flex items-center justify-center pt-1">
-
-            {/* Sub-indicators */}
-            {isSubmenu && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
-            {isLeague && item.entity_id && leagueKinds[item.entity_id] === 'league' && (
-              <button
-                onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-              >
-                Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
-              </button>
+            {hasFooterControl && (
+              <div className="h-5 flex items-center justify-center pt-1">
+                {/* Sub-indicators */}
+                {showChevron && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
+                {showTeamsButton && (
+                  <button
+                    onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                  >
+                    Teams{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
+                  </button>
+                )}
+                {showMenuButton && (
+                  <button
+                    onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                  >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
+                )}
+                {showSchoolsButton && (
+                  <button
+                    onClick={e => { e.stopPropagation(); loadAllSchools(); }}
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                  >
+                    Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
+                  </button>
+                )}
+              </div>
             )}
-            {isAccordionParent && (
-              <button
-                onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-              >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
-            )}
-            {isSchools && (
-              <button
-                onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
-              >
-                Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
-              </button>
-            )}
-            </div>
           </div>
         )}
 
