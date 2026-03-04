@@ -20,6 +20,7 @@ import Preferences2 from "./pages/Preferences2";
 import WhySportsDig from "./pages/WhySportsDig";
 import Instructions from "./pages/Instructions";
 import Index from "./pages/Index";
+import About from "./pages/About";
 
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
@@ -69,6 +70,7 @@ const App = () => {
               {/* /splash now redirects to /feed since the branded loader is built-in */}
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
