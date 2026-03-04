@@ -150,7 +150,7 @@ export default function ExampleFeed() {
   if (articles.length === 0) return null;
 
   return (
-    <div className="w-full max-w-lg mx-auto pt-4 md:pt-6">
+    <div className="w-full max-w-lg mx-auto pt-2 md:pt-3">
       <h3 className="text-sm md:text-base font-bold text-foreground text-center mb-3">
         Latest Sports News
       </h3>
