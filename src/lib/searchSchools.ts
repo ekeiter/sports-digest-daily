@@ -8,6 +8,7 @@ export interface SchoolSearchResult {
   logo_url: string | null;
   league_id: number | null;
   league_code: string | null;
+  league_logo_url: string | null;
   display_label: string; // e.g., "Penn State Nittany Lions (NCAAF)" or "Penn State Nittany Lions (All Sports)"
 }
 
@@ -76,7 +77,7 @@ async function expandSchoolsWithLeagues(
     .select(`
       school_id,
       league_id,
-      leagues!inner(id, code, name)
+      leagues!inner(id, code, name, logo_url)
     `)
     .in("school_id", schoolIds)
     .eq("is_active", true);
@@ -92,15 +93,16 @@ async function expandSchoolsWithLeagues(
       logo_url: school.logo_url,
       league_id: null,
       league_code: null,
+      league_logo_url: null,
       display_label: `${school.name} (All Sports)`,
     }));
   }
 
   // Build a map of school_id -> league associations
-  const schoolLeagueMap = new Map<number, Array<{ league_id: number; league_code: string }>>();
+  const schoolLeagueMap = new Map<number, Array<{ league_id: number; league_code: string; league_logo_url: string | null }>>();
   
   for (const ls of leagueSchools || []) {
-    const league = ls.leagues as unknown as { id: number; code: string; name: string };
+    const league = ls.leagues as unknown as { id: number; code: string; name: string; logo_url?: string | null };
     if (!league) continue;
     
     if (!schoolLeagueMap.has(ls.school_id)) {
@@ -109,6 +111,7 @@ async function expandSchoolsWithLeagues(
     schoolLeagueMap.get(ls.school_id)!.push({
       league_id: league.id,
       league_code: league.code,
+      league_logo_url: league.logo_url || null,
     });
   }
 
@@ -138,31 +141,33 @@ async function expandSchoolsWithLeagues(
       return priorityA - priorityB;
     });
 
-    // Add league-specific entries
-    for (const league of sortedLeagues) {
-      results.push({
-        id: school.id * 10000 + league.league_id, // Unique key for each school+league combo
-        school_id: school.id,
-        name: school.name,
-        short_name: school.short_name,
-        logo_url: school.logo_url,
-        league_id: league.league_id,
-        league_code: league.league_code,
-        display_label: `${school.name} (${league.league_code})`,
-      });
-    }
-
-    // Always add "All Sports" option at the end
+    // Add "All Sports" option FIRST
     results.push({
-      id: school.id, // Use school.id for "All Sports" since league_id is null
+      id: school.id,
       school_id: school.id,
       name: school.name,
       short_name: school.short_name,
       logo_url: school.logo_url,
       league_id: null,
       league_code: null,
+      league_logo_url: null,
       display_label: `${school.name} (All Sports)`,
     });
+
+    // Add league-specific entries
+    for (const league of sortedLeagues) {
+      results.push({
+        id: school.id * 10000 + league.league_id,
+        school_id: school.id,
+        name: school.name,
+        short_name: school.short_name,
+        logo_url: school.logo_url,
+        league_id: league.league_id,
+        league_code: league.league_code,
+        league_logo_url: league.league_logo_url,
+        display_label: `${school.name} (${league.league_code})`,
+      });
+    }
   }
 
   return results;

@@ -881,7 +881,7 @@ export default function Preferences() {
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
             {/* Backdrop blur overlay when dropdown is open - placed outside search container */}
-            {showSearchDropdown && teamSearchTerm && <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]" onClick={() => setShowSearchDropdown(false)} />}
+            {showSearchDropdown && teamSearchTerm && <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]" />}
             
             {/* Universal Search */}
             <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
@@ -926,7 +926,7 @@ export default function Preferences() {
                 </Button>
               </div>
 
-              {showSearchDropdown && teamSearchTerm && <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+              {showSearchDropdown && teamSearchTerm && <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto">
                   {loadingAllTeams ? <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-5 w-5 animate-spin" />
                     </div> : <>
@@ -1033,6 +1033,11 @@ export default function Preferences() {
                       }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">
                                   {result.display_label}
                                 </span>
+                                {result.league_logo_url && (
+                                  <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                    <img src={result.league_logo_url} alt={result.league_code || ''} className="h-5 w-5 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                                  </div>
+                                )}
                                 <Heart 
                                   className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} 
                                   onClick={e => {
