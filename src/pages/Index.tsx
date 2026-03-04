@@ -67,7 +67,7 @@ const Index = () => {
           <h2 className="text-base md:text-lg font-bold text-foreground">
             Your Personalized Sports News Feed
           </h2>
-          <ul className="text-sm md:text-base text-muted-foreground space-y-1.5 md:space-y-2 text-left max-w-lg mx-auto">
+          <ul className="text-sm md:text-base text-foreground space-y-1.5 md:space-y-2 text-left max-w-lg mx-auto">
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Unmatched customization</strong> — follow sports, leagues, teams, colleges, and major events</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Track individual athletes</strong> — a unique way to follow player-specific news across leagues</span></li>
             <li className="flex gap-2"><span className="text-[#1B3A6B] shrink-0">✔</span><span><strong>Comprehensive coverage</strong> — thousands of trusted sources, updated within minutes of publication</span></li>
