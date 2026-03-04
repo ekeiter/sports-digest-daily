@@ -141,7 +141,7 @@ export default function ExampleFeed() {
 
   return (
     <div className="w-full max-w-lg mx-auto pt-4 md:pt-6">
-      <p className="text-xs md:text-sm text-muted-foreground text-center mb-2 px-2">
+      <p className="text-xs md:text-sm text-foreground text-left mb-2 px-2">
         SportsDig continuously tracks sports coverage from thousands of trusted sources across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day.
       </p>
       <h3 className="text-sm md:text-base font-bold text-foreground text-center mb-3">
