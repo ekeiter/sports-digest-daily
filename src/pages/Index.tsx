@@ -87,15 +87,6 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="pt-1 md:pt-4 text-center text-xs text-foreground space-y-1">
-            <p>SportsDig™ — Personalized Sports News</p>
-            <p>© 2026 SportsDig. All rights reserved.</p>
-            <div className="flex justify-center gap-4 pt-1">
-              <a href="/contact" className="underline hover:text-muted-foreground">Contact</a>
-              <a href="/privacy" className="underline hover:text-muted-foreground">Privacy Policy</a>
-            </div>
-          </div>
-
           <ExampleFeed />
         </div>
       </main>
