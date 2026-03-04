@@ -141,8 +141,11 @@ export default function ExampleFeed() {
 
   return (
     <div className="w-full max-w-lg mx-auto pt-4 md:pt-6">
+      <p className="text-xs md:text-sm text-muted-foreground text-center mb-2 px-2">
+        SportsDig continuously tracks sports coverage from thousands of trusted sources across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day.
+      </p>
       <h3 className="text-sm md:text-base font-bold text-foreground text-center mb-3">
-        An example of the real-time coverage available in SportsDig
+        Latest Sports News
       </h3>
       <div className="space-y-0">
         {articles.map((article) => (
@@ -172,6 +175,15 @@ export default function ExampleFeed() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="pt-4 pb-6 text-center text-xs text-foreground space-y-1">
+        <p>SportsDig™ — Personalized Sports News</p>
+        <p>© 2026 SportsDig. All rights reserved.</p>
+        <div className="flex justify-center gap-4 pt-1">
+          <a href="/contact" className="underline hover:text-muted-foreground">Contact</a>
+          <a href="/privacy" className="underline hover:text-muted-foreground">Privacy Policy</a>
+        </div>
       </div>
     </div>
   );
