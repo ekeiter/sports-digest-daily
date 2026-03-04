@@ -85,6 +85,9 @@ const Index = () => {
             <Button className="flex-1 md:flex-none md:w-48 h-9 md:h-11" variant="outline" onClick={() => navigate('/auth?mode=signup')}>
               Register
             </Button>
+            <Button className="flex-1 md:flex-none md:w-48 h-9 md:h-11" variant="outline" onClick={() => navigate('/about')}>
+              About
+            </Button>
           </div>
 
           <ExampleFeed />
