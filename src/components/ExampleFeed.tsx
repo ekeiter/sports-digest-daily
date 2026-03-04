@@ -141,12 +141,12 @@ export default function ExampleFeed() {
 
   return (
     <div className="w-full max-w-lg mx-auto pt-4 md:pt-6">
-      <p className="text-xs md:text-sm text-foreground text-left mb-4 px-2">
-        SportsDig continuously tracks sports coverage from thousands of trusted sources across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day. Register for the App to explore all of the functionality.
-      </p>
       <h3 className="text-sm md:text-base font-bold text-foreground text-center mb-3">
         Latest Sports News
       </h3>
+      <p className="text-sm md:text-sm text-foreground text-justify mb-4 px-0">
+        SportsDig tracks sports coverage from thousands of major sports publishers and regional outlets across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day. Register to personalize your feed and explore the full capabilities of the app.
+      </p>
       <div className="space-y-0">
         {articles.map((article) => (
           <Card key={article.id} className="overflow-hidden rounded-none border-0 shadow-none border-b">
