@@ -78,7 +78,7 @@ const Index = () => {
             We find the stories — so you don't have to.
           </p>
 
-          <div className="pt-1 md:pt-4 flex flex-row gap-4 justify-center w-full">
+          <div className="pt-0 md:pt-1 pb-0 flex flex-row gap-4 justify-center w-full">
             <Button className="flex-1 md:flex-none md:w-48 h-9 md:h-11" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
