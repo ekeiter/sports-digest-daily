@@ -1035,7 +1035,7 @@ export default function Preferences() {
                                   {result.display_label}
                                 </span>
                                 {result.league_logo_url && (
-                                  <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                  <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 logo-glow">
                                     <img src={result.league_logo_url} alt={result.league_code || ''} className="h-5 w-5 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>
                                 )}
