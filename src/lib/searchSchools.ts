@@ -98,6 +98,24 @@ async function expandSchoolsWithLeagues(
     }));
   }
 
+  // Collect league IDs to fetch fallback logos from preference_menu_items
+  const allLeagueIds = [...new Set((leagueSchools || []).map(ls => ls.league_id))];
+  
+  // Fetch fallback logos from preference_menu_items for leagues missing logo_url
+  const { data: menuLogos } = allLeagueIds.length > 0
+    ? await supabase
+        .from("preference_menu_items")
+        .select("entity_id, logo_url")
+        .eq("entity_type", "league")
+        .in("entity_id", allLeagueIds)
+        .not("logo_url", "is", null)
+    : { data: [] };
+  
+  const menuLogoMap = new Map<number, string>();
+  for (const item of menuLogos || []) {
+    if (item.logo_url) menuLogoMap.set(item.entity_id!, item.logo_url);
+  }
+
   // Build a map of school_id -> league associations
   const schoolLeagueMap = new Map<number, Array<{ league_id: number; league_code: string; league_logo_url: string | null }>>();
   
@@ -111,7 +129,7 @@ async function expandSchoolsWithLeagues(
     schoolLeagueMap.get(ls.school_id)!.push({
       league_id: league.id,
       league_code: league.code,
-      league_logo_url: league.logo_url || null,
+      league_logo_url: league.logo_url || menuLogoMap.get(league.id) || null,
     });
   }
 

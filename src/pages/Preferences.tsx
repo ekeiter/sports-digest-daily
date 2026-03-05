@@ -827,6 +827,9 @@ export default function Preferences() {
   const expandedLeague = expandedLeagueId ? menuItems.find(m => m.entity_type === 'league' && m.entity_id === expandedLeagueId) : null;
   return (
     <div className="h-full flex flex-col bg-page-bg overflow-hidden">
+      {/* Backdrop blur overlay - must be outside scrollable main */}
+      {showSearchDropdown && teamSearchTerm && <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]" />}
+      
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-1">
           <div className="flex items-center">
@@ -880,8 +883,6 @@ export default function Preferences() {
       <main className="flex-1 overflow-y-auto container mx-auto px-4 pt-0 pb-2">
         <div className="bg-transparent border-none shadow-none">
           <div className="pt-2">
-            {/* Backdrop blur overlay when dropdown is open - placed outside search container */}
-            {showSearchDropdown && teamSearchTerm && <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[5]" />}
             
             {/* Universal Search */}
             <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
