@@ -609,7 +609,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
               <span className="text-sm font-bold text-foreground">{item.label}</span>
               <button
                 onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium mt-1"
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium mt-1"
               >Close</button>
             </div>
             <div className="grid grid-cols-3 gap-2 p-2">
