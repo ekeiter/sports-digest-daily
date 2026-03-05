@@ -141,14 +141,29 @@ export default function MyFeeds() {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : !hasFavorites ? (
-            <div className="text-center py-16 space-y-3">
-              <p className="text-muted-foreground">No favorites yet</p>
-              <button
-                onClick={() => navigate("/preferences")}
-                className="text-sm font-medium text-primary underline"
-              >
-                Go to Feed Manager to add some
-              </button>
+            <div className="mx-2 md:mx-0 rounded-lg border bg-card text-card-foreground shadow-sm">
+              <div className="p-6 text-center space-y-5">
+                <h2 className="text-xl font-semibold">No favorites yet</h2>
+                <p className="text-muted-foreground">
+                  Click on <span className="font-semibold">Feed Manager</span> below to start accessing news feeds and selecting favorite topics.
+                </p>
+                <button
+                  onClick={() => navigate("/preferences")}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  Go to Feed Manager
+                </button>
+
+                <div className="text-left space-y-3 pt-2 border-t">
+                  <h3 className="font-semibold text-sm text-foreground">Instructions for using the Feed Manager</h3>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p><span className="font-semibold text-foreground">Browsing Topics</span> — Clicking on any topic will take you to a focused news feed for that topic.</p>
+                    <p><span className="font-semibold text-foreground">Searching</span> — Use the search bar to find teams, colleges, players, coaches, etc.</p>
+                    <p><span className="font-semibold text-foreground">Adding Favorites</span> — Tap the heart icon to add to favorites.</p>
+                    <p><span className="font-semibold text-foreground">Combined Feed</span> — Shows articles from all your favorites in one unified stream.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">
