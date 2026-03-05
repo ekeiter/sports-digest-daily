@@ -738,7 +738,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 className="pl-9 pr-8 h-12 rounded-2xl bg-card dark:bg-favorite-card dark:text-primary-foreground dark:placeholder:text-primary-foreground/60 text-base md:text-sm placeholder:text-sm"
               />
               {teamSearchTerm && (
-                <button type="button" onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); setSchoolSearchResults([]); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <button type="button" onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); setSchoolSearchResults([]); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground dark:text-primary-foreground dark:hover:text-primary-foreground">
                   <X className="h-4 w-4" />
                 </button>
               )}
