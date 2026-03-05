@@ -1371,7 +1371,7 @@ export default function Preferences() {
                           const grandchildIsLeague = grandchild.entity_type === 'league';
                           return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30">
                                           <div onClick={() => handleItemClick(grandchild)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                               </div>}
                                             <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
