@@ -568,7 +568,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             {hasFooterControl && (
               <div className="h-5 flex items-center justify-center pt-1">
                 {/* Sub-indicators */}
-                {showChevron && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
+                {showChevron && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground dark:text-primary-foreground/70" />}
                 {showTeamsButton && (
                   <button
                     onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
