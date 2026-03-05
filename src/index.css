@@ -102,9 +102,9 @@ All colors MUST be HSL.
     --badge-interest: 199 89% 55%;
     --badge-interest-foreground: 199 89% 95%;
 
-    --favorite-card: 216 45% 16%;
-    --favorite-card-hover: 216 45% 20%;
-    --favorite-card-border: 216 35% 28%;
+    --favorite-card: 210 10% 75%;
+    --favorite-card-hover: 210 10% 80%;
+    --favorite-card-border: 210 10% 65%;
 
     --page-bg: 220 50% 14%;
 
