@@ -752,7 +752,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                   <>
                     {getFilteredSportsAndLeagues().sports.length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Sports</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Sports</h3>
                         {getFilteredSportsAndLeagues().sports.slice(0, 10).map(item => {
                           const isSel = item.entity_id ? selectedSports.includes(item.entity_id) : false;
                           return (
