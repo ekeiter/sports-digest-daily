@@ -1059,7 +1059,7 @@ export default function Preferences() {
                     const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
                     const isFollowed = followedPersonIds.has(person.id);
                     return <div key={`person-${person.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                       <img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                     </div>}
                                   <div onClick={() => {
