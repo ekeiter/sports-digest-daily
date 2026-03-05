@@ -137,8 +137,12 @@ All colors MUST be HSL.
   }
 }
 
-/* Dark-mode logo glow: subtle white halo around logo shapes */
+/* Dark-mode logo glow: stronger white halo + faint circular backdrop */
+.dark .logo-glow {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 60%, transparent 100%);
+  border-radius: 9999px;
+}
 .dark .logo-glow img,
 .dark .logo-glow svg {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.1));
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 7px rgba(255, 255, 255, 0.15));
 }
