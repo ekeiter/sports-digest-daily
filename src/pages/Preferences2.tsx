@@ -524,7 +524,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         {!(isAccordionParent && isAccordionExpanded) && (
           <div
-            className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
+            className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background dark:bg-favorite-card text-foreground dark:text-primary-foreground shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] dark:hover:shadow-[0_8px_28px_rgba(255,255,255,0.2),_0_0_2px_rgba(255,255,255,0.3)] transition-shadow cursor-pointer select-none relative h-[130px]"
             onClick={() => {
               // If this card has an entity_id or a custom route, navigate to it
               const hasRoute = item.display_options && (item.display_options as any).route;
@@ -544,7 +544,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
                 title={isSelected ? "Remove from favorites" : "Add to favorites"}
               >
-                <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+                <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground dark:text-primary-foreground/70'}`} />
               </button>
             )}
 
@@ -568,7 +568,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             {hasFooterControl && (
               <div className="h-5 flex items-center justify-center pt-1">
                 {/* Sub-indicators */}
-                {showChevron && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
+                {showChevron && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground dark:text-primary-foreground/70" />}
                 {showTeamsButton && (
                   <button
                     onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
@@ -598,7 +598,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
         {/* Accordion children in a container with header */}
         {isAccordionParent && isAccordionExpanded && (
-          <div className="rounded-xl border border-muted-foreground/30 bg-secondary shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25)] overflow-hidden">
+          <div className="rounded-xl border border-muted-foreground/30 bg-secondary dark:bg-favorite-card shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] overflow-hidden">
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
@@ -632,7 +632,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
     return (
       <div
         key={item.id}
-        className="flex flex-col items-center justify-center gap-1 px-2 p-2 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[116px]"
+        className="flex flex-col items-center justify-center gap-1 px-2 p-2 rounded-xl bg-background dark:bg-favorite-card text-foreground dark:text-primary-foreground shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] dark:hover:shadow-[0_8px_28px_rgba(255,255,255,0.2),_0_0_2px_rgba(255,255,255,0.3)] transition-shadow cursor-pointer select-none relative h-[116px]"
         onClick={() => handleNavigateToFocus(
           entityType,
           item.id,
@@ -650,7 +650,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
           className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
           title={isSelected ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+          <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground dark:text-primary-foreground/70'}`} />
           {entityType === 'school' && allSportsSchools.has(item.id) && (
             <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
           )}
