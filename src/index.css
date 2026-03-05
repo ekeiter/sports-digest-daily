@@ -136,3 +136,9 @@ All colors MUST be HSL.
     overscroll-behavior-y: none;
   }
 }
+
+/* Dark-mode logo glow: subtle white halo around logo shapes */
+.dark .logo-glow img,
+.dark .logo-glow svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.1));
+}
