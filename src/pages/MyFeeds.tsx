@@ -71,7 +71,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       )}
 
       {sublabel && (
-        <span className="text-[11px] leading-tight text-foreground/85 line-clamp-2 w-full">{sublabel}</span>
+        <span className="text-[11px] leading-tight text-foreground/85 dark:text-[hsl(210_11%_15%/0.85)] line-clamp-2 w-full">{sublabel}</span>
       )}
     </button>
   );
