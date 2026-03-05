@@ -40,7 +40,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-white dark:bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] select-none h-[132px]"
+      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] select-none h-[132px]"
     >
       {/* Delete icon - upper right */}
       <div
@@ -119,7 +119,7 @@ export default function MyFeeds() {
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-[hsl(210_14%_89%)]">
+    <div className="h-full flex flex-col overflow-hidden bg-page-bg">
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-1">
@@ -170,7 +170,7 @@ export default function MyFeeds() {
               {/* Combined Favorites Feed button */}
               <button
                 onClick={() => navigate("/feed")}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white dark:bg-card text-foreground font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-card text-foreground font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:bg-accent/50 transition-colors"
               >
                 <Newspaper className="h-5 w-5" />
                 Combined Favorites Feed

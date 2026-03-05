@@ -524,7 +524,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         {!(isAccordionParent && isAccordionExpanded) && (
           <div
-            className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
+            className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-background shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] transition-shadow cursor-pointer select-none relative h-[130px]"
             onClick={() => {
               // If this card has an entity_id or a custom route, navigate to it
               const hasRoute = item.display_options && (item.display_options as any).route;
@@ -572,7 +572,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 {showTeamsButton && (
                   <button
                     onClick={e => { e.stopPropagation(); loadTeamsForLeague(item.entity_id!); }}
-                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium"
                   >
                     {leagueTeamTypes[item.entity_id!] === 'school' ? 'Schools' : leagueTeamTypes[item.entity_id!] === 'country' ? 'Countries' : 'Teams'}{(() => { const c = getSelectedTeamCountForLeague(item.entity_id!); return c > 0 ? ` (${c})` : ''; })()}
                   </button>
@@ -580,13 +580,13 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 {showMenuButton && (
                   <button
                     onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium"
                   >{isAccordionExpanded ? 'Close' : 'Menu'}</button>
                 )}
                 {showSchoolsButton && (
                   <button
                     onClick={e => { e.stopPropagation(); loadAllSchools(); }}
-                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium"
+                    className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium"
                   >
                     Schools{selectedSchools.length > 0 ? ` (${selectedSchools.length})` : ''}
                   </button>
@@ -598,7 +598,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
         {/* Accordion children in a container with header */}
         {isAccordionParent && isAccordionExpanded && (
-          <div className="rounded-xl border border-muted-foreground/30 bg-[hsl(210_40%_96%)] shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] overflow-hidden">
+          <div className="rounded-xl border border-muted-foreground/30 bg-secondary shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25)] overflow-hidden">
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
@@ -735,7 +735,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                   }
                 }}
                 onFocus={() => { if (teamSearchTerm) setShowSearchDropdown(true); }}
-                className="pl-9 pr-8 h-12 rounded-2xl bg-white text-base md:text-sm placeholder:text-sm"
+                className="pl-9 pr-8 h-12 rounded-2xl bg-card text-base md:text-sm placeholder:text-sm"
               />
               {teamSearchTerm && (
                 <button type="button" onClick={() => { setTeamSearchTerm(""); setShowSearchDropdown(false); setPeopleSearchResults([]); setSchoolSearchResults([]); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
