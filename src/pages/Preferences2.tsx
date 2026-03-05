@@ -745,7 +745,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             </div>
             {/* Search dropdown - keep as list for usability */}
             {showSearchDropdown && teamSearchTerm && (
-              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto overscroll-contain">
+              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card dark:bg-favorite-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto overscroll-contain no-logo-glow">
                 {loadingAllTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (

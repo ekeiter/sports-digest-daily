@@ -176,7 +176,7 @@ export default function TrendingPlayers({
               return (
                 <div
                   key={person.id}
-                  className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card border-muted-foreground/30 select-none"
+                  className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border border-muted-foreground/30 select-none"
                 >
                   {person.logo_url && (
                     <div className="flex items-center justify-center w-8 h-8 shrink-0">
