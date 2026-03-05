@@ -170,7 +170,7 @@ export default function MyFeeds() {
               {/* Combined Favorites Feed button */}
               <button
                 onClick={() => navigate("/feed")}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-card text-foreground font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] text-foreground dark:text-[hsl(210_11%_15%)] font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors"
               >
                 <Newspaper className="h-5 w-5" />
                 Combined Favorites Feed
