@@ -832,7 +832,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                                   {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                                   {person.countries?.logo_url && <img src={person.countries.logo_url} alt={person.countries.name} className="h-4 w-5 object-contain flex-shrink-0" />}
                                 </span>
-                                <span className="text-xs text-muted-foreground truncate">
+                                <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">
                                   {[person.teams?.display_name || person.schools?.short_name, person.leagues?.code].filter(Boolean).join(' • ')}
                                 </span>
                               </div>
