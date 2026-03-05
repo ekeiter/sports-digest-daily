@@ -1310,7 +1310,7 @@ export default function Preferences() {
                     // Check if child is a heading with children (no entity_type but has children)
                     const childIsHeadingWithMenu = !child.entity_type && childHasChildren;
                     return <div key={child.id}>
-                                <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
+                                <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-favorite-card dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                   <div onClick={() => !childIsHeadingWithMenu && handleItemClick(child)} className={`flex items-center gap-1.5 flex-1 min-w-0 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                     {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                         <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
