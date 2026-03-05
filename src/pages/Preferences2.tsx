@@ -772,7 +772,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isSel = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
                           return (
                             <div key={`league-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { if (item.entity_id) handleNavigateToFocus('league', item.entity_id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{item.label}</span>
                               <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSel ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => { e.stopPropagation(); if (item.entity_id) handleLeagueToggle(item.entity_id, item.label); }} />
                             </div>
