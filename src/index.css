@@ -68,7 +68,7 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 216 58% 10%;
+    --background: 220 50% 14%;
     --foreground: 210 40% 92%;
 
     --card: 216 50% 14%;
@@ -106,7 +106,7 @@ All colors MUST be HSL.
     --favorite-card-hover: 216 45% 20%;
     --favorite-card-border: 216 35% 28%;
 
-    --page-bg: 216 58% 10%;
+    --page-bg: 220 50% 14%;
 
     --sidebar-background: 216 45% 17%;
     --sidebar-foreground: 210 40% 92%;
