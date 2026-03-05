@@ -715,7 +715,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
           {/* Search bar - same as original */}
           <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[50]' : ''}`} ref={searchRef}>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-primary-foreground/60 pointer-events-none" />
               {(loadingAllTeams || searchingSchools || searchingPeople) && (
                 <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
               )}
