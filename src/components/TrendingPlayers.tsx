@@ -189,7 +189,7 @@ export default function TrendingPlayers({
                       {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                       {person.country_logo_url && <img src={person.country_logo_url} alt="" className="h-3.5 w-5 object-contain flex-shrink-0" />}
                     </span>
-                    <span className="text-xs text-muted-foreground truncate">{getContextDisplay(person)}</span>
+                    <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">{getContextDisplay(person)}</span>
                   </div>
                   <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
                   <button
