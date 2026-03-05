@@ -710,7 +710,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       </header>
 
       {/* ─── Content ─── */}
-      <main ref={mainScrollRef} className="flex-1 overflow-y-auto">
+      <main ref={mainScrollRef} className={`flex-1 ${showSearchDropdown && teamSearchTerm ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         <div className="container mx-auto px-1.5 py-3 max-w-lg">
           {/* Search bar - same as original */}
           <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[50]' : ''}`} ref={searchRef}>
@@ -745,7 +745,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             </div>
             {/* Search dropdown - keep as list for usability */}
             {showSearchDropdown && teamSearchTerm && (
-              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto">
+              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto overscroll-contain">
                 {loadingAllTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
