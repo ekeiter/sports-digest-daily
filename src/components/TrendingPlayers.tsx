@@ -149,12 +149,14 @@ export default function TrendingPlayers({
             className={`${btnBase} flex-1 ${activeWindow === 2 ? btnActive : btnInactive}`}
           >
             2 Hours
+            {activeWindow === 2 ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />}
           </button>
           <button
             onClick={() => handleToggle(24)}
             className={`${btnBase} flex-1 ${activeWindow === 24 ? btnActive : btnInactive}`}
           >
             24 Hours
+            {activeWindow === 24 ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />}
           </button>
         </div>
       </div>
