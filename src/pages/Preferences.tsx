@@ -1155,7 +1155,7 @@ export default function Preferences() {
                             }
                             className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                           >
-                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                 <img src={item.logo_url} alt={item.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">

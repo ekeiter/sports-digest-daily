@@ -825,7 +825,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isFollowed = followedPersonIds.has(person.id);
                           return (
                             <div key={`person-${person.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <div onClick={() => { handleNavigateToFocus('person', person.id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                                 <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                                   {person.name}
