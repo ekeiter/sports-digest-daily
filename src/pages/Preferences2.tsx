@@ -829,7 +829,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                               <div onClick={() => { handleNavigateToFocus('person', person.id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                                 <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                                   {person.name}
-                                  {person.position && <span className="text-muted-foreground font-normal">• {person.position}</span>}
+                                  {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                                   {person.countries?.logo_url && <img src={person.countries.logo_url} alt={person.countries.name} className="h-4 w-5 object-contain flex-shrink-0" />}
                                 </span>
                                 <span className="text-xs text-muted-foreground truncate">
