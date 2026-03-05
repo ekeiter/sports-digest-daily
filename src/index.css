@@ -146,3 +146,12 @@ All colors MUST be HSL.
 .dark .logo-glow svg {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.25)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
 }
+
+/* On grey favorite cards, logos are already legible — disable the white halo */
+.dark .no-logo-glow .logo-glow {
+  background: none;
+}
+.dark .no-logo-glow .logo-glow img,
+.dark .no-logo-glow .logo-glow svg {
+  filter: none;
+}
