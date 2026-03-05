@@ -683,7 +683,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center gap-2">
               <span className="text-lg font-bold text-foreground">Feed Manager</span>
-              <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f]" /></button>
+              <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f] dark:text-foreground" /></button>
             </div>
             <div className="w-10 flex justify-end">
               {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
