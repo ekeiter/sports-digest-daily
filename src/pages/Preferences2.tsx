@@ -797,7 +797,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {(schoolSearchResults.length > 0 || searchingSchools) && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Schools</h3>
                         {searchingSchools ? <div className="flex items-center justify-center py-2"><Loader2 className="h-4 w-4 animate-spin" /></div> : schoolSearchResults.map(result => {
                           const isAllSportsSelected = result.league_id === null && allSportsSchools.has(result.school_id);
                           const isLeagueSpecificSelected = result.league_id !== null && selectedSchoolsByLeague[result.league_id]?.includes(result.school_id);
