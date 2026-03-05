@@ -1237,7 +1237,7 @@ export default function Preferences() {
                     if (!item.entity_id && !hasCustomRoute) return;
                     handleItemClick(item);
                   }} className={`flex items-center gap-1.5 flex-1 min-w-0 ${!item.entity_id && !(item.display_options && (item.display_options as any).route) ? '' : 'cursor-pointer'}`}>
-                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                               <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                             </div>}
                           <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
