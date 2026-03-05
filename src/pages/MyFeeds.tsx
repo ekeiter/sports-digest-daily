@@ -40,7 +40,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card hover:bg-accent/50 transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] select-none h-[132px]"
+      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:text-[hsl(210_11%_15%)] select-none h-[132px]"
     >
       {/* Delete icon - upper right */}
       <div
@@ -51,7 +51,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       </div>
 
       {/* Logo */}
-      <div className="w-8 h-8 flex items-center justify-center logo-glow flex-shrink-0">
+      <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
         {logoUrl ? (
           <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" onError={e => e.currentTarget.style.display = 'none'} />
         ) : (
@@ -170,7 +170,7 @@ export default function MyFeeds() {
               {/* Combined Favorites Feed button */}
               <button
                 onClick={() => navigate("/feed")}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-card text-foreground font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] text-foreground dark:text-[hsl(210_11%_15%)] font-semibold text-sm shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors"
               >
                 <Newspaper className="h-5 w-5" />
                 Combined Favorites Feed
