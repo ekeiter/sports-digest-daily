@@ -1102,7 +1102,7 @@ export default function Preferences() {
                 const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
                 return <div key={school.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
                           <div onClick={() => handleNavigateToFocus('school', school.id)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                 <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
