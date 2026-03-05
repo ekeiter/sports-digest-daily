@@ -51,7 +51,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       </div>
 
       {/* Logo */}
-      <div className="w-8 h-8 flex items-center justify-center logo-glow flex-shrink-0">
+      <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
         {logoUrl ? (
           <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" onError={e => e.currentTarget.style.display = 'none'} />
         ) : (
