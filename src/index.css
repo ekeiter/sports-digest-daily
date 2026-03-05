@@ -139,7 +139,7 @@ All colors MUST be HSL.
 
 /* Dark-mode logo glow: stronger white halo + faint circular backdrop */
 .dark .logo-glow {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 60%, transparent 100%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 60%, transparent 100%);
   border-radius: 9999px;
 }
 .dark .logo-glow img,
