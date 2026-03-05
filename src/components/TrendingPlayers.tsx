@@ -193,7 +193,7 @@ export default function TrendingPlayers({
                     </span>
                     <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">{getContextDisplay(person)}</span>
                   </div>
-                  <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
+                  <span className="text-xs font-semibold bg-primary/10 text-primary dark:text-primary-foreground px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); isFollowed ? handleUnfollow(person) : handleFollow(person); }}
                     className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
