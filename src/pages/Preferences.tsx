@@ -1100,7 +1100,7 @@ export default function Preferences() {
                     {schools.map(school => {
                 // In the Schools browser (All Sports context), selected if any interest exists
                 const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
-                return <div key={school.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
+                return <div key={school.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/40">
                           <div onClick={() => handleNavigateToFocus('school', school.id)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
                             {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                 <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
@@ -1136,7 +1136,7 @@ export default function Preferences() {
                 // For countries: check selectedCountries
                 // For teams: check selectedTeams
                 const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || (expandedLeagueId ? (selectedSchoolsByLeague[expandedLeagueId] || []).includes(item.id) : selectedSchools.includes(item.id)) : expandedLeagueType === 'country' ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id)) : selectedTeams.includes(item.id);
-                return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
+                return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/40">
                           <div
                             onClick={() =>
                               handleNavigateToFocus(
@@ -1230,7 +1230,7 @@ export default function Preferences() {
               }
               return <div key={item.id}>
                       {showDivider && <div className="border-t border-muted-foreground/30 my-3" />}
-                      <div className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30">
+                      <div className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30">
                         <div onClick={() => {
                     // Skip click for items with no entity_id, unless they have a custom route (like Winter Olympics Selector)
                     const hasCustomRoute = item.display_options && (item.display_options as any).route;
@@ -1310,7 +1310,7 @@ export default function Preferences() {
                     // Check if child is a heading with children (no entity_type but has children)
                     const childIsHeadingWithMenu = !child.entity_type && childHasChildren;
                     return <div key={child.id}>
-                                <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
+                                <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                   <div onClick={() => !childIsHeadingWithMenu && handleItemClick(child)} className={`flex items-center gap-1.5 flex-1 min-w-0 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                     {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                         <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
@@ -1369,7 +1369,7 @@ export default function Preferences() {
                                     {getChildItems(child.id).map(grandchild => {
                           const grandchildIsSelected = isItemSelected(grandchild);
                           const grandchildIsLeague = grandchild.entity_type === 'league';
-                          return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30">
+                          return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30">
                                           <div onClick={() => handleItemClick(grandchild)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
                                             {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
