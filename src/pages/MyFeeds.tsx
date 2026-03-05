@@ -40,7 +40,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:text-[hsl(210_11%_15%)] select-none h-[132px]"
+      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_4px_16px_rgba(255,255,255,0.08),_0_0_1px_rgba(255,255,255,0.15)] dark:text-[hsl(210_11%_15%)] select-none h-[132px]"
     >
       {/* Delete icon - upper right */}
       <div
@@ -65,13 +65,13 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
       {/* Secondary icon row (league logo / country flag) */}
       {(secondaryIcon || secondaryLabel) && (
         <div className="flex items-center justify-center gap-1">
-          {secondaryLabel && <span className="text-xs font-medium text-foreground">{secondaryLabel}</span>}
+          {secondaryLabel && <span className="text-xs font-medium text-foreground dark:text-[hsl(210_11%_15%)]">{secondaryLabel}</span>}
           {secondaryIcon && <img src={secondaryIcon} alt="" className="w-5 h-4 object-contain" />}
         </div>
       )}
 
       {sublabel && (
-        <span className="text-[11px] leading-tight text-foreground/85 line-clamp-2 w-full">{sublabel}</span>
+        <span className="text-[11px] leading-tight text-foreground/85 dark:text-[hsl(210_11%_15%/0.85)] line-clamp-2 w-full">{sublabel}</span>
       )}
     </button>
   );
