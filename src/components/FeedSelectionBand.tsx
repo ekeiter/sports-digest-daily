@@ -122,7 +122,7 @@ function SelectionCard({ logoUrl, label, sublabel, interestId, entityType, entit
         onMouseLeave={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
-        className={`flex flex-col items-center w-[72px] h-16 md:w-20 md:h-[72px] lg:w-24 lg:h-[84px] p-0.5 md:p-1 lg:p-1.5 rounded-md bg-card border border-border hover:bg-accent transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle lg:animate-none' : ''}`}
+        className={`flex flex-col items-center w-[72px] h-16 md:w-20 md:h-[72px] lg:w-24 lg:h-[84px] p-0.5 md:p-1 lg:p-1.5 rounded-md bg-card dark:bg-favorite-card border border-border dark:border-favorite-card-border hover:bg-accent dark:hover:bg-favorite-card-hover transition-colors select-none ${hasSublabel ? 'justify-start' : 'justify-center'} ${showDeleteOverlay ? 'animate-wiggle lg:animate-none' : ''}`}
       >
         <div className="w-8 h-8 md:w-9 md:h-9 lg:w-11 lg:h-11 flex items-center justify-center">
           {logoUrl ? (
