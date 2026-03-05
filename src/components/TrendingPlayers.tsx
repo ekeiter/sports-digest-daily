@@ -186,7 +186,7 @@ export default function TrendingPlayers({
                   <div onClick={() => handleNavigateToFocus(person.id)} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {person.name}
-                      {person.position && <span className="text-muted-foreground font-normal">• {person.position}</span>}
+                      {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                       {person.country_logo_url && <img src={person.country_logo_url} alt="" className="h-3.5 w-5 object-contain flex-shrink-0" />}
                     </span>
                     <span className="text-xs text-muted-foreground truncate">{getContextDisplay(person)}</span>
