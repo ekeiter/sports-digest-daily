@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.a91799b00a46440b83a7558b463f6a82',
-  appName: 'sports-digest-daily',
+  appId: 'com.sportsdig.app',
+  appName: 'SportsDig',
   webDir: 'dist',
   android: {
     buildOptions: {
