@@ -1292,7 +1292,7 @@ export default function Preferences() {
                       </div>
                       
                       {/* Accordion children */}
-                      {isAccordionParent && isAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
+                      {isAccordionParent && isAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] shadow-sm overflow-hidden">
                           {/* Container header with logo and title */}
                           <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
                             {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
