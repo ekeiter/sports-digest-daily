@@ -1360,7 +1360,7 @@ export default function Preferences() {
                                 {childHasChildren && childIsAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
                                     {/* Container header with logo and title */}
                                     <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
-                                      {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                      {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                           <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                         </div>}
                                       <span className="text-sm font-bold text-foreground">{child.label}</span>
