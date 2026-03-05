@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, TrendingUp, Heart } from "lucide-react";
+import { Loader2, TrendingUp, Heart, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
@@ -149,12 +149,14 @@ export default function TrendingPlayers({
             className={`${btnBase} flex-1 ${activeWindow === 2 ? btnActive : btnInactive}`}
           >
             2 Hours
+            {activeWindow === 2 ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />}
           </button>
           <button
             onClick={() => handleToggle(24)}
             className={`${btnBase} flex-1 ${activeWindow === 24 ? btnActive : btnInactive}`}
           >
             24 Hours
+            {activeWindow === 24 ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />}
           </button>
         </div>
       </div>
@@ -191,7 +193,7 @@ export default function TrendingPlayers({
                     </span>
                     <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">{getContextDisplay(person)}</span>
                   </div>
-                  <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
+                  <span className="text-xs font-semibold bg-primary/10 text-primary dark:text-primary-foreground px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); isFollowed ? handleUnfollow(person) : handleFollow(person); }}
                     className="shrink-0 p-1 rounded-md hover:bg-muted/50 transition-colors"
