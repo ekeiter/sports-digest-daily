@@ -192,10 +192,10 @@ export default function Profile() {
             </div>
 
             <div className="pt-4 border-t space-y-2">
-              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => navigate('/instructions')}>
+              <Button variant="outline" className="w-full justify-start text-sm" onClick={() => navigate('/instructions')}>
                 <BookOpen className="h-4 w-4 mr-2" /> Instructions
               </Button>
-              <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => navigate('/why-sportsdig')}>
+              <Button variant="outline" className="w-full justify-start text-sm" onClick={() => navigate('/why-sportsdig')}>
                 <HelpCircle className="h-4 w-4 mr-2" /> Why SportsDig
               </Button>
             </div>
