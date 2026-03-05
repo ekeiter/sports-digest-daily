@@ -550,7 +550,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
             {/* Logo */}
             {item.logo_url ? (
-              <div className={`flex items-center justify-center dark:bg-white dark:rounded-md dark:p-0.5 ${isLogoOnly ? 'w-16 h-16' : 'w-10 h-10'}`}>
+              <div className={`flex items-center justify-center logo-glow ${isLogoOnly ? 'w-16 h-16' : 'w-10 h-10'}`}>
                 <img src={item.logo_url} alt={item.label} className={`object-contain ${isLogoOnly ? 'h-14 w-14' : 'h-9 w-9'}`} onError={e => e.currentTarget.style.display = 'none'} />
               </div>
             ) : (
@@ -602,14 +602,14 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
-                <div className="flex items-center justify-center w-10 h-10 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                <div className="flex items-center justify-center w-10 h-10 shrink-0 logo-glow">
                   <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                 </div>
               )}
               <span className="text-sm font-bold text-foreground">{item.label}</span>
               <button
                 onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-[#F4F4F4] text-foreground shadow-sm hover:bg-muted hover:shadow-md transition-all font-medium mt-1"
+                className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium mt-1"
               >Close</button>
             </div>
             <div className="grid grid-cols-3 gap-2 p-2">
@@ -658,7 +658,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
         {/* Logo + name centered */}
         {item.logo_url ? (
-          <div className="flex items-center justify-center w-11 h-11 dark:bg-white dark:rounded-md dark:p-0.5">
+          <div className="flex items-center justify-center w-11 h-11 logo-glow">
             <img src={item.logo_url} alt={item.display_name} className="h-10 w-10 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
           </div>
         ) : (
@@ -757,7 +757,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isSel = item.entity_id ? selectedSports.includes(item.entity_id) : false;
                           return (
                             <div key={`sport-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { if (item.entity_id) handleNavigateToFocus('sport', item.entity_id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{item.label}</span>
                               <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSel ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => { e.stopPropagation(); if (item.entity_id) handleSportToggle(item.entity_id, item.label); }} />
                             </div>
@@ -772,7 +772,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isSel = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
                           return (
                             <div key={`league-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { if (item.entity_id) handleNavigateToFocus('league', item.entity_id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{item.label}</span>
                               <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSel ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => { e.stopPropagation(); if (item.entity_id) handleLeagueToggle(item.entity_id, item.label); }} />
                             </div>
@@ -787,7 +787,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isSel = selectedTeams.includes(Number(team.id));
                           return (
                             <div key={`team-${team.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { handleNavigateToFocus('team', Number(team.id)); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{team.display_name}</span>
                               <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSel ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => { e.stopPropagation(); handleTeamToggle(Number(team.id)); }} />
                             </div>
@@ -804,10 +804,10 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isSel = isAllSportsSelected || isLeagueSpecificSelected;
                           return (
                             <div key={`school-${result.school_id}-${result.league_id ?? 'all'}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { handleNavigateToFocus('school', result.school_id, result.league_id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{result.display_label}</span>
                               {result.league_logo_url && (
-                                <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 logo-glow">
                                   <img src={result.league_logo_url} alt={result.league_code || ''} className="h-5 w-5 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                 </div>
                               )}
@@ -825,7 +825,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                           const isFollowed = followedPersonIds.has(person.id);
                           return (
                             <div key={`person-${person.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                              {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
+                              {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow"><img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <div onClick={() => { handleNavigateToFocus('person', person.id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                                 <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                                   {person.name}

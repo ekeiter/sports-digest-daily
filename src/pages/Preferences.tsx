@@ -937,7 +937,7 @@ export default function Preferences() {
                           {getFilteredSportsAndLeagues().sports.slice(0, 10).map(item => {
                     const isSelected = item.entity_id ? selectedSports.includes(item.entity_id) : false;
                     return <div key={`sport-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                     <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -965,7 +965,7 @@ export default function Preferences() {
                           {getFilteredSportsAndLeagues().leagues.slice(0, 10).map(item => {
                     const isSelected = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
                     return <div key={`league-${item.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                     <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -993,7 +993,7 @@ export default function Preferences() {
                           {getFilteredTeams().slice(0, 15).map(team => {
                     const isSelected = selectedTeams.includes(Number(team.id));
                     return <div key={`team-${team.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                     <img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -1024,7 +1024,7 @@ export default function Preferences() {
                     const isSelected = isAllSportsSelected || isLeagueSpecificSelected;
                     
                     return <div key={`school-${result.school_id}-${result.league_id ?? 'all'}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                     <img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
@@ -1035,7 +1035,7 @@ export default function Preferences() {
                                   {result.display_label}
                                 </span>
                                 {result.league_logo_url && (
-                                  <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                  <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 logo-glow">
                                     <img src={result.league_logo_url} alt={result.league_code || ''} className="h-5 w-5 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>
                                 )}
@@ -1059,7 +1059,7 @@ export default function Preferences() {
                     const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
                     const isFollowed = followedPersonIds.has(person.id);
                     return <div key={`person-${person.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                  {logoUrl && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                       <img src={logoUrl} alt={person.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                     </div>}
                                   <div onClick={() => {
@@ -1102,7 +1102,7 @@ export default function Preferences() {
                 const isSelected = allSportsSchools.has(school.id) || selectedSchools.includes(school.id);
                 return <div key={school.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card border-muted-foreground/40">
                           <div onClick={() => handleNavigateToFocus('school', school.id)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                            {school.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                 <img src={school.logo_url} alt={school.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
@@ -1155,7 +1155,7 @@ export default function Preferences() {
                             }
                             className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer"
                           >
-                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                 <img src={item.logo_url} alt={item.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-xs md:text-sm font-medium truncate flex-1 min-w-0">
@@ -1237,7 +1237,7 @@ export default function Preferences() {
                     if (!item.entity_id && !hasCustomRoute) return;
                     handleItemClick(item);
                   }} className={`flex items-center gap-1.5 flex-1 min-w-0 ${!item.entity_id && !(item.display_options && (item.display_options as any).route) ? '' : 'cursor-pointer'}`}>
-                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                          {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                               <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                             </div>}
                           <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
@@ -1295,7 +1295,7 @@ export default function Preferences() {
                       {isAccordionParent && isAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
                           {/* Container header with logo and title */}
                           <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
-                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                            {item.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                 <img src={item.logo_url} alt={item.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                               </div>}
                             <span className="text-sm font-bold text-foreground">{item.label}</span>
@@ -1312,7 +1312,7 @@ export default function Preferences() {
                     return <div key={child.id}>
                                 <div className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
                                   <div onClick={() => !childIsHeadingWithMenu && handleItemClick(child)} className={`flex items-center gap-1.5 flex-1 min-w-0 ${childIsHeadingWithMenu ? '' : 'cursor-pointer'}`}>
-                                    {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                    {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                         <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                       </div>}
                                     <span className={`text-xs md:text-sm font-medium flex-1 min-w-0 ${childIsHeadingWithMenu ? 'font-bold' : ''}`}>
@@ -1360,7 +1360,7 @@ export default function Preferences() {
                                 {childHasChildren && childIsAccordionExpanded && <div className="mt-1 rounded-lg border border-muted-foreground/30 bg-card shadow-sm overflow-hidden">
                                     {/* Container header with logo and title */}
                                     <div className="flex items-center justify-center gap-2 py-2 px-3 border-b border-muted-foreground/20">
-                                      {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                      {child.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                           <img src={child.logo_url} alt={child.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                         </div>}
                                       <span className="text-sm font-bold text-foreground">{child.label}</span>
@@ -1371,7 +1371,7 @@ export default function Preferences() {
                           const grandchildIsLeague = grandchild.entity_type === 'league';
                           return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card border-muted-foreground/30">
                                           <div onClick={() => handleItemClick(grandchild)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
-                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                            {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                               </div>}
                                             <span className="text-xs md:text-sm font-medium flex-1 min-w-0">
