@@ -100,15 +100,6 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
   useEffect(() => { checkUser(); }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSearchDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     if (showSearchDropdown && teamSearchTerm) {
@@ -682,6 +673,9 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
   return (
     <div className="h-full flex flex-col bg-page-bg overflow-hidden">
+      {showSearchDropdown && teamSearchTerm && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-md z-[40]" />
+      )}
       {/* ─── Header (same as Preferences) ─── */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-1">
@@ -719,7 +713,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       <main ref={mainScrollRef} className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-1.5 py-3 max-w-lg">
           {/* Search bar - same as original */}
-          <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[6]' : ''}`} ref={searchRef}>
+          <div className={`mb-4 relative ${showSearchDropdown && teamSearchTerm ? 'z-[50]' : ''}`} ref={searchRef}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               {(loadingAllTeams || searchingSchools || searchingPeople) && (
@@ -751,7 +745,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             </div>
             {/* Search dropdown - keep as list for usability */}
             {showSearchDropdown && teamSearchTerm && (
-              <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-96 overflow-y-auto">
+              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto">
                 {loadingAllTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
@@ -812,6 +806,11 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                             <div key={`school-${result.school_id}-${result.league_id ?? 'all'}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
                               {result.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5"><img src={result.logo_url} alt={result.name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} /></div>}
                               <span onClick={() => { handleNavigateToFocus('school', result.school_id, result.league_id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="text-xs lg:text-sm font-medium truncate flex-1 min-w-0 cursor-pointer">{result.display_label}</span>
+                              {result.league_logo_url && (
+                                <div className="flex items-center justify-center w-6 h-6 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                  <img src={result.league_logo_url} alt={result.league_code || ''} className="h-5 w-5 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
+                                </div>
+                              )}
                               <Heart className={`h-5 w-5 cursor-pointer flex-shrink-0 ${isSel ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`} onClick={e => { e.stopPropagation(); handleSchoolToggle(result.school_id, result.league_id); }} />
                             </div>
                           );
