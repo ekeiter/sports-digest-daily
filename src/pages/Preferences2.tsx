@@ -550,7 +550,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
             {/* Logo */}
             {item.logo_url ? (
-              <div className={`flex items-center justify-center dark:bg-white dark:rounded-md dark:p-0.5 ${isLogoOnly ? 'w-16 h-16' : 'w-10 h-10'}`}>
+              <div className={`flex items-center justify-center logo-glow ${isLogoOnly ? 'w-16 h-16' : 'w-10 h-10'}`}>
                 <img src={item.logo_url} alt={item.label} className={`object-contain ${isLogoOnly ? 'h-14 w-14' : 'h-9 w-9'}`} onError={e => e.currentTarget.style.display = 'none'} />
               </div>
             ) : (
