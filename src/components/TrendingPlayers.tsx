@@ -132,8 +132,8 @@ export default function TrendingPlayers({
   };
 
   const btnBase = "px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors";
-  const btnActive = "bg-foreground text-background";
-  const btnInactive = "bg-muted text-foreground hover:bg-accent border border-muted-foreground/30";
+  const btnActive = "bg-foreground text-background dark:bg-favorite-card dark:text-primary-foreground";
+  const btnInactive = "bg-muted text-foreground hover:bg-accent border border-muted-foreground/30 dark:bg-favorite-card dark:text-primary-foreground dark:border-favorite-card-border";
 
   return (
     <div className="space-y-1">
