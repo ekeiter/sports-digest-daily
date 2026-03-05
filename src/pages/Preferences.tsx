@@ -1369,7 +1369,7 @@ export default function Preferences() {
                                     {getChildItems(child.id).map(grandchild => {
                           const grandchildIsSelected = isItemSelected(grandchild);
                           const grandchildIsLeague = grandchild.entity_type === 'league';
-                          return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30">
+                          return <div key={grandchild.id} className="flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border transition-colors select-none bg-card dark:bg-favorite-card dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/30">
                                           <div onClick={() => handleItemClick(grandchild)} className="flex items-center gap-1.5 flex-1 min-w-0 cursor-pointer">
                                             {grandchild.logo_url && <div className="flex items-center justify-center w-8 h-8 shrink-0 logo-glow">
                                                 <img src={grandchild.logo_url} alt={grandchild.label} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
