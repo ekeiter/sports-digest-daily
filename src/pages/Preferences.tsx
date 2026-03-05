@@ -993,7 +993,7 @@ export default function Preferences() {
                           {getFilteredTeams().slice(0, 15).map(team => {
                     const isSelected = selectedTeams.includes(Number(team.id));
                     return <div key={`team-${team.id}`} className="flex items-center gap-1.5 p-2 hover:bg-accent border-b last:border-b-0 select-none">
-                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                                {team.logo_url && <div className="flex items-center justify-center w-8 h-8 flex-shrink-0 logo-glow">
                                     <img src={team.logo_url} alt={team.display_name} className="h-7 w-7 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                                   </div>}
                                 <span onClick={() => {
