@@ -598,7 +598,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
         {/* Accordion children in a container with header */}
         {isAccordionParent && isAccordionExpanded && (
-          <div className="rounded-xl border border-muted-foreground/30 bg-secondary shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.25)] overflow-hidden">
+          <div className="rounded-xl border border-muted-foreground/30 bg-secondary dark:bg-favorite-card shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] overflow-hidden">
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
