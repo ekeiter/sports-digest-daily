@@ -658,7 +658,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
 
         {/* Logo + name centered */}
         {item.logo_url ? (
-          <div className="flex items-center justify-center w-11 h-11 dark:bg-white dark:rounded-md dark:p-0.5">
+          <div className="flex items-center justify-center w-11 h-11 logo-glow">
             <img src={item.logo_url} alt={item.display_name} className="h-10 w-10 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
           </div>
         ) : (
