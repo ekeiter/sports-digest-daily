@@ -1136,7 +1136,7 @@ export default function Preferences() {
                 // For countries: check selectedCountries
                 // For teams: check selectedTeams
                 const isSelected = expandedLeagueType === 'school' ? allSportsSchools.has(item.id) || (expandedLeagueId ? (selectedSchoolsByLeague[expandedLeagueId] || []).includes(item.id) : selectedSchools.includes(item.id)) : expandedLeagueType === 'country' ? (expandedLeagueId ? (selectedCountriesByLeague[expandedLeagueId] || []).includes(item.id) : selectedCountries.includes(item.id)) : selectedTeams.includes(item.id);
-                return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card dark:bg-[hsl(210_10%_75%)] dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/40">
+                return <div key={item.id} className="flex items-center gap-1.5 p-1 rounded-lg transition-colors border select-none bg-card dark:bg-favorite-card dark:text-[hsl(210_11%_15%)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] border-muted-foreground/40">
                           <div
                             onClick={() =>
                               handleNavigateToFocus(
