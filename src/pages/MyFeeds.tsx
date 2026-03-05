@@ -40,7 +40,7 @@ function FavoriteCard({ logoUrl, label, sublabel, secondaryIcon, secondaryLabel,
   return (
     <button
       onClick={onClick}
-      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card dark:bg-[hsl(210_10%_75%)] hover:bg-accent/50 dark:hover:bg-[hsl(210_10%_80%)] transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] dark:text-[hsl(210_11%_15%)] select-none h-[132px]"
+      className="relative flex flex-col items-center justify-center gap-1 w-full p-2 rounded-xl bg-card dark:bg-favorite-card hover:bg-accent/50 dark:hover:bg-favorite-card-hover transition-colors text-center shadow-[0_2px_8px_rgba(0,0,0,0.12)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] dark:text-[hsl(210_11%_15%)] select-none h-[132px]"
     >
       {/* Delete icon - upper right */}
       <div
