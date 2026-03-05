@@ -650,7 +650,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
           className="absolute top-2 right-2 p-0.5 rounded-full hover:bg-muted/50 transition-colors"
           title={isSelected ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+          <Heart className={`h-5 w-5 ${isSelected ? 'fill-red-500 text-red-500' : 'text-muted-foreground dark:text-primary-foreground/70'}`} />
           {entityType === 'school' && allSportsSchools.has(item.id) && (
             <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">A</span>
           )}
