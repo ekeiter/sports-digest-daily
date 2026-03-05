@@ -602,7 +602,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             {/* Container header with logo and title */}
             <div className="flex flex-col items-center justify-center gap-1 py-3 px-3 border-b border-muted-foreground/20">
               {item.logo_url && (
-                <div className="flex items-center justify-center w-10 h-10 shrink-0 dark:bg-white dark:rounded-md dark:p-0.5">
+                <div className="flex items-center justify-center w-10 h-10 shrink-0 logo-glow">
                   <img src={item.logo_url} alt={item.label} className="h-9 w-9 object-contain" onError={e => e.currentTarget.style.display = 'none'} />
                 </div>
               )}
