@@ -240,14 +240,24 @@ export default function Feed() {
         <main className="flex-1 overflow-y-auto w-full px-0 md:px-2 py-2">
           {articles.length === 0 ? (
             <Card className="mx-2 md:mx-0">
-              <CardContent className="p-12 text-center">
-                <h2 className="text-xl font-semibold mb-2">No articles yet</h2>
-                <p className="text-muted-foreground mb-4">
-                  Follow some teams or leagues to see personalized sports news here.
+              <CardContent className="p-6 text-center space-y-5">
+                <h2 className="text-xl font-semibold">No articles yet</h2>
+                <p className="text-muted-foreground">
+                  Click on <span className="font-semibold">Feed Manager</span> below to start accessing news feeds and selecting favorite topics.
                 </p>
                 <Button onClick={() => navigate("/preferences")}>
-                  Follow Teams & Topics
+                  Go to Feed Manager
                 </Button>
+
+                <div className="text-left space-y-3 pt-2 border-t">
+                  <h3 className="font-semibold text-sm text-foreground">Instructions for using the Feed Manager</h3>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p><span className="font-semibold text-foreground">Browsing Topics</span> — Clicking on any topic will take you to a focused news feed for that topic.</p>
+                    <p><span className="font-semibold text-foreground">Searching</span> — Use the search bar to find teams, colleges, players, coaches, etc.</p>
+                    <p><span className="font-semibold text-foreground">Adding Favorites</span> — Tap the heart icon to add to favorites.</p>
+                    <p><span className="font-semibold text-foreground">Combined Feed</span> — Shows articles from all your favorites in one unified stream.</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ) : (
