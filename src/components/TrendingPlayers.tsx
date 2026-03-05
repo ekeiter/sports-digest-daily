@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, TrendingUp, Heart } from "lucide-react";
+import { Loader2, TrendingUp, Heart, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
