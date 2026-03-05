@@ -819,7 +819,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {peopleSearchResults.length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Players & Coaches</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Players & Coaches</h3>
                         {peopleSearchResults.map(person => {
                           const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
                           const isFollowed = followedPersonIds.has(person.id);
