@@ -745,14 +745,14 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
             </div>
             {/* Search dropdown - keep as list for usability */}
             {showSearchDropdown && teamSearchTerm && (
-              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card dark:bg-favorite-card border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto overscroll-contain no-logo-glow">
+              <div className="absolute z-[60] left-0 right-0 mt-1 bg-card dark:bg-favorite-card dark:text-primary-foreground border rounded-lg shadow-lg max-h-[70vh] overflow-y-auto overscroll-contain no-logo-glow">
                 {loadingAllTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
                   <>
                     {getFilteredSportsAndLeagues().sports.length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Sports</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Sports</h3>
                         {getFilteredSportsAndLeagues().sports.slice(0, 10).map(item => {
                           const isSel = item.entity_id ? selectedSports.includes(item.entity_id) : false;
                           return (
@@ -767,7 +767,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {getFilteredSportsAndLeagues().leagues.length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Leagues</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Leagues</h3>
                         {getFilteredSportsAndLeagues().leagues.slice(0, 10).map(item => {
                           const isSel = item.entity_id ? selectedLeagues.includes(item.entity_id) : false;
                           return (
@@ -782,7 +782,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {getFilteredTeams().length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Teams</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Teams</h3>
                         {getFilteredTeams().slice(0, 15).map(team => {
                           const isSel = selectedTeams.includes(Number(team.id));
                           return (
@@ -797,7 +797,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {(schoolSearchResults.length > 0 || searchingSchools) && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Schools</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Schools</h3>
                         {searchingSchools ? <div className="flex items-center justify-center py-2"><Loader2 className="h-4 w-4 animate-spin" /></div> : schoolSearchResults.map(result => {
                           const isAllSportsSelected = result.league_id === null && allSportsSchools.has(result.school_id);
                           const isLeagueSpecificSelected = result.league_id !== null && selectedSchoolsByLeague[result.league_id]?.includes(result.school_id);
@@ -819,7 +819,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                     )}
                     {peopleSearchResults.length > 0 && (
                       <>
-                        <h3 className="font-semibold text-sm text-muted-foreground p-2 border-b bg-muted/50">Players & Coaches</h3>
+                        <h3 className="font-semibold text-sm text-muted-foreground dark:text-primary-foreground/70 p-2 border-b bg-muted/50 dark:bg-favorite-card-border">Players & Coaches</h3>
                         {peopleSearchResults.map(person => {
                           const logoUrl = person.teams?.logo_url || person.schools?.logo_url || person.leagues?.logo_url || person.sports?.logo_url;
                           const isFollowed = followedPersonIds.has(person.id);
@@ -829,10 +829,10 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                               <div onClick={() => { handleNavigateToFocus('person', person.id); setShowSearchDropdown(false); setTeamSearchTerm(""); }} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                                 <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                                   {person.name}
-                                  {person.position && <span className="text-muted-foreground font-normal">• {person.position}</span>}
+                                  {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                                   {person.countries?.logo_url && <img src={person.countries.logo_url} alt={person.countries.name} className="h-4 w-5 object-contain flex-shrink-0" />}
                                 </span>
-                                <span className="text-xs text-muted-foreground truncate">
+                                <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">
                                   {[person.teams?.display_name || person.schools?.short_name, person.leagues?.code].filter(Boolean).join(' • ')}
                                 </span>
                               </div>

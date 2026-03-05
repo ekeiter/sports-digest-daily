@@ -176,7 +176,7 @@ export default function TrendingPlayers({
               return (
                 <div
                   key={person.id}
-                  className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border border-muted-foreground/30 select-none"
+                  className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border dark:text-primary-foreground border-muted-foreground/30 select-none"
                 >
                   {person.logo_url && (
                     <div className="flex items-center justify-center w-8 h-8 shrink-0">
@@ -186,10 +186,10 @@ export default function TrendingPlayers({
                   <div onClick={() => handleNavigateToFocus(person.id)} className="flex flex-col min-w-0 flex-1 cursor-pointer">
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {person.name}
-                      {person.position && <span className="text-muted-foreground font-normal">• {person.position}</span>}
+                      {person.position && <span className="text-muted-foreground dark:text-primary-foreground/70 font-normal">• {person.position}</span>}
                       {person.country_logo_url && <img src={person.country_logo_url} alt="" className="h-3.5 w-5 object-contain flex-shrink-0" />}
                     </span>
-                    <span className="text-xs text-muted-foreground truncate">{getContextDisplay(person)}</span>
+                    <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate">{getContextDisplay(person)}</span>
                   </div>
                   <span className="text-xs font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">{person.article_count}</span>
                   <button
