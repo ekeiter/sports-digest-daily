@@ -672,7 +672,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   };
 
   return (
-    <div className="h-full flex flex-col bg-page-bg overflow-hidden">
+    <div className="h-full flex flex-col bg-page-bg overflow-hidden w-full max-w-3xl mx-auto">
       {showSearchDropdown && teamSearchTerm && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-md z-[40]" />
       )}

@@ -119,7 +119,7 @@ export default function MyFeeds() {
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-page-bg">
+    <div className="h-full flex flex-col overflow-hidden bg-page-bg w-full max-w-3xl mx-auto">
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-1">
