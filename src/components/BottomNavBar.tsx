@@ -14,7 +14,7 @@ export function BottomNavBar() {
 
   return (
     <nav className="border-t bg-background flex-shrink-0">
-      <div className="flex justify-around items-center h-14">
+      <div className="flex justify-around items-center h-14 max-w-3xl mx-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
