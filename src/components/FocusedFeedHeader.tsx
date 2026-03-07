@@ -371,8 +371,8 @@ export function FocusedFeedHeader({
   if (!isFocused) {
     return (
       <div className="flex items-center justify-center gap-2">
-        <Newspaper className="h-5 w-5 text-primary flex-shrink-0" />
-        <span className="text-lg md:text-xl font-bold text-foreground truncate">
+        <Newspaper className="h-5 w-5 text-inherit flex-shrink-0" />
+        <span className="text-lg md:text-xl font-bold text-inherit truncate">
           Combined Favorites Feed
         </span>
       </div>
@@ -395,11 +395,11 @@ export function FocusedFeedHeader({
           )}
         </div>
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-lg md:text-xl font-bold text-foreground truncate">
+          <span className="text-lg md:text-xl font-bold text-inherit truncate">
             {displayContent.label}
           </span>
           {displayContent.rightLabel && (
-            <span className="text-lg md:text-xl font-bold text-foreground flex-shrink-0">
+            <span className="text-lg md:text-xl font-bold text-inherit flex-shrink-0">
               {displayContent.rightLabel}
             </span>
           )}
@@ -407,11 +407,11 @@ export function FocusedFeedHeader({
             <img src={displayContent.rightIcon} alt="" className="w-6 h-5 object-contain flex-shrink-0" />
           )}
           {displayContent.sublabel && (
-            <span className="text-lg md:text-xl font-bold text-foreground truncate">
+            <span className="text-lg md:text-xl font-bold text-inherit truncate">
               {displayContent.sublabel}
             </span>
           )}
-          <span className="text-lg md:text-xl font-bold text-foreground flex-shrink-0">
+          <span className="text-lg md:text-xl font-bold text-inherit flex-shrink-0">
             Feed
           </span>
         </div>
@@ -422,7 +422,7 @@ export function FocusedFeedHeader({
   // Loading state while fetching entity info
   return (
     <div className="flex items-center justify-center gap-2">
-      <span className="text-lg md:text-xl font-bold text-foreground truncate">
+      <span className="text-lg md:text-xl font-bold text-inherit truncate">
         Loading...
       </span>
     </div>
