@@ -295,6 +295,7 @@ export default function Feed() {
                             <h3 className="font-semibold text-sm line-clamp-3">
                               {article.title}
                             </h3>
+                            <div className="h-1.5" />
                           </div>
                         </div>
                       </button>
