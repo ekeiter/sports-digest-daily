@@ -612,7 +612,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium mt-1"
               >Close</button>
             </div>
-            <div className="grid grid-cols-3 gap-2 p-2">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 p-2">
               {getChildItems(item.id).map(child => renderItemCard(child))}
             </div>
           </div>
@@ -859,7 +859,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 {loadingSchools ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
                     {schools.map(school => renderEntityCard(
                       { id: school.id, display_name: school.name, nickname: school.short_name, logo_url: school.logo_url },
                       'school'
@@ -877,7 +877,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 {loadingTeams ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
                     {getExpandedLeagueTeams().map(item => renderEntityCard(item, expandedLeagueType))}
                   </div>
                 )}
@@ -922,7 +922,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 return sections.map((section, idx) => (
                   <div key={idx} className="bg-card rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] p-3">
                     {section.heading && <h3 className="text-lg font-bold text-foreground mb-2 text-center">{section.heading}</h3>}
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                       {section.items.map(item => renderItemCard(item))}
                     </div>
                   </div>
