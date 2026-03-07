@@ -612,7 +612,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 className="text-[10px] w-[4.5rem] text-center px-1 py-0.5 rounded-md border border-border bg-muted text-foreground shadow-sm hover:bg-accent hover:shadow-md transition-all font-medium mt-1"
               >Close</button>
             </div>
-            <div className="grid grid-cols-3 gap-2 p-2">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 p-2">
               {getChildItems(item.id).map(child => renderItemCard(child))}
             </div>
           </div>
