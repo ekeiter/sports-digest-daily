@@ -176,7 +176,7 @@ export default function MyFeeds() {
                 Combined Favorites Feed
               </button>
 
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
               {/* Sports */}
               {prefs.sports.map(sport => (
                 <FavoriteCard
