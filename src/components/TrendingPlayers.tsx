@@ -44,9 +44,10 @@ export default function TrendingPlayers({
   const loadTrendingPeople = useCallback(async (hours: TimeWindow) => {
     setLoading(true);
     try {
+      const limit = hours === 24 ? 30 : 20;
       const { data, error } = await supabase.rpc('get_trending_people', {
         p_hours: hours,
-        p_limit: 20
+        p_limit: limit
       });
       if (error) throw error;
       if (!data || data.length === 0) {
