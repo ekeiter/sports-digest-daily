@@ -211,7 +211,7 @@ export default function Feed() {
 
   return (
     <div className="h-full flex flex-col w-full max-w-3xl mx-auto overflow-hidden bg-page-bg">
-        <header className="border-b bg-background/80 dark:bg-favorite-card backdrop-blur-sm z-10 flex-shrink-0 dark:text-[hsl(210,11%,15%)]">
+        <header className="border-b bg-background/80 dark:bg-favorite-card backdrop-blur-sm z-10 flex-shrink-0 dark:text-[hsl(210_11%_15%)]">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
             {/* Logo left */}
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
