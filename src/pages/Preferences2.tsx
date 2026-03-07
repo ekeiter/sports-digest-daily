@@ -859,7 +859,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
                 {loadingSchools ? (
                   <div className="flex items-center justify-center py-4"><Loader2 className="h-5 w-5 animate-spin" /></div>
                 ) : (
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
                     {schools.map(school => renderEntityCard(
                       { id: school.id, display_name: school.name, nickname: school.short_name, logo_url: school.logo_url },
                       'school'
