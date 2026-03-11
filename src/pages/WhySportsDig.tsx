@@ -10,7 +10,7 @@ const WhySportsDig = ({ showHeader = true }: WhySportsDigProps) => {
     <div className="h-full flex flex-col overflow-hidden bg-page-bg">
       {showHeader && (
         <header className="py-2 flex-shrink-0">
-          <div className="container mx-auto px-4 max-w-3xl">
+          <div className="container mx-auto px-4 max-w-5xl">
             <div className="flex items-center justify-center">
               <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-16" />
             </div>
