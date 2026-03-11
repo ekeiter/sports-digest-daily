@@ -36,7 +36,7 @@ interface SelectionCardProps {
 function SelectionCard({ logoUrl, label, sublabel, interestId, entityType, entityId, leagueId, onDelete, isDeleteMode }: SelectionCardProps) {
   const navigate = useNavigate();
   const hasSublabel = !!sublabel;
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [isLongPressing, setIsLongPressing] = useState(false);
 
