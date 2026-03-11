@@ -14,7 +14,7 @@ export default function MyFeedsSkeleton() {
         </div>
       </header>
 
-      <div className="container mx-auto px-2 py-4 max-w-3xl">
+      <div className="container mx-auto px-2 py-4 max-w-5xl">
         {/* Navigation buttons skeleton */}
         <div className="flex justify-center gap-2 mb-4">
           <Skeleton className="h-8 w-24" />

@@ -21,7 +21,7 @@ export default function FeedSkeleton() {
       </header>
 
       {/* Feed articles skeleton */}
-      <main className="container mx-auto px-2 py-2 max-w-3xl">
+      <main className="container mx-auto px-2 py-2 max-w-5xl">
         <div className="space-y-2">
           {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="overflow-hidden">

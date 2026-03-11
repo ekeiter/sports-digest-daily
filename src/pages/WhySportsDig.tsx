@@ -18,7 +18,7 @@ const WhySportsDig = ({ showHeader = true }: WhySportsDigProps) => {
         </header>
       )}
 
-      <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6 max-w-3xl">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6 max-w-5xl">
         <div className="bg-card text-card-foreground rounded-lg shadow-lg p-5 md:p-6 space-y-6">
           <section className="space-y-3">
             <div className="flex items-center gap-3">
