@@ -210,7 +210,7 @@ export default function Feed() {
   }
 
   return (
-    <div className="h-full flex flex-col w-full max-w-3xl mx-auto overflow-hidden bg-page-bg">
+    <div className="h-full flex flex-col w-full max-w-5xl mx-auto overflow-hidden bg-page-bg">
         <header className="border-b bg-background/80 dark:bg-favorite-card backdrop-blur-sm z-10 flex-shrink-0 dark:text-[hsl(210_11%_15%)]">
           <div className="w-full px-1 md:px-3 py-1 flex items-center justify-between">
             {/* Logo left */}

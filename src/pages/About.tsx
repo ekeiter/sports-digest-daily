@@ -9,7 +9,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-page-bg">
-      <div className="container mx-auto px-4 max-w-3xl pt-3 relative flex items-center justify-center">
+      <div className="container mx-auto px-4 max-w-5xl pt-3 relative flex items-center justify-center">
         <Button
           variant="ghost"
           size="sm"

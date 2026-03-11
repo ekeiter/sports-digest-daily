@@ -6,7 +6,7 @@ export default function FeedSkeleton() {
     <div className="min-h-screen">
       {/* Header skeleton */}
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-        <div className="container mx-auto px-3 py-2 max-w-3xl">
+        <div className="container mx-auto px-3 py-2 max-w-5xl">
           <div className="flex flex-col gap-2">
             <div className="flex justify-center">
               <Skeleton className="h-8 w-64" />
@@ -21,7 +21,7 @@ export default function FeedSkeleton() {
       </header>
 
       {/* Feed articles skeleton */}
-      <main className="container mx-auto px-2 py-2 max-w-3xl">
+      <main className="container mx-auto px-2 py-2 max-w-5xl">
         <div className="space-y-2">
           {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="overflow-hidden">
