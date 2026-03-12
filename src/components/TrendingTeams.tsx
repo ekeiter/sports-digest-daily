@@ -178,7 +178,7 @@ export default function TrendingTeams({
               const followed = isFollowed(entity);
               return (
                 <div
-                  key={`${entity.entity_type}-${entity.entity_id}`}
+                  key={`${entity.entity_type}-${entity.entity_id}-${entity.league_id ?? ''}`}
                   className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border dark:text-primary-foreground border-muted-foreground/30 select-none"
                 >
                   {entity.logo_url && (
