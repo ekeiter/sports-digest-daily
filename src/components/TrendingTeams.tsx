@@ -116,8 +116,10 @@ export default function TrendingTeams({
     if (!userId) return;
     let query = supabase.from("subscriber_interests").delete().eq("subscriber_id", userId);
     if (entity.entity_type === "team") query = query.eq("team_id", entity.entity_id);
-    else if (entity.entity_type === "school") query = query.eq("school_id", entity.entity_id);
-    else if (entity.entity_type === "country") {
+    else if (entity.entity_type === "school") {
+      query = query.eq("school_id", entity.entity_id);
+      if (entity.league_id) query = query.eq("league_id", entity.league_id);
+    } else if (entity.entity_type === "country") {
       query = query.eq("country_id", entity.entity_id);
       if (entity.league_id) query = query.eq("league_id", entity.league_id);
     }
