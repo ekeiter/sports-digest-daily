@@ -135,7 +135,7 @@ export default function Profile() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6">
+      <main className="flex-1 overflow-y-auto container mx-auto px-4 pb-6 max-w-lg">
         <Card className="w-full">
           <CardHeader className="space-y-1">
             <CardTitle className="text-lg md:text-2xl text-center">Your Profile</CardTitle>
