@@ -122,7 +122,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-page-bg">
+    <div className="h-full flex flex-col overflow-hidden bg-page-bg w-full max-w-5xl mx-auto">
       <header className="py-2 flex-shrink-0">
         <div className="container mx-auto px-4">
           <div className="flex items-center">
