@@ -264,7 +264,7 @@ export default function Feed() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-3">
               {articles.map((article, index) => (
                 <div key={article.article_id}>
-                  <Card className="overflow-hidden rounded-none border-0 shadow-none">
+                  <Card className="overflow-hidden rounded-none border-0 shadow-none md:rounded-lg md:shadow-md md:border">
                     <CardContent className="p-0">
                       <button
                         type="button"
