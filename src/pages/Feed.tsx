@@ -292,7 +292,7 @@ export default function Feed() {
                               <span>{formatTimeAgo(article.published_effective)}</span>
                             </div>
 
-                            <h3 className="font-semibold text-sm line-clamp-3">
+                            <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem]">
                               {article.title}
                             </h3>
                             <div className="h-1.5" />
