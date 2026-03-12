@@ -96,8 +96,10 @@ export default function TrendingTeams({
     if (!userId) return;
     const insert: any = { subscriber_id: userId, notification_enabled: true, priority: 1 };
     if (entity.entity_type === "team") insert.team_id = entity.entity_id;
-    else if (entity.entity_type === "school") insert.school_id = entity.entity_id;
-    else if (entity.entity_type === "country") {
+    else if (entity.entity_type === "school") {
+      insert.school_id = entity.entity_id;
+      if (entity.league_id) insert.league_id = entity.league_id;
+    } else if (entity.entity_type === "country") {
       insert.country_id = entity.entity_id;
       if (entity.league_id) insert.league_id = entity.league_id;
     }
