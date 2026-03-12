@@ -66,6 +66,7 @@ export default function TrendingTeams({
         league_code: row.league_code,
         league_logo_url: row.league_logo_url,
         league_id: row.league_id,
+        league_display_label: row.league_display_label,
       }));
       setTrendingEntities(result);
     } catch (error) {
