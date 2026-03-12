@@ -15,6 +15,7 @@ interface TrendingTeamEntity {
   logo_url: string | null;
   league_code: string | null;
   league_logo_url: string | null;
+  league_id: number | null;
 }
 
 interface TrendingTeamsProps {
@@ -63,6 +64,7 @@ export default function TrendingTeams({
         logo_url: row.logo_url,
         league_code: row.league_code,
         league_logo_url: row.league_logo_url,
+        league_id: row.league_id,
       }));
       setTrendingEntities(result);
     } catch (error) {
@@ -95,7 +97,10 @@ export default function TrendingTeams({
     const insert: any = { subscriber_id: userId, notification_enabled: true, priority: 1 };
     if (entity.entity_type === "team") insert.team_id = entity.entity_id;
     else if (entity.entity_type === "school") insert.school_id = entity.entity_id;
-    else if (entity.entity_type === "country") insert.country_id = entity.entity_id;
+    else if (entity.entity_type === "country") {
+      insert.country_id = entity.entity_id;
+      if (entity.league_id) insert.league_id = entity.league_id;
+    }
 
     const { error } = await supabase.from("subscriber_interests").insert(insert);
     if (error) { toast.error("Failed to follow"); return; }
@@ -110,7 +115,10 @@ export default function TrendingTeams({
     let query = supabase.from("subscriber_interests").delete().eq("subscriber_id", userId);
     if (entity.entity_type === "team") query = query.eq("team_id", entity.entity_id);
     else if (entity.entity_type === "school") query = query.eq("school_id", entity.entity_id);
-    else if (entity.entity_type === "country") query = query.eq("country_id", entity.entity_id);
+    else if (entity.entity_type === "country") {
+      query = query.eq("country_id", entity.entity_id);
+      if (entity.league_id) query = query.eq("league_id", entity.league_id);
+    }
 
     const { error } = await query;
     if (error) { toast.error("Failed to unfollow"); return; }
@@ -170,7 +178,7 @@ export default function TrendingTeams({
               const followed = isFollowed(entity);
               return (
                 <div
-                  key={`${entity.entity_type}-${entity.entity_id}`}
+                  key={`${entity.entity_type}-${entity.entity_id}-${entity.league_id ?? ''}`}
                   className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border dark:text-primary-foreground border-muted-foreground/30 select-none"
                 >
                   {entity.logo_url && (
