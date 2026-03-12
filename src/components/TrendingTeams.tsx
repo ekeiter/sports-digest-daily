@@ -205,10 +205,22 @@ export default function TrendingTeams({
                     <span className="text-xs lg:text-sm font-medium truncate">
                       {entity.entity_type === 'country'
                         ? (entity.league_display_label || entity.league_code || entity.entity_name)
-                        : entity.entity_type === 'school' && entity.league_code
-                          ? `${entity.entity_name} (${entity.league_code})`
-                          : entity.entity_name}
+                        : entity.entity_name}
                     </span>
+                    {/* School: gender indicator + league logo inline */}
+                    {entity.entity_type === 'school' && entity.league_code && (() => {
+                      const maleLeagues = ['NCAAB', 'NCAAM', 'NCAAMH', 'NCAAMSOC'];
+                      const femaleLeagues = ['NCAAW', 'NCAAWH', 'NCAAWSOC', 'NCAASB'];
+                      const gender = maleLeagues.includes(entity.league_code) ? 'M' : femaleLeagues.includes(entity.league_code) ? 'W' : null;
+                      return (
+                        <>
+                          {gender && <span className="text-xs font-semibold shrink-0">{gender}</span>}
+                          {entity.league_logo_url && (
+                            <img src={entity.league_logo_url} alt="" className="h-4 w-4 object-contain shrink-0" onError={(e) => (e.currentTarget.style.display = "none")} />
+                          )}
+                        </>
+                      );
+                    })()}
                     {/* Country flag shown inline after league name */}
                     {entity.entity_type === 'country' && entity.logo_url && (
                       <img src={entity.logo_url} alt="" className="h-3.5 w-5 object-contain shrink-0" />
