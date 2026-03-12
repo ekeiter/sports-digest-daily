@@ -20,6 +20,7 @@ import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
+import TrendingTeams from "@/components/TrendingTeams";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
