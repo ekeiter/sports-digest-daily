@@ -16,6 +16,7 @@ interface TrendingTeamEntity {
   league_code: string | null;
   league_logo_url: string | null;
   league_id: number | null;
+  league_display_label: string | null;
 }
 
 interface TrendingTeamsProps {
