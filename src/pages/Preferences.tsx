@@ -1189,18 +1189,31 @@ export default function Preferences() {
                 
                 {/* Trending Players - only show at root level */}
                 {currentParentId === null && (
-                  <TrendingPlayers
-                    userId={userId}
-                    followedPersonIds={followedPersonIds}
-                    onPersonFollowed={(personId) => {
-                      setFollowedPersonIds(prev => {
-                        const next = new Set(prev);
-                        if (next.has(personId)) next.delete(personId);
-                        else next.add(personId);
-                        return next;
-                      });
-                    }}
-                  />
+                  <>
+                    <TrendingPlayers
+                      userId={userId}
+                      followedPersonIds={followedPersonIds}
+                      onPersonFollowed={(personId) => {
+                        setFollowedPersonIds(prev => {
+                          const next = new Set(prev);
+                          if (next.has(personId)) next.delete(personId);
+                          else next.add(personId);
+                          return next;
+                        });
+                      }}
+                    />
+                    <TrendingTeams
+                      userId={userId}
+                      selectedTeams={selectedTeams}
+                      selectedSchools={selectedSchools}
+                      selectedCountries={selectedCountries}
+                      onEntityFollowed={(entityType, entityId) => {
+                        if (entityType === 'team') setSelectedTeams(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                        else if (entityType === 'school') setSelectedSchools(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                        else if (entityType === 'country') setSelectedCountries(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                      }}
+                    />
+                  </>
                 )}
                 
                 {currentItems.map(item => {
