@@ -16,6 +16,7 @@ interface TrendingTeamEntity {
   league_code: string | null;
   league_logo_url: string | null;
   league_id: number | null;
+  league_display_label: string | null;
 }
 
 interface TrendingTeamsProps {
@@ -65,6 +66,7 @@ export default function TrendingTeams({
         league_code: row.league_code,
         league_logo_url: row.league_logo_url,
         league_id: row.league_id,
+        league_display_label: row.league_display_label,
       }));
       setTrendingEntities(result);
     } catch (error) {
@@ -185,22 +187,31 @@ export default function TrendingTeams({
                   key={`${entity.entity_type}-${entity.entity_id}-${entity.league_id ?? ''}`}
                   className="no-logo-glow flex items-center gap-1.5 py-0.5 px-1.5 rounded-lg border bg-card dark:bg-favorite-card dark:border-favorite-card-border dark:text-primary-foreground border-muted-foreground/30 select-none"
                 >
-                  {entity.logo_url && (
-                    <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                      <img src={entity.logo_url} alt="" className="h-7 w-7 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                    </div>
+                  {/* Logo: for countries show league logo, for others show entity logo */}
+                  {entity.entity_type === 'country' ? (
+                    entity.league_logo_url && (
+                      <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                        <img src={entity.league_logo_url} alt="" className="h-7 w-7 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                      </div>
+                    )
+                  ) : (
+                    entity.logo_url && (
+                      <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                        <img src={entity.logo_url} alt="" className="h-7 w-7 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                      </div>
+                    )
                   )}
-                  <div onClick={() => handleNavigateToFocus(entity)} className="flex flex-col min-w-0 flex-1 cursor-pointer">
-                    <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
-                      {entity.entity_name}
+                  <div onClick={() => handleNavigateToFocus(entity)} className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer">
+                    <span className="text-xs lg:text-sm font-medium truncate">
+                      {entity.entity_type === 'country'
+                        ? (entity.league_display_label || entity.league_code || entity.entity_name)
+                        : entity.entity_type === 'school' && entity.league_code
+                          ? `${entity.entity_name} (${entity.league_code})`
+                          : entity.entity_name}
                     </span>
-                    {entity.league_code && entity.entity_type !== 'team' && (
-                      <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate flex items-center gap-1">
-                        {entity.league_code}
-                        {entity.league_logo_url && (
-                          <img src={entity.league_logo_url} alt="" className="h-3.5 w-3.5 object-contain inline-block" />
-                        )}
-                      </span>
+                    {/* Country flag shown inline after league name */}
+                    {entity.entity_type === 'country' && entity.logo_url && (
+                      <img src={entity.logo_url} alt="" className="h-3.5 w-5 object-contain shrink-0" />
                     )}
                   </div>
                   <span className="text-xs font-semibold bg-primary/10 text-primary dark:text-primary-foreground px-1.5 py-0.5 rounded shrink-0">

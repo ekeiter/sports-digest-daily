@@ -2253,6 +2253,7 @@ export type Database = {
           entity_name: string
           entity_type: string
           league_code: string
+          league_display_label: string
           league_id: number
           league_logo_url: string
           logo_url: string
