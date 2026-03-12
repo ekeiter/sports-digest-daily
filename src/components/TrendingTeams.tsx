@@ -135,7 +135,11 @@ export default function TrendingTeams({
   };
 
   const handleNavigateToFocus = (entity: TrendingTeamEntity) => {
-    navigate(`/feed?type=${entity.entity_type}&id=${entity.entity_id}`);
+    let url = `/feed?type=${entity.entity_type}&id=${entity.entity_id}`;
+    if (entity.league_id && (entity.entity_type === 'school' || entity.entity_type === 'country')) {
+      url += `&leagueId=${entity.league_id}`;
+    }
+    navigate(url);
   };
 
   const btnBase = "px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors";
