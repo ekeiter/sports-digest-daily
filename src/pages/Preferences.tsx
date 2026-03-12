@@ -20,6 +20,7 @@ import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
 import { searchPeople, PersonSearchResult } from "@/lib/searchPeople";
 import { searchSchools, SchoolSearchResult } from "@/lib/searchSchools";
 import TrendingPlayers from "@/components/TrendingPlayers";
+import TrendingTeams from "@/components/TrendingTeams";
 
 type MenuItem = Database['public']['Tables']['preference_menu_items']['Row'];
 type Team = Database['public']['Tables']['teams']['Row'];
@@ -1188,18 +1189,31 @@ export default function Preferences() {
                 
                 {/* Trending Players - only show at root level */}
                 {currentParentId === null && (
-                  <TrendingPlayers
-                    userId={userId}
-                    followedPersonIds={followedPersonIds}
-                    onPersonFollowed={(personId) => {
-                      setFollowedPersonIds(prev => {
-                        const next = new Set(prev);
-                        if (next.has(personId)) next.delete(personId);
-                        else next.add(personId);
-                        return next;
-                      });
-                    }}
-                  />
+                  <>
+                    <TrendingPlayers
+                      userId={userId}
+                      followedPersonIds={followedPersonIds}
+                      onPersonFollowed={(personId) => {
+                        setFollowedPersonIds(prev => {
+                          const next = new Set(prev);
+                          if (next.has(personId)) next.delete(personId);
+                          else next.add(personId);
+                          return next;
+                        });
+                      }}
+                    />
+                    <TrendingTeams
+                      userId={userId}
+                      selectedTeams={selectedTeams}
+                      selectedSchools={selectedSchools}
+                      selectedCountries={selectedCountries}
+                      onEntityFollowed={(entityType, entityId) => {
+                        if (entityType === 'team') setSelectedTeams(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                        else if (entityType === 'school') setSelectedSchools(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                        else if (entityType === 'country') setSelectedCountries(prev => prev.includes(entityId) ? prev.filter(id => id !== entityId) : [...prev, entityId]);
+                      }}
+                    />
+                  </>
                 )}
                 
                 {currentItems.map(item => {

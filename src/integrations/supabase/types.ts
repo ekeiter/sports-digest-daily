@@ -2245,6 +2245,18 @@ export type Database = {
           team_name: string
         }[]
       }
+      get_trending_teams: {
+        Args: { p_hours?: number; p_limit?: number }
+        Returns: {
+          article_count: number
+          entity_id: number
+          entity_name: string
+          entity_type: string
+          league_code: string
+          league_logo_url: string
+          logo_url: string
+        }[]
+      }
       link_article_source: {
         Args: {
           p_article_id: number
