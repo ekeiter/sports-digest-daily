@@ -194,7 +194,7 @@ export default function TrendingTeams({
                     <span className="text-xs lg:text-sm font-medium truncate flex items-center gap-1.5">
                       {entity.entity_name}
                     </span>
-                    {entity.league_code && (
+                    {entity.league_code && entity.entity_type !== 'team' && (
                       <span className="text-xs text-muted-foreground dark:text-primary-foreground/70 truncate flex items-center gap-1">
                         {entity.league_code}
                         {entity.league_logo_url && (
