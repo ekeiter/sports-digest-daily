@@ -74,6 +74,90 @@ export type Database = {
         }
         Relationships: []
       }
+      article_ai_test: {
+        Row: {
+          ai_ms: number | null
+          article_id: number
+          created_at: string
+          domain: string | null
+          id: number
+          new_ai_countries: string[] | null
+          new_ai_leagues: string[] | null
+          new_ai_people: string[] | null
+          new_ai_schools: string[] | null
+          new_ai_schools_raw: string[] | null
+          new_ai_sports: string[] | null
+          new_ai_teams: string[] | null
+          new_ai_teams_raw: string[] | null
+          new_is_olympics: boolean | null
+          prod_ai_countries: string[] | null
+          prod_ai_leagues: string[] | null
+          prod_ai_people: string[] | null
+          prod_ai_schools: string[] | null
+          prod_ai_sports: string[] | null
+          prod_ai_teams: string[] | null
+          tested_at: string
+          title: string | null
+          unmatched_schools: string[] | null
+          unmatched_teams: string[] | null
+          url: string | null
+        }
+        Insert: {
+          ai_ms?: number | null
+          article_id: number
+          created_at?: string
+          domain?: string | null
+          id?: number
+          new_ai_countries?: string[] | null
+          new_ai_leagues?: string[] | null
+          new_ai_people?: string[] | null
+          new_ai_schools?: string[] | null
+          new_ai_schools_raw?: string[] | null
+          new_ai_sports?: string[] | null
+          new_ai_teams?: string[] | null
+          new_ai_teams_raw?: string[] | null
+          new_is_olympics?: boolean | null
+          prod_ai_countries?: string[] | null
+          prod_ai_leagues?: string[] | null
+          prod_ai_people?: string[] | null
+          prod_ai_schools?: string[] | null
+          prod_ai_sports?: string[] | null
+          prod_ai_teams?: string[] | null
+          tested_at?: string
+          title?: string | null
+          unmatched_schools?: string[] | null
+          unmatched_teams?: string[] | null
+          url?: string | null
+        }
+        Update: {
+          ai_ms?: number | null
+          article_id?: number
+          created_at?: string
+          domain?: string | null
+          id?: number
+          new_ai_countries?: string[] | null
+          new_ai_leagues?: string[] | null
+          new_ai_people?: string[] | null
+          new_ai_schools?: string[] | null
+          new_ai_schools_raw?: string[] | null
+          new_ai_sports?: string[] | null
+          new_ai_teams?: string[] | null
+          new_ai_teams_raw?: string[] | null
+          new_is_olympics?: boolean | null
+          prod_ai_countries?: string[] | null
+          prod_ai_leagues?: string[] | null
+          prod_ai_people?: string[] | null
+          prod_ai_schools?: string[] | null
+          prod_ai_sports?: string[] | null
+          prod_ai_teams?: string[] | null
+          tested_at?: string
+          title?: string | null
+          unmatched_schools?: string[] | null
+          unmatched_teams?: string[] | null
+          url?: string | null
+        }
+        Relationships: []
+      }
       article_country_map: {
         Row: {
           article_id: number
@@ -407,6 +491,7 @@ export type Database = {
       articles: {
         Row: {
           ai_countries: string[] | null
+          ai_empty: boolean
           ai_extraction_cost: number | null
           ai_extraction_ms: number | null
           ai_leagues: string[] | null
@@ -467,6 +552,7 @@ export type Database = {
         }
         Insert: {
           ai_countries?: string[] | null
+          ai_empty?: boolean
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
           ai_leagues?: string[] | null
@@ -527,6 +613,7 @@ export type Database = {
         }
         Update: {
           ai_countries?: string[] | null
+          ai_empty?: boolean
           ai_extraction_cost?: number | null
           ai_extraction_ms?: number | null
           ai_leagues?: string[] | null
@@ -604,6 +691,7 @@ export type Database = {
       }
       countries: {
         Row: {
+          aliases: string[] | null
           app_order_id: number | null
           code: string
           created_at: string | null
@@ -616,6 +704,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          aliases?: string[] | null
           app_order_id?: number | null
           code: string
           created_at?: string | null
@@ -628,6 +717,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          aliases?: string[] | null
           app_order_id?: number | null
           code?: string
           created_at?: string | null
@@ -862,6 +952,75 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "schools"
             referencedColumns: ["short_name"]
+          },
+        ]
+      }
+      entity_aliases_discovered: {
+        Row: {
+          article_ids: number[] | null
+          created_at: string
+          entity_type: string | null
+          first_seen_at: string
+          id: number
+          last_seen_at: string
+          league_codes: string[] | null
+          notes: string | null
+          raw_name: string
+          resolved_at: string | null
+          resolved_school_id: number | null
+          resolved_team_id: number | null
+          suggested_matches: Json | null
+          times_seen: number
+          updated_at: string
+        }
+        Insert: {
+          article_ids?: number[] | null
+          created_at?: string
+          entity_type?: string | null
+          first_seen_at?: string
+          id?: number
+          last_seen_at?: string
+          league_codes?: string[] | null
+          notes?: string | null
+          raw_name: string
+          resolved_at?: string | null
+          resolved_school_id?: number | null
+          resolved_team_id?: number | null
+          suggested_matches?: Json | null
+          times_seen?: number
+          updated_at?: string
+        }
+        Update: {
+          article_ids?: number[] | null
+          created_at?: string
+          entity_type?: string | null
+          first_seen_at?: string
+          id?: number
+          last_seen_at?: string
+          league_codes?: string[] | null
+          notes?: string | null
+          raw_name?: string
+          resolved_at?: string | null
+          resolved_school_id?: number | null
+          resolved_team_id?: number | null
+          suggested_matches?: Json | null
+          times_seen?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_aliases_discovered_resolved_school_id_fkey"
+            columns: ["resolved_school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_aliases_discovered_resolved_team_id_fkey"
+            columns: ["resolved_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1162,6 +1321,7 @@ export type Database = {
           display_label: string | null
           display_options: Json | null
           id: number
+          is_womens: boolean
           kind: Database["public"]["Enums"]["topic_kind"]
           logo_url: string | null
           name: string
@@ -1178,6 +1338,7 @@ export type Database = {
           display_label?: string | null
           display_options?: Json | null
           id?: number
+          is_womens?: boolean
           kind?: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
           name: string
@@ -1194,6 +1355,7 @@ export type Database = {
           display_label?: string | null
           display_options?: Json | null
           id?: number
+          is_womens?: boolean
           kind?: Database["public"]["Enums"]["topic_kind"]
           logo_url?: string | null
           name?: string
@@ -1208,6 +1370,56 @@ export type Database = {
             columns: ["sport_id"]
             isOneToOne: false
             referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leagues_discovered: {
+        Row: {
+          article_ids: number[] | null
+          created_at: string
+          first_seen_at: string
+          id: number
+          last_seen_at: string
+          notes: string | null
+          raw_code: string
+          resolved_at: string | null
+          resolved_league_id: number | null
+          sport_context: string[] | null
+          times_seen: number
+        }
+        Insert: {
+          article_ids?: number[] | null
+          created_at?: string
+          first_seen_at?: string
+          id?: number
+          last_seen_at?: string
+          notes?: string | null
+          raw_code: string
+          resolved_at?: string | null
+          resolved_league_id?: number | null
+          sport_context?: string[] | null
+          times_seen?: number
+        }
+        Update: {
+          article_ids?: number[] | null
+          created_at?: string
+          first_seen_at?: string
+          id?: number
+          last_seen_at?: string
+          notes?: string | null
+          raw_code?: string
+          resolved_at?: string | null
+          resolved_league_id?: number | null
+          sport_context?: string[] | null
+          times_seen?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leagues_discovered_resolved_league_id_fkey"
+            columns: ["resolved_league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
             referencedColumns: ["id"]
           },
         ]
@@ -1291,6 +1503,7 @@ export type Database = {
           aliases: string[] | null
           api_id: string | null
           api_source: string | null
+          birth_date: string | null
           country_code: string | null
           created_at: string | null
           id: number
@@ -1301,6 +1514,7 @@ export type Database = {
           name: string
           normalized_name: string
           position: string | null
+          pro_transition_date: string | null
           role: string
           school_id: number | null
           sport_id: number | null
@@ -1310,6 +1524,7 @@ export type Database = {
           aliases?: string[] | null
           api_id?: string | null
           api_source?: string | null
+          birth_date?: string | null
           country_code?: string | null
           created_at?: string | null
           id?: number
@@ -1320,6 +1535,7 @@ export type Database = {
           name: string
           normalized_name: string
           position?: string | null
+          pro_transition_date?: string | null
           role: string
           school_id?: number | null
           sport_id?: number | null
@@ -1329,6 +1545,7 @@ export type Database = {
           aliases?: string[] | null
           api_id?: string | null
           api_source?: string | null
+          birth_date?: string | null
           country_code?: string | null
           created_at?: string | null
           id?: number
@@ -1339,6 +1556,7 @@ export type Database = {
           name?: string
           normalized_name?: string
           position?: string | null
+          pro_transition_date?: string | null
           role?: string
           school_id?: number | null
           sport_id?: number | null
@@ -1377,7 +1595,7 @@ export type Database = {
       }
       people_discovered: {
         Row: {
-          article_id: number | null
+          article_ids: number[] | null
           detected_league: string | null
           detected_sport: string | null
           detected_teams: string[] | null
@@ -1390,7 +1608,7 @@ export type Database = {
           times_seen: number | null
         }
         Insert: {
-          article_id?: number | null
+          article_ids?: number[] | null
           detected_league?: string | null
           detected_sport?: string | null
           detected_teams?: string[] | null
@@ -1403,7 +1621,7 @@ export type Database = {
           times_seen?: number | null
         }
         Update: {
-          article_id?: number | null
+          article_ids?: number[] | null
           detected_league?: string | null
           detected_sport?: string | null
           detected_teams?: string[] | null
@@ -1415,15 +1633,7 @@ export type Database = {
           status?: string | null
           times_seen?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "people_discovered_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "articles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       preference_menu_items: {
         Row: {
@@ -2131,6 +2341,7 @@ export type Database = {
         Args: { p_batch_size?: number; p_worker_id?: string }
         Returns: {
           ai_countries: string[] | null
+          ai_empty: boolean
           ai_extraction_cost: number | null
           ai_extraction_ms: number | null
           ai_leagues: string[] | null
