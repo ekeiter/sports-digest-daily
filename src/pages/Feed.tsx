@@ -38,7 +38,9 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const mainRef = useRef<HTMLElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Parse focus parameters - supports both old interestId format and new type+id format
   const focusParam = searchParams.get("focus");
@@ -131,6 +133,7 @@ export default function Feed() {
         id: last.article_id
       });
       setExtraArticles(prev => [...prev, ...moreArticles]);
+      if (moreArticles.length === 0) setHasMore(false);
     } catch (error) {
       console.error("Error loading more:", error);
     } finally {
@@ -141,6 +144,7 @@ export default function Feed() {
   const handleRefresh = async () => {
     setRefreshing(true);
     setExtraArticles([]);
+    setHasMore(true);
     if (user) {
       invalidateFeed(user.id, interestId, entityType || undefined, entityId, focusLeagueId);
     }
