@@ -288,7 +288,10 @@ export default function Feed() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-3">
               {articles.map((article, index) => (
-                <div key={article.article_id}>
+                <div key={article.article_id} className="relative">
+                  {index === Math.max(0, articles.length - 5) && (
+                    <div ref={sentinelRef} className="absolute top-0 left-0 w-px h-px pointer-events-none" aria-hidden />
+                  )}
                   <Card className="overflow-hidden rounded-none border-0 shadow-none md:rounded-lg md:shadow-md md:border">
                     <CardContent className="p-0">
                       <button
@@ -333,16 +336,9 @@ export default function Feed() {
                   )} */}
                 </div>
               ))}
-              {articles.length >= 100 && (
-                <div className="flex justify-center pt-4">
-                  <Button className="w-full md:w-auto" onClick={loadMore} disabled={loadingMore} variant="outline">
-                    {loadingMore ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Loading...
-                      </>
-                    ) : "Load More"}
-                  </Button>
+              {loadingMore && (
+                <div className="flex justify-center py-4 md:col-span-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               )}
             </div>
