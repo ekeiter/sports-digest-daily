@@ -525,13 +525,12 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       <div key={item.id} className={isAccordionParent && isAccordionExpanded ? "col-span-3" : ""}>
         {!(isAccordionParent && isAccordionExpanded) && (
           <div
-            className="no-logo-glow flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl bg-background dark:bg-favorite-card text-foreground dark:text-primary-foreground shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] dark:hover:shadow-[0_8px_28px_rgba(255,255,255,0.2),_0_0_2px_rgba(255,255,255,0.3)] transition-shadow cursor-pointer select-none relative h-[118px]"
+            className={`no-logo-glow flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl bg-background dark:bg-favorite-card text-foreground dark:text-primary-foreground shadow-[0_6px_20px_rgba(0,0,0,0.22),0_2px_6px_rgba(0,0,0,0.14)] dark:shadow-[0_6px_24px_rgba(255,255,255,0.15),_0_0_2px_rgba(255,255,255,0.25)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16)] dark:hover:shadow-[0_8px_28px_rgba(255,255,255,0.2),_0_0_2px_rgba(255,255,255,0.3)] transition-shadow select-none relative h-[118px] ${(item.entity_id || (item.display_options && (item.display_options as any).route)) ? 'cursor-pointer' : 'cursor-default'}`}
             onClick={() => {
-              // If this card has an entity_id or a custom route, navigate to it
+              // Only navigate when the card has an entity_id or a custom route.
+              // For accordion parents without an entity, require using the Menu button.
               const hasRoute = item.display_options && (item.display_options as any).route;
               if (item.entity_id || hasRoute) { handleItemClick(item); return; }
-              // Otherwise, if it's an accordion parent with no entity, toggle expand
-              if (isAccordionParent) { toggleAccordion(item.id); return; }
             }}
           >
             {/* Heart in top-right corner */}
