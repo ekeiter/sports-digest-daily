@@ -679,17 +679,15 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
       )}
       {/* ─── Header (same as Preferences) ─── */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-1">
-          <div className="flex items-center">
+        <div className="w-full px-2 py-1">
+          <div className="relative flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
-            <div className="flex-1 flex items-center justify-center gap-2">
-              <span className="text-lg font-bold text-foreground">Feed Manager</span>
-              <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f] dark:text-foreground" /></button>
-            </div>
-            <div className="w-10 flex justify-end">
+            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none">Feed Manager</span>
+            <div className="ml-auto flex items-center gap-2">
               {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
                 <button onClick={handleBack} className="p-1 bg-black rounded transition-transform hover:scale-110" aria-label="Go back"><ArrowLeft className="h-5 w-5 text-white" /></button>
               )}
+              <button onClick={() => setShowHelpDialog(true)} className="p-1 rounded-full hover:bg-black/10 transition-colors" aria-label="Help"><HelpCircle className="h-6 w-6 text-[#1e3a5f] dark:text-foreground" /></button>
             </div>
           </div>
 
