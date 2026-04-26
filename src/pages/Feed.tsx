@@ -213,7 +213,7 @@ export default function Feed() {
 
   return (
     <div className="h-full flex flex-col w-full max-w-5xl mx-auto overflow-hidden bg-page-bg">
-        <header className="border-b bg-background/80 dark:bg-favorite-card backdrop-blur-sm z-10 flex-shrink-0 dark:text-[hsl(210_11%_15%)]">
+        <header className="bg-page-bg z-10 flex-shrink-0">
           <div className="relative w-full px-2 py-1 flex items-center">
             {/* Logo left edge */}
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
@@ -233,7 +233,7 @@ export default function Feed() {
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="ml-auto p-1 md:p-1.5 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+              className="ml-auto p-1 md:p-1.5 hover:bg-muted rounded-full transition-colors flex-shrink-0 text-primary"
               aria-label="Refresh feed"
             >
               <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
