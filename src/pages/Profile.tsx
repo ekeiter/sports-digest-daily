@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, HelpCircle } from "lucide-react";
+import { BookOpen, HelpCircle, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,7 +128,7 @@ export default function Profile() {
           <div className="flex items-center">
             <img src={sportsDigBlimpLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <div className="flex-1 flex items-center justify-center">
-              <span className="text-lg font-bold text-foreground">Profile</span>
+              <span className="text-lg font-bold text-foreground flex items-center gap-2"><UserIcon className="h-5 w-5" />Profile</span>
             </div>
             <div className="w-11 flex-shrink-0" />
           </div>
