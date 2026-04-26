@@ -75,6 +75,8 @@ export default function Feed() {
   // Scroll to top when feed focus changes
   useEffect(() => {
     window.scrollTo(0, 0);
+    setExtraArticles([]);
+    setHasMore(true);
   }, [interestId, entityType, entityId, focusLeagueId]);
 
   // Preload all thumbnail images in the background once articles load
@@ -84,6 +86,21 @@ export default function Feed() {
       preloadImages(thumbnailUrls);
     }
   }, [initialArticles, extraArticles]);
+
+  // Auto-load more when sentinel (placed 5 cards before end) enters viewport
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    const root = mainRef.current;
+    if (!sentinel || !root || !hasMore || loadingMore || articles.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { root, rootMargin: "200px 0px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [articles.length, hasMore, loadingMore]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
