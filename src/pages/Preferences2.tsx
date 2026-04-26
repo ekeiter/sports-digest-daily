@@ -485,7 +485,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
   };
   const hasChildren = (item: MenuItem) => menuItems.some(m => m.parent_id === item.id);
   const getChildItems = (parentId: number) => menuItems.filter(item => item.parent_id === parentId).sort((a, b) => (a.app_order ?? 0) - (b.app_order ?? 0));
-  const toggleAccordion = (itemId: number) => { setExpandedAccordionIds(prev => prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]); };
+  const toggleAccordion = (itemId: number) => { setExpandedAccordionIds(prev => prev.includes(itemId) ? [] : [itemId]); };
 
   // ─── RENDER ───
 
