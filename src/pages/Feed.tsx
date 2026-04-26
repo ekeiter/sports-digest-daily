@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
+  const mainRef = useRef<HTMLElement | null>(null);
 
   // Parse focus parameters - supports both old interestId format and new type+id format
   const focusParam = searchParams.get("focus");
@@ -145,6 +146,7 @@ export default function Feed() {
     }
     await refetch();
     setRefreshing(false);
+    mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const formatTimeAgo = (dateString: string) => {
@@ -237,7 +239,7 @@ export default function Feed() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto w-full px-0 md:px-2 py-2">
+        <main ref={mainRef} className="flex-1 overflow-y-auto w-full px-0 md:px-2 py-2">
           {articles.length === 0 ? (
             <Card className="mx-2 md:mx-0">
               <CardContent className="p-6 text-center space-y-5">
