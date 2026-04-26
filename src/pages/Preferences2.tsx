@@ -5,7 +5,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart, HelpCircle } from "lucide-react";
+import { Loader2, Search, X, ChevronRight, ChevronDown, ArrowLeft, Heart, HelpCircle, Settings } from "lucide-react";
 import sportsdigLogo from "@/assets/sportsdig-blimp-logo.png";
 import {
   Dialog,
@@ -682,7 +682,7 @@ const [leagueKinds, setLeagueKinds] = useState<Record<number, string>>({});
         <div className="container mx-auto px-1.5 py-1 max-w-lg">
           <div className="relative flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
-            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none">Feed Manager</span>
+            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none flex items-center gap-2"><Settings className="h-5 w-5" />Feed Manager</span>
             <div className="ml-auto flex items-center gap-2">
               {(menuStack.length > 0 || expandedLeagueId !== null || showSchoolsView) && (
                 <button onClick={handleBack} className="p-1 bg-black rounded transition-transform hover:scale-110" aria-label="Go back"><ArrowLeft className="h-5 w-5 text-white" /></button>
