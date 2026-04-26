@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Loader2, Newspaper } from "lucide-react";
+import { Trash2, Loader2, Newspaper, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useUserPreferences, useInvalidateUserPreferences } from "@/hooks/useUserPreferences";
 import { useInvalidateArticleFeed } from "@/hooks/useArticleFeed";
@@ -125,7 +125,7 @@ export default function MyFeeds() {
         <div className="container mx-auto px-3 py-1 max-w-lg">
           <div className="relative flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
-            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none">Favorites</span>
+            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none flex items-center gap-2"><Heart className="h-5 w-5" />Favorites</span>
             <div className="ml-auto w-11 flex-shrink-0" />
           </div>
         </div>
