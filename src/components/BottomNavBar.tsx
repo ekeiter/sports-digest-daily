@@ -25,7 +25,7 @@ export function BottomNavBar() {
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 rounded-lg transition-colors ${
                 isActive
                   ? "bg-blue-100 dark:bg-blue-800/40 text-primary"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground dark:text-white"
               }`}
             >
               <item.icon className="h-5 w-5" />
