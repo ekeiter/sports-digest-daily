@@ -38,7 +38,9 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [extraArticles, setExtraArticles] = useState<FeedRow[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const mainRef = useRef<HTMLElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Parse focus parameters - supports both old interestId format and new type+id format
   const focusParam = searchParams.get("focus");
@@ -73,6 +75,8 @@ export default function Feed() {
   // Scroll to top when feed focus changes
   useEffect(() => {
     window.scrollTo(0, 0);
+    setExtraArticles([]);
+    setHasMore(true);
   }, [interestId, entityType, entityId, focusLeagueId]);
 
   // Preload all thumbnail images in the background once articles load
@@ -82,6 +86,21 @@ export default function Feed() {
       preloadImages(thumbnailUrls);
     }
   }, [initialArticles, extraArticles]);
+
+  // Auto-load more when sentinel (placed 5 cards before end) enters viewport
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    const root = mainRef.current;
+    if (!sentinel || !root || !hasMore || loadingMore || articles.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { root, rootMargin: "200px 0px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [articles.length, hasMore, loadingMore]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -131,6 +150,7 @@ export default function Feed() {
         id: last.article_id
       });
       setExtraArticles(prev => [...prev, ...moreArticles]);
+      if (moreArticles.length === 0) setHasMore(false);
     } catch (error) {
       console.error("Error loading more:", error);
     } finally {
@@ -141,6 +161,7 @@ export default function Feed() {
   const handleRefresh = async () => {
     setRefreshing(true);
     setExtraArticles([]);
+    setHasMore(true);
     if (user) {
       invalidateFeed(user.id, interestId, entityType || undefined, entityId, focusLeagueId);
     }
@@ -267,7 +288,10 @@ export default function Feed() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-3">
               {articles.map((article, index) => (
-                <div key={article.article_id}>
+                <div key={article.article_id} className="relative">
+                  {index === Math.max(0, articles.length - 5) && (
+                    <div ref={sentinelRef} className="absolute top-0 left-0 w-px h-px pointer-events-none" aria-hidden />
+                  )}
                   <Card className="overflow-hidden rounded-none border-0 shadow-none md:rounded-lg md:shadow-md md:border">
                     <CardContent className="p-0">
                       <button
@@ -312,16 +336,9 @@ export default function Feed() {
                   )} */}
                 </div>
               ))}
-              {articles.length >= 100 && (
-                <div className="flex justify-center pt-4">
-                  <Button className="w-full md:w-auto" onClick={loadMore} disabled={loadingMore} variant="outline">
-                    {loadingMore ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Loading...
-                      </>
-                    ) : "Load More"}
-                  </Button>
+              {loadingMore && (
+                <div className="flex justify-center py-4 md:col-span-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               )}
             </div>
