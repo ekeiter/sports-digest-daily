@@ -122,7 +122,7 @@ export default function MyFeeds() {
     <div className="h-full flex flex-col overflow-hidden bg-page-bg w-full max-w-5xl mx-auto">
       {/* Header */}
       <header className="bg-page-bg flex-shrink-0 sticky top-0 z-10">
-        <div className="w-full px-2 py-1">
+        <div className="container mx-auto px-3 py-1 max-w-lg">
           <div className="relative flex items-center">
             <img src={sportsdigLogo} alt="SportsDig" className="h-11 w-11 object-contain flex-shrink-0" />
             <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-foreground pointer-events-none">Favorites</span>
