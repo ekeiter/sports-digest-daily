@@ -53,6 +53,11 @@ export default function AuthCallback() {
           if (isEmailChangeFromUrl) {
             // Email change confirmation — just sign out and show simple confirmation
             await supabase.auth.signOut();
+            try {
+              const bc = new BroadcastChannel('sportsdig-auth');
+              bc.postMessage({ type: 'auth-confirmed', kind: 'email-change' });
+              bc.close();
+            } catch (e) { console.warn('BroadcastChannel unavailable', e); }
             setShowEmailChangeDialog(true);
           } else {
             // New signup confirmation — ensure subscriber, send welcome email, then sign out
@@ -70,6 +75,11 @@ export default function AuthCallback() {
             }
 
             await supabase.auth.signOut();
+            try {
+              const bc = new BroadcastChannel('sportsdig-auth');
+              bc.postMessage({ type: 'auth-confirmed', kind: 'signup' });
+              bc.close();
+            } catch (e) { console.warn('BroadcastChannel unavailable', e); }
             setShowConfirmDialog(true);
           }
         }
