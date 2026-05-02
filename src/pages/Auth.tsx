@@ -60,6 +60,29 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Listen for confirmation from the email-callback tab and switch this tab to sign-in
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('sportsdig-auth');
+      bc.onmessage = (e) => {
+        if (e?.data?.type === 'auth-confirmed') {
+          setShowConfirmation(false);
+          setIsSignUp(false);
+          reset();
+          toast({
+            title: "Email Confirmed",
+            description: "Please sign in to continue.",
+            duration: 5000,
+          });
+        }
+      };
+    } catch (e) {
+      console.warn('BroadcastChannel unavailable', e);
+    }
+    return () => { bc?.close(); };
+  }, [reset, toast]);
+
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const onSubmit = async (data: AuthFormData) => {
