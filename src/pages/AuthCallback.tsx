@@ -172,7 +172,11 @@ export default function AuthCallback() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="sm:justify-center">
-              <AlertDialogAction onClick={() => { window.close(); navigate("/auth"); }}>
+              <AlertDialogAction onClick={() => {
+                window.open(`${window.location.origin}/auth`, "_blank");
+                window.close();
+                navigate("/auth");
+              }}>
                 Sign In
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -201,7 +205,11 @@ export default function AuthCallback() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
-            <AlertDialogAction onClick={() => { window.close(); navigate("/auth"); }}>
+            <AlertDialogAction onClick={() => {
+              window.open(`${window.location.origin}/auth`, "_blank");
+              window.close();
+              navigate("/auth");
+            }}>
               Sign In
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -220,7 +228,11 @@ export default function AuthCallback() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
-            <AlertDialogAction onClick={() => { window.close(); navigate("/auth"); }}>
+            <AlertDialogAction onClick={() => {
+              window.open(`${window.location.origin}/auth`, "_blank");
+              window.close();
+              navigate("/auth");
+            }}>
               Sign In
             </AlertDialogAction>
           </AlertDialogFooter>
