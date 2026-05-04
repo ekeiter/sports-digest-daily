@@ -163,7 +163,7 @@ export default function ExampleFeed() {
   return (
     <div className="w-full max-w-lg mx-auto pt-2 md:pt-3">
       <h3 className="text-sm md:text-base font-bold text-foreground text-center mb-3">
-        Latest Sports News
+        Latest Sports News - Sample Feed
       </h3>
       <p className="text-sm md:text-sm text-foreground text-justify mb-4 px-0">
         SportsDig tracks sports coverage from thousands of major sports publishers and regional outlets across professional leagues, college athletics, and international competitions. The feed below highlights a sample of the latest sports headlines updated throughout the day. Register to personalize your feed and explore the full capabilities of the app.
